@@ -63,6 +63,70 @@
     </main>
     <footer>
         <p>&copy; 2023 241 Runners Awareness. All rights reserved.</p>
+         <script>
+        let slideIndex = 0;
+        let slides = document.getElementsByClassName("slide");
+        let dots = document.getElementsByClassName("dot");
+        let slideInterval;
+        
+        function showSlide(n) {
+            if (n >= slides.length) slideIndex = 0;
+            if (n < 0) slideIndex = slides.length - 1;
+        
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+                dots[i].classList.remove("active");
+            }
+        
+            slides[slideIndex].style.display = "block";
+            dots[slideIndex].classList.add("active");
+        }
+        
+        function nextSlide() {
+            slideIndex++;
+            showSlide(slideIndex);
+        }
+        
+        function prevSlide() {
+            slideIndex--;
+            showSlide(slideIndex);
+        }
+        
+        function goToSlide(n) {
+            slideIndex = n;
+            showSlide(slideIndex);
+        }
+        
+        document.querySelector(".next").addEventListener("click", () => {
+            nextSlide();
+            resetInterval();
+        });
+        
+        document.querySelector(".prev").addEventListener("click", () => {
+            prevSlide();
+            resetInterval();
+        });
+        
+        for (let i = 0; i < dots.length; i++) {
+            dots[i].addEventListener("click", () => {
+                goToSlide(i);
+                resetInterval();
+            });
+        }
+        
+        function startAutoSlide() {
+            slideInterval = setInterval(nextSlide, 4000); // 4 seconds
+        }
+        
+        function resetInterval() {
+            clearInterval(slideInterval);
+            startAutoSlide();
+        }
+        
+        // Initialize
+        showSlide(slideIndex);
+        startAutoSlide();
+        </script>
     </footer>
 </body>
 </html>
