@@ -82,7 +82,7 @@ a.about:hover {
     color: white;
 }
 
-a.events {
+a.socials {
     outline: none;
     text-decoration: none;
     color: inherit;
@@ -94,7 +94,7 @@ a.events {
     transition: all 0.3s ease-in;
 }
 
-a.events:hover {
+a.socials:hover {
     background-color: yellow;
     color: black;
 }
