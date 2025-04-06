@@ -62,7 +62,7 @@ p {
     padding: 10px;
     text-align: center;
 }
-    
+
 /* This css styling is for the nav buttons */
 /* when hovered even */
 a.about {
@@ -138,13 +138,11 @@ footer {
     border-left: 2px solid #333;
     border-right: 2px solid #333;
     border-bottom: 2px solid #333;
-    bottom: 0;
-    width: 100%;
     z-index: 1000;
-    height: 60px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);
-    padding-bottom: 2px;
-    display: inherit;
+    /*-- updated footer --*/
+    min-height: 100%;
+    flex-direction: column;
+    display: flex;
 }
 
 /* slideshow styling */
