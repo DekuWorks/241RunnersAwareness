@@ -20,7 +20,7 @@ nav.navbar {
 }
 
 /* Push the page content down */
-hml, body {
+body {
     font-family: Arial, sans-serif;
     background-color: red;
     margin: 0;
