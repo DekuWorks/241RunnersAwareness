@@ -143,6 +143,8 @@ footer {
     min-height: 100%;
     flex-direction: column;
     display: inherit;
+    bottom: 0;
+    padding-bottom: 2px;
 }
 
 /* slideshow styling */
