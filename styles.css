@@ -142,7 +142,7 @@ footer {
     /*-- updated footer --*/
     min-height: 100%;
     flex-direction: column;
-    display: flex;
+    display: inherit;
 }
 
 /* slideshow styling */
