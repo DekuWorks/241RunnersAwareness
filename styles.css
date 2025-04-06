@@ -20,12 +20,13 @@ nav.navbar {
 }
 
 /* Push the page content down */
-body {
+hml, body {
     font-family: Arial, sans-serif;
     background-color: red;
     margin: 0;
     padding-top: 140px; /* matches header height */
     color: black;
+    height: 100%;
 }
 
 
