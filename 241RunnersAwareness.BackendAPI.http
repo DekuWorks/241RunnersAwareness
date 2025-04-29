@@ -1,0 +1,11 @@
+@_241RunnersAwareness.BackendAPI_HostAddress = http://localhost:5113
+
+GET {{_241RunnersAwareness.BackendAPI_HostAddress}}/todos/
+Accept: application/json
+
+###
+
+GET {{_241RunnersAwareness.BackendAPI_HostAddress}}/todos/1
+Accept: application/json
+
+###

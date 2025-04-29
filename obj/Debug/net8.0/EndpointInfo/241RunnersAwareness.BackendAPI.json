@@ -1,0 +1,184 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "241RunnersAwareness.BackendAPI",
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/Individual": {
+      "get": {
+        "tags": [
+          "Individual"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Individual"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Individual"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Individual"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Individual"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Individual"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Individual"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Individual"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Individual"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Individual"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Individual"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "EmergencyContact": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Individual": {
+        "type": "object",
+        "properties": {
+          "individualId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "gender": {
+            "type": "string",
+            "nullable": true
+          },
+          "specialNeedsDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "photoPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "fingerprintPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "thumbprintPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "hasBeenAdopted": {
+            "type": "boolean"
+          },
+          "adoptionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "placementStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateAdded": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "emergencyContacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EmergencyContact"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
