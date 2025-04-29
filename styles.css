@@ -1,0 +1,215 @@
+header {
+    background-color: black;
+    color: white;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    height: 140px; /* total height of header + navbar */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);
+}
+
+/* Navbar inside the fixed header */
+nav.navbar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 60px;
+    margin-top: 10px;
+}
+
+/* Push the page content down */
+body {
+    font-family: Arial, sans-serif;
+    background-color: red;
+    margin: 0;
+    color: black;
+    padding-top: 140px;
+}
+
+
+
+h1 {
+    font-size: 2em;
+    margin: 0;
+    padding: 10px;
+    text-align: center;
+    background-color: black;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0;
+    padding: 20px 10px;
+    text-align: center;
+}
+
+h2.obj {
+    font-size: 1.5em;
+    margin: 0;
+    text-align: center;
+    color: black;
+    background-color: red;
+    padding: 20px 10px;
+}
+
+
+
+p {
+    font-size: 1em;
+    margin: 0;
+    padding: 10px;
+    text-align: center;
+}
+
+/* This css styling is for the nav buttons */
+/* when hovered even */
+a.about {
+    outline: none;
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+    padding: 10px 20px;
+    border: 2px solid black;
+    border-radius: 25px;
+    background-color: black;
+    transition: all 0.3s ease-in;
+}
+
+a.about:hover {
+    background-color: red;
+    color: white;
+}
+
+a.socials {
+    outline: none;
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+    padding: 10px 20px;
+    border: 2px solid black;
+    border-radius: 25px;
+    background-color: black;
+    transition: all 0.3s ease-in;
+}
+
+a.socials:hover {
+    background-color: yellow;
+    color: black;
+}
+
+a.donate {
+    outline: none;
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+    padding: 10px 20px;
+    border: 2px solid black;
+    border-radius: 25px;
+    background-color: black;
+    transition: all 0.3s ease-in;
+}
+
+a.donate:hover {
+    background-color: green;
+    color: white;
+}
+
+
+img {
+    width: 50%;
+    height: 75%;
+    display: block;
+    justify-content: center;
+    margin: auto
+}
+
+/* Slideshow styling */
+
+
+/* Footer */
+
+footer {
+    background-color: black;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    border-left: 2px solid #333;
+    border-right: 2px solid #333;
+    border-bottom: 2px solid #333;
+    z-index: 1000;
+    /*-- updated footer --*/
+    min-height: 100%;
+    flex-direction: column;
+    display: inherit;
+    bottom: 0;
+    padding-bottom: 2px;
+}
+
+/* slideshow styling */
+.slideshow-wrapper {
+    max-width: 60%;
+    margin: 20px auto;
+    text-align: center;
+    position: relative;
+}
+
+.slideshow-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.slide {
+    display: none;
+}
+
+.slide img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+.slideshow-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.prev, .next {
+    cursor: pointer;
+    padding: 10px 20px;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    background-color: black;
+    border: none;
+    border-radius: 25px;
+    transition: background-color 0.3s ease;
+}
+
+.prev:hover, .next:hover {
+    background-color: green;
+}
+
+/* Dots */
+.slideshow-dots {
+    margin-top: 10px;
+}
+
+.dot {
+    cursor: pointer;
+    height: 12px;
+    width: 12px;
+    margin: 0 4px;
+    background-color: black;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+.dot.active,
+.dot:hover {
+    background-color: yellow;
+}

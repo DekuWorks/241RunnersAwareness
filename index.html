@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>241 Runners Awareness Foundation</title>
+    <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+    <header>
+        <h1>241Runners Awareness</h1>
+        <nav class="navbar">
+                <a href="about_us.html" class ="about">About Us</a>
+                <a href="https://linktr.ee/241Runners" class ="socials" id="EVbutt">Socials</a>
+                <a href ="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" class="donate">Donate</a>        
+        </nav>
+    </header>
+    <main>
+        <section id="home">
+            <h2 class="obj">Goals and Objective</h2>
+            <img src="1aBHYAzY.jpeg" alt="Runners"/>
+        </section>
+        <section id="mission">
+            <h2>Our Mission</h2>
+            <!-- for hero section slideshow -->
+             <div class="slideshow-wrapper">
+                <div class="slideshow-container">
+                    <div class="slide fade">
+                        <img src="DSC03750.jpg" alt="Slide 1">
+                    </div>
+                    <div class="slide fade">
+                        <img src="DSC04720.jpg" alt="Slide 2">
+                    </div>
+                    <div class ="slide fade">
+                        <img src="lisa_thomas_241.jpg" alt="Slide 3">
+                    </div>
+                </div>
+            
+                <!-- Arrows OUTSIDE the slideshow container -->
+                <div class="slideshow-buttons">
+                    <button class="prev">&#10094;</button>
+                    <button class="next">&#10095;</button>
+                </div>
+            
+                <!-- Dots below the slideshow -->
+                <div class="slideshow-dots">
+                    <span class="dot" data-slide="0"></span>
+                    <span class="dot" data-slide="1"></span>
+                    <span class="dot" data-slide="2"></span>
+                </div>
+            </div>
+              
+            <p>241 Runners Awareness was founded to bridge the critical gaps between runaway youth, their families, and law enforcement, with the goal of ensuring no child is lost without recognition or support. Inspired by the tragic story of Israel Thomas, a young man who was misidentified following a fatal accident, 241 Runners Awareness is committed to meaningful change for adoptive families affected by runaway cases. Find our more in our about us and on our recent <a href ="https://www.khou.com/article/news/local/missing-persons-dna-database/285-04ef5786-6741-4171-8048-cdedfe170ee8">interview</a>!</p>
+        </section>
+        <section id="events">
+            <h2>Upcoming Events</h2>
+            <img src="2025Flyer.pdf"/>
+        </section>
+        <section id="contact">
+            <h2>Contact Us</h2>
+            <p>Get in touch with us for more information.</p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 241 Runners Awareness. All rights reserved.</p>
+         <script>
+        let slideIndex = 0;
+        let slides = document.getElementsByClassName("slide");
+        let dots = document.getElementsByClassName("dot");
+        let slideInterval;
+        
+        function showSlide(n) {
+            if (n >= slides.length) slideIndex = 0;
+            if (n < 0) slideIndex = slides.length - 1;
+        
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+                dots[i].classList.remove("active");
+            }
+        
+            slides[slideIndex].style.display = "block";
+            dots[slideIndex].classList.add("active");
+        }
+        
+        function nextSlide() {
+            slideIndex++;
+            showSlide(slideIndex);
+        }
+        
+        function prevSlide() {
+            slideIndex--;
+            showSlide(slideIndex);
+        }
+        
+        function goToSlide(n) {
+            slideIndex = n;
+            showSlide(slideIndex);
+        }
+        
+        document.querySelector(".next").addEventListener("click", () => {
+            nextSlide();
+            resetInterval();
+        });
+        
+        document.querySelector(".prev").addEventListener("click", () => {
+            prevSlide();
+            resetInterval();
+        });
+        
+        for (let i = 0; i < dots.length; i++) {
+            dots[i].addEventListener("click", () => {
+                goToSlide(i);
+                resetInterval();
+            });
+        }
+        
+        function startAutoSlide() {
+            slideInterval = setInterval(nextSlide, 4000); // 4 seconds
+        }
+        
+        function resetInterval() {
+            clearInterval(slideInterval);
+            startAutoSlide();
+        }
+        
+        // Initialize
+        showSlide(slideIndex);
+        startAutoSlide();
+        </script>
+    </footer>
+</body>
+</html>
