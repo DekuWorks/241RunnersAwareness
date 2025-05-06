@@ -16,6 +16,8 @@ nav.navbar {
     align-items: center;
     height: 60px;
     margin-top: 10px;
+    color: white;
+    background-color: black;
 }
 
 /*Back button for pages to return to main*/
