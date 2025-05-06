@@ -1,32 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\mibro\\source\\repos\\241RunnersAwareness.BackendAPI\\241RunnersAwareness.BackendAPI.csproj": {}
+    "/Users/marcusbrown/Documents/241RunnersAwareness/241RunnersAwareness.BackendAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\mibro\\source\\repos\\241RunnersAwareness.BackendAPI\\241RunnersAwareness.BackendAPI.csproj": {
+    "/Users/marcusbrown/Documents/241RunnersAwareness/241RunnersAwareness.BackendAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mibro\\source\\repos\\241RunnersAwareness.BackendAPI\\241RunnersAwareness.BackendAPI.csproj",
+        "projectUniqueName": "/Users/marcusbrown/Documents/241RunnersAwareness/241RunnersAwareness.BackendAPI.csproj",
         "projectName": "241RunnersAwareness.BackendAPI",
-        "projectPath": "C:\\Users\\mibro\\source\\repos\\241RunnersAwareness.BackendAPI\\241RunnersAwareness.BackendAPI.csproj",
-        "packagesPath": "C:\\Users\\mibro\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mibro\\source\\repos\\241RunnersAwareness.BackendAPI\\obj\\",
+        "projectPath": "/Users/marcusbrown/Documents/241RunnersAwareness/241RunnersAwareness.BackendAPI.csproj",
+        "packagesPath": "/Users/marcusbrown/.nuget/packages/",
+        "outputPath": "/Users/marcusbrown/Documents/241RunnersAwareness/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\mibro\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/marcusbrown/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -80,19 +73,15 @@
           "downloadDependencies": [
             {
               "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.15, 8.0.15]"
+              "version": "[8.0.14, 8.0.14]"
             },
             {
-              "name": "Microsoft.NETCore.App.Host.win-x64",
-              "version": "[8.0.15, 8.0.15]"
+              "name": "Microsoft.NETCore.App.Host.osx-arm64",
+              "version": "[8.0.14, 8.0.14]"
             },
             {
               "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.15, 8.0.15]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[8.0.15, 8.0.15]"
+              "version": "[8.0.14, 8.0.14]"
             }
           ],
           "frameworkReferences": {
@@ -103,7 +92,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.202/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
