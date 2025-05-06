@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Individual</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <script defer src="submit.js"></script>
+</head>
+<body>
+  <h1>Register an Individual</h1>
+  <form id="individualForm">
+    <input type="text" id="fullName" placeholder="Full Name" required><br>
+    <input type="text" id="gender" placeholder="Gender" required><br>
+    <input type="number" id="age" placeholder="Age" required><br>
+    <input type="text" id="diagnosis" placeholder="Diagnosis" required><br>
+    <input type="text" id="lastSeenLocation" placeholder="Last Seen Location" required><br>
+    <input type="datetime-local" id="lastSeenDate" required><br>
+    <input type="text" id="photoPath" placeholder="Photo URL"><br>
+    <textarea id="notes" placeholder="Notes" required></textarea><br>
+    <input type="text" id="currentStatus" placeholder="Current Status" required><br>
+    <input type="text" id="thumbprintPath" placeholder="Thumbprint URL" required><br>
+    <input type="text" id="fingerprintPath" placeholder="Fingerprint URL" required><br>
+    <input type="text" id="placementStatus" placeholder="Placement Status" required><br>
+    <input type="text" id="specialNeedsDescription" placeholder="Special Needs Description" required><br>
+    <button type="submit">Submit</button>
+  </form>
+  <div id="response"></div>
+</body>
+</html>
