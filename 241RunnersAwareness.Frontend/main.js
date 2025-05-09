@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // 🟢 INDIVIDUAL FORM LOGIC
+  // 🟢 INDIVIDUAL FORM SUBMISSION
   const form = document.getElementById("individualForm");
   const responseBox = document.getElementById("response");
 
@@ -24,9 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
       try {
         const response = await fetch("https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/Individuals", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data)
         });
 
@@ -43,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // 🟢 EMERGENCY CONTACT FORM LOGIC
+  // 🟢 EMERGENCY CONTACT FORM SUBMISSION
   const emergencyForm = document.getElementById("emergencyForm");
   const emergencyResponseBox = document.getElementById("emergencyResponse");
 
@@ -63,9 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
       try {
         const response = await fetch("https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/EmergencyContact", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(contactData)
         });
 
@@ -81,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
-    // 🟨 Populate Individual Dropdown
+    // 🟨 INDIVIDUAL DROPDOWN FOR EMERGENCY FORM
     async function populateIndividualDropdown() {
       const dropdown = document.getElementById("individualID");
       if (!dropdown) return;
@@ -105,7 +101,41 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    populateIndividualDropdown(); // Call it on load
+    populateIndividualDropdown();
+  }
+
+  // 🟢 VIEW RECORDS PAGE LOGIC
+  const individualListContainer = document.getElementById("individualList");
+
+  if (individualListContainer) {
+    fetch("https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/Individuals")
+      .then(response => response.json())
+      .then(individuals => {
+        if (individuals.length === 0) {
+          individualListContainer.textContent = "No records found.";
+          return;
+        }
+
+        const list = document.createElement("ul");
+
+        individuals.forEach(ind => {
+          const item = document.createElement("li");
+          item.innerHTML = `
+            <strong>${ind.fullName}</strong> (DOB: ${ind.dateOfBirth})<br/>
+            Status: ${ind.currentStatus}<br/>
+            Last Seen: ${ind.lastSeenLocation}<br/>
+            <hr/>
+          `;
+          list.appendChild(item);
+        });
+
+        individualListContainer.innerHTML = ""; // Clear "Loading..."
+        individualListContainer.appendChild(list);
+      })
+      .catch(error => {
+        individualListContainer.textContent = "⚠️ Failed to load records.";
+        console.error("View page error:", error);
+      });
   }
 });
 
