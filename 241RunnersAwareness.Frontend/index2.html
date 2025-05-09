@@ -1,29 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Add Individual</title>
-  <link rel="stylesheet" href="styles.css"/>
-  <script defer src="submit.js"></script>
+    <title>Form</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <h1>Register an Individual</h1>
-  <form id="individualForm">
-    <input type="text" id="fullName" placeholder="Full Name" required><br>
-    <input type="text" id="gender" placeholder="Gender" required><br>
-    <input type="number" id="age" placeholder="Age" required><br>
-    <input type="text" id="diagnosis" placeholder="Diagnosis" required><br>
-    <input type="text" id="lastSeenLocation" placeholder="Last Seen Location" required><br>
-    <input type="datetime-local" id="lastSeenDate" required><br>
-    <input type="text" id="photoPath" placeholder="Photo URL"><br>
-    <textarea id="notes" placeholder="Notes" required></textarea><br>
-    <input type="text" id="currentStatus" placeholder="Current Status" required><br>
-    <input type="text" id="thumbprintPath" placeholder="Thumbprint URL" required><br>
-    <input type="text" id="fingerprintPath" placeholder="Fingerprint URL" required><br>
-    <input type="text" id="placementStatus" placeholder="Placement Status" required><br>
-    <input type="text" id="specialNeedsDescription" placeholder="Special Needs Description" required><br>
-    <button type="submit">Submit</button>
-  </form>
-  <div id="response"></div>
+
+    <form id="individualForm">
+        <div>
+            <label for="fullName">Full Name:</label>
+            <input type="text" id="fullName" placeholder="Full Name" required />
+        </div>
+
+        <div>
+            <label for="dateOfBirth">Date of Birth:</label>
+            <input type="text" id="dateOfBirth" placeholder="Date of Birth" required />
+        </div>
+
+        <div>
+            <label for="gender">Gender:</label>
+            <input type="text" id="gender" placeholder="Gender" required />
+        </div>
+
+        <div>
+            <label for="race">Race:</label>
+            <input type="text" id="race" placeholder="Race" required />
+        </div>
+
+        <div>
+            <label for="stateLastSeen">State Last Seen:</label>
+            <input type="text" id="stateLastSeen" placeholder="State Last Seen" required />
+        </div>
+
+        <div>
+            <label for="countyLastSeen">County Last Seen:</label>
+            <input type="text" id="countyLastSeen" placeholder="County Last Seen" required />
+        </div>
+
+        <div>
+            <label for="lastSeenLocation">Last Seen Location:</label>
+            <input type="text" id="lastSeenLocation" placeholder="Last Seen Location" required />
+        </div>
+
+        <div>
+            <label for="height">Height:</label>
+            <input type="text" id="height" placeholder="Height" required />
+        </div>
+
+        <div>
+            <label for="weight">Weight:</label>
+            <input type="text" id="weight" placeholder="Weight" required />
+        </div>
+
+        <div>
+            <label for="disability">Disability:</label>
+            <input type="text" id="disability" placeholder="Disability" required />
+        </div>
+
+        <div>
+            <label for="specialNeedsDescription">Special Needs Description:</label>
+            <input type="text" id="specialNeedsDescription" placeholder="Special Needs Description" required />
+        </div>
+
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+
+    <!-- Link your JavaScript file here -->
+    <script src="main.js"></script>
+
 </body>
 </html>
