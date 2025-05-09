@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sign Up - 241Runners</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Sign Up</h1>
+    <nav class="navbar">
+      <a href="index.html">← Back to Home</a>
+    </nav>
+  </header>
+
+  <main>
+    <form id="signupForm">
+      <label for="fullName">Full Name</label>
+      <input type="text" id="fullName" required />
+
+      <label for="email">Email</label>
+      <input type="email" id="email" required />
+
+      <label for="phone">Phone</label>
+      <input type="tel" id="phone" required />
+
+      <button type="submit">Continue</button>
+    </form>
+  </main>
+
+  <script>
+    document.getElementById("signupForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const data = {
+        fullName: document.getElementById("fullName").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value
+      };
+
+      try {
+        const response = await fetch("https://241runnersapi.azurewebsites.net/api/Users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          alert("Signup successful! Now add individual information.");
+          window.location.href = "index2.html";
+        } else {
+          const error = await response.text();
+          alert("Signup failed: " + error);
+        }
+      } catch (err) {
+        alert("Network error. Try again later.");
+      }
+    });
+  </script>
+</body>
+</html>
