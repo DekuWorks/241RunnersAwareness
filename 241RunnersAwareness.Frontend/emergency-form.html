@@ -1,32 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Emergency Contact Form</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
+<form id="emergencyForm">
+  <label for="name">Contact Name:</label>
+  <input type="text" id="name" required />
 
-  <form id="emergencyForm">
-    <label for="name">Contact Name:</label>
-    <input type="text" id="name" required />
+  <label for="phone">Phone Number:</label>
+  <input type="text" id="phone" required />
 
-    <label for="phone">Phone Number:</label>
-    <input type="text" id="phone" required />
+  <label for="relationship">Relationship:</label>
+  <input type="text" id="relationship" required />
 
-    <label for="relationship">Relationship:</label>
-    <input type="text" id="relationship" required />
+  <label for="email">Email:</label>
+  <input type="email" id="email" required />
 
-    <label for="individualID">Linked Individual ID:</label>
-    <input type="text" id="individualID" required />
+  <label for="address">Address:</label>
+  <input type="text" id="address" required />
 
-    <button type="submit">Add Emergency Contact</button>
+  <label for="individualID">Linked Individual ID:</label>
+  <input type="text" id="individualID" required />
 
-    <div id="emergencyResponse" style="margin-top: 1em; font-weight: bold;"></div>
-  </form>
-
-  <script src="main.js"></script>
-</body>
-</html>
-
+  <button type="submit">Add Emergency Contact</button>
+  <div id="emergencyResponse" style="margin-top: 1em; font-weight: bold;"></div>
+</form>
