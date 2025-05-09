@@ -80,5 +80,32 @@ document.addEventListener("DOMContentLoaded", function () {
         if (emergencyResponseBox) emergencyResponseBox.textContent = `❌ Request failed: ${error.message}`;
       }
     });
+
+    // 🟨 Populate Individual Dropdown
+    async function populateIndividualDropdown() {
+      const dropdown = document.getElementById("individualID");
+      if (!dropdown) return;
+
+      try {
+        const response = await fetch("https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/Individuals");
+        if (!response.ok) throw new Error("Failed to fetch individuals");
+
+        const individuals = await response.json();
+        dropdown.innerHTML = '<option value="">-- Select Individual --</option>';
+
+        individuals.forEach(ind => {
+          const option = document.createElement("option");
+          option.value = ind.individualID;
+          option.textContent = `${ind.fullName} (DOB: ${ind.dateOfBirth})`;
+          dropdown.appendChild(option);
+        });
+      } catch (error) {
+        dropdown.innerHTML = '<option value="">⚠️ Error loading individuals</option>';
+        console.error("Dropdown error:", error);
+      }
+    }
+
+    populateIndividualDropdown(); // Call it on load
   }
 });
+
