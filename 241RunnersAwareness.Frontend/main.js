@@ -41,3 +41,42 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+// Emergency Contact form handler
+document.addEventListener("DOMContentLoaded", function () {
+    const emergencyForm = document.getElementById("emergencyForm");
+    const emergencyResponseBox = document.getElementById("emergencyResponse");
+
+    if (emergencyForm) {
+        emergencyForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const contactData = {
+                name: document.getElementById("name").value,
+                phone: document.getElementById("phone").value,
+                relationship: document.getElementById("relationship").value,
+                individualID: document.getElementById("individualID").value
+            };
+
+            try {
+                const response = await fetch("https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/EmergencyContact", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(contactData)
+                });
+
+                if (response.ok) {
+                    if (emergencyResponseBox) emergencyResponseBox.textContent = "✅ Emergency contact added!";
+                    emergencyForm.reset();
+                } else {
+                    const errorText = await response.text();
+                    if (emergencyResponseBox) emergencyResponseBox.textContent = `❌ Error: ${errorText}`;
+                }
+            } catch (error) {
+                if (emergencyResponseBox) emergencyResponseBox.textContent = `❌ Request failed: ${error.message}`;
+            }
+        });
+    }
+});
