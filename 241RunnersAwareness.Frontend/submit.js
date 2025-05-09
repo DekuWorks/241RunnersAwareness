@@ -1,42 +1,46 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("individualForm");
-  
-    form.addEventListener("submit", async function (e) {
-      e.preventDefault();
-  
-      const data = {
-        fullName: document.getElementById("fullName").value,
-        gender: document.getElementById("gender").value,
-        dateOfBirth: document.getElementById("age").value,
-        specialNeedsDescription: document.getElementById("diagnosis").value,
-        lastSeenLocation: document.getElementById("lastSeenLocation").value,
-        photoPath: document.getElementById("photoPath").value,
-        notes: document.getElementById("notes").value,
-        currentStatus: document.getElementById("currentStatus").value,
-        thumbprintPath: document.getElementById("thumbprint").value,
-        fingerprintPath: document.getElementById("fingerprint").value,
-        placementStatus: document.getElementById("placementStatus").value
-      };
-  
-      try {
-        const response = await fetch("https://your-api.azurewebsites.net/api/Individuals", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        });
-  
-        if (response.ok) {
-          document.getElementById("response").textContent = "✅ Individual added successfully!";
-          form.reset();
-        } else {
-          const errorText = await response.text();
-          document.getElementById("response").textContent = `❌ Error: ${errorText}`;
+
+    if (!form) {
+        console.error("Form not found. Make sure it has id='individualForm'");
+        return;
+    }
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = {
+            fullName: document.getElementById("fullName").value,
+            dateOfBirth: document.getElementById("dateOfBirth").value,
+            gender: document.getElementById("gender").value,
+            race: document.getElementById("race").value,
+            stateLastSeen: document.getElementById("stateLastSeen").value,
+            countyLastSeen: document.getElementById("countyLastSeen").value,
+            lastSeenLocation: document.getElementById("lastSeenLocation").value,
+            height: document.getElementById("height").value,
+            weight: document.getElementById("weight").value,
+            disability: document.getElementById("disability").value,
+            specialNeedsDescription: document.getElementById("specialNeedsDescription").value
+        };
+
+        try {
+            const response = await fetch("https://your-api-url/api/Individuals", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                alert("Individual successfully added!");
+                form.reset();
+            } else {
+                const errorMsg = await response.text();
+                alert("Error submitting form: " + errorMsg);
+            }
+        } catch (error) {
+            alert("Server error: " + error.message);
         }
-      } catch (error) {
-        document.getElementById("response").textContent = `❌ Request failed: ${error.message}`;
-      }
     });
-  });
-  
+});
