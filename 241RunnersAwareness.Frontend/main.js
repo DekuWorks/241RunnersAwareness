@@ -1,8 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-  // ================================
-  // 🔷 INDIVIDUAL FORM SUBMISSION
-  // ================================
+  // 🔹 INDIVIDUAL FORM SUBMISSION
   const form = document.getElementById("individualForm");
   const responseBox = document.getElementById("response");
 
@@ -25,31 +23,25 @@ document.addEventListener("DOMContentLoaded", function () {
       };
 
       try {
-        const response = await fetch(
-          "https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/Individuals",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-          }
-        );
+        const response = await fetch("https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/Individuals", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
 
-        if (response.ok) {
-          if (responseBox) responseBox.textContent = "✅ Individual added successfully!";
-          form.reset();
-        } else {
-          const errorText = await response.text();
-          if (responseBox) responseBox.textContent = `❌ Error: ${errorText}`;
-        }
+        const message = response.ok
+          ? "✅ Individual added successfully!"
+          : `❌ Error: ${await response.text()}`;
+
+        if (responseBox) responseBox.textContent = message;
+        if (response.ok) form.reset();
       } catch (error) {
         if (responseBox) responseBox.textContent = `❌ Request failed: ${error.message}`;
       }
     });
   }
 
-  // ================================
-  // 🔷 EMERGENCY CONTACT FORM SUBMISSION
-  // ================================
+  // 🔹 EMERGENCY CONTACT FORM SUBMISSION
   const emergencyForm = document.getElementById("emergencyForm");
   const emergencyResponseBox = document.getElementById("emergencyResponse");
 
@@ -67,43 +59,33 @@ document.addEventListener("DOMContentLoaded", function () {
       };
 
       try {
-        const response = await fetch(
-          "https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/EmergencyContact",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(contactData)
-          }
-        );
+        const response = await fetch("https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/EmergencyContact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(contactData)
+        });
 
-        if (response.ok) {
-          if (emergencyResponseBox) emergencyResponseBox.textContent = "✅ Emergency contact added!";
-          emergencyForm.reset();
-        } else {
-          const errorText = await response.text();
-          if (emergencyResponseBox) emergencyResponseBox.textContent = `❌ Error: ${errorText}`;
-        }
+        const message = response.ok
+          ? "✅ Emergency contact added!"
+          : `❌ Error: ${await response.text()}`;
+
+        if (emergencyResponseBox) emergencyResponseBox.textContent = message;
+        if (response.ok) emergencyForm.reset();
       } catch (error) {
         if (emergencyResponseBox) emergencyResponseBox.textContent = `❌ Request failed: ${error.message}`;
       }
     });
 
-    // ================================
-    // 🔶 POPULATE INDIVIDUAL DROPDOWN
-    // ================================
+    // 🔹 Populate Dropdown
     async function populateIndividualDropdown() {
       const dropdown = document.getElementById("individualID");
       if (!dropdown) return;
 
       try {
-        const response = await fetch(
-          "https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/Individuals"
-        );
-        if (!response.ok) throw new Error("Failed to fetch individuals");
-
+        const response = await fetch("https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/Individuals");
         const individuals = await response.json();
-        dropdown.innerHTML = '<option value="">-- Select Individual --</option>';
 
+        dropdown.innerHTML = '<option value="">-- Select Individual --</option>';
         individuals.forEach(ind => {
           const option = document.createElement("option");
           option.value = ind.individualID;
@@ -116,43 +98,137 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    populateIndividualDropdown(); // 🔁 Populate on page load
+    populateIndividualDropdown();
   }
 
-  // ================================
-  // 🔷 VIEW RECORDS (view-records.html)
-  // ================================
+  // 🔹 VIEW RECORDS PAGE
   const individualListContainer = document.getElementById("individualList");
 
   if (individualListContainer) {
-    fetch("https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/Individuals")
-      .then(response => response.json())
-      .then(individuals => {
-        if (individuals.length === 0) {
-          individualListContainer.textContent = "No records found.";
-          return;
-        }
+    Promise.all([
+      fetch("https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/Individuals").then(res => res.json()),
+      fetch("https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/EmergencyContact").then(res => res.json())
+    ])
+    .then(([individuals, contacts]) => {
+      if (!individuals.length) {
+        individualListContainer.textContent = "No records found.";
+        return;
+      }
 
-        const list = document.createElement("ul");
+      const list = document.createElement("ul");
 
-        individuals.forEach(ind => {
-          const item = document.createElement("li");
-          item.innerHTML = `
+      individuals.forEach(ind => {
+        const linkedContacts = contacts.filter(c => c.individualID === ind.individualID);
+
+        let contactHTML = linkedContacts.length
+          ? `<ul>${linkedContacts.map(c => `
+              <li>
+                <strong>${c.name}</strong><br/>
+                Phone: ${c.phone}<br/>
+                Relationship: ${c.relationship}<br/>
+                Email: ${c.email}<br/>
+                Address: ${c.address}
+              </li>`).join("<br/>")}
+            </ul>`
+          : "<em>No emergency contacts listed.</em>";
+
+        const item = document.createElement("li");
+        item.innerHTML = `
+          <div class="record-block" id="record-${ind.individualID}">
             <strong>${ind.fullName}</strong> (DOB: ${ind.dateOfBirth})<br/>
-            Status: ${ind.currentStatus}<br/>
-            Last Seen: ${ind.lastSeenLocation}<br/>
+            Status: ${ind.currentStatus || "Not specified"}<br/>
+            Last Seen: ${ind.lastSeenLocation || "Not available"}<br/><br/>
+            <u>Emergency Contacts:</u><br/>
+            ${contactHTML}
+            <button onclick="printRecord('record-${ind.individualID}')">🖨️ Print</button>
             <hr/>
-          `;
-          list.appendChild(item);
-        });
-
-        individualListContainer.innerHTML = ""; // Clear "Loading..."
-        individualListContainer.appendChild(list);
-      })
-      .catch(error => {
-        individualListContainer.textContent = "⚠️ Failed to load records.";
-        console.error("View page error:", error);
+          </div>
+        `;
+        list.appendChild(item);
       });
+
+      individualListContainer.innerHTML = "";
+      individualListContainer.appendChild(list);
+    })
+    .catch(error => {
+      individualListContainer.textContent = "⚠️ Failed to load data.";
+      console.error("Data load error:", error);
+    });
   }
 
+  // 🔹 VIEW CONTACTS PAGE (with search)
+  const contactListContainer = document.getElementById("contactList");
+  const searchInput = document.getElementById("searchInput");
+
+  if (contactListContainer && searchInput) {
+    let allContacts = [];
+    let allIndividuals = [];
+
+    Promise.all([
+      fetch("https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/EmergencyContact").then(res => res.json()),
+      fetch("https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/Individuals").then(res => res.json())
+    ])
+    .then(([contacts, individuals]) => {
+      allContacts = contacts;
+      allIndividuals = individuals;
+      renderContacts(allContacts, allIndividuals);
+    })
+    .catch(error => {
+      contactListContainer.textContent = "⚠️ Failed to load contact data.";
+      console.error("Contact list error:", error);
+    });
+
+    searchInput.addEventListener("input", function () {
+      const keyword = this.value.toLowerCase();
+      const filtered = allContacts.filter(c => {
+        const person = allIndividuals.find(i => i.individualID === c.individualID);
+        return (
+          c.name.toLowerCase().includes(keyword) ||
+          c.phone.toLowerCase().includes(keyword) ||
+          (person && person.fullName.toLowerCase().includes(keyword))
+        );
+      });
+      renderContacts(filtered, allIndividuals);
+    });
+
+    function renderContacts(contactsToRender, individuals) {
+      contactListContainer.innerHTML = "";
+
+      if (!contactsToRender.length) {
+        contactListContainer.textContent = "No matching contacts found.";
+        return;
+      }
+
+      const list = document.createElement("ul");
+      contactsToRender.forEach(contact => {
+        const linkedPerson = individuals.find(ind => ind.individualID === contact.individualID);
+        const linkedName = linkedPerson ? linkedPerson.fullName : "Unknown Individual";
+
+        const item = document.createElement("li");
+        item.innerHTML = `
+          <div class="record-block">
+            <strong>${contact.name}</strong><br/>
+            Relationship: ${contact.relationship}<br/>
+            Phone: ${contact.phone}<br/>
+            Email: ${contact.email}<br/>
+            Address: ${contact.address}<br/>
+            Linked To: <em>${linkedName}</em>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+      contactListContainer.appendChild(list);
+    }
+  }
+
+  // 🔧 GLOBAL PRINT FUNCTION
+  window.printRecord = function (recordId) {
+    const originalContent = document.body.innerHTML;
+    const printSection = document.getElementById(recordId).innerHTML;
+
+    document.body.innerHTML = printSection;
+    window.print();
+    document.body.innerHTML = originalContent;
+    location.reload(); // optional refresh
+  };
 });
