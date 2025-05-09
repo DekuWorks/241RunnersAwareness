@@ -1,5 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // 🟢 INDIVIDUAL FORM SUBMISSION
+
+  // ================================
+  // 🔷 INDIVIDUAL FORM SUBMISSION
+  // ================================
   const form = document.getElementById("individualForm");
   const responseBox = document.getElementById("response");
 
@@ -22,11 +25,14 @@ document.addEventListener("DOMContentLoaded", function () {
       };
 
       try {
-        const response = await fetch("https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/Individuals", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
-        });
+        const response = await fetch(
+          "https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/Individuals",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+          }
+        );
 
         if (response.ok) {
           if (responseBox) responseBox.textContent = "✅ Individual added successfully!";
@@ -41,7 +47,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // 🟢 EMERGENCY CONTACT FORM SUBMISSION
+  // ================================
+  // 🔷 EMERGENCY CONTACT FORM SUBMISSION
+  // ================================
   const emergencyForm = document.getElementById("emergencyForm");
   const emergencyResponseBox = document.getElementById("emergencyResponse");
 
@@ -59,11 +67,14 @@ document.addEventListener("DOMContentLoaded", function () {
       };
 
       try {
-        const response = await fetch("https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/EmergencyContact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(contactData)
-        });
+        const response = await fetch(
+          "https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/EmergencyContact",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(contactData)
+          }
+        );
 
         if (response.ok) {
           if (emergencyResponseBox) emergencyResponseBox.textContent = "✅ Emergency contact added!";
@@ -77,13 +88,17 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
-    // 🟨 INDIVIDUAL DROPDOWN FOR EMERGENCY FORM
+    // ================================
+    // 🔶 POPULATE INDIVIDUAL DROPDOWN
+    // ================================
     async function populateIndividualDropdown() {
       const dropdown = document.getElementById("individualID");
       if (!dropdown) return;
 
       try {
-        const response = await fetch("https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/Individuals");
+        const response = await fetch(
+          "https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/Individuals"
+        );
         if (!response.ok) throw new Error("Failed to fetch individuals");
 
         const individuals = await response.json();
@@ -101,10 +116,12 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    populateIndividualDropdown();
+    populateIndividualDropdown(); // 🔁 Populate on page load
   }
 
-  // 🟢 VIEW RECORDS PAGE LOGIC
+  // ================================
+  // 🔷 VIEW RECORDS (view-records.html)
+  // ================================
   const individualListContainer = document.getElementById("individualList");
 
   if (individualListContainer) {
@@ -137,5 +154,5 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("View page error:", error);
       });
   }
-});
 
+});
