@@ -1,76 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Form</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Individual Entry Form</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-    <form id="individualForm">
-        <div>
-            <label for="fullName">Full Name:</label>
-            <input type="text" id="fullName" placeholder="Full Name" required />
-        </div>
+  <form id="individualForm">
+    <label for="fullName">Full Name:</label>
+    <input type="text" id="fullName" required />
 
-        <div>
-            <label for="dateOfBirth">Date of Birth:</label>
-            <input type="text" id="dateOfBirth" placeholder="Date of Birth" required />
-        </div>
+    <label for="gender">Gender:</label>
+    <input type="text" id="gender" required />
 
-        <div>
-            <label for="gender">Gender:</label>
-            <input type="text" id="gender" placeholder="Gender" required />
-        </div>
+    <label for="dateOfBirth">Date of Birth:</label>
+    <input type="date" id="dateOfBirth" required />
 
-        <div>
-            <label for="race">Race:</label>
-            <input type="text" id="race" placeholder="Race" required />
-        </div>
+    <label for="diagnosis">Special Needs / Diagnosis:</label>
+    <input type="text" id="diagnosis" required />
 
-        <div>
-            <label for="stateLastSeen">State Last Seen:</label>
-            <input type="text" id="stateLastSeen" placeholder="State Last Seen" required />
-        </div>
+    <label for="lastSeenLocation">Last Seen Location:</label>
+    <input type="text" id="lastSeenLocation" required />
 
-        <div>
-            <label for="countyLastSeen">County Last Seen:</label>
-            <input type="text" id="countyLastSeen" placeholder="County Last Seen" required />
-        </div>
+    <label for="photoPath">Photo URL or File Path:</label>
+    <input type="text" id="photoPath" />
 
-        <div>
-            <label for="lastSeenLocation">Last Seen Location:</label>
-            <input type="text" id="lastSeenLocation" placeholder="Last Seen Location" required />
-        </div>
+    <label for="notes">Additional Notes:</label>
+    <textarea id="notes" rows="4" cols="50"></textarea>
 
-        <div>
-            <label for="height">Height:</label>
-            <input type="text" id="height" placeholder="Height" required />
-        </div>
+    <label for="currentStatus">Current Status:</label>
+    <input type="text" id="currentStatus" required />
 
-        <div>
-            <label for="weight">Weight:</label>
-            <input type="text" id="weight" placeholder="Weight" required />
-        </div>
+    <label for="thumbprint">Thumbprint File Path:</label>
+    <input type="text" id="thumbprint" />
 
-        <div>
-            <label for="disability">Disability:</label>
-            <input type="text" id="disability" placeholder="Disability" required />
-        </div>
+    <label for="fingerprint">Fingerprint File Path:</label>
+    <input type="text" id="fingerprint" />
 
-        <div>
-            <label for="specialNeedsDescription">Special Needs Description:</label>
-            <input type="text" id="specialNeedsDescription" placeholder="Special Needs Description" required />
-        </div>
+    <label for="placementStatus">Placement Status:</label>
+    <input type="text" id="placementStatus" required />
 
-        <div>
-            <button type="submit">Submit</button>
-        </div>
-    </form>
+    <button type="submit">Submit</button>
 
-    <!-- Link your JavaScript file here -->
-    <script src="main.js"></script>
+    <div id="response" style="margin-top: 1em; font-weight: bold;"></div>
+  </form>
 
+  <script src="main.js"></script>
 </body>
 </html>
+
