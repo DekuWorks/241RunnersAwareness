@@ -58,6 +58,30 @@ header {
   background-color: black;
 }
 
+.navbar a {
+padding: 10px 15px;
+text-decoration: none;
+font-weight: bold;
+display: inline-block;
+}
+
+/* Traffic light button colors */
+.navbar a:nth-child(1) { background-color: #e53935; } /* Home */
+.navbar a:nth-child(2) { background-color: #b71c1c; } /* About Us */
+.navbar a:nth-child(3) { background-color: #fbc02d; } /* Events */
+.navbar a:nth-child(4) { background-color: #fdd835; } /* Sign Up */
+.navbar a:nth-child(5) { background-color: #66bb6a; } /* Log In */
+.navbar a:nth-child(6) { background-color: #2e7d32; } /* Contact */
+
+/* Hover effects - slightly darker shades */
+.navbar a:nth-child(1):hover { background-color: #c62828; }
+.navbar a:nth-child(2):hover { background-color: #8e0000; }
+.navbar a:nth-child(3):hover { background-color: #f9a825; }
+.navbar a:nth-child(4):hover { background-color: #fbc02d; }
+.navbar a:nth-child(5):hover { background-color: #4caf50; }
+.navbar a:nth-child(6):hover { background-color: #1b5e20; }
+
+
 .toggle-button {
   display: none;
   flex-direction: column;
