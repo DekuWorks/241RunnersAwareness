@@ -4,26 +4,31 @@
   <meta charset="UTF-8" />
   <title>Sign Up - 241Runners</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
   <header>
     <h1>Sign Up</h1>
     <nav class="navbar">
-      <a href="index.html">← Back to Home</a>
+      <a href="/index.html">← Back to Home</a>
     </nav>
   </header>
 
   <main>
-    <form id="signupForm">
+    <form id="signupForm" aria-labelledby="signupTitle" novalidate>
+      <div role="alert" id="formError" style="color: red; display: none;"></div>
+
       <label for="fullName">Full Name</label>
-      <input type="text" id="fullName" required />
+      <input type="text" id="fullName" name="fullName" aria-describedby="nameHelp" required />
+      <small id="nameHelp">Enter your full legal name.</small>
 
       <label for="email">Email</label>
-      <input type="email" id="email" required />
+      <input type="email" id="email" name="email" aria-describedby="emailHelp" required />
+      <small id="emailHelp">We’ll send a confirmation link.</small>
 
       <label for="phone">Phone</label>
-      <input type="tel" id="phone" required />
+      <input type="tel" id="phone" name="phone" aria-describedby="phoneHelp" required />
+      <small id="phoneHelp">Mobile or emergency contact number.</small>
 
       <button type="submit">Continue</button>
     </form>
@@ -34,9 +39,9 @@
       e.preventDefault();
 
       const data = {
-        fullName: document.getElementById("fullName").value,
-        email: document.getElementById("email").value,
-        phone: document.getElementById("phone").value
+        fullName: document.getElementById("fullName").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        phone: document.getElementById("phone").value.trim()
       };
 
       try {
@@ -51,10 +56,12 @@
           window.location.href = "index2.html";
         } else {
           const error = await response.text();
-          alert("Signup failed: " + error);
+          document.getElementById("formError").textContent = "Signup failed: " + error;
+          document.getElementById("formError").style.display = "block";
         }
       } catch (err) {
-        alert("Network error. Try again later.");
+        document.getElementById("formError").textContent = "Network error. Try again later.";
+        document.getElementById("formError").style.display = "block";
       }
     });
   </script>
