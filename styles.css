@@ -16,7 +16,6 @@ h1 {
   background-color: black;
   color: white;
 }
-
 .logo-title-horizontal {
   display: flex;
   align-items: center;
@@ -24,14 +23,10 @@ h1 {
   gap: 15px;
   padding: 10px 0;
 }
-
 .site-logo {
   width: 60px;
   height: auto;
 }
-
-
-
 h2, h2.obj {
   font-size: 1.5em;
   margin: 0;
@@ -64,7 +59,6 @@ header {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);
   padding-bottom: 10px;
 }
-
 .navbar {
   display: flex;
   justify-content: center;
@@ -73,23 +67,22 @@ header {
   flex-wrap: wrap;
   background-color: black;
 }
-
 .navbar a {
-padding: 10px 15px;
-text-decoration: none;
-font-weight: bold;
-display: inline-block;
+  padding: 10px 15px;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
 }
 
 /* Traffic light button colors */
-.navbar a:nth-child(1) { background-color: #e53935; } /* Home */
-.navbar a:nth-child(2) { background-color: #b71c1c; } /* About Us */
-.navbar a:nth-child(3) { background-color: #fbc02d; } /* Events */
-.navbar a:nth-child(4) { background-color: #fdd835; } /* Sign Up */
-.navbar a:nth-child(5) { background-color: #66bb6a; } /* Log In */
-.navbar a:nth-child(6) { background-color: #2e7d32; } /* Contact */
+.navbar a:nth-child(1) { background-color: #e53935; }
+.navbar a:nth-child(2) { background-color: #b71c1c; }
+.navbar a:nth-child(3) { background-color: #fbc02d; }
+.navbar a:nth-child(4) { background-color: #fdd835; }
+.navbar a:nth-child(5) { background-color: #66bb6a; }
+.navbar a:nth-child(6) { background-color: #2e7d32; }
 
-/* Hover effects - slightly darker shades */
+/* Hover effects */
 .navbar a:nth-child(1):hover { background-color: #c62828; }
 .navbar a:nth-child(2):hover { background-color: #8e0000; }
 .navbar a:nth-child(3):hover { background-color: #f9a825; }
@@ -97,27 +90,24 @@ display: inline-block;
 .navbar a:nth-child(5):hover { background-color: #4caf50; }
 .navbar a:nth-child(6):hover { background-color: #1b5e20; }
 
-
+/* Hamburger menu */
 .toggle-button {
   display: none;
   flex-direction: column;
   cursor: pointer;
 }
-
 .toggle-button span {
   height: 3px;
   width: 25px;
   background: white;
   margin: 4px 0;
 }
-
 .nav-links {
   display: flex;
   justify-content: center;
   gap: 12px;
   flex-wrap: wrap;
 }
-
 .nav-links a {
   color: white;
   text-decoration: none;
@@ -130,79 +120,22 @@ display: inline-block;
   align-items: center;
   gap: 8px;
 }
-
 .nav-links a:hover {
   background-color: red;
   color: white;
 }
 
-/* Refactored legacy button styles */
-.about {
-  background-color: red;
-  color: white;
-}
-.about:hover {
-  background-color: darkred;
-}
-
-.socials {
-  background-color: yellow;
-  color: black;
-}
-.socials:hover {
-  background-color: gold;
-}
-
-.donate {
-  background-color: green;
-  color: white;
-}
-.donate:hover {
-  background-color: darkgreen;
-}
-
-.signup {
-  background-color: #007bff;
-  color: white;
-}
-.signup:hover {
-  background-color: #0056b3;
-}
-
-.login {
-  background-color: #28a745;
-  color: white;
-}
-.login:hover {
-  background-color: #1e7e34;
-}
-
-/* Icon styles */
-.nav-links i {
-  font-size: 1rem;
-}
-
-@media screen and (max-width: 768px) {
-  .toggle-button {
-    display: flex;
-  }
-  .nav-links {
-    display: none;
-    width: 100%;
-    flex-direction: column;
-    align-items: center;
-    background-color: black;
-  }
-  .nav-links.active {
-    display: flex;
-  }
-  .nav-links a {
-    width: 100%;
-    padding: 15px;
-    border-top: 1px solid #444;
-    justify-content: center;
-  }
-}
+/* Additional Buttons */
+.about { background-color: red; color: white; }
+.about:hover { background-color: darkred; }
+.socials { background-color: yellow; color: black; }
+.socials:hover { background-color: gold; }
+.donate { background-color: green; color: white; }
+.donate:hover { background-color: darkgreen; }
+.signup { background-color: #007bff; color: white; }
+.signup:hover { background-color: #0056b3; }
+.login { background-color: #28a745; color: white; }
+.login:hover { background-color: #1e7e34; }
 
 /* =============================
    SLIDESHOW STYLING
@@ -240,12 +173,8 @@ display: inline-block;
   border-radius: 25px;
   transition: background-color 0.3s ease;
 }
-.prev:hover, .next:hover {
-  background-color: green;
-}
-.slideshow-dots {
-  margin-top: 10px;
-}
+.prev:hover, .next:hover { background-color: green; }
+.slideshow-dots { margin-top: 10px; }
 .dot {
   cursor: pointer;
   height: 12px;
@@ -256,14 +185,11 @@ display: inline-block;
   display: inline-block;
   transition: background-color 0.3s ease;
 }
-.dot.active, .dot:hover {
-  background-color: yellow;
-}
+.dot.active, .dot:hover { background-color: yellow; }
 
 /* =============================
-   IMAGE DEFAULT STYLING
+   IMAGES
 ============================= */
-
 .centered-img {
   display: block;
   margin: 0 auto;
@@ -271,9 +197,8 @@ display: inline-block;
   height: auto;
 }
 
-
 /* =============================
-   FORM STYLES
+   FORMS
 ============================= */
 form {
   background: white;
@@ -304,12 +229,10 @@ form button {
   border-radius: 4px;
   cursor: pointer;
 }
-form button:hover {
-  background-color: #005fa3;
-}
+form button:hover { background-color: #005fa3; }
 
 /* =============================
-   VIEW BLOCK STYLES (Records + Contacts)
+   RECORD DISPLAY
 ============================= */
 .record-block {
   background: #ffffff;
@@ -328,9 +251,7 @@ form button:hover {
   border-radius: 4px;
   cursor: pointer;
 }
-.record-block button:hover {
-  background-color: #388e3c;
-}
+.record-block button:hover { background-color: #388e3c; }
 
 /* =============================
    FOOTER
@@ -344,7 +265,6 @@ footer {
   border-top: 2px solid #333;
   margin-top: 40px;
 }
-
 
 /* =============================
    RESPONSIVE LAYOUT
@@ -396,21 +316,12 @@ footer {
    PRINT STYLES
 ============================= */
 @media print {
-  body * {
-    visibility: hidden;
-  }
-
-  .record-block, .record-block * {
-    visibility: visible;
-  }
-
+  body * { visibility: hidden; }
+  .record-block, .record-block * { visibility: visible; }
   .record-block {
     position: absolute;
     left: 0;
     top: 0;
   }
-
-  button {
-    display: none;
-  }
+  button { display: none; }
 }
