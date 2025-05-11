@@ -16,6 +16,22 @@ h1 {
   background-color: black;
   color: white;
 }
+
+.logo-title-horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 10px 0;
+}
+
+.site-logo {
+  width: 60px;
+  height: auto;
+}
+
+
+
 h2, h2.obj {
   font-size: 1.5em;
   margin: 0;
@@ -247,13 +263,14 @@ display: inline-block;
 /* =============================
    IMAGE DEFAULT STYLING
 ============================= */
-img {
-  width: 50%;
-  height: 75%;
+
+.centered-img {
   display: block;
-  justify-content: center;
-  margin: auto;
+  margin: 0 auto;
+  max-width: 90%;
+  height: auto;
 }
+
 
 /* =============================
    FORM STYLES
@@ -322,15 +339,12 @@ footer {
   background-color: black;
   color: white;
   text-align: center;
-  padding: 10px 2px;
-  border-left: 2px solid #333;
-  border-right: 2px solid #333;
-  border-bottom: 2px solid #333;
-  min-height: 100%;
-  display: inherit;
-  flex-direction: column;
-  z-index: 1000;
+  padding: 20px 10px;
+  font-size: 0.9em;
+  border-top: 2px solid #333;
+  margin-top: 40px;
 }
+
 
 /* =============================
    RESPONSIVE LAYOUT
