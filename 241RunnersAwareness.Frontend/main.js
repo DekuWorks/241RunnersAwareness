@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
       };
 
       try {
-        const response = await fetch("https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/Individuals", {
+        const response = await fetch("https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net/api/Individual", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data)

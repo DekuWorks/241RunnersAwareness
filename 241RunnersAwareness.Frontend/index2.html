@@ -4,50 +4,90 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Individual Entry Form</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/styles.css"/>
 </head>
 <body>
 
   <form id="individualForm">
     <label for="fullName">Full Name:</label>
-    <input type="text" id="fullName" required />
+    <input type="text" id="fullName" name="fullName" required />
 
     <label for="gender">Gender:</label>
-    <input type="text" id="gender" required />
+    <input type="text" id="gender" name="gender" required />
 
     <label for="dateOfBirth">Date of Birth:</label>
-    <input type="date" id="dateOfBirth" required />
+    <input type="date" id="dateOfBirth" name="dateOfBirth" required />
 
     <label for="diagnosis">Special Needs / Diagnosis:</label>
-    <input type="text" id="diagnosis" required />
+    <input type="text" id="diagnosis" name="diagnosis" required />
 
     <label for="lastSeenLocation">Last Seen Location:</label>
-    <input type="text" id="lastSeenLocation" required />
+    <input type="text" id="lastSeenLocation" name="lastSeenLocation" required />
 
     <label for="photoPath">Photo URL or File Path:</label>
-    <input type="text" id="photoPath" />
+    <input type="text" id="photoPath" name="photoPath" />
 
     <label for="notes">Additional Notes:</label>
-    <textarea id="notes" rows="4" cols="50"></textarea>
+    <textarea id="notes" name="notes" rows="4" cols="50"></textarea>
 
     <label for="currentStatus">Current Status:</label>
-    <input type="text" id="currentStatus" required />
+    <input type="text" id="currentStatus" name="currentStatus" required />
 
     <label for="thumbprint">Thumbprint File Path:</label>
-    <input type="text" id="thumbprint" />
+    <input type="text" id="thumbprint" name="thumbprint" />
 
     <label for="fingerprint">Fingerprint File Path:</label>
-    <input type="text" id="fingerprint" />
+    <input type="text" id="fingerprint" name="fingerprint" />
 
     <label for="placementStatus">Placement Status:</label>
-    <input type="text" id="placementStatus" required />
+    <input type="text" id="placementStatus" name="placementStatus" required />
 
     <button type="submit">Submit</button>
 
     <div id="response" style="margin-top: 1em; font-weight: bold;"></div>
   </form>
 
-  <script src="main.js"></script>
+  <script>
+    document.getElementById("individualForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+  
+      const data = {
+        fullName: document.getElementById("fullName").value,
+        gender: document.getElementById("gender").value,
+        dateOfBirth: document.getElementById("dateOfBirth").value,
+        diagnosis: document.getElementById("diagnosis").value,
+        lastSeenLocation: document.getElementById("lastSeenLocation").value,
+        photoPath: document.getElementById("photoPath").value,
+        notes: document.getElementById("notes").value,
+        currentStatus: document.getElementById("currentStatus").value,
+        thumbprint: document.getElementById("thumbprint").value,
+        fingerprint: document.getElementById("fingerprint").value,
+        placementStatus: document.getElementById("placementStatus").value
+      };
+  
+      try {
+        const response = await fetch("https://241runnersawarenessapi.azurewebsites.net/api/Individual", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+  
+        if (response.ok) {
+          document.getElementById("response").textContent = "Submission successful! Now continue to Emergency Contact.";
+          setTimeout(() => {
+            window.location.href = "emergency-form.html";
+          }, 2000);
+        } else {
+          const errorText = await response.text();
+          document.getElementById("response").textContent = "Error: " + errorText;
+        }
+      } catch (err) {
+        document.getElementById("response").textContent = "Network error: " + err.message;
+      }
+    });
+  </script>
+  
+
 </body>
 </html>
 
