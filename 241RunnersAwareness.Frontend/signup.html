@@ -5,29 +5,49 @@
   <title>Sign Up - 241Runners</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="/styles.css" />
+  <style>
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: black;
+      color: white;
+      padding: 8px;
+      z-index: 100;
+    }
+    .skip-link:focus {
+      top: 0;
+    }
+  </style>
 </head>
 <body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
   <header>
-    <h1>Sign Up</h1>
+    <h1 id="signupTitle">Sign Up</h1>
     <nav class="navbar">
       <a href="/index.html">← Back to Home</a>
     </nav>
   </header>
 
-  <main>
-    <form id="signupForm" aria-labelledby="signupTitle" novalidate>
-      <div role="alert" id="formError" style="color: red; display: none;"></div>
+  <main id="main">
+    <form id="signupForm" role="form" aria-labelledby="signupTitle" aria-describedby="formHelp" novalidate>
+      <div id="formHelp" class="visually-hidden">All fields marked required must be filled before submitting.</div>
+      <div id="formError" role="alert" style="color: red; display: none;"></div>
 
-      <label for="fullName">Full Name</label>
-      <input type="text" id="fullName" name="fullName" aria-describedby="nameHelp" required />
+      <!-- Full Name -->
+      <label for="fullName">Full Name <span aria-hidden="true">*</span></label>
+      <input type="text" id="fullName" name="fullName" required aria-required="true" aria-describedby="nameHelp" />
       <small id="nameHelp">Enter your full legal name.</small>
 
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email" aria-describedby="emailHelp" required />
+      <!-- Email -->
+      <label for="email">Email <span aria-hidden="true">*</span></label>
+      <input type="email" id="email" name="email" required aria-required="true" aria-describedby="emailHelp" />
       <small id="emailHelp">We’ll send a confirmation link.</small>
 
-      <label for="phone">Phone</label>
-      <input type="tel" id="phone" name="phone" aria-describedby="phoneHelp" required />
+      <!-- Phone -->
+      <label for="phone">Phone <span aria-hidden="true">*</span></label>
+      <input type="tel" id="phone" name="phone" required aria-required="true" aria-describedby="phoneHelp" />
       <small id="phoneHelp">Mobile or emergency contact number.</small>
 
       <button type="submit">Continue</button>
@@ -37,12 +57,20 @@
   <script>
     document.getElementById("signupForm").addEventListener("submit", async function(e) {
       e.preventDefault();
+      const formError = document.getElementById("formError");
+      formError.style.display = "none";
 
       const data = {
         fullName: document.getElementById("fullName").value.trim(),
         email: document.getElementById("email").value.trim(),
         phone: document.getElementById("phone").value.trim()
       };
+
+      if (!data.fullName || !data.email || !data.phone) {
+        formError.textContent = "Please fill out all required fields.";
+        formError.style.display = "block";
+        return;
+      }
 
       try {
         const response = await fetch("https://241runnersapi.azurewebsites.net/api/Users", {
@@ -56,12 +84,12 @@
           window.location.href = "index2.html";
         } else {
           const error = await response.text();
-          document.getElementById("formError").textContent = "Signup failed: " + error;
-          document.getElementById("formError").style.display = "block";
+          formError.textContent = "Signup failed: " + error;
+          formError.style.display = "block";
         }
       } catch (err) {
-        document.getElementById("formError").textContent = "Network error. Try again later.";
-        document.getElementById("formError").style.display = "block";
+        formError.textContent = "Network error. Try again later.";
+        formError.style.display = "block";
       }
     });
   </script>
