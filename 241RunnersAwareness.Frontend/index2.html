@@ -5,8 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Individual Entry Form</title>
   <link rel="stylesheet" href="/styles.css"/>
+  <style>
+    .success-banner {
+      border: 2px solid green;
+      background-color: #e8f5e9;
+      padding: 1rem;
+      margin: 1rem auto 2rem;
+      max-width: 600px;
+      text-align: center;
+      border-radius: 12px;
+      color: green;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+  </style>
 </head>
 <body>
+
+  <!-- Success Confirmation Message -->
+  <div class="success-banner">
+    ✅ Signup successful! Now enter the individual's information below.
+  </div>
 
   <form id="individualForm">
     <label for="fullName">Full Name:</label>
@@ -86,8 +105,6 @@
       }
     });
   </script>
-  
 
 </body>
 </html>
-
