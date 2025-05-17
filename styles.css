@@ -6,41 +6,47 @@ body {
   background-color: red;
   margin: 0;
   color: black;
-  padding-top: 140px;
+  padding-top: 8.75rem; /* 140px */
 }
+
 h1 {
-  font-size: 2em;
+  font-size: 2rem;
   margin: 0;
-  padding: 10px;
+  padding: 0.625rem;
   text-align: center;
   background-color: black;
   color: white;
 }
+
 .logo-title-horizontal {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15px;
-  padding: 10px 0;
+  gap: 0.9375rem;
+  padding: 0.625rem 0;
 }
+
 .site-logo {
   width: 60px;
   height: auto;
 }
+
 h2, h2.obj {
-  font-size: 1.5em;
+  font-size: 1.5rem;
   margin: 0;
   text-align: center;
-  padding: 20px 10px;
+  padding: 1.25rem 0.625rem;
 }
+
 h2.obj {
   color: black;
   background-color: red;
 }
+
 p {
-  font-size: 1em;
+  font-size: 1rem;
   margin: 0;
-  padding: 10px;
+  padding: 0.625rem;
   text-align: center;
 }
 
@@ -57,24 +63,26 @@ header {
   z-index: 1000;
   height: auto;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);
-  padding-bottom: 10px;
+  padding-bottom: 0.625rem;
 }
+
 .navbar {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px 20px;
+  padding: 0.625rem 1.25rem;
   flex-wrap: wrap;
   background-color: black;
 }
+
 .navbar a {
-  padding: 10px 15px;
+  padding: 0.625rem 0.9375rem;
   text-decoration: none;
   font-weight: bold;
   display: inline-block;
 }
 
-/* Traffic light button colors */
+/* Button Colors */
 .navbar a:nth-child(1) { background-color: #e53935; }
 .navbar a:nth-child(2) { background-color: #b71c1c; }
 .navbar a:nth-child(3) { background-color: #fbc02d; }
@@ -82,7 +90,7 @@ header {
 .navbar a:nth-child(5) { background-color: #66bb6a; }
 .navbar a:nth-child(6) { background-color: #2e7d32; }
 
-/* Hover effects */
+/* Hover Effects */
 .navbar a:nth-child(1):hover { background-color: #c62828; }
 .navbar a:nth-child(2):hover { background-color: #8e0000; }
 .navbar a:nth-child(3):hover { background-color: #f9a825; }
@@ -90,102 +98,126 @@ header {
 .navbar a:nth-child(5):hover { background-color: #4caf50; }
 .navbar a:nth-child(6):hover { background-color: #1b5e20; }
 
-/* Hamburger menu */
+/* Hamburger Menu */
 .toggle-button {
   display: none;
   flex-direction: column;
   cursor: pointer;
 }
+
 .toggle-button span {
   height: 3px;
   width: 25px;
   background: white;
-  margin: 4px 0;
+  margin: 0.25rem 0;
 }
+
+/* Nav Links */
 .nav-links {
   display: flex;
   justify-content: center;
-  gap: 12px;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
+
 .nav-links a {
   color: white;
   text-decoration: none;
-  padding: 10px 20px;
-  border-radius: 20px;
+  padding: 0.625rem 1.25rem;
+  border-radius: 1.25rem;
   transition: background-color 0.3s ease;
   border: 2px solid white;
   font-weight: bold;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
+
 .nav-links a:hover {
   background-color: red;
   color: white;
 }
 
-/* Additional Buttons */
-.about { background-color: red; color: white; }
-.about:hover { background-color: darkred; }
+/* Named Buttons */
+.about   { background-color: red;    color: white; }
 .socials { background-color: yellow; color: black; }
+.donate  { background-color: green;  color: white; }
+.signup  { background-color: #007bff; color: white; }
+.login   { background-color: #28a745; color: white; }
+
+.about:hover   { background-color: darkred; }
 .socials:hover { background-color: gold; }
-.donate { background-color: green; color: white; }
-.donate:hover { background-color: darkgreen; }
-.signup { background-color: #007bff; color: white; }
-.signup:hover { background-color: #0056b3; }
-.login { background-color: #28a745; color: white; }
-.login:hover { background-color: #1e7e34; }
+.donate:hover  { background-color: darkgreen; }
+.signup:hover  { background-color: #0056b3; }
+.login:hover   { background-color: #1e7e34; }
 
 /* =============================
-   SLIDESHOW STYLING
+   SLIDESHOW
 ============================= */
 .slideshow-wrapper {
   max-width: 60%;
-  margin: 20px auto;
+  margin: 1.25rem auto;
   text-align: center;
   position: relative;
 }
+
 .slideshow-container {
   position: relative;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: 0.625rem;
 }
-.slide { display: none; }
+
+.slide {
+  display: none;
+}
+
 .slide img {
   width: 100%;
   height: auto;
-  border-radius: 10px;
+  border-radius: 0.625rem;
 }
+
 .slideshow-buttons {
   display: flex;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 0.625rem;
 }
+
 .prev, .next {
   cursor: pointer;
-  padding: 10px 20px;
+  padding: 0.625rem 1.25rem;
   color: white;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 1.125rem;
   background-color: black;
   border: none;
-  border-radius: 25px;
+  border-radius: 1.5625rem;
   transition: background-color 0.3s ease;
 }
-.prev:hover, .next:hover { background-color: green; }
-.slideshow-dots { margin-top: 10px; }
+
+.prev:hover, .next:hover {
+  background-color: green;
+}
+
+.slideshow-dots {
+  margin-top: 0.625rem;
+}
+
 .dot {
   cursor: pointer;
-  height: 12px;
-  width: 12px;
-  margin: 0 4px;
+  height: 0.75rem;
+  width: 0.75rem;
+  margin: 0 0.25rem;
   background-color: black;
   border-radius: 50%;
   display: inline-block;
   transition: background-color 0.3s ease;
 }
-.dot.active, .dot:hover { background-color: yellow; }
+
+.dot.active,
+.dot:hover {
+  background-color: yellow;
+}
 
 /* =============================
    IMAGES
@@ -202,56 +234,67 @@ header {
 ============================= */
 form {
   background: white;
-  padding: 20px;
-  border-radius: 8px;
+  padding: 1.25rem;
+  border-radius: 0.5rem;
   max-width: 600px;
-  margin: 20px auto;
+  margin: 1.25rem auto;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
 form label {
   font-weight: bold;
-  margin-top: 10px;
+  margin-top: 0.625rem;
   display: block;
 }
-form input, form select, form textarea {
+
+form input,
+form select,
+form textarea {
   width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-  margin-bottom: 15px;
-  border-radius: 4px;
+  padding: 0.5rem;
+  margin: 0.3125rem 0 0.9375rem;
+  border-radius: 0.25rem;
   border: 1px solid #bbb;
 }
+
 form button {
-  padding: 10px 16px;
+  padding: 0.625rem 1rem;
   background-color: #007acc;
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   cursor: pointer;
 }
-form button:hover { background-color: #005fa3; }
+
+form button:hover {
+  background-color: #005fa3;
+}
 
 /* =============================
    RECORD DISPLAY
 ============================= */
 .record-block {
-  background: #ffffff;
+  background: #fff;
   border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 20px;
+  border-radius: 0.5rem;
+  padding: 0.9375rem;
+  margin-bottom: 1.25rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
+
 .record-block button {
-  margin-top: 10px;
-  padding: 8px 12px;
+  margin-top: 0.625rem;
+  padding: 0.5rem 0.75rem;
   background-color: #4caf50;
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   cursor: pointer;
 }
-.record-block button:hover { background-color: #388e3c; }
+
+.record-block button:hover {
+  background-color: #388e3c;
+}
 
 /* =============================
    FOOTER
@@ -260,10 +303,10 @@ footer {
   background-color: black;
   color: white;
   text-align: center;
-  padding: 20px 10px;
-  font-size: 0.9em;
+  padding: 1.25rem 0.625rem;
+  font-size: 0.9rem;
   border-top: 2px solid #333;
-  margin-top: 40px;
+  margin-top: 2.5rem;
 }
 
 /* =============================
@@ -272,41 +315,50 @@ footer {
 @media screen and (max-width: 600px) {
   header {
     height: auto;
-    padding: 10px;
+    padding: 0.625rem;
   }
+
   nav.navbar {
     flex-direction: column;
-    height: auto;
-    gap: 10px;
-    margin-top: 5px;
+    gap: 0.625rem;
+    margin-top: 0.3125rem;
   }
+
   h1, h2, h2.obj, p {
-    font-size: 1em;
-    padding: 10px 5px;
+    font-size: 1rem;
+    padding: 0.625rem 0.3125rem;
   }
-  a.about, a.socials, a.donate {
-    padding: 8px 16px;
-    font-size: 0.9em;
+
+  a.about,
+  a.socials,
+  a.donate {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
   }
+
   .slideshow-wrapper { max-width: 95%; }
   img { width: 90%; height: auto; }
+
   .back-button {
     width: 90%;
     text-align: center;
     display: block;
-    margin: 15px auto;
+    margin: 0.9375rem auto;
   }
 }
+
 @media screen and (min-width: 601px) and (max-width: 1024px) {
   nav.navbar {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-around;
-    gap: 10px;
+    gap: 0.625rem;
   }
+
   .slideshow-wrapper { max-width: 80%; }
   img { width: 70%; height: auto; }
 }
+
 @media screen and (min-width: 1025px) {
   .slideshow-wrapper { max-width: 60%; }
   img { width: 50%; height: auto; }
@@ -316,12 +368,22 @@ footer {
    PRINT STYLES
 ============================= */
 @media print {
-  body * { visibility: hidden; }
-  .record-block, .record-block * { visibility: visible; }
+  body * {
+    visibility: hidden;
+  }
+
+  .record-block,
+  .record-block * {
+    visibility: visible;
+  }
+
   .record-block {
     position: absolute;
     left: 0;
     top: 0;
   }
-  button { display: none; }
+
+  button {
+    display: none;
+  }
 }
