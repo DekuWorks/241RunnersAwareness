@@ -10,6 +10,11 @@
 
   <h1>Add Emergency Contact</h1>
 
+  <div style="margin: 1rem 0; font-weight: bold;">
+    Logged in as: <span id="usernameDisplay"></span>
+  </div>
+  <button onclick="logout()" style="margin-bottom: 1rem;">Logout</button>
+
   <form id="emergencyForm">
     <label for="name">Contact Name:</label>
     <input type="text" id="name" required />
@@ -26,19 +31,38 @@
     <label for="address">Home Address:</label>
     <input type="text" id="address" required />
 
-    <button type="submit">Submit Contact</button>
+    <button type="submit" id="submitBtn">Submit Contact</button>
     <div id="response" style="margin-top: 1em; font-weight: bold;"></div>
   </form>
 
   <script>
+    const userId = localStorage.getItem("userId");
     const individualId = localStorage.getItem("individualId");
+    const username = localStorage.getItem("username");
+
+    if (!userId) {
+      alert("Please log in first.");
+      window.location.href = "login.html";
+    }
+
     if (!individualId) {
-      alert("No individual selected. Please start by entering individual info.");
+      alert("No individual selected. Please enter individual info first.");
       window.location.href = "individual-entry.html";
+    }
+
+    document.getElementById("usernameDisplay").textContent = username || "User";
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = "login.html";
     }
 
     document.getElementById("emergencyForm").addEventListener("submit", async function(e) {
       e.preventDefault();
+
+      const submitButton = document.getElementById("submitBtn");
+      submitButton.disabled = true;
+      submitButton.textContent = "Submitting...";
 
       const contact = {
         name: document.getElementById("name").value,
@@ -65,6 +89,9 @@
       } catch (err) {
         document.getElementById("response").textContent = "❌ Network error: " + err.message;
       }
+
+      submitButton.disabled = false;
+      submitButton.textContent = "Submit Contact";
     });
   </script>
 </body>
