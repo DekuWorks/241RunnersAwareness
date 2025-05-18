@@ -70,7 +70,7 @@
       }
 
       try {
-        const response = await fetch("http://localhost:5113/api/User/Register", {
+        const response = await fetch("https://241runnersawarenessapi.azurewebsites.net/api/User/Register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data)
