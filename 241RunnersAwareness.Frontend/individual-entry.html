@@ -10,6 +10,11 @@
 
   <h1>Enter Individual Info</h1>
 
+  <div style="margin: 1rem 0; font-weight: bold;">
+    Logged in as: <span id="usernameDisplay"></span>
+  </div>
+  <button onclick="logout()" style="margin-bottom: 1rem;">Logout</button>
+
   <form id="individualForm">
     <label for="fullName">Full Name:</label>
     <input type="text" id="fullName" required />
@@ -44,19 +49,35 @@
     <label for="placementStatus">Placement Status:</label>
     <input type="text" id="placementStatus" required />
 
-    <button type="submit">Submit</button>
+    <button type="submit" id="submitBtn">Submit</button>
     <div id="response" style="margin-top: 1em; font-weight: bold;"></div>
   </form>
 
   <script>
     const userId = localStorage.getItem("userId");
+    const username = localStorage.getItem("username");
+    const usernameDisplay = document.getElementById("usernameDisplay");
+
     if (!userId) {
       alert("Please log in first.");
       window.location.href = "login.html";
     }
 
+    if (usernameDisplay) {
+      usernameDisplay.textContent = username || "User";
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = "login.html";
+    }
+
     document.getElementById("individualForm").addEventListener("submit", async function(e) {
       e.preventDefault();
+
+      const submitButton = document.getElementById("submitBtn");
+      submitButton.disabled = true;
+      submitButton.textContent = "Submitting...";
 
       const data = {
         fullName: document.getElementById("fullName").value,
@@ -93,6 +114,9 @@
       } catch (err) {
         document.getElementById("response").textContent = "❌ Network error: " + err.message;
       }
+
+      submitButton.disabled = false;
+      submitButton.textContent = "Submit";
     });
   </script>
 </body>
