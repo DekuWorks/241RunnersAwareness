@@ -2,87 +2,70 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Emergency Contact Form</title>
-  <link rel="stylesheet" href="/styles.css" />
-  <style>
-    .confirmation {
-      margin-top: 1rem;
-      font-weight: bold;
-    }
-    .success {
-      color: green;
-    }
-    .error {
-      color: red;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/styles.css"/>
 </head>
 <body>
 
-  <h1>Emergency Contact Information</h1>
+  <h1>Add Emergency Contact</h1>
 
-  <form id="emergencyForm" aria-label="Emergency Contact Form">
+  <form id="emergencyForm">
     <label for="name">Contact Name:</label>
-    <input type="text" id="name" name="name" required aria-required="true" />
+    <input type="text" id="name" required />
 
     <label for="phone">Phone Number:</label>
-    <input type="tel" id="phone" name="phone" required aria-required="true" />
+    <input type="tel" id="phone" required />
 
     <label for="relationship">Relationship:</label>
-    <input type="text" id="relationship" name="relationship" required aria-required="true" />
+    <input type="text" id="relationship" required />
 
     <label for="email">Email Address:</label>
-    <input type="email" id="email" name="email" required aria-required="true" />
+    <input type="email" id="email" required />
 
     <label for="address">Home Address:</label>
-    <input type="text" id="address" name="address" required aria-required="true" />
+    <input type="text" id="address" required />
 
     <button type="submit">Submit Contact</button>
-
-    <div id="response" class="confirmation" role="alert" aria-live="polite"></div>
+    <div id="response" style="margin-top: 1em; font-weight: bold;"></div>
   </form>
 
   <script>
+    const individualId = localStorage.getItem("individualId");
+    if (!individualId) {
+      alert("No individual selected. Please start by entering individual info.");
+      window.location.href = "individual-entry.html";
+    }
+
     document.getElementById("emergencyForm").addEventListener("submit", async function(e) {
       e.preventDefault();
 
-      const data = {
-        name: document.getElementById("name").value.trim(),
-        phoneNumber: document.getElementById("phone").value.trim(), // FIXED: match backend
-        relationship: document.getElementById("relationship").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        address: document.getElementById("address").value.trim(),
-        individualId: 1 // TEMP: This must match a valid Individual record
+      const contact = {
+        name: document.getElementById("name").value,
+        phoneNumber: document.getElementById("phone").value,
+        relationship: document.getElementById("relationship").value,
+        email: document.getElementById("email").value,
+        address: document.getElementById("address").value,
+        individualId: individualId
       };
-
-      const responseDiv = document.getElementById("response");
-      responseDiv.className = "confirmation"; // Reset classes
 
       try {
         const response = await fetch("https://241runnersawarenessapi.azurewebsites.net/api/EmergencyContact", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
+          body: JSON.stringify(contact)
         });
 
         if (response.ok) {
-          responseDiv.textContent = "✅ Contact saved successfully!";
-          responseDiv.classList.add("success");
-          setTimeout(() => {
-            window.location.href = "index.html";
-          }, 2000);
+          document.getElementById("response").textContent = "✅ Emergency contact saved.";
         } else {
           const errorText = await response.text();
-          responseDiv.textContent = "❌ Error: " + errorText;
-          responseDiv.classList.add("error");
+          document.getElementById("response").textContent = "❌ Error: " + errorText;
         }
       } catch (err) {
-        responseDiv.textContent = "❌ Network error: " + err.message;
-        responseDiv.classList.add("error");
+        document.getElementById("response").textContent = "❌ Network error: " + err.message;
       }
     });
   </script>
-
 </body>
 </html>
