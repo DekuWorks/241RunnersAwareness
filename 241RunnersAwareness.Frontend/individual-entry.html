@@ -54,17 +54,18 @@
   </form>
 
   <script>
-    const userId = localStorage.getItem("userId");
+    // Display logged-in username
+    const userId = localStorage.getItem("userId") || "demo-admin";
     const username = localStorage.getItem("username");
     const usernameDisplay = document.getElementById("usernameDisplay");
 
-    if (!userId) {
+    if (!username) {
       alert("Please log in first.");
       window.location.href = "login.html";
     }
 
     if (usernameDisplay) {
-      usernameDisplay.textContent = username || "User";
+      usernameDisplay.textContent = username;
     }
 
     function logout() {
@@ -76,26 +77,28 @@
       e.preventDefault();
 
       const submitButton = document.getElementById("submitBtn");
+      const responseBox = document.getElementById("response");
       submitButton.disabled = true;
       submitButton.textContent = "Submitting...";
+      responseBox.textContent = "";
 
       const data = {
-        fullName: document.getElementById("fullName").value,
-        gender: document.getElementById("gender").value,
+        fullName: document.getElementById("fullName").value.trim(),
+        gender: document.getElementById("gender").value.trim(),
         dateOfBirth: document.getElementById("dateOfBirth").value,
-        diagnosis: document.getElementById("diagnosis").value,
-        lastSeenLocation: document.getElementById("lastSeenLocation").value,
-        photoPath: document.getElementById("photoPath").value,
-        notes: document.getElementById("notes").value,
-        currentStatus: document.getElementById("currentStatus").value,
-        thumbprint: document.getElementById("thumbprint").value,
-        fingerprint: document.getElementById("fingerprint").value,
-        placementStatus: document.getElementById("placementStatus").value,
+        diagnosis: document.getElementById("diagnosis").value.trim(),
+        lastSeenLocation: document.getElementById("lastSeenLocation").value.trim(),
+        photoPath: document.getElementById("photoPath").value.trim(),
+        notes: document.getElementById("notes").value.trim(),
+        currentStatus: document.getElementById("currentStatus").value.trim(),
+        thumbprint: document.getElementById("thumbprint").value.trim(),
+        fingerprint: document.getElementById("fingerprint").value.trim(),
+        placementStatus: document.getElementById("placementStatus").value.trim(),
         userId: userId
       };
 
       try {
-        const response = await fetch("https://241runnersawarenessapi.azurewebsites.net/api/Individual", {
+        const response = await fetch("https://241runnersawareness-backend-canadacentral-01.azurewebsites.net/api/Individual", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data)
@@ -104,15 +107,18 @@
         const result = await response.json();
         if (response.ok) {
           localStorage.setItem("individualId", result.id);
-          document.getElementById("response").textContent = "✅ Saved. Redirecting to emergency contact...";
+          responseBox.style.color = "green";
+          responseBox.textContent = "✅ Saved. Redirecting to emergency contact...";
           setTimeout(() => {
             window.location.href = "emergency-form.html";
           }, 2000);
         } else {
-          document.getElementById("response").textContent = "❌ Error: " + result;
+          responseBox.style.color = "red";
+          responseBox.textContent = "❌ Error: " + (result.message || JSON.stringify(result));
         }
       } catch (err) {
-        document.getElementById("response").textContent = "❌ Network error: " + err.message;
+        responseBox.style.color = "red";
+        responseBox.textContent = "❌ Network error: " + err.message;
       }
 
       submitButton.disabled = false;
