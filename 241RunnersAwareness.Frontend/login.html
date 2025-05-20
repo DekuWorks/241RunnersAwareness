@@ -2,62 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Login - 241Runners</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - 241RunnersAwareness</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
   <h1>Login</h1>
 
   <form id="loginForm">
-    <label for="email">Email:</label>
-    <input type="email" id="email" required />
-
-    <label for="password">Password:</label>
-    <input type="password" id="password" required />
-
+    <label for="username">Enter Username:</label>
+    <input type="text" id="username" required />
     <button type="submit">Login</button>
-    <div id="loginStatus" style="margin-top: 1em; font-weight: bold;"></div>
   </form>
 
+  <div id="loginMessage" style="margin-top: 1rem; font-weight: bold;"></div>
+
   <script>
-    document.getElementById("loginForm").addEventListener("submit", async function(e) {
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const messageBox = document.getElementById('loginMessage');
 
-      const login = {
-        email: document.getElementById("email").value,
-        password: document.getElementById("password").value
-      };
-
-      try {
-        const res = await fetch("https://241runnersawarenessapi.azurewebsites.net/api/User/Login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(login)
-        });
-
-        const loginStatus = document.getElementById("loginStatus");
-
-        if (res.ok) {
-          const data = await res.json();
-          loginStatus.textContent = "✅ Welcome " + data.username + "! Redirecting...";
-          loginStatus.style.color = "green";
-
-          // Store login session
-          localStorage.setItem("userId", data.userId);
-          localStorage.setItem("username", data.username);
-
-          setTimeout(() => {
-            window.location.href = "individual-entry.html";
-          }, 1500);
-        } else {
-          const error = await res.text();
-          loginStatus.textContent = "❌ Login failed: " + error;
-          loginStatus.style.color = "red";
-        }
-      } catch (err) {
-        document.getElementById("loginStatus").textContent = "❌ Network error: " + err.message;
-        loginStatus.style.color = "red";
+      if (username) {
+        localStorage.setItem('username', username);
+        messageBox.style.color = 'green';
+        messageBox.textContent = 'Login successful! Redirecting...';
+        setTimeout(() => {
+          window.location.href = 'emergency-form.html';
+        }, 1000);
+      } else {
+        messageBox.style.color = 'red';
+        messageBox.textContent = 'Please enter a valid username.';
       }
     });
   </script>
