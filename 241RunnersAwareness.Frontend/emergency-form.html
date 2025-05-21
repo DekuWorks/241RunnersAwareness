@@ -31,8 +31,10 @@
     <label for="address">Home Address:</label>
     <input type="text" id="address" required />
 
-    <label for="individualId">Individual ID:</label>
-    <input type="number" id="individualId" required />
+    <label for="individualId">Select Individual:</label>
+    <select id="individualId" required>
+      <option value="">-- Select an Individual --</option>
+    </select>
 
     <button type="submit">Add Emergency Contact</button>
   </form>
@@ -40,12 +42,34 @@
   <div id="messageBox" style="margin-top: 1rem; font-weight: bold;"></div>
 
   <script>
+    const apiBase = 'https://241runnersawareness-backend-bhf9dth5hccdeme8.canadacentral-01.azurewebsites.net';
+
     // Check login status
     const username = localStorage.getItem('username');
     if (!username) {
       window.location.href = 'login.html';
     } else {
       document.getElementById('usernameDisplay').textContent = username;
+    }
+
+    // Load individuals into dropdown
+    async function loadIndividuals() {
+      try {
+        const response = await fetch(`${apiBase}/api/Individual`);
+        const individuals = await response.json();
+
+        const dropdown = document.getElementById('individualId');
+        individuals.forEach(ind => {
+          const option = document.createElement('option');
+          option.value = ind.individualId;
+          option.textContent = `${ind.firstName} ${ind.lastName}`;
+          dropdown.appendChild(option);
+        });
+      } catch (err) {
+        console.error('Error loading individuals:', err);
+        const dropdown = document.getElementById('individualId');
+        dropdown.innerHTML = '<option value="">Failed to load individuals</option>';
+      }
     }
 
     // Form submission
@@ -58,13 +82,13 @@
         relationship: document.getElementById('relationship').value.trim(),
         email: document.getElementById('email').value.trim(),
         address: document.getElementById('address').value.trim(),
-        individualId: parseInt(document.getElementById('individualId').value)
+        individualId: document.getElementById('individualId').value
       };
 
       const messageBox = document.getElementById('messageBox');
 
       try {
-        const response = await fetch('https://241runnersawareness-backend-<your-subdomain>.azurewebsites.net/api/EmergencyContact', {
+        const response = await fetch(`${apiBase}/api/EmergencyContact`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -92,6 +116,9 @@
       localStorage.removeItem('username');
       window.location.href = 'login.html';
     }
+
+    // Load dropdown on page load
+    loadIndividuals();
   </script>
 </body>
 </html>
