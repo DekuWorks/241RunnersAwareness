@@ -33,6 +33,8 @@ Azure SQL integration for live data persistence
 Future AI + biometric features in 2026
 
 ✍️ Authors
+
+
 Marcus Brown – Lead Developer
 
 Daniel Carey – Full Stack Developer
