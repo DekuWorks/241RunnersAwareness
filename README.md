@@ -39,6 +39,6 @@ Marcus Brown – Lead Developer
 
 Daniel Carey – Full Stack Developer
 
-Lisa Thomas – Founder of 241 Runners Foundation
+Lisa Thomas – Founder of 241 Runners Awareness Foundation
 
 
