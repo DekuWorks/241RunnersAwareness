@@ -1,3 +1,8 @@
-import NotFound from './pages/NotFound';
+const NotFound = () => (
+  <div>
+    <h2>404 - Page Not Found</h2>
+    <p>The page you are looking for does not exist.</p>
+  </div>
+);
 
-<Route path="*" element={<NotFound />} />
+export default NotFound;
