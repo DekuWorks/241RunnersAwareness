@@ -1,0 +1,11 @@
+{
+  "name": "241runnersawareness-root",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "npm --prefix 241runnersawareness-frontend run dev",
+    "build": "npm --prefix 241runnersawareness-frontend run build",
+    "preview": "npm --prefix 241runnersawareness-frontend run preview",
+    "test": "npm --prefix 241runnersawareness-frontend run test"
+  }
+} 
