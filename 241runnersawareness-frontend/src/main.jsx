@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
+import 'react-toastify/dist/ReactToastify.css'
 
 import { Provider } from 'react-redux'
 import { store } from './store' // ← this is your new store

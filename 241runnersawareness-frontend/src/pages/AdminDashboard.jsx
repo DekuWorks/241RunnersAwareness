@@ -4,11 +4,11 @@ import { fetchCases, deleteCase, createCase, updateCase, updateCaseStatus } from
 import { toast } from 'react-toastify';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { logout } from '../features/auth/authSlice';
-import CaseList from '../../components/cases/CaseList';
-import CaseForm from '../../components/cases/CaseForm';
+import CaseList from '../components/cases/CaseList';
+import CaseForm from '../components/cases/CaseForm';
 
 const AdminDashboard = () => {
-  const user = useSelector((state) => state.auth.user);
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { cases, loading, error, totalPages } = useSelector((state) => state.cases);
