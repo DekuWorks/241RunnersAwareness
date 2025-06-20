@@ -8,6 +8,8 @@ import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 import LoginForm from "./components/LoginForm";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminHome from './pages/AdminHome';
+import AuditLogPage from './pages/AuditLogPage';
 
 function App() {
   const user = useSelector((state) => state.auth.user);
@@ -24,22 +26,13 @@ function App() {
           />
 
           {/* Protected Admin Routes */}
-          <Route
-            path="admin"
-            element={
-              <ProtectedRoute role="admin">
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<div className="p-4">
-              <h2 className="text-2xl font-bold mb-4">Welcome to Admin Dashboard</h2>
-              <div className="bg-white p-6 rounded-lg shadow">
-                <p className="text-gray-600">Select an option from the sidebar to manage your application.</p>
-              </div>
-            </div>} />
-            <Route path="users" element={<UsersPage />} />
-            <Route path="settings" element={<SettingsPage />} />
+          <Route element={<ProtectedRoute adminOnly />}>
+            <Route path="admin" element={<AdminDashboard />}>
+              <Route index element={<AdminHome />} />
+              <Route path="users" element={<UsersPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+              <Route path="audit-logs" element={<AuditLogPage />} />
+            </Route>
           </Route>
 
           {/* 404 Route */}

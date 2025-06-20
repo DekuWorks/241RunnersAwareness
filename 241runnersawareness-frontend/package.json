@@ -29,7 +29,8 @@
     "jest-environment-jsdom": "^30.0.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.10",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vite-plugin-pwa": "^1.0.0"
   },
   "engines": {
     "node": "18.x"

@@ -70,6 +70,34 @@ export const usersAPI = {
   deleteUser: (id) => api.delete(`/users/${id}`),
 };
 
+// Cases API calls
+export const casesAPI = {
+  getCases: (params) => api.get('/cases', { 
+    params: {
+      page: params?.page || 1,
+      limit: params?.limit || 10,
+      search: params?.search,
+      ...params
+    }
+  }),
+  getCase: (id) => api.get(`/cases/${id}`),
+  createCase: (caseData) => api.post('/cases', caseData),
+  updateCase: (id, caseData) => api.put(`/cases/${id}`, caseData),
+  deleteCase: (id) => api.delete(`/cases/${id}`),
+  updateCaseStatus: (id, status) => api.patch(`/cases/${id}/status`, status),
+};
+
+// Audit API calls
+export const auditAPI = {
+  getLogs: (params) => api.get('/audit-logs', {
+    params: {
+      page: params?.page || 1,
+      limit: params?.limit || 15,
+      ...params,
+    },
+  }),
+};
+
 // Settings API calls
 export const settingsAPI = {
   getSettings: () => api.get('/settings'),

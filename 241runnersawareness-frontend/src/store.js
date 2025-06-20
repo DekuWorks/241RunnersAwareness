@@ -2,6 +2,8 @@ import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './features/auth/authSlice'
 import usersReducer from './features/users/usersSlice'
 import adminReducer from './features/admin/adminSlice'
+import casesReducer from './features/cases/casesSlice'
+import auditLogReducer from './features/audit/auditLogSlice'
 
 // You can add more slices later (alerts, users, etc.)
 export const store = configureStore({
@@ -9,6 +11,8 @@ export const store = configureStore({
     auth: authReducer,
     users: usersReducer,
     admin: adminReducer,
+    cases: casesReducer,
+    audit: auditLogReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
