@@ -10,6 +10,7 @@ import LoginForm from "./components/LoginForm";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminHome from './pages/AdminHome';
 import AuditLogPage from './pages/AuditLogPage';
+import CasesPage from './pages/CasesPage';
 
 function App() {
   const user = useSelector((state) => state.auth.user);
@@ -30,6 +31,7 @@ function App() {
             <Route path="admin" element={<AdminDashboard />}>
               <Route index element={<AdminHome />} />
               <Route path="users" element={<UsersPage />} />
+              <Route path="cases" element={<CasesPage />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route path="audit-logs" element={<AuditLogPage />} />
             </Route>
