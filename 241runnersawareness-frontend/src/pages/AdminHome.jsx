@@ -1,51 +1,42 @@
-import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../features/auth/authSlice";
-import { useState } from "react";
+import React from "react";
+import { useSelector } from "react-redux";
 
 const AdminHome = () => {
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
-  const [username, setUsername] = useState("");
+  const { user } = useSelector((state) => state.auth);
 
-  const handleLogin = () => {
-    // For now, we'll just set a mock user since the login action doesn't exist
-    // In a real app, you'd use loginAsync with proper credentials
-    const mockUser = { name: username || "Guest", role: "admin" };
-    // You would typically dispatch loginAsync here with proper credentials
-    console.log("Login attempted with:", mockUser);
-  };
+  // Dummy data for dashboard metrics
+  const stats = [
+    { name: 'Total Users', value: '1,204', change: '+2.5%', changeType: 'positive' },
+    { name: 'Active Cases', value: '82', change: '-1.2%', changeType: 'negative' },
+    { name: 'Resolved Cases', value: '450', change: '+10.8%', changeType: 'positive' },
+    { name: 'Pending Approvals', value: '12', change: '0%', changeType: 'neutral' },
+  ];
 
   return (
-    <div className="space-y-4 p-4">
-      <h1 className="text-2xl font-bold">Admin Login</h1>
+    <div>
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map((stat) => (
+          <div key={stat.name} className="bg-white p-6 rounded-lg shadow-md">
+            <h3 className="text-gray-500 text-sm font-medium">{stat.name}</h3>
+            <p className="text-3xl font-semibold text-gray-900 mt-2">{stat.value}</p>
+            <p className={`mt-2 flex items-baseline text-sm font-semibold ${
+              stat.changeType === 'positive' ? 'text-green-600' : 
+              stat.changeType === 'negative' ? 'text-red-600' : 'text-gray-500'
+            }`}>
+              {stat.change} from last month
+            </p>
+          </div>
+        ))}
+      </div>
 
-      {user ? (
-        <div>
-          <p>Welcome, <strong>{user.name}</strong>!</p>
-          <button
-            onClick={() => dispatch(logout())}
-            className="bg-red-500 text-white px-4 py-2 rounded"
-          >
-            Log out
-          </button>
-        </div>
-      ) : (
-        <div className="space-y-2">
-          <input
-            type="text"
-            placeholder="Enter name"
-            className="border p-2 rounded w-full"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <button
-            onClick={handleLogin}
-            className="bg-green-500 text-white px-4 py-2 rounded"
-          >
-            Log in
-          </button>
-        </div>
-      )}
+      <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
+        <h2 className="text-xl font-bold text-gray-800">Recent Activity</h2>
+        <p className="mt-4 text-gray-600">
+          Activity feed coming soon. This area will display recent user registrations, case updates, and other important events.
+        </p>
+      </div>
     </div>
   );
 };

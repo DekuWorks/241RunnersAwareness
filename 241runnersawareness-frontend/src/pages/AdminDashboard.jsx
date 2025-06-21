@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { logout } from '../features/auth/authSlice';
 
 const AdminDashboard = () => {
@@ -13,44 +13,49 @@ const AdminDashboard = () => {
     navigate('/login');
   };
 
+  const linkStyles = "block py-3 px-4 text-white transition duration-200 hover:bg-red-700";
+  const activeLinkStyles = {
+    backgroundColor: '#dc2626', // red-600
+  };
+
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-200">
       {/* Sidebar */}
-      <div className="w-64 bg-white shadow-md">
-        <div className="p-5">
-          <h2 className="text-xl font-bold text-gray-800">Admin Panel</h2>
+      <div className="w-64 bg-black text-white shadow-lg">
+        <div className="p-6">
+          <h2 className="text-2xl font-bold">Admin Panel</h2>
         </div>
-        <nav className="mt-5">
-          <Link to="/admin" className="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-500 hover:text-white">
+        <nav className="mt-4">
+          <NavLink to="/admin" end className={linkStyles} style={({isActive}) => isActive ? activeLinkStyles : undefined}>
             Dashboard
-          </Link>
-          <Link to="/admin/users" className="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-500 hover:text-white">
+          </NavLink>
+          <NavLink to="/admin/users" className={linkStyles} style={({isActive}) => isActive ? activeLinkStyles : undefined}>
             Users
-          </Link>
-          <Link to="/admin/cases" className="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-500 hover:text-white">
+          </NavLink>
+          <NavLink to="/admin/cases" className={linkStyles} style={({isActive}) => isActive ? activeLinkStyles : undefined}>
             Cases
-          </Link>
-          <Link to="/admin/audit-logs" className="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-500 hover:text-white">
+          </NavLink>
+          <NavLink to="/admin/audit-logs" className={linkStyles} style={({isActive}) => isActive ? activeLinkStyles : undefined}>
             Audit Logs
-          </Link>
-          <Link to="/admin/settings" className="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-500 hover:text-white">
+          </NavLink>
+          <NavLink to="/admin/settings" className={linkStyles} style={({isActive}) => isActive ? activeLinkStyles : undefined}>
             Settings
-          </Link>
+          </NavLink>
         </nav>
       </div>
 
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="flex justify-between items-center p-4 bg-white border-b">
-          <h1 className="text-xl">Welcome, {user?.name}</h1>
+        <header className="flex justify-between items-center p-4 bg-white border-b-2 border-gray-200">
+          <h1 className="text-2xl font-semibold text-gray-800">Welcome, {user?.name}</h1>
           <button
             onClick={handleLogout}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            className="px-4 py-2 bg-red-600 text-white rounded-md font-bold hover:bg-red-700 transition-colors duration-300"
           >
             Logout
           </button>
         </header>
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-8">
           <Outlet />
         </main>
       </div>
@@ -59,4 +64,3 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
-  `nk`

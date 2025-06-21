@@ -22,7 +22,11 @@ namespace _241RunnersAwareness.BackendAPI.Models
         public string PlacementStatus { get; set; }
         public DateTime DateAdded { get; set; }
         public string Notes { get; set; }
+        public string? ZipCode { get; set; }
+        public string? Country { get; set; }
+        public string? PhotoUrl { get; set; }
+        public DateTime? LastPhotoUpdate { get; set; }
 
-        public List<EmergencyContact> EmergencyContacts { get; set; }
+        public ICollection<EmergencyContact>? EmergencyContacts { get; set; }
     }
 }

@@ -21,11 +21,11 @@ const CasesPage = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Manage Cases</h1>
+        <h1 className="text-3xl font-bold text-gray-800">Manage Cases</h1>
         {user?.role === 'admin' && (
           <button
             onClick={() => handleOpenModal()}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+            className="px-6 py-2 bg-red-600 text-white rounded-md font-bold hover:bg-red-700 transition-colors duration-300"
           >
             Add Case
           </button>
