@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminHome from './pages/AdminHome';
 import AuditLogPage from './pages/AuditLogPage';
 import CasesPage from './pages/CasesPage';
+import MyCasePage from './pages/MyCasePage';
 
 function App() {
   const user = useSelector((state) => state.auth.user);
@@ -25,6 +26,11 @@ function App() {
             path="login" 
             element={user ? <Navigate to="/admin" replace /> : <LoginForm />} 
           />
+
+          {/* Protected User Route */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="mycase" element={<MyCasePage />} />
+          </Route>
 
           {/* Protected Admin Routes */}
           <Route element={<ProtectedRoute adminOnly />}>

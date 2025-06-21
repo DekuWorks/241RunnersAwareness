@@ -14,51 +14,59 @@ const NavBar = () => {
   };
 
   return (
-    <nav className="bg-white shadow">
+    <nav className="bg-black text-white shadow-md fixed top-0 w-full z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex">
-            <div className="flex-shrink-0 flex items-center">
-              <Link to="/" className="text-xl font-bold text-indigo-600">
-                241 Runners
-              </Link>
-            </div>
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+          <div className="flex items-center">
+            <Link to="/" className="text-2xl font-bold text-white">
+              241 Runners
+            </Link>
+          </div>
+          <div className="flex items-center">
+            <div className="hidden sm:flex sm:space-x-4">
               <Link
                 to="/"
-                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                className="text-white no-underline px-4 py-2 rounded-full border-2 border-white font-bold transition-colors duration-300 hover:bg-red-600"
               >
                 Home
               </Link>
               {user?.role === "admin" && (
                 <Link
                   to="/admin"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                  className="text-white no-underline px-4 py-2 rounded-full border-2 border-white font-bold transition-colors duration-300 hover:bg-red-600"
                 >
                   Admin Dashboard
                 </Link>
               )}
-            </div>
-          </div>
-          <div className="flex items-center">
-            {user ? (
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-700">Welcome, {user.name}</span>
-                <button
-                  onClick={handleLogout}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              {user && user.role !== 'admin' && (
+                <Link
+                  to="/mycase"
+                  className="text-white no-underline px-4 py-2 rounded-full border-2 border-white font-bold transition-colors duration-300 hover:bg-red-600"
                 >
-                  Logout
-                </button>
-              </div>
-            ) : (
-              <Link
-                to="/login"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Login
-              </Link>
-            )}
+                  My Case
+                </Link>
+              )}
+            </div>
+            <div className="ml-4 flex items-center">
+              {user ? (
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm">Welcome, {user.name}</span>
+                  <button
+                    onClick={handleLogout}
+                    className="px-4 py-2 rounded-full border-2 border-white font-bold transition-colors duration-300 bg-red-600 hover:bg-red-700"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  to="/login"
+                  className="px-4 py-2 rounded-full border-2 border-white font-bold transition-colors duration-300 bg-blue-600 hover:bg-blue-700"
+                >
+                  Login
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       </div>

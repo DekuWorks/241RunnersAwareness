@@ -68,6 +68,7 @@ export const usersAPI = {
   createUser: (userData) => api.post('/users', userData),
   updateUser: (id, userData) => api.put(`/users/${id}`, userData),
   deleteUser: (id) => api.delete(`/users/${id}`),
+  getMyCase: () => api.get('/individual/mycase'),
 };
 
 // Cases API calls
