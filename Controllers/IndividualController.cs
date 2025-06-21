@@ -13,10 +13,12 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using _241RunnersAwareness.DTOs;
 
 namespace _241RunnersAwareness.BackendAPI.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/[controller]")]
     public class IndividualController : ControllerBase
@@ -28,20 +30,18 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
             _context = context;
         }
 
-        // GET: api/Individual/mycase
-        [HttpGet("mycase")]
-        public async Task<ActionResult<Individual>> GetMyCase()
+        // GET: api/Individual
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Individual>>> GetIndividuals()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
-            {
-                return Unauthorized();
-            }
+            return await _context.Individuals.ToListAsync();
+        }
 
-            var individual = await _context.Individuals
-                .Include(i => i.EmergencyContacts)
-                .FirstOrDefaultAsync(i => i.Id == userId);
-
+        // GET: api/Individual/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Individual>> GetIndividual(Guid id)
+        {
+            var individual = await _context.Individuals.FindAsync(id);
             if (individual == null)
             {
                 return NotFound();
@@ -50,11 +50,38 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
             return individual;
         }
 
-        // GET: api/Individual
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Individual>>> GetIndividuals()
+        // PUT: api/Individual/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateIndividual(Guid id, [FromBody] AdminCaseUpdateDto updateDto)
         {
-            return _context.Individuals.ToList();
+            var individual = await _context.Individuals.FindAsync(id);
+            if (individual == null)
+            {
+                return NotFound();
+            }
+
+            individual.FullName = updateDto.FullName;
+            individual.CurrentStatus = updateDto.CurrentStatus;
+
+            _context.Entry(individual).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Individuals.Any(e => e.IndividualId == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
         // POST: api/individual
@@ -68,7 +95,7 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
         }
 
         [HttpPost("{id}/photo")]
-        public async Task<IActionResult> UploadPhoto(string id, IFormFile file)
+        public async Task<IActionResult> UploadPhoto(Guid id, IFormFile file)
         {
             var individual = await _context.Individuals.FindAsync(id);
             if (individual == null)

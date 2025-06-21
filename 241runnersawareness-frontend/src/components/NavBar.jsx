@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
@@ -39,12 +39,9 @@ const NavBar = () => {
                 </Link>
               )}
               {user && user.role !== 'admin' && (
-                <Link
-                  to="/mycase"
-                  className="text-white no-underline px-4 py-2 rounded-full border-2 border-white font-bold transition-colors duration-300 hover:bg-red-600"
-                >
+                <NavLink to="/mycase" className="hover:underline text-white no-underline px-4 py-2 rounded-full border-2 border-white font-bold transition-colors duration-300 hover:bg-red-600">
                   My Case
-                </Link>
+                </NavLink>
               )}
             </div>
             <div className="ml-4 flex items-center">

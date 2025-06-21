@@ -8,7 +8,7 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error } = useSelector((state) => state.auth);
+  const { loading } = useSelector((state) => state.auth);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,6 +16,7 @@ const LoginForm = () => {
       await dispatch(loginAsync({ email, password })).unwrap();
       navigate('/admin');
     } catch (err) {
+      // Error is handled by the global interceptor, which will show a toast.
       console.error('Login failed:', err);
     }
   };
@@ -26,13 +27,6 @@ const LoginForm = () => {
         <form className="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
           <h2 className="text-2xl font-bold text-center text-gray-800 mb-8">Sign In</h2>
           
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md relative mb-6" role="alert">
-              <strong className="font-bold">Login failed: </strong>
-              <span className="block sm:inline">{error}</span>
-            </div>
-          )}
-
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
               Email Address

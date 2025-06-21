@@ -1,41 +1,64 @@
-# 241 Runners Awareness
+# 241Runners Awareness Application
 
-This is the official application for the 241 Runners Awareness organization. It includes a public-facing informational website, a portal for registered individuals to manage their case files, and an administrative dashboard for staff.
+This is the official web application for the 241 Runners Awareness organization. It provides a secure portal for individuals to manage their case files and a comprehensive dashboard for administrators to manage user data, cases, and system logs.
 
-## Tech Stack
+## ✨ Features
 
-- **Frontend:** React, Redux, Vite, Tailwind CSS
-- **Backend:** C# (.NET), ASP.NET Core, Entity Framework Core
-- **Database:** SQL Server
+- **Authentication:** Secure user login and session management using JWT.
+- **Role-Based Access Control:** Distinct interfaces and permissions for regular users and administrators.
+- **Admin Dashboard:** A central hub for admins to manage users, view all case files, and monitor system activity via an audit log.
+- **Case Management:** Users can view their personal case details and update their profile photo.
+- **Secure Photo Uploads:** Users can upload a new photo, which is restricted to once every 30 days to prevent abuse.
+- **Profile Reminders:** Automatic reminders notify users when their profile photo needs to be updated (every 6 months).
 
-## Setup Steps
+## 🚀 Tech Stack
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/your-repo/241RunnersAwareness.git
-   ```
-2. **Backend Setup:**
-   - Navigate to the `241RunnersAwareness.BackendAPI` directory.
-   - Restore dependencies: `dotnet restore`
-   - Update database: `dotnet ef database update`
-   - Run the backend: `dotnet run`
-3. **Frontend Setup:**
-   - Navigate to the `241runnersawareness-frontend` directory.
-   - Install dependencies: `npm install`
-   - Start the development server: `npm run dev`
+- **Frontend:**
+  - [React](https://reactjs.org/)
+  - [Vite](https://vitejs.dev/)
+  - [Redux Toolkit](https://redux-toolkit.js.org/) for state management
+  - [Axios](https://axios-http.com/) for API requests
+  - [Tailwind CSS](https://tailwindcss.com/) for styling
+- **Backend:**
+  - C# with ASP.NET Core
+  - Entity Framework Core for data access
+- **Deployment:**
+  - Configured for easy deployment to [Netlify](https://www.netlify.com/).
 
-## Environment Variables
-Create a `.env` file in the `241runnersawareness-frontend` directory and add the following variables. See `.env.example` for a template.
+## 🛠️ Local Development Setup
 
-# React + Vite
+Follow these steps to get the frontend running on your local machine.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### 1. Prerequisites
+- [Node.js](https://nodejs.org/en/) (v18 or higher recommended)
+- A running instance of the 241RunnersAwareness backend API.
 
-Currently, two official plugins are available:
+### 2. Clone the Repository
+```bash
+git clone <your-repository-url>
+cd 241runnersawareness-frontend
+```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 3. Install Dependencies
+```bash
+npm install
+```
 
-## Expanding the ESLint configuration
+### 4. Configure Environment Variables
+Copy the example environment file to create your own local configuration:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+cp env.example .env
+```
+Now, open the `.env` file and fill in the required values for your local backend API.
+```env
+VITE_API_BASE_URL=http://localhost:5000/api
+VITE_AUTH_TOKEN_KEY=authToken
+VITE_APP_NAME=241Runners Awareness
+```
+
+### 5. Run the Development Server
+```bash
+npm run dev
+```
+The application should now be running at `http://localhost:5173` (or the next available port).

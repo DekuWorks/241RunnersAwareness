@@ -27,21 +27,19 @@ api.interceptors.request.use(
   }
 );
 
-// Add a response interceptor to handle errors
+// Response interceptor for handling errors globally
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // Handle unauthorized access
-      localStorage.removeItem('token');
-      store.dispatch(logout());
-      toast.error('Your session has expired. Please log in again.');
-      window.location.href = '/login';
-    } else if (error.response?.status === 403) {
-      toast.error('You do not have permission to perform this action.');
-    } else if (error.response?.status === 500) {
-      toast.error('An unexpected error occurred. Please try again later.');
+    // Extract a meaningful error message
+    const message = error.response?.data?.message || error.response?.data || error.message;
+    
+    // Show a toast notification
+    if (message) {
+      toast.error(message);
     }
+
+    // Reject the promise to allow for specific component-level error handling if needed
     return Promise.reject(error);
   }
 );
