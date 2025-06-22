@@ -1,0 +1,378 @@
+/* =============================
+   GLOBAL STYLES
+============================= */
+body {
+  font-family: Arial, sans-serif;
+  background-color: red;
+  margin: 0;
+  color: black;
+  padding-top: 140px;
+}
+h1 {
+  font-size: 2em;
+  margin: 0;
+  padding: 10px;
+  text-align: center;
+  background-color: black;
+  color: white;
+}
+h2, h2.obj {
+  font-size: 1.5em;
+  margin: 0;
+  text-align: center;
+  padding: 20px 10px;
+}
+h2.obj {
+  color: black;
+  background-color: red;
+}
+p {
+  font-size: 1em;
+  margin: 0;
+  padding: 10px;
+  text-align: center;
+}
+
+/* =============================
+   HEADER & NAVIGATION
+============================= */
+header {
+  background-color: black;
+  color: white;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  height: auto;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);
+  padding-bottom: 10px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  flex-wrap: wrap;
+  background-color: black;
+}
+
+.toggle-button {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.toggle-button span {
+  height: 3px;
+  width: 25px;
+  background: white;
+  margin: 4px 0;
+}
+
+.nav-links {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  transition: background-color 0.3s ease;
+  border: 2px solid white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-links a:hover {
+  background-color: red;
+  color: white;
+}
+
+/* Refactored legacy button styles */
+.about {
+  background-color: red;
+  color: white;
+}
+.about:hover {
+  background-color: darkred;
+}
+
+.socials {
+  background-color: yellow;
+  color: black;
+}
+.socials:hover {
+  background-color: gold;
+}
+
+.donate {
+  background-color: green;
+  color: white;
+}
+.donate:hover {
+  background-color: darkgreen;
+}
+
+.signup {
+  background-color: #007bff;
+  color: white;
+}
+.signup:hover {
+  background-color: #0056b3;
+}
+
+.login {
+  background-color: #28a745;
+  color: white;
+}
+.login:hover {
+  background-color: #1e7e34;
+}
+
+/* Icon styles */
+.nav-links i {
+  font-size: 1rem;
+}
+
+@media screen and (max-width: 768px) {
+  .toggle-button {
+    display: flex;
+  }
+  .nav-links {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    background-color: black;
+  }
+  .nav-links.active {
+    display: flex;
+  }
+  .nav-links a {
+    width: 100%;
+    padding: 15px;
+    border-top: 1px solid #444;
+    justify-content: center;
+  }
+}
+
+/* =============================
+   SLIDESHOW STYLING
+============================= */
+.slideshow-wrapper {
+  max-width: 60%;
+  margin: 20px auto;
+  text-align: center;
+  position: relative;
+}
+.slideshow-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+}
+.slide { display: none; }
+.slide img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+.slideshow-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.prev, .next {
+  cursor: pointer;
+  padding: 10px 20px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  background-color: black;
+  border: none;
+  border-radius: 25px;
+  transition: background-color 0.3s ease;
+}
+.prev:hover, .next:hover {
+  background-color: green;
+}
+.slideshow-dots {
+  margin-top: 10px;
+}
+.dot {
+  cursor: pointer;
+  height: 12px;
+  width: 12px;
+  margin: 0 4px;
+  background-color: black;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+}
+.dot.active, .dot:hover {
+  background-color: yellow;
+}
+
+/* =============================
+   IMAGE DEFAULT STYLING
+============================= */
+img {
+  width: 50%;
+  height: 75%;
+  display: block;
+  justify-content: center;
+  margin: auto;
+}
+
+/* =============================
+   FORM STYLES
+============================= */
+form {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 600px;
+  margin: 20px auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+form label {
+  font-weight: bold;
+  margin-top: 10px;
+  display: block;
+}
+form input, form select, form textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  border: 1px solid #bbb;
+}
+form button {
+  padding: 10px 16px;
+  background-color: #007acc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+form button:hover {
+  background-color: #005fa3;
+}
+
+/* =============================
+   VIEW BLOCK STYLES (Records + Contacts)
+============================= */
+.record-block {
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+.record-block button {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.record-block button:hover {
+  background-color: #388e3c;
+}
+
+/* =============================
+   FOOTER
+============================= */
+footer {
+  background-color: black;
+  color: white;
+  text-align: center;
+  padding: 10px 2px;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+  border-bottom: 2px solid #333;
+  min-height: 100%;
+  display: inherit;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+/* =============================
+   RESPONSIVE LAYOUT
+============================= */
+@media screen and (max-width: 600px) {
+  header {
+    height: auto;
+    padding: 10px;
+  }
+  nav.navbar {
+    flex-direction: column;
+    height: auto;
+    gap: 10px;
+    margin-top: 5px;
+  }
+  h1, h2, h2.obj, p {
+    font-size: 1em;
+    padding: 10px 5px;
+  }
+  a.about, a.socials, a.donate {
+    padding: 8px 16px;
+    font-size: 0.9em;
+  }
+  .slideshow-wrapper { max-width: 95%; }
+  img { width: 90%; height: auto; }
+  .back-button {
+    width: 90%;
+    text-align: center;
+    display: block;
+    margin: 15px auto;
+  }
+}
+@media screen and (min-width: 601px) and (max-width: 1024px) {
+  nav.navbar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 10px;
+  }
+  .slideshow-wrapper { max-width: 80%; }
+  img { width: 70%; height: auto; }
+}
+@media screen and (min-width: 1025px) {
+  .slideshow-wrapper { max-width: 60%; }
+  img { width: 50%; height: auto; }
+}
+
+/* =============================
+   PRINT STYLES
+============================= */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .record-block, .record-block * {
+    visibility: visible;
+  }
+
+  .record-block {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  button {
+    display: none;
+  }
+} 
