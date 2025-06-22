@@ -50,24 +50,26 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="signup-card" style={{ background: 'white', maxWidth: '600px', margin: 'auto', padding: '2rem', borderRadius: '10px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-      <h2 style={{ textAlign: 'center', color: '#222' }}>Sign Up</h2>
-      <div style={{ width: '100%', height: '1px', background: '#eee', margin: '1rem 0' }}></div>
+    <div className="form-container">
+      <h2>Sign Up</h2>
+      <div className="divider"></div>
 
-      <GoogleLogin
-        onSuccess={handleGoogleSuccess}
-        onError={handleGoogleError}
-        text="signup_with"
-        shape="rectangular"
-        size="large"
-        logo_alignment="left"
-      />
+      <div className="google-login">
+        <GoogleLogin
+          onSuccess={handleGoogleSuccess}
+          onError={handleGoogleError}
+          text="signup_with"
+          shape="rectangular"
+          size="large"
+          logo_alignment="left"
+        />
+      </div>
 
-      <div style={{ width: '100%', height: '1px', background: '#eee', margin: '1rem 0' }}></div>
+      <div className="divider"></div>
       
       {message && <p style={{ color: 'red', textAlign: 'center' }}>{message}</p>}
 
-      <form onSubmit={handleTraditionalRegister} style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <form onSubmit={handleTraditionalRegister}>
         <div>
           <label htmlFor="fullName">Full Name *</label>
           <input
@@ -78,7 +80,6 @@ const RegisterPage = () => {
             onChange={onChange}
             required
             placeholder="Enter your full name"
-            style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #bbb' }}
           />
         </div>
         <div>
@@ -91,7 +92,6 @@ const RegisterPage = () => {
             onChange={onChange}
             required
             placeholder="Enter your email"
-            style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #bbb' }}
           />
         </div>
         <div>
@@ -104,7 +104,6 @@ const RegisterPage = () => {
             onChange={onChange}
             required
             placeholder="Enter your phone number"
-            style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #bbb' }}
           />
         </div>
         <div>
@@ -117,10 +116,9 @@ const RegisterPage = () => {
             onChange={onChange}
             required
             placeholder="Enter your password"
-            style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #bbb' }}
           />
         </div>
-        <button type="submit" disabled={loading} style={{ padding: '10px', background: '#007acc', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+        <button type="submit" disabled={loading}>
           {loading ? 'Creating Account...' : 'Continue'}
         </button>
       </form>

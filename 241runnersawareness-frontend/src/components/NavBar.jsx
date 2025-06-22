@@ -14,31 +14,35 @@ const NavBar = () => {
   };
 
   return (
-    <nav className="bg-gray-800 text-white p-4 shadow">
-      <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-xl font-bold">
-          <Link to="/">241Runners Awareness</Link>
-        </h1>
-        <ul className="flex gap-4 text-sm items-center">
-          <li><Link to="/">Home</Link></li>
+    <header>
+      <h1>
+        <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>
+          241Runners Awareness
+        </Link>
+      </h1>
+      <nav className="navbar">
+        <div className="nav-links">
+          <Link to="/" className="home">Home</Link>
+          <a href="https://www.241runnersawareness.org/about_us.html" className="about" target="_blank" rel="noopener noreferrer">About Us</a>
+          <a href="https://linktr.ee/241Runners" className="socials" target="_blank" rel="noopener noreferrer">Socials</a>
+          <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" className="donate" target="_blank" rel="noopener noreferrer">Donate</a>
+
           {user ? (
             <>
-              {user.role === 'admin' && <li><Link to="/admin">Admin</Link></li>}
-              <li>
-                <button onClick={handleLogout} className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded">
-                  Logout
-                </button>
-              </li>
+              {user.role === 'admin' && <Link to="/admin" className="login">Admin</Link>}
+              <button onClick={handleLogout} className="logout">
+                Logout
+              </button>
             </>
           ) : (
             <>
-              <li><Link to="/login">Log In</Link></li>
-              <li><Link to="/register">Sign Up</Link></li>
+              <Link to="/login" className="login">Log In</Link>
+              <Link to="/register" className="signup">Sign Up</Link>
             </>
           )}
-        </ul>
-      </div>
-    </nav>
+        </div>
+      </nav>
+    </header>
   );
 };
 

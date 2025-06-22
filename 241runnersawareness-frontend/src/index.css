@@ -32,11 +32,38 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background-color: red;
+  color: black;
+  /* padding-top: 140px; */ /* Removed for SPA layout */
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  font-size: 2em;
+  margin: 0;
+  padding: 10px;
+  text-align: center;
+  background-color: black;
+  color: white;
+}
+
+h2, h2.obj {
+  font-size: 1.5em;
+  margin: 0;
+  text-align: center;
+  padding: 20px 10px;
+}
+
+h2.obj {
+  color: black;
+  background-color: red;
+}
+
+p {
+  font-size: 1em;
+  margin: 0;
+  padding: 10px;
+  text-align: center;
 }
 
 button {
@@ -69,4 +96,138 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+/* =============================
+   HEADER & NAVIGATION
+============================= */
+header {
+  background-color: black;
+  color: white;
+  text-align: center;
+  width: 100%;
+  z-index: 1000;
+  height: auto;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);
+  padding-bottom: 10px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  flex-wrap: wrap;
+  background-color: black;
+}
+
+.nav-links {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.nav-links a, .nav-links button {
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  transition: background-color 0.3s ease;
+  border: 2px solid white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.nav-links a:hover, .nav-links button:hover {
+  background-color: red;
+  color: white;
+}
+
+/* Specific button styles from original site */
+.nav-links .about { background-color: red; color: white; }
+.nav-links .about:hover { background-color: darkred; }
+.nav-links .socials { background-color: yellow; color: black; }
+.nav-links .socials:hover { background-color: gold; }
+.nav-links .donate { background-color: green; color: white; }
+.nav-links .donate:hover { background-color: darkgreen; }
+.nav-links .signup { background-color: #007bff; color: white; }
+.nav-links .signup:hover { background-color: #0056b3; }
+.nav-links .login { background-color: #28a745; color: white; }
+.nav-links .login:hover { background-color: #1e7e34; }
+.nav-links .logout { background-color: #dc3545; color: white; }
+.nav-links .logout:hover { background-color: #c82333; }
+
+
+/* =============================
+   FORM STYLES
+============================= */
+.form-container {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 600px;
+  margin: 40px auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2 {
+    color: #222;
+}
+
+.form-container label {
+  font-weight: bold;
+  margin-top: 10px;
+  display: block;
+  color: #333;
+}
+
+.form-container input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #bbb;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+.form-container button {
+  width: 100%;
+  padding: 10px 16px;
+  background-color: #007acc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  margin-top: 8px;
+}
+
+.form-container button:hover {
+  background-color: #005fa3;
+}
+
+.form-container .divider {
+    width: 100%;
+    height: 1px;
+    background: #eee;
+    margin: 16px 0 24px 0;
+}
+
+.form-container .google-login {
+    margin-bottom: 20px;
+}
+
+footer {
+  background-color: black;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  margin-top: 40px;
 }
