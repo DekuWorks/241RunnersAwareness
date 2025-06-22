@@ -28,8 +28,6 @@ body {
     color: black;
 }
 
-
-
 h1 {
     font-size: 2em;
     margin: 0;
@@ -54,8 +52,6 @@ h2.obj {
     padding: 20px 10px;
 }
 
-
-
 p {
     font-size: 1em;
     margin: 0;
@@ -64,58 +60,48 @@ p {
 }
     
 /* This css styling is for the nav buttons */
-/* when hovered even */
-a.about {
+.nav-button {
     outline: none;
     text-decoration: none;
-    color: inherit;
+    color: white;
     display: inline-block;
     padding: 10px 20px;
-    border: 2px solid black;
+    border: 2px solid white;
     border-radius: 25px;
     background-color: black;
     transition: all 0.3s ease-in;
+    font-weight: bold;
 }
 
-a.about:hover {
+/* when hovered even */
+.nav-button.about:hover {
     background-color: red;
     color: white;
 }
 
-a.events {
-    outline: none;
-    text-decoration: none;
-    color: inherit;
-    display: inline-block;
-    padding: 10px 20px;
-    border: 2px solid black;
-    border-radius: 25px;
-    background-color: black;
-    transition: all 0.3s ease-in;
-}
-
-a.events:hover {
+.nav-button.events:hover {
     background-color: yellow;
     color: black;
 }
 
-a.donate {
-    outline: none;
-    text-decoration: none;
-    color: inherit;
-    display: inline-block;
-    padding: 10px 20px;
-    border: 2px solid black;
-    border-radius: 25px;
-    background-color: black;
-    transition: all 0.3s ease-in;
-}
-
-a.donate:hover {
+.nav-button.donate:hover {
     background-color: green;
     color: white;
 }
 
+.nav-button.signup {
+  background-color: #007bff;
+}
+.nav-button.signup:hover {
+  background-color: #0056b3;
+}
+
+.nav-button.login {
+  background-color: #28a745;
+}
+.nav-button.login:hover {
+  background-color: #1e7e34;
+}
 
 img {
     width: 50%;
