@@ -1,6 +1,6 @@
 [build]
   command = "npm run build --prefix frontend"
-  publish = "docs"
+  publish = "docs/HTML"
 
 [[redirects]]
   from = "/app/*"
