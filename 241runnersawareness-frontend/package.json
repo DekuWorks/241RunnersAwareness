@@ -11,12 +11,15 @@
   "dependencies": {
     "@react-oauth/google": "^0.12.2",
     "@reduxjs/toolkit": "^2.8.2",
+    "@tailwindcss/postcss": "^4.1.10",
+    "autoprefixer": "^10.4.21",
     "axios": "^1.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.1.1",
     "react-router-dom": "^6.22.3",
-    "redux": "^4.2.1"
+    "redux": "^4.2.1",
+    "tailwindcss": "^4.1.10"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.27.2",
