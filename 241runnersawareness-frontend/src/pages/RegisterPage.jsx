@@ -15,11 +15,12 @@ const RegisterPage = () => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
+    phoneNumber: '',
     password: '',
   });
   const [message, setMessage] = useState('');
 
-  const { fullName, email, password } = formData;
+  const { fullName, email, phoneNumber, password } = formData;
 
   useEffect(() => {
     if (error) {
@@ -36,7 +37,7 @@ const RegisterPage = () => {
   const handleTraditionalRegister = (e) => {
     e.preventDefault();
     setMessage('');
-    dispatch(register({ fullName, email, password, phoneNumber: '000-000-0000' }));
+    dispatch(register({ fullName, email, phoneNumber, password }));
   };
   
   const handleGoogleSuccess = (credentialResponse) => {
@@ -90,6 +91,19 @@ const RegisterPage = () => {
             onChange={onChange}
             required
             placeholder="Enter your email"
+            style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #bbb' }}
+          />
+        </div>
+        <div>
+          <label htmlFor="phoneNumber">Phone Number *</label>
+          <input
+            type="tel"
+            id="phoneNumber"
+            name="phoneNumber"
+            value={phoneNumber}
+            onChange={onChange}
+            required
+            placeholder="Enter your phone number"
             style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #bbb' }}
           />
         </div>

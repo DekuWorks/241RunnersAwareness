@@ -29,6 +29,12 @@ namespace _241RunnersAwareness.BackendAPI.Models
         public string Password { get; set; }
     }
     
+    public class GoogleLoginRequest
+    {
+        [Required]
+        public string IdToken { get; set; }
+    }
+    
     public class VerifyEmailRequest
     {
         [Required]

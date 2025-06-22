@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using _241RunnersAwareness.BackendAPI.Data;
 using _241RunnersAwareness.BackendAPI.Models;
 using _241RunnersAwareness.BackendAPI.Services;
+using Google.Apis.Auth;
 
 namespace _241RunnersAwareness.BackendAPI.Controllers
 {
@@ -125,6 +126,73 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                 {
                     Success = false,
                     Message = "An error occurred during login."
+                });
+            }
+        }
+
+        [HttpPost("google-login")]
+        public async Task<ActionResult<AuthResponse>> GoogleLogin(GoogleLoginRequest request)
+        {
+            try
+            {
+                // Verify Google ID token
+                var payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken);
+                
+                if (payload == null)
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Invalid Google token."
+                    });
+                }
+
+                // Check if user exists
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == payload.Email && u.IsActive);
+
+                if (user == null)
+                {
+                    // Create new user from Google data
+                    user = new User
+                    {
+                        UserId = Guid.NewGuid(),
+                        Email = payload.Email,
+                        FullName = payload.Name,
+                        EmailVerified = true, // Google accounts are pre-verified
+                        PhoneVerified = false, // Will need phone verification
+                        IsActive = true,
+                        CreatedAt = DateTime.UtcNow,
+                        LastLoginAt = DateTime.UtcNow
+                    };
+
+                    _context.Users.Add(user);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    // Update last login for existing user
+                    user.LastLoginAt = DateTime.UtcNow;
+                    await _context.SaveChangesAsync();
+                }
+
+                var token = _authService.GenerateJwtToken(user);
+
+                return Ok(new AuthResponse
+                {
+                    Success = true,
+                    Message = "Google login successful.",
+                    Token = token,
+                    User = _authService.MapToUserDto(user),
+                    RequiresVerification = !user.PhoneVerified
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new AuthResponse
+                {
+                    Success = false,
+                    Message = "An error occurred during Google login."
                 });
             }
         }

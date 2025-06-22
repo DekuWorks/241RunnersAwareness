@@ -112,10 +112,12 @@
       <div class="divider"></div>
       <form class="signup-form" id="traditional-signup-form" autocomplete="off">
         <div class="form-message" id="form-message"></div>
-        <label for="username">Username *</label>
-        <input type="text" id="username" name="username" required placeholder="Enter your username">
+        <label for="fullName">Full Name *</label>
+        <input type="text" id="fullName" name="fullName" required placeholder="Enter your full name">
         <label for="email">Email *</label>
         <input type="email" id="email" name="email" required placeholder="Enter your email">
+        <label for="phoneNumber">Phone Number *</label>
+        <input type="tel" id="phoneNumber" name="phoneNumber" required placeholder="Enter your phone number">
         <label for="password">Password *</label>
         <input type="password" id="password" name="password" required placeholder="Enter your password">
         <button type="submit">Continue</button>
@@ -126,19 +128,43 @@
     <p>&copy; 2024 241 Runners Awareness. All rights reserved.</p>
   </footer>
   <script>
-    function handleGoogleSignup(response) {
-      alert('Google Sign Up Success!\n' + JSON.stringify(response));
-      // You can send response.credential to your backend for verification
+    async function handleGoogleSignup(response) {
+      const messageDiv = document.getElementById('form-message');
+      try {
+        const res = await fetch('/api/auth/google-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            IdToken: response.credential
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          messageDiv.style.color = '#388e3c';
+          messageDiv.textContent = 'Google signup successful! Redirecting...';
+          localStorage.setItem('user', JSON.stringify(data));
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 2000);
+        } else {
+          messageDiv.style.color = '#d32f2f';
+          messageDiv.textContent = data.message || 'Google signup failed.';
+        }
+      } catch (err) {
+        messageDiv.style.color = '#d32f2f';
+        messageDiv.textContent = 'An error occurred during Google signup.';
+      }
     }
 
     document.getElementById('traditional-signup-form').addEventListener('submit', async function(e) {
       e.preventDefault();
       const messageDiv = document.getElementById('form-message');
       messageDiv.textContent = '';
-      const username = document.getElementById('username').value.trim();
+      const fullName = document.getElementById('fullName').value.trim();
       const email = document.getElementById('email').value.trim();
+      const phoneNumber = document.getElementById('phoneNumber').value.trim();
       const password = document.getElementById('password').value;
-      if (!username || !email || !password) {
+      if (!fullName || !email || !phoneNumber || !password) {
         messageDiv.textContent = 'All fields are required.';
         return;
       }
@@ -147,10 +173,10 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            fullName: username,
+            fullName: fullName,
             email: email,
-            password: password,
-            phoneNumber: "000-000-0000" // Placeholder, update as needed
+            phoneNumber: phoneNumber,
+            password: password
           })
         });
         const data = await res.json();
