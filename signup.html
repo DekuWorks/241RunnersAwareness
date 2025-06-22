@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - 241 Runners Awareness</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    .signup-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: 60px auto 0 auto;
+      padding: 32px 24px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .signup-card h2 {
+      margin-bottom: 12px;
+      font-size: 2em;
+      color: #222;
+      text-align: center;
+    }
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: #eee;
+      margin: 16px 0 24px 0;
+    }
+    .signup-form {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .signup-form label {
+      font-weight: bold;
+      margin-bottom: 4px;
+      margin-top: 8px;
+      display: block;
+    }
+    .signup-form input {
+      width: 100%;
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #bbb;
+      margin-bottom: 8px;
+    }
+    .signup-form button {
+      padding: 10px 16px;
+      background-color: #007acc;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1em;
+      margin-top: 8px;
+    }
+    .signup-form button:hover {
+      background-color: #005fa3;
+    }
+    .form-message {
+      color: #d32f2f;
+      margin-bottom: 8px;
+      text-align: center;
+      font-size: 1em;
+    }
+    @media (max-width: 700px) {
+      .signup-card {
+        max-width: 95vw;
+        padding: 18px 4vw 18px 4vw;
+      }
+      .signup-form { max-width: 95vw; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>241Runners Awareness</h1>
+    <nav class="navbar nav-links">
+      <a href="index.html" class="home">Home</a>
+      <a href="about_us.html" class="about">About Us</a>
+      <a href="signup.html" class="signup">Sign Up</a>
+      <a href="login.html" class="login">Log In</a>
+      <a href="https://linktr.ee/241Runners" class="socials">Socials</a>
+      <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" class="donate">Donate</a>
+    </nav>
+  </header>
+  <main>
+    <div class="signup-card">
+      <h2>Sign Up</h2>
+      <div class="divider"></div>
+      <div id="g_id_onload"
+        data-client_id="933970195369-67fjn7t28p7q8a3grar5a46jad4mvinq.apps.googleusercontent.com"
+        data-context="signup"
+        data-ux_mode="popup"
+        data-callback="handleGoogleSignup"
+        data-auto_prompt="false">
+      </div>
+      <div class="g_id_signin signup"
+        data-type="standard"
+        data-shape="rectangular"
+        data-theme="outline"
+        data-text="signup_with"
+        data-size="large"
+        data-logo_alignment="left">
+      </div>
+      <div class="divider"></div>
+      <form class="signup-form" id="traditional-signup-form" autocomplete="off">
+        <div class="form-message" id="form-message"></div>
+        <label for="username">Username *</label>
+        <input type="text" id="username" name="username" required placeholder="Enter your username">
+        <label for="email">Email *</label>
+        <input type="email" id="email" name="email" required placeholder="Enter your email">
+        <label for="password">Password *</label>
+        <input type="password" id="password" name="password" required placeholder="Enter your password">
+        <button type="submit">Continue</button>
+      </form>
+    </div>
+  </main>
+  <footer>
+    <p>&copy; 2024 241 Runners Awareness. All rights reserved.</p>
+  </footer>
+  <script>
+    function handleGoogleSignup(response) {
+      alert('Google Sign Up Success!\n' + JSON.stringify(response));
+      // You can send response.credential to your backend for verification
+    }
+
+    document.getElementById('traditional-signup-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const messageDiv = document.getElementById('form-message');
+      messageDiv.textContent = '';
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      if (!username || !email || !password) {
+        messageDiv.textContent = 'All fields are required.';
+        return;
+      }
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fullName: username,
+            email: email,
+            password: password,
+            phoneNumber: "000-000-0000" // Placeholder, update as needed
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          messageDiv.style.color = '#388e3c';
+          messageDiv.textContent = 'Registration successful! Please check your email and phone for verification.';
+          document.getElementById('traditional-signup-form').reset();
+        } else {
+          messageDiv.style.color = '#d32f2f';
+          messageDiv.textContent = data.message || 'Registration failed.';
+        }
+      } catch (err) {
+        messageDiv.style.color = '#d32f2f';
+        messageDiv.textContent = 'An error occurred. Please try again.';
+      }
+    });
+  </script>
+</body>
+</html> 
