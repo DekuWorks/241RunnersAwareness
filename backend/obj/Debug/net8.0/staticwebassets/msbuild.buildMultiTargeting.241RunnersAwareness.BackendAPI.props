@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\241RunnersAwareness.BackendAPI.props" />
+</Project>

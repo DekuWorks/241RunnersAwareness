@@ -45,7 +45,7 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
 
                     b.HasIndex("IndividualId");
 
-                    b.ToTable("EmergencyContacts");
+                    b.ToTable("EmergencyContacts", (string)null);
                 });
 
             modelBuilder.Entity("_241RunnersAwareness.BackendAPI.Models.Individual", b =>
@@ -104,7 +104,7 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
 
                     b.HasKey("IndividualId");
 
-                    b.ToTable("Individuals");
+                    b.ToTable("Individuals", (string)null);
                 });
 
             modelBuilder.Entity("EmergencyContact", b =>

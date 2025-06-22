@@ -17,10 +17,37 @@ const RegisterPage = () => {
     email: '',
     phoneNumber: '',
     password: '',
+    role: 'user',
+    // Common fields
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    emergencyContactName: '',
+    emergencyContactPhone: '',
+    emergencyContactRelationship: '',
+    // Role-specific fields
+    relationshipToRunner: '',
+    licenseNumber: '',
+    organization: '',
+    credentials: '',
+    specialization: '',
+    yearsOfExperience: '',
+    // Individual fields (for non-user roles)
+    individualFullName: '',
+    individualDateOfBirth: '',
+    individualGender: '',
+    individualEmergencyContactName: '',
+    individualEmergencyContactPhone: ''
   });
   const [message, setMessage] = useState('');
 
-  const { fullName, email, phoneNumber, password } = formData;
+  const { 
+    fullName, email, phoneNumber, password, role,
+    address, city, state, zipCode, emergencyContactName, emergencyContactPhone, emergencyContactRelationship,
+    relationshipToRunner, licenseNumber, organization, credentials, specialization, yearsOfExperience,
+    individualFullName, individualDateOfBirth, individualGender, individualEmergencyContactName, individualEmergencyContactPhone
+  } = formData;
 
   useEffect(() => {
     if (error) {
@@ -37,7 +64,43 @@ const RegisterPage = () => {
   const handleTraditionalRegister = (e) => {
     e.preventDefault();
     setMessage('');
-    dispatch(register({ fullName, email, phoneNumber, password }));
+    
+    // Prepare the registration data
+    const registrationData = {
+      fullName,
+      email,
+      phoneNumber,
+      password,
+      role,
+      address,
+      city,
+      state,
+      zipCode,
+      emergencyContactName,
+      emergencyContactPhone,
+      emergencyContactRelationship,
+      relationshipToRunner,
+      licenseNumber,
+      organization,
+      credentials,
+      specialization,
+      yearsOfExperience
+    };
+
+    // Add individual data if role is not 'user' and individual info is provided
+    if (role !== 'user' && individualFullName) {
+      registrationData.individual = {
+        fullName: individualFullName,
+        dateOfBirth: individualDateOfBirth,
+        gender: individualGender,
+        emergencyContact: {
+          name: individualEmergencyContactName,
+          phone: individualEmergencyContactPhone
+        }
+      };
+    }
+
+    dispatch(register(registrationData));
   };
   
   const handleGoogleSuccess = (credentialResponse) => {
@@ -47,6 +110,195 @@ const RegisterPage = () => {
 
   const handleGoogleError = () => {
     setMessage('Google Registration Failed. Please try again.');
+  };
+
+  const getRoleSpecificFields = () => {
+    switch (role) {
+      case 'parent':
+      case 'caregiver':
+      case 'adoptive_parent':
+        return (
+          <>
+            <div>
+              <label htmlFor="relationshipToRunner">Relationship to Runner *</label>
+              <select
+                id="relationshipToRunner"
+                name="relationshipToRunner"
+                value={relationshipToRunner}
+                onChange={onChange}
+                required
+              >
+                <option value="">Select relationship</option>
+                <option value="parent">Parent</option>
+                <option value="guardian">Guardian</option>
+                <option value="caregiver">Caregiver</option>
+                <option value="adoptive_parent">Adoptive Parent</option>
+                <option value="foster_parent">Foster Parent</option>
+                <option value="grandparent">Grandparent</option>
+                <option value="sibling">Sibling</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="organization">Organization (if applicable)</label>
+              <input
+                type="text"
+                id="organization"
+                name="organization"
+                value={organization}
+                onChange={onChange}
+                placeholder="Enter organization name"
+              />
+            </div>
+            <div>
+              <label htmlFor="yearsOfExperience">Years of Experience</label>
+              <input
+                type="text"
+                id="yearsOfExperience"
+                name="yearsOfExperience"
+                value={yearsOfExperience}
+                onChange={onChange}
+                placeholder="e.g., 5 years"
+              />
+            </div>
+          </>
+        );
+      case 'aba_therapist':
+        return (
+          <>
+            <div>
+              <label htmlFor="licenseNumber">License Number *</label>
+              <input
+                type="text"
+                id="licenseNumber"
+                name="licenseNumber"
+                value={licenseNumber}
+                onChange={onChange}
+                required
+                placeholder="Enter your license number"
+              />
+            </div>
+            <div>
+              <label htmlFor="organization">Organization/Clinic *</label>
+              <input
+                type="text"
+                id="organization"
+                name="organization"
+                value={organization}
+                onChange={onChange}
+                required
+                placeholder="Enter organization name"
+              />
+            </div>
+            <div>
+              <label htmlFor="credentials">Credentials *</label>
+              <input
+                type="text"
+                id="credentials"
+                name="credentials"
+                value={credentials}
+                onChange={onChange}
+                required
+                placeholder="e.g., BCBA, LPC, etc."
+              />
+            </div>
+            <div>
+              <label htmlFor="specialization">Specialization</label>
+              <input
+                type="text"
+                id="specialization"
+                name="specialization"
+                value={specialization}
+                onChange={onChange}
+                placeholder="e.g., Autism, ADHD, etc."
+              />
+            </div>
+            <div>
+              <label htmlFor="yearsOfExperience">Years of Experience *</label>
+              <input
+                type="text"
+                id="yearsOfExperience"
+                name="yearsOfExperience"
+                value={yearsOfExperience}
+                onChange={onChange}
+                required
+                placeholder="e.g., 5 years"
+              />
+            </div>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const getIndividualFields = () => {
+    if (role === 'user') return null;
+    
+    return (
+      <div className="individual-section">
+        <h3>Runner Information</h3>
+        <div>
+          <label htmlFor="individualFullName">Runner's Full Name *</label>
+          <input
+            type="text"
+            id="individualFullName"
+            name="individualFullName"
+            value={individualFullName}
+            onChange={onChange}
+            required
+            placeholder="Enter runner's full name"
+          />
+        </div>
+        <div>
+          <label htmlFor="individualDateOfBirth">Runner's Date of Birth</label>
+          <input
+            type="date"
+            id="individualDateOfBirth"
+            name="individualDateOfBirth"
+            value={individualDateOfBirth}
+            onChange={onChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="individualGender">Runner's Gender</label>
+          <select
+            id="individualGender"
+            name="individualGender"
+            value={individualGender}
+            onChange={onChange}
+          >
+            <option value="">Select gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+            <option value="prefer_not_to_say">Prefer not to say</option>
+          </select>
+        </div>
+        <div>
+          <label htmlFor="individualEmergencyContactName">Runner's Emergency Contact Name</label>
+          <input
+            type="text"
+            id="individualEmergencyContactName"
+            name="individualEmergencyContactName"
+            value={individualEmergencyContactName}
+            onChange={onChange}
+            placeholder="Emergency contact name"
+          />
+        </div>
+        <div>
+          <label htmlFor="individualEmergencyContactPhone">Runner's Emergency Contact Phone</label>
+          <input
+            type="tel"
+            id="individualEmergencyContactPhone"
+            name="individualEmergencyContactPhone"
+            value={individualEmergencyContactPhone}
+            onChange={onChange}
+            placeholder="Emergency contact phone"
+          />
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -70,54 +322,178 @@ const RegisterPage = () => {
       {message && <p role="alert" aria-live="assertive" style={{ color: 'red', textAlign: 'center' }}>{message}</p>}
 
       <form onSubmit={handleTraditionalRegister}>
-        <div>
-          <label htmlFor="fullName">Full Name *</label>
-          <input
-            type="text"
-            id="fullName"
-            name="fullName"
-            value={fullName}
-            onChange={onChange}
-            required
-            placeholder="Enter your full name"
-          />
+        {/* Basic Information */}
+        <div className="form-section">
+          <h3>Basic Information</h3>
+          <div>
+            <label htmlFor="fullName">Full Name *</label>
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              value={fullName}
+              onChange={onChange}
+              required
+              placeholder="Enter your full name"
+            />
+          </div>
+          <div>
+            <label htmlFor="email">Email *</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              onChange={onChange}
+              required
+              placeholder="Enter your email"
+            />
+          </div>
+          <div>
+            <label htmlFor="phoneNumber">Phone Number *</label>
+            <input
+              type="tel"
+              id="phoneNumber"
+              name="phoneNumber"
+              value={phoneNumber}
+              onChange={onChange}
+              required
+              placeholder="Enter your phone number"
+            />
+          </div>
+          <div>
+            <label htmlFor="password">Password *</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={password}
+              onChange={onChange}
+              required
+              placeholder="Enter your password"
+            />
+          </div>
         </div>
-        <div>
-          <label htmlFor="email">Email *</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={email}
-            onChange={onChange}
-            required
-            placeholder="Enter your email"
-          />
+
+        {/* Role Selection */}
+        <div className="form-section">
+          <h3>Account Type</h3>
+          <div>
+            <label htmlFor="role">I am a: *</label>
+            <select
+              id="role"
+              name="role"
+              value={role}
+              onChange={onChange}
+              required
+            >
+              <option value="user">General User</option>
+              <option value="parent">Parent</option>
+              <option value="caregiver">Caregiver</option>
+              <option value="aba_therapist">ABA Therapist</option>
+              <option value="adoptive_parent">Adoptive Parent</option>
+            </select>
+          </div>
         </div>
-        <div>
-          <label htmlFor="phoneNumber">Phone Number *</label>
-          <input
-            type="tel"
-            id="phoneNumber"
-            name="phoneNumber"
-            value={phoneNumber}
-            onChange={onChange}
-            required
-            placeholder="Enter your phone number"
-          />
+
+        {/* Role-specific fields */}
+        {role !== 'user' && (
+          <div className="form-section">
+            <h3>Professional Information</h3>
+            {getRoleSpecificFields()}
+          </div>
+        )}
+
+        {/* Address Information */}
+        <div className="form-section">
+          <h3>Address Information</h3>
+          <div>
+            <label htmlFor="address">Address</label>
+            <input
+              type="text"
+              id="address"
+              name="address"
+              value={address}
+              onChange={onChange}
+              placeholder="Enter your address"
+            />
+          </div>
+          <div>
+            <label htmlFor="city">City</label>
+            <input
+              type="text"
+              id="city"
+              name="city"
+              value={city}
+              onChange={onChange}
+              placeholder="Enter your city"
+            />
+          </div>
+          <div>
+            <label htmlFor="state">State</label>
+            <input
+              type="text"
+              id="state"
+              name="state"
+              value={state}
+              onChange={onChange}
+              placeholder="Enter your state"
+            />
+          </div>
+          <div>
+            <label htmlFor="zipCode">Zip Code</label>
+            <input
+              type="text"
+              id="zipCode"
+              name="zipCode"
+              value={zipCode}
+              onChange={onChange}
+              placeholder="Enter your zip code"
+            />
+          </div>
         </div>
-        <div>
-          <label htmlFor="password">Password *</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={password}
-            onChange={onChange}
-            required
-            placeholder="Enter your password"
-          />
+
+        {/* Emergency Contact */}
+        <div className="form-section">
+          <h3>Emergency Contact</h3>
+          <div>
+            <label htmlFor="emergencyContactName">Emergency Contact Name</label>
+            <input
+              type="text"
+              id="emergencyContactName"
+              name="emergencyContactName"
+              value={emergencyContactName}
+              onChange={onChange}
+              placeholder="Emergency contact name"
+            />
+          </div>
+          <div>
+            <label htmlFor="emergencyContactPhone">Emergency Contact Phone</label>
+            <input
+              type="tel"
+              id="emergencyContactPhone"
+              name="emergencyContactPhone"
+              value={emergencyContactPhone}
+              onChange={onChange}
+              placeholder="Emergency contact phone"
+            />
+          </div>
+          <div>
+            <label htmlFor="emergencyContactRelationship">Relationship to You</label>
+            <input
+              type="text"
+              id="emergencyContactRelationship"
+              name="emergencyContactRelationship"
+              value={emergencyContactRelationship}
+              onChange={onChange}
+              placeholder="e.g., Spouse, Parent, Friend"
+            />
+          </div>
         </div>
+
+        {/* Individual Information */}
+        {getIndividualFields()}
+
         <button type="submit" disabled={loading}>
           {loading ? 'Creating Account...' : 'Continue'}
         </button>

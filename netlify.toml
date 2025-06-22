@@ -1,5 +1,13 @@
 [build]
-  publish = "docs/HTML"
+  command = "npm run build"
+  publish = "dist"
+
+# The base directory is specified in the package.json directory.
+# All requests will be handled by the React app.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
 
 # The build command and redirects for the separate React app have been removed
 # because the main site is now self-contained with its own login/signup pages. 

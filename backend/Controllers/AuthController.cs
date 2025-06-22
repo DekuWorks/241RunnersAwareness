@@ -7,6 +7,7 @@ using _241RunnersAwareness.BackendAPI.Data;
 using _241RunnersAwareness.BackendAPI.Models;
 using _241RunnersAwareness.BackendAPI.Services;
 using Google.Apis.Auth;
+using System.Collections.Generic;
 
 namespace _241RunnersAwareness.BackendAPI.Controllers
 {
@@ -60,8 +61,55 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                     EmailVerificationToken = _authService.GenerateVerificationToken(),
                     PhoneVerificationCode = _authService.GenerateVerificationCode(),
                     EmailVerificationExpiry = DateTime.UtcNow.AddHours(24),
-                    PhoneVerificationExpiry = DateTime.UtcNow.AddMinutes(10)
+                    PhoneVerificationExpiry = DateTime.UtcNow.AddMinutes(10),
+                    Role = request.Role ?? "user",
+                    
+                    // Role-specific fields
+                    RelationshipToRunner = request.RelationshipToRunner,
+                    LicenseNumber = request.LicenseNumber,
+                    Organization = request.Organization,
+                    Credentials = request.Credentials,
+                    Specialization = request.Specialization,
+                    YearsOfExperience = request.YearsOfExperience,
+                    
+                    // Common fields
+                    Address = request.Address,
+                    City = request.City,
+                    State = request.State,
+                    ZipCode = request.ZipCode,
+                    EmergencyContactName = request.EmergencyContactName,
+                    EmergencyContactPhone = request.EmergencyContactPhone,
+                    EmergencyContactRelationship = request.EmergencyContactRelationship
                 };
+
+                // If role is not 'user' and Individual info is provided, create and link Individual
+                if (request.Role != null && request.Role != "user" && request.Individual != null)
+                {
+                    var individual = new Individual
+                    {
+                        IndividualId = Guid.NewGuid(),
+                        FullName = request.Individual.FullName,
+                        DateOfBirth = request.Individual.DateOfBirth ?? DateTime.MinValue,
+                        Gender = request.Individual.Gender,
+                        DateAdded = DateTime.UtcNow,
+                        EmergencyContacts = new List<EmergencyContact>()
+                    };
+
+                    // Add emergency contact if provided
+                    if (request.Individual.EmergencyContact != null)
+                    {
+                        individual.EmergencyContacts.Add(new EmergencyContact
+                        {
+                            Name = request.Individual.EmergencyContact.Name,
+                            Phone = request.Individual.EmergencyContact.Phone
+                        });
+                    }
+
+                    _context.Individuals.Add(individual);
+                    await _context.SaveChangesAsync();
+
+                    user.IndividualId = individual.IndividualId;
+                }
 
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
