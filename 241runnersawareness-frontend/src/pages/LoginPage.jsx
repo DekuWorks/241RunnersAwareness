@@ -62,7 +62,7 @@ const LoginPage = () => {
       
       <div className="divider"></div>
       
-      {message && <p style={{ color: 'red', textAlign: 'center' }}>{message}</p>}
+      {message && <p role="alert" aria-live="assertive" style={{ color: 'red', textAlign: 'center' }}>{message}</p>}
 
       <form onSubmit={handleTraditionalLogin}>
         <div>
