@@ -1,11 +1,22 @@
 {
-  "name": "241runnersawareness-root",
-  "private": true,
+  "name": "241runnersawareness-backend",
   "version": "1.0.0",
+  "description": "Backend API for 241 Runners Awareness with SSO",
+  "main": "Program.cs",
   "scripts": {
-    "dev": "npm --prefix 241runnersawareness-frontend run dev",
-    "build": "npm --prefix 241runnersawareness-frontend run build",
-    "preview": "npm --prefix 241runnersawareness-frontend run preview",
-    "test": "npm --prefix 241runnersawareness-frontend run test"
+    "build": "dotnet build",
+    "run": "dotnet run",
+    "test": "dotnet test"
+  },
+  "dependencies": {
+    "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.0",
+    "Microsoft.IdentityModel.Tokens": "7.0.0",
+    "System.IdentityModel.Tokens.Jwt": "7.0.0",
+    "SendGrid": "9.28.1",
+    "Twilio": "6.0.0",
+    "BCrypt.Net-Next": "4.0.3"
+  },
+  "devDependencies": {
+    "Microsoft.EntityFrameworkCore.Tools": "8.0.0"
   }
 } 

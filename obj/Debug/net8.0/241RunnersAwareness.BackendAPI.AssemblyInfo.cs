@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("241RunnersAwareness.BackendAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f2231c58c31a37d5f04cdd7ba736c7aef45476d3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+62294eee8c881dea8e47231fff611165c43bafc5")]
 [assembly: System.Reflection.AssemblyProductAttribute("241RunnersAwareness.BackendAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("241RunnersAwareness.BackendAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
