@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - 241Runners Awareness</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    body {
+      background: #ff0000;
+      min-height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .header {
+      width: 100%;
+      background: #000;
+      color: #fff;
+      text-align: center;
+      padding: 32px 0 16px 0;
+      font-size: 2.2rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .back-btn {
+      display: inline-block;
+      margin: 12px 0 0 0;
+      background: #e53935;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 18px;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .back-btn:hover {
+      background: #b71c1c;
+    }
+    .signup-container {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+      max-width: 400px;
+      width: 95%;
+      margin: 40px auto 0 auto;
+      padding: 32px 24px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .google-btn-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 18px 0 12px 0;
+      color: #888;
+      font-size: 14px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #eee;
+    }
+    .divider:not(:empty)::before {
+      margin-right: 10px;
+    }
+    .divider:not(:empty)::after {
+      margin-left: 10px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #222;
+    }
+    input[type="text"], input[type="email"], input[type="password"] {
+      padding: 10px;
+      border: 1.5px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: border 0.2s;
+    }
+    input:focus {
+      border: 1.5px solid #007bff;
+      outline: none;
+    }
+    .submit-btn {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    .submit-btn:hover {
+      background: #0056b3;
+    }
+    .message {
+      text-align: center;
+      margin: 10px 0 0 0;
+      font-size: 1rem;
+      color: #d32f2f;
+    }
+    @media (max-width: 600px) {
+      .signup-container {
+        padding: 18px 6px 18px 6px;
+      }
+      .header {
+        font-size: 1.3rem;
+        padding: 18px 0 8px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">Sign Up</div>
+  <a href="/" class="back-btn">&larr; Back to Home</a>
+  <form class="signup-container" id="signupForm">
+    <div class="google-btn-container">
+      <div id="g_id_onload"
+        data-client_id="933970195369-67fjn7t28p7q8a3grar5a46jad4mvinq.apps.googleusercontent.com"
+        data-callback="handleGoogleSignIn"
+        data-auto_prompt="false">
+      </div>
+      <div class="g_id_signin"
+        data-type="standard"
+        data-size="large"
+        data-theme="outline"
+        data-text="sign_up_with"
+        data-shape="rectangular"
+        data-logo_alignment="left">
+      </div>
+    </div>
+    <div class="divider">or</div>
+    <div class="form-group">
+      <label for="username">Username *</label>
+      <input type="text" id="username" name="username" required autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label for="email">Email *</label>
+      <input type="email" id="email" name="email" required autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label for="password">Password *</label>
+      <input type="password" id="password" name="password" required autocomplete="new-password">
+    </div>
+    <button type="submit" class="submit-btn">Continue</button>
+    <div class="message" id="message"></div>
+  </form>
+  <script>
+    // Backend API URL
+    const API_BASE_URL = 'https://api.241runnersawareness.org/api';
+
+    // Google SSO handler
+    function handleGoogleSignIn(response) {
+      const messageDiv = document.getElementById('message');
+      messageDiv.style.color = '#007bff';
+      messageDiv.textContent = 'Signing up with Google...';
+      fetch(`${API_BASE_URL}/auth/google-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ IdToken: response.credential })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          localStorage.setItem('user', JSON.stringify(data));
+          messageDiv.style.color = '#388e3c';
+          messageDiv.textContent = 'Sign up successful! Redirecting...';
+          setTimeout(() => window.location.href = '/', 1200);
+        } else {
+          messageDiv.style.color = '#d32f2f';
+          messageDiv.textContent = data.message || 'Google sign up failed.';
+        }
+      })
+      .catch(() => {
+        messageDiv.style.color = '#d32f2f';
+        messageDiv.textContent = 'Network error. Please try again.';
+      });
+    }
+
+    // Traditional signup handler (optional: POST to your backend)
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const messageDiv = document.getElementById('message');
+      messageDiv.style.color = '#007bff';
+      messageDiv.textContent = 'Signing up...';
+      // Example: POST to your backend registration endpoint
+      fetch(`${API_BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username,
+          email,
+          password
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          localStorage.setItem('user', JSON.stringify(data));
+          messageDiv.style.color = '#388e3c';
+          messageDiv.textContent = 'Sign up successful! Redirecting...';
+          setTimeout(() => window.location.href = '/', 1200);
+        } else {
+          messageDiv.style.color = '#d32f2f';
+          messageDiv.textContent = data.message || 'Sign up failed.';
+        }
+      })
+      .catch(() => {
+        messageDiv.style.color = '#d32f2f';
+        messageDiv.textContent = 'Network error. Please try again.';
+      });
+    });
+  </script>
+</body>
+</html>
