@@ -45,11 +45,10 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="form-container">
+    <div className="auth-container">
       <h2>Log In</h2>
-      <div className="divider"></div>
       
-      <div className="google-login">
+      <div className="google-auth-container">
         <GoogleLogin
           onSuccess={handleGoogleSuccess}
           onError={handleGoogleError}
@@ -57,16 +56,23 @@ const LoginPage = () => {
           shape="rectangular"
           size="large"
           logo_alignment="left"
+          theme="outline"
         />
       </div>
       
-      <div className="divider"></div>
+      <div className="divider">
+        <span>or</span>
+      </div>
       
-      {message && <p role="alert" aria-live="assertive" style={{ color: 'red', textAlign: 'center' }}>{message}</p>}
-
-      <form onSubmit={handleTraditionalLogin}>
-        <div>
-          <label htmlFor="email">Email *</label>
+      {message && (
+        <div className={message.includes('successful') ? 'success-message' : 'error-message'}>
+          {message}
+        </div>
+      )}
+      
+      <form onSubmit={handleTraditionalLogin} className="auth-form">
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
           <input
             type="email"
             id="email"
@@ -77,8 +83,9 @@ const LoginPage = () => {
             placeholder="Enter your email"
           />
         </div>
-        <div>
-          <label htmlFor="password">Password *</label>
+        
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
           <input
             type="password"
             id="password"
@@ -89,13 +96,19 @@ const LoginPage = () => {
             placeholder="Enter your password"
           />
         </div>
-        <button type="submit" disabled={loading}>
-          {loading ? 'Logging In...' : 'Continue'}
+        
+        <button 
+          type="submit" 
+          className="auth-button"
+          disabled={loading}
+        >
+          {loading ? 'Logging in...' : 'Log In'}
         </button>
       </form>
-      <p style={{ marginTop: '1rem', textAlign: 'center' }}>
-        Don't have an account? <Link to="/register" style={{ color: '#007acc' }}>Sign Up</Link>
-      </p>
+      
+      <div className="auth-links">
+        <Link to="/register">Don't have an account? Sign up</Link>
+      </div>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { GoogleLogin } from '@react-oauth/google';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { register, loginWithGoogle, reset } from '../features/auth/authSlice';
 
 // TODO: Create and import the register and googleLogin async thunks from authSlice
@@ -119,8 +119,8 @@ const RegisterPage = () => {
       case 'adoptive_parent':
         return (
           <>
-            <div>
-              <label htmlFor="relationshipToRunner">Relationship to Runner *</label>
+            <div className="form-group">
+              <label htmlFor="relationshipToRunner">Relationship to Runner</label>
               <select
                 id="relationshipToRunner"
                 name="relationshipToRunner"
@@ -139,7 +139,7 @@ const RegisterPage = () => {
                 <option value="other">Other</option>
               </select>
             </div>
-            <div>
+            <div className="form-group">
               <label htmlFor="organization">Organization (if applicable)</label>
               <input
                 type="text"
@@ -150,7 +150,7 @@ const RegisterPage = () => {
                 placeholder="Enter organization name"
               />
             </div>
-            <div>
+            <div className="form-group">
               <label htmlFor="yearsOfExperience">Years of Experience</label>
               <input
                 type="text"
@@ -166,8 +166,8 @@ const RegisterPage = () => {
       case 'aba_therapist':
         return (
           <>
-            <div>
-              <label htmlFor="licenseNumber">License Number *</label>
+            <div className="form-group">
+              <label htmlFor="licenseNumber">License Number</label>
               <input
                 type="text"
                 id="licenseNumber"
@@ -178,8 +178,8 @@ const RegisterPage = () => {
                 placeholder="Enter your license number"
               />
             </div>
-            <div>
-              <label htmlFor="organization">Organization/Clinic *</label>
+            <div className="form-group">
+              <label htmlFor="organization">Organization/Clinic</label>
               <input
                 type="text"
                 id="organization"
@@ -190,8 +190,8 @@ const RegisterPage = () => {
                 placeholder="Enter organization name"
               />
             </div>
-            <div>
-              <label htmlFor="credentials">Credentials *</label>
+            <div className="form-group">
+              <label htmlFor="credentials">Credentials</label>
               <input
                 type="text"
                 id="credentials"
@@ -202,7 +202,7 @@ const RegisterPage = () => {
                 placeholder="e.g., BCBA, LPC, etc."
               />
             </div>
-            <div>
+            <div className="form-group">
               <label htmlFor="specialization">Specialization</label>
               <input
                 type="text"
@@ -213,8 +213,8 @@ const RegisterPage = () => {
                 placeholder="e.g., Autism, ADHD, etc."
               />
             </div>
-            <div>
-              <label htmlFor="yearsOfExperience">Years of Experience *</label>
+            <div className="form-group">
+              <label htmlFor="yearsOfExperience">Years of Experience</label>
               <input
                 type="text"
                 id="yearsOfExperience"
@@ -236,10 +236,10 @@ const RegisterPage = () => {
     if (role === 'user') return null;
     
     return (
-      <div className="individual-section">
+      <div className="form-section">
         <h3>Runner Information</h3>
-        <div>
-          <label htmlFor="individualFullName">Runner's Full Name *</label>
+        <div className="form-group">
+          <label htmlFor="individualFullName">Runner's Full Name</label>
           <input
             type="text"
             id="individualFullName"
@@ -250,7 +250,7 @@ const RegisterPage = () => {
             placeholder="Enter runner's full name"
           />
         </div>
-        <div>
+        <div className="form-group">
           <label htmlFor="individualDateOfBirth">Runner's Date of Birth</label>
           <input
             type="date"
@@ -260,7 +260,7 @@ const RegisterPage = () => {
             onChange={onChange}
           />
         </div>
-        <div>
+        <div className="form-group">
           <label htmlFor="individualGender">Runner's Gender</label>
           <select
             id="individualGender"
@@ -275,7 +275,7 @@ const RegisterPage = () => {
             <option value="prefer_not_to_say">Prefer not to say</option>
           </select>
         </div>
-        <div>
+        <div className="form-group">
           <label htmlFor="individualEmergencyContactName">Runner's Emergency Contact Name</label>
           <input
             type="text"
@@ -286,7 +286,7 @@ const RegisterPage = () => {
             placeholder="Emergency contact name"
           />
         </div>
-        <div>
+        <div className="form-group">
           <label htmlFor="individualEmergencyContactPhone">Runner's Emergency Contact Phone</label>
           <input
             type="tel"
@@ -302,11 +302,10 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="form-container">
+    <div className="auth-container">
       <h2>Sign Up</h2>
-      <div className="divider"></div>
-
-      <div className="google-login">
+      
+      <div className="google-auth-container">
         <GoogleLogin
           onSuccess={handleGoogleSuccess}
           onError={handleGoogleError}
@@ -314,19 +313,26 @@ const RegisterPage = () => {
           shape="rectangular"
           size="large"
           logo_alignment="left"
+          theme="outline"
         />
       </div>
 
-      <div className="divider"></div>
+      <div className="divider">
+        <span>or</span>
+      </div>
       
-      {message && <p role="alert" aria-live="assertive" style={{ color: 'red', textAlign: 'center' }}>{message}</p>}
+      {message && (
+        <div className={message.includes('successful') ? 'success-message' : 'error-message'}>
+          {message}
+        </div>
+      )}
 
-      <form onSubmit={handleTraditionalRegister}>
+      <form onSubmit={handleTraditionalRegister} className="auth-form">
         {/* Basic Information */}
         <div className="form-section">
           <h3>Basic Information</h3>
-          <div>
-            <label htmlFor="fullName">Full Name *</label>
+          <div className="form-group">
+            <label htmlFor="fullName">Full Name</label>
             <input
               type="text"
               id="fullName"
@@ -337,8 +343,8 @@ const RegisterPage = () => {
               placeholder="Enter your full name"
             />
           </div>
-          <div>
-            <label htmlFor="email">Email *</label>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
@@ -349,8 +355,8 @@ const RegisterPage = () => {
               placeholder="Enter your email"
             />
           </div>
-          <div>
-            <label htmlFor="phoneNumber">Phone Number *</label>
+          <div className="form-group">
+            <label htmlFor="phoneNumber">Phone Number</label>
             <input
               type="tel"
               id="phoneNumber"
@@ -361,8 +367,8 @@ const RegisterPage = () => {
               placeholder="Enter your phone number"
             />
           </div>
-          <div>
-            <label htmlFor="password">Password *</label>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
             <input
               type="password"
               id="password"
@@ -378,8 +384,8 @@ const RegisterPage = () => {
         {/* Role Selection */}
         <div className="form-section">
           <h3>Account Type</h3>
-          <div>
-            <label htmlFor="role">I am a: *</label>
+          <div className="form-group">
+            <label htmlFor="role">I am a:</label>
             <select
               id="role"
               name="role"
@@ -407,7 +413,7 @@ const RegisterPage = () => {
         {/* Address Information */}
         <div className="form-section">
           <h3>Address Information</h3>
-          <div>
+          <div className="form-group">
             <label htmlFor="address">Address</label>
             <input
               type="text"
@@ -418,7 +424,7 @@ const RegisterPage = () => {
               placeholder="Enter your address"
             />
           </div>
-          <div>
+          <div className="form-group">
             <label htmlFor="city">City</label>
             <input
               type="text"
@@ -429,7 +435,7 @@ const RegisterPage = () => {
               placeholder="Enter your city"
             />
           </div>
-          <div>
+          <div className="form-group">
             <label htmlFor="state">State</label>
             <input
               type="text"
@@ -440,7 +446,7 @@ const RegisterPage = () => {
               placeholder="Enter your state"
             />
           </div>
-          <div>
+          <div className="form-group">
             <label htmlFor="zipCode">Zip Code</label>
             <input
               type="text"
@@ -456,7 +462,7 @@ const RegisterPage = () => {
         {/* Emergency Contact */}
         <div className="form-section">
           <h3>Emergency Contact</h3>
-          <div>
+          <div className="form-group">
             <label htmlFor="emergencyContactName">Emergency Contact Name</label>
             <input
               type="text"
@@ -467,7 +473,7 @@ const RegisterPage = () => {
               placeholder="Emergency contact name"
             />
           </div>
-          <div>
+          <div className="form-group">
             <label htmlFor="emergencyContactPhone">Emergency Contact Phone</label>
             <input
               type="tel"
@@ -478,7 +484,7 @@ const RegisterPage = () => {
               placeholder="Emergency contact phone"
             />
           </div>
-          <div>
+          <div className="form-group">
             <label htmlFor="emergencyContactRelationship">Relationship to You</label>
             <input
               type="text"
@@ -494,10 +500,14 @@ const RegisterPage = () => {
         {/* Individual Information */}
         {getIndividualFields()}
 
-        <button type="submit" disabled={loading}>
-          {loading ? 'Creating Account...' : 'Continue'}
+        <button type="submit" className="auth-button" disabled={loading}>
+          {loading ? 'Creating Account...' : 'Create Account'}
         </button>
       </form>
+      
+      <div className="auth-links">
+        <Link to="/login">Already have an account? Log in</Link>
+      </div>
     </div>
   );
 };

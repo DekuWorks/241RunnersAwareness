@@ -30,9 +30,16 @@ namespace _241RunnersAwareness.BackendAPI
             {
                 options.AddPolicy("AllowAll", policy =>
                 {
-                    policy.AllowAnyOrigin()
+                    policy.WithOrigins(
+                            "https://241runnersawareness.org",
+                            "https://www.241runnersawareness.org",
+                            "https://app.241runnersawareness.org",
+                            "http://localhost:3000",
+                            "http://localhost:5173"
+                          )
                           .AllowAnyMethod()
-                          .AllowAnyHeader();
+                          .AllowAnyHeader()
+                          .AllowCredentials();
                 });
             });
 

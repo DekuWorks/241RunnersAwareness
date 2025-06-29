@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout, reset } from '../features/auth/authSlice';
+import { unifiedLogout } from '../utils/authUtils';
 
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -9,10 +10,14 @@ const NavBar = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    // Use unified logout utility
+    await unifiedLogout(navigate, '/');
+    
+    // Also dispatch Redux logout for state cleanup
     dispatch(logout());
     dispatch(reset());
-    navigate('/');
+    
     setIsMenuOpen(false);
   };
 

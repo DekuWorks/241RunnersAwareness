@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
+import { API_BASE_URL } from '../../config/api';
 
-const API_URL = '/api/auth';
+const API_URL = `${API_BASE_URL}/auth`;
 
 // Async Thunks
 export const register = createAsyncThunk('auth/register', async (userData, thunkAPI) => {
@@ -40,9 +41,25 @@ export const loginWithGoogle = createAsyncThunk('auth/googleLogin', async ({ tok
   }
 });
 
-
-export const logout = createAsyncThunk('auth/logout', async () => {
-  localStorage.removeItem('user');
+export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
+  try {
+    // Clear local storage
+    localStorage.removeItem('user');
+    
+    // Revoke Google session if available
+    if (window.google && window.google.accounts) {
+      try {
+        await window.google.accounts.oauth2.revoke(localStorage.getItem('google_access_token'));
+        localStorage.removeItem('google_access_token');
+      } catch (error) {
+        console.log('Google session revocation failed:', error);
+      }
+    }
+    
+    return { success: true };
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.message);
+  }
 });
 
 const initialState = {
