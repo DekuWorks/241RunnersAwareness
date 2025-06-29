@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - 241 Runners Awareness</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main>
+    <h2>Login</h2>
+    <form id="login-form">
+      <label>Email:</label>
+      <input type="email" id="email" required />
+      <label>Password:</label>
+      <input type="password" id="password" required />
+      <button type="submit">Login</button>
+    </form>
+
+    <!-- Google SSO Login -->
+    <div id="g_id_onload"
+         data-client_id="933970195369-67fjn7t28p7q8a3grar5a46jad4mvinq.apps.googleusercontent.com"
+         data-login_uri="https://api.241runnersawareness.org/api/auth/google-login"
+         data-auto_prompt="false">
+    </div>
+
+    <div class="g_id_signin"
+         data-type="standard"
+         data-size="large"
+         data-theme="outline"
+         data-text="sign_in_with"
+         data-shape="rectangular"
+         data-logo_alignment="left">
+    </div>
+  </main>
+
+  <script>
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const res = await fetch("https://api.241runnersawareness.org/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+      if (res.ok && data.token) {
+        localStorage.setItem("token", data.token);
+        window.location.href = "/dashboard.html";
+      } else {
+        alert(data.message || "Login failed");
+      }
+    });
+  </script>
+</body>
+</html> 
