@@ -57,4 +57,15 @@ Built with React, .NET 8, and modern deployment tools, this system empowers user
 ---
 
 ## 📁 Project Structure
+├── frontend/ # React app
+├── backend/ # ASP.NET Core Web API
+├── .gitmodules # Submodules (if any)
+├── index.html # Static fallback
+├── CNAME # Custom domain mapping
+├── *.md # Docs and checklists
+
+yaml
+Copy
+Edit
+
 
