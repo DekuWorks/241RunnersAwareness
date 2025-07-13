@@ -133,35 +133,35 @@
   </style>
 </head>
 <body>
-  <header>
+  <header role="banner">
     <div class="header-bar">
-      <img src="/241-logo.jpg" alt="241 Runners Awareness Logo" class="logo" />
+      <img src="/241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
       <h1>241 Runners Awareness</h1>
     </div>
 
-    <nav>
+    <nav role="navigation" aria-label="Main navigation">
       <a href="index.html">Home</a>
       <a href="aboutus.html">About Us</a>
       <a href="signup.html">Sign Up</a>
-      <a href="login.html">Login</a>
-      <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank">Donate</a>
-      <a href="https://linktr.ee/241Runners" target="_blank">Follow Us</a>
+      <a href="login.html" aria-current="page">Login</a>
+      <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
+      <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
     </nav>
     
-    <button class="theme-toggle" id="theme-toggle">
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
       ☀️
     </button>
     
-    <button class="hamburger">
+    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-navigation">
       <span></span>
       <span></span>
       <span></span>
     </button>
   </header>
   
-  <div class="header">Login</div>
+      <h2 class="header" id="login-heading">Login</h2>
   <a href="index.html" class="back-btn">&larr; Back to Home</a>
-  <form class="login-container" id="login-form">
+  <form class="login-container" id="login-form" role="form" aria-labelledby="login-heading">
     <div class="google-btn-container">
       <div id="g_id_onload"
          data-client_id="933970195369-67fjn7t28p7q8a3grar5a46jad4mvinq.apps.googleusercontent.com"
@@ -240,6 +240,8 @@
     const nav = document.querySelector('nav');
     
     hamburger.addEventListener('click', function() {
+      const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+      hamburger.setAttribute('aria-expanded', !isExpanded);
       hamburger.classList.toggle('active');
       nav.classList.toggle('active');
     });
@@ -269,6 +271,7 @@
     if (currentTheme === 'dark') {
       body.classList.add('dark-mode');
       themeToggle.textContent = '🌙';
+      themeToggle.setAttribute('aria-pressed', 'true');
     }
     
     // Theme toggle click handler
@@ -278,9 +281,11 @@
       if (body.classList.contains('dark-mode')) {
         localStorage.setItem('theme', 'dark');
         themeToggle.textContent = '🌙';
+        themeToggle.setAttribute('aria-pressed', 'true');
       } else {
         localStorage.setItem('theme', 'light');
         themeToggle.textContent = '☀️';
+        themeToggle.setAttribute('aria-pressed', 'false');
       }
     });
   </script>
