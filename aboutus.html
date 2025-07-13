@@ -82,6 +82,17 @@
       background: #b71c1c;
     }
     
+    .form-header-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 18px;
+      margin-bottom: 0;
+    }
+    .form-header-group .back-btn {
+      margin: 0 0 12px 0;
+    }
+    
     @media (max-width: 768px) {
       .about-content {
         padding: 20px;
@@ -129,9 +140,10 @@
     </button>
   </header>
   
-  <a href="index.html" class="back-btn">&larr; Back to Home</a>
-
   <main role="main">
+    <div class="form-header-group">
+      <a href="index.html" class="back-btn">&larr; Back to Home</a>
+    </div>
     <div class="about-content">
       <h2 id="about-heading">About 241 Runners Awareness</h2>
       
