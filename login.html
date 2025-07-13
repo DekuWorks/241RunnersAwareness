@@ -199,7 +199,11 @@
       <label for="password">Password *</label>
       <input type="password" id="password" name="password" required autocomplete="current-password">
     </div>
-    <button type="submit" class="submit-btn">Login</button>
+    <div class="form-group" id="totp-group" style="display:none;">
+      <label for="totp">2FA Code</label>
+      <input type="text" id="totp" name="totp" maxlength="6" pattern="\\d{6}" autocomplete="one-time-code" placeholder="6-digit code">
+    </div>
+    <button type="submit" class="submit-btn" id="login-btn">Login</button>
     <div class="message" id="message"></div>
   </form>
   </main>
@@ -207,35 +211,66 @@
   <script>
     // Backend API URL
     const API_BASE_URL = 'https://api.241runnersawareness.org/api';
-
+    let twoFARequired = false;
+    let loginEmail = '';
     document.getElementById("login-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
+      const totp = document.getElementById("totp").value;
       const messageDiv = document.getElementById("message");
+      const totpGroup = document.getElementById("totp-group");
+      const loginBtn = document.getElementById("login-btn");
 
       messageDiv.style.color = '#007bff';
-      messageDiv.textContent = 'Logging in...';
+      messageDiv.textContent = twoFARequired ? 'Verifying 2FA...' : 'Logging in...';
+      loginBtn.disabled = true;
 
-      const res = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ email, password })
-      });
-
-      const data = await res.json();
-      if (res.ok && data.token) {
-        localStorage.setItem("token", data.token);
-        messageDiv.style.color = '#388e3c';
-        messageDiv.textContent = 'Login successful! Redirecting...';
-        setTimeout(() => {
-          window.location.href = "/dashboard.html";
-        }, 1200);
+      if (!twoFARequired) {
+        // Step 1: Password login
+        const res = await fetch(`${API_BASE_URL}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (res.ok && data.token) {
+          localStorage.setItem("token", data.token);
+          messageDiv.style.color = '#388e3c';
+          messageDiv.textContent = 'Login successful! Redirecting...';
+          setTimeout(() => { window.location.href = "/dashboard.html"; }, 1200);
+        } else if (data.requiresVerification && !data.token) {
+          // 2FA required
+          twoFARequired = true;
+          loginEmail = email;
+          totpGroup.style.display = '';
+          messageDiv.style.color = '#007bff';
+          messageDiv.textContent = 'Enter your 2FA code.';
+          loginBtn.textContent = 'Verify 2FA';
+          loginBtn.disabled = false;
+        } else {
+          messageDiv.style.color = '#d32f2f';
+          messageDiv.textContent = data.message || "Login failed";
+          loginBtn.disabled = false;
+        }
       } else {
-        messageDiv.style.color = '#d32f2f';
-        messageDiv.textContent = data.message || "Login failed";
+        // Step 2: 2FA verification
+        const res = await fetch(`${API_BASE_URL}/auth/2fa/verify`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: loginEmail, totp })
+        });
+        const data = await res.json();
+        if (res.ok && data.token) {
+          localStorage.setItem("token", data.token);
+          messageDiv.style.color = '#388e3c';
+          messageDiv.textContent = '2FA successful! Redirecting...';
+          setTimeout(() => { window.location.href = "/dashboard.html"; }, 1200);
+        } else {
+          messageDiv.style.color = '#d32f2f';
+          messageDiv.textContent = data.message || "2FA failed";
+          loginBtn.disabled = false;
+        }
       }
     });
 

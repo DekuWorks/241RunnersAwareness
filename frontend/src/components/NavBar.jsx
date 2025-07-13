@@ -27,14 +27,23 @@ const NavBar = () => {
 
   return (
     <header>
-      <h1>
-        <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>
-          241Runners Awareness
-        </Link>
-      </h1>
+      <div className="header-bar">
+        <div className="traffic-lights">
+          <span className="dot red"></span>
+          <span className="dot yellow"></span>
+          <span className="dot green"></span>
+        </div>
+        <img src="/241-logo.jpg" alt="241 Runners Awareness Logo" />
+        <h1>
+          <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>
+            241Runners Awareness
+          </Link>
+        </h1>
+      </div>
+      
       <nav className="navbar">
         <button 
-          className="toggle-button" 
+          className="hamburger" 
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-controls="nav-links"
           aria-expanded={isMenuOpen}
@@ -45,22 +54,24 @@ const NavBar = () => {
           <span></span>
         </button>
         <div className={`nav-links ${isMenuOpen ? 'active' : ''}`} id="nav-links">
-          <Link to="/" className="home" onClick={closeMenu}>Home</Link>
-          <a href="https://www.241runnersawareness.org/about_us.html" className="about" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>About Us</a>
-          <a href="https://linktr.ee/241Runners" className="socials" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>Socials</a>
-          <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" className="donate" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>Donate</a>
+          <Link to="/" onClick={closeMenu}>Home</Link>
+          <a href="https://www.241runnersawareness.org/about_us.html" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>About Us</a>
+          <Link to="/cases" onClick={closeMenu}>Cases</Link>
+          <Link to="/map" onClick={closeMenu}>Map</Link>
+          <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>Socials</a>
+          <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>Donate</a>
 
           {user ? (
             <>
-              {user.role === 'admin' && <Link to="/admin" className="login" onClick={closeMenu}>Admin</Link>}
-              <button onClick={handleLogout} className="logout">
+              {user.role === 'admin' && <Link to="/admin" onClick={closeMenu}>Admin</Link>}
+              <button onClick={handleLogout}>
                 Logout
               </button>
             </>
           ) : (
             <>
-              <Link to="/login" className="login" onClick={closeMenu}>Log In</Link>
-              <Link to="/register" className="signup" onClick={closeMenu}>Sign Up</Link>
+              <Link to="/login" onClick={closeMenu}>Log In</Link>
+              <Link to="/register" onClick={closeMenu}>Sign Up</Link>
             </>
           )}
         </div>

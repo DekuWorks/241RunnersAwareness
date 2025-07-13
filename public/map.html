@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map View - 241 Runners Awareness</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        #map {
+            height: 70vh;
+            width: 100%;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .map-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .map-controls button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background: var(--accent-color);
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .map-controls button:hover {
+            background: var(--accent-hover);
+        }
+        
+        .map-controls select {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        .runner-popup {
+            text-align: center;
+        }
+        
+        .runner-popup h3 {
+            margin: 0 0 10px 0;
+            color: var(--accent-color);
+        }
+        
+        .runner-popup p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-found { background: #ff6b6b; color: white; }
+        .status-missing { background: #ffa500; color: white; }
+        .status-safe { background: #51cf66; color: white; }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+        
+        .error {
+            background: #ff6b6b;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <div class="nav-content">
+                <div class="nav-brand">
+                    <img src="241-logo.jpg" alt="241 Runners Awareness Logo" class="nav-logo">
+                    <span class="nav-title">241 Runners Awareness</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="aboutus.html">About Us</a></li>
+                    <li><a href="cases.html">Cases</a></li>
+                    <li><a href="map.html" class="active">Map</a></li>
+                    <li><a href="login.html">Login</a></li>
+                    <li><a href="signup.html">Sign Up</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <button class="theme-toggle" aria-label="Toggle dark mode">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div class="back-home-container">
+                <a href="index.html" class="back-home-btn">← Back to Home</a>
+            </div>
+
+            <h1>Map View</h1>
+            <p>View the locations of all registered runners on an interactive map.</p>
+
+            <div class="map-controls">
+                <button id="refreshBtn">🔄 Refresh Data</button>
+                <select id="statusFilter">
+                    <option value="">All Statuses</option>
+                    <option value="Found">Found</option>
+                    <option value="Missing">Missing</option>
+                    <option value="Safe">Safe</option>
+                </select>
+                <button id="centerMapBtn">📍 Center Map</button>
+                <button id="toggleClustersBtn">🗂️ Toggle Clusters</button>
+            </div>
+
+            <div id="loading" class="loading">
+                Loading map data...
+            </div>
+
+            <div id="error" class="error" style="display: none;"></div>
+
+            <div id="map"></div>
+
+            <div id="noData" class="no-data" style="display: none;">
+                No location data available. Runners need to have latitude and longitude coordinates to appear on the map.
+            </div>
+
+            <div class="map-info">
+                <h3>Map Legend</h3>
+                <div class="legend">
+                    <div class="legend-item">
+                        <span class="status-badge status-found">Found</span>
+                        <span>Runner has been found</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="status-badge status-missing">Missing</span>
+                        <span>Runner is currently missing</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="status-badge status-safe">Safe</span>
+                        <span>Runner is safe</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2024 241 Runners Awareness. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <script src="scripts.js"></script>
+    <script>
+        let map;
+        let markers = [];
+        let markerClusterGroup;
+        let currentData = [];
+
+        // Initialize map
+        function initMap() {
+            map = L.map('map').setView([39.8283, -98.5795], 4); // Center of USA
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            markerClusterGroup = L.markerClusterGroup();
+            map.addLayer(markerClusterGroup);
+        }
+
+        // Create custom markers based on status
+        function createCustomMarker(lat, lng, status) {
+            const colors = {
+                'Found': '#ff6b6b',
+                'Missing': '#ffa500', 
+                'Safe': '#51cf66'
+            };
+            
+            const color = colors[status] || '#666';
+            
+            return L.circleMarker([lat, lng], {
+                radius: 8,
+                fillColor: color,
+                color: '#fff',
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.8
+            });
+        }
+
+        // Create popup content
+        function createPopupContent(runner) {
+            const statusClass = runner.currentStatus?.toLowerCase().replace(/\s+/g, '-') || 'unknown';
+            return `
+                <div class="runner-popup">
+                    <h3>${runner.fullName}</h3>
+                    <p><strong>Status:</strong> <span class="status-badge status-${statusClass}">${runner.currentStatus || 'Unknown'}</span></p>
+                    <p><strong>Age:</strong> ${calculateAge(runner.dateOfBirth)} years old</p>
+                    <p><strong>Gender:</strong> ${runner.gender || 'Not specified'}</p>
+                    ${runner.address ? `<p><strong>Address:</strong> ${runner.address}</p>` : ''}
+                    ${runner.city && runner.state ? `<p><strong>Location:</strong> ${runner.city}, ${runner.state}</p>` : ''}
+                    <p><strong>Added:</strong> ${new Date(runner.dateAdded).toLocaleDateString()}</p>
+                </div>
+            `;
+        }
+
+        // Calculate age from date of birth
+        function calculateAge(dateOfBirth) {
+            if (!dateOfBirth) return 'Unknown';
+            const birthDate = new Date(dateOfBirth);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
+        // Load and display runners data
+        async function loadRunnersData() {
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error');
+            const noDataEl = document.getElementById('noData');
+            
+            loadingEl.style.display = 'block';
+            errorEl.style.display = 'none';
+            noDataEl.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/individuals');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                currentData = data.filter(runner => 
+                    runner.latitude && runner.longitude && 
+                    runner.latitude !== 0 && runner.longitude !== 0
+                );
+
+                if (currentData.length === 0) {
+                    loadingEl.style.display = 'none';
+                    noDataEl.style.display = 'block';
+                    return;
+                }
+
+                displayRunners(currentData);
+                loadingEl.style.display = 'none';
+                
+            } catch (error) {
+                console.error('Error loading runners data:', error);
+                loadingEl.style.display = 'none';
+                errorEl.style.display = 'block';
+                errorEl.textContent = `Error loading data: ${error.message}`;
+            }
+        }
+
+        // Display runners on map
+        function displayRunners(runners) {
+            // Clear existing markers
+            markerClusterGroup.clearLayers();
+            markers = [];
+
+            runners.forEach(runner => {
+                const marker = createCustomMarker(
+                    runner.latitude, 
+                    runner.longitude, 
+                    runner.currentStatus
+                );
+                
+                const popupContent = createPopupContent(runner);
+                marker.bindPopup(popupContent);
+                
+                markerClusterGroup.addLayer(marker);
+                markers.push(marker);
+            });
+        }
+
+        // Filter runners by status
+        function filterRunners() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            let filteredData = currentData;
+            
+            if (statusFilter) {
+                filteredData = currentData.filter(runner => 
+                    runner.currentStatus === statusFilter
+                );
+            }
+            
+            displayRunners(filteredData);
+        }
+
+        // Center map on all markers
+        function centerMap() {
+            if (markers.length > 0) {
+                const group = new L.featureGroup(markers);
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+        }
+
+        // Toggle marker clustering
+        function toggleClusters() {
+            if (map.hasLayer(markerClusterGroup)) {
+                map.removeLayer(markerClusterGroup);
+                markers.forEach(marker => map.addLayer(marker));
+            } else {
+                markers.forEach(marker => map.removeLayer(marker));
+                map.addLayer(markerClusterGroup);
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            initMap();
+            loadRunnersData();
+
+            document.getElementById('refreshBtn').addEventListener('click', loadRunnersData);
+            document.getElementById('statusFilter').addEventListener('change', filterRunners);
+            document.getElementById('centerMapBtn').addEventListener('click', centerMap);
+            document.getElementById('toggleClustersBtn').addEventListener('click', toggleClusters);
+        });
+    </script>
+</body>
+</html> 

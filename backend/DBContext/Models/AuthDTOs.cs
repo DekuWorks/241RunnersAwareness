@@ -128,4 +128,52 @@ namespace _241RunnersAwareness.BackendAPI.Models
         public string Name { get; set; }
         public string Phone { get; set; }
     }
+
+    // 2FA DTOs
+    public class SetupTwoFactorRequest
+    {
+        [Required]
+        public string Email { get; set; }
+    }
+
+    public class SetupTwoFactorResponse
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public string QrCodeUrl { get; set; }
+        public string Secret { get; set; }
+        public List<string> BackupCodes { get; set; }
+    }
+
+    public class VerifyTwoFactorRequest
+    {
+        [Required]
+        public string Email { get; set; }
+        [Required]
+        public string Totp { get; set; }
+    }
+
+    public class VerifyTwoFactorResponse
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public string Token { get; set; }
+        public UserDto User { get; set; }
+    }
+
+    public class DisableTwoFactorRequest
+    {
+        [Required]
+        public string Email { get; set; }
+        [Required]
+        public string Totp { get; set; }
+    }
+
+    public class BackupCodeRequest
+    {
+        [Required]
+        public string Email { get; set; }
+        [Required]
+        public string BackupCode { get; set; }
+    }
 } 

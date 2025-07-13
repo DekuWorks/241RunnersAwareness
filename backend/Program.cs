@@ -68,6 +68,8 @@ namespace _241RunnersAwareness.BackendAPI
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<ISmsService, SmsService>();
+            builder.Services.AddScoped<ICsvExportService, CsvExportService>();
+            builder.Services.AddScoped<ITwoFactorService, TwoFactorService>();
 
             // 🚀 ADD Swagger service here
             builder.Services.AddEndpointsApiExplorer();

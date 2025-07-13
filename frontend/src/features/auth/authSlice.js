@@ -41,6 +41,19 @@ export const loginWithGoogle = createAsyncThunk('auth/googleLogin', async ({ tok
   }
 });
 
+export const loginWith2FA = createAsyncThunk('auth/loginWith2FA', async ({ email, totp }, thunkAPI) => {
+  try {
+    const response = await axios.post(`${API_URL}/2fa/verify`, { email, totp });
+    if (response.data.token) {
+      localStorage.setItem('user', JSON.stringify(response.data));
+    }
+    return response.data;
+  } catch (error) {
+    const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
 export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
   try {
     // Clear local storage
@@ -67,6 +80,8 @@ const initialState = {
   loading: false,
   error: null,
   isSuccess: false,
+  twoFARequired: false,
+  twoFAEmail: '',
 };
 
 const authSlice = createSlice({
@@ -77,6 +92,8 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = null;
       state.isSuccess = false;
+      state.twoFARequired = false;
+      state.twoFAEmail = '';
     }
   },
   extraReducers: (builder) => {
@@ -96,16 +113,27 @@ const authSlice = createSlice({
       })
       .addCase(login.pending, (state) => {
         state.loading = true;
+        state.twoFARequired = false;
+        state.twoFAEmail = '';
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
-        state.isSuccess = true;
-        state.user = action.payload;
+        if (action.payload && action.payload.requiresVerification && !action.payload.token) {
+          // 2FA required, do not set user yet
+          state.twoFARequired = true;
+          state.twoFAEmail = action.meta.arg.email;
+          state.user = null;
+        } else {
+          state.isSuccess = true;
+          state.user = action.payload;
+        }
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         state.user = null;
+        state.twoFARequired = false;
+        state.twoFAEmail = '';
       })
       .addCase(loginWithGoogle.pending, (state) => {
         state.loading = true;
@@ -116,6 +144,21 @@ const authSlice = createSlice({
         state.user = action.payload;
       })
       .addCase(loginWithGoogle.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.user = null;
+      })
+      .addCase(loginWith2FA.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(loginWith2FA.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isSuccess = true;
+        state.user = action.payload;
+        state.twoFARequired = false;
+        state.twoFAEmail = '';
+      })
+      .addCase(loginWith2FA.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         state.user = null;

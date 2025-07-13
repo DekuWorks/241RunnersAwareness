@@ -19,17 +19,20 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
         private readonly IAuthService _authService;
         private readonly IEmailService _emailService;
         private readonly ISmsService _smsService;
+        private readonly ITwoFactorService _twoFactorService;
 
         public AuthController(
             RunnersDbContext context,
             IAuthService authService,
             IEmailService emailService,
-            ISmsService smsService)
+            ISmsService smsService,
+            ITwoFactorService twoFactorService)
         {
             _context = context;
             _authService = authService;
             _emailService = emailService;
             _smsService = smsService;
+            _twoFactorService = twoFactorService;
         }
 
         [HttpPost("register")]
@@ -408,6 +411,280 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                     Success = false,
                     Message = "An error occurred while resending verification."
                 });
+            }
+        }
+
+        // 2FA Setup
+        [HttpPost("2fa/setup")]
+        public async Task<ActionResult<SetupTwoFactorResponse>> SetupTwoFactor(SetupTwoFactorRequest request)
+        {
+            try
+            {
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == request.Email && u.IsActive);
+
+                if (user == null)
+                {
+                    return BadRequest(new SetupTwoFactorResponse
+                    {
+                        Success = false,
+                        Message = "User not found."
+                    });
+                }
+
+                if (user.TwoFactorEnabled)
+                {
+                    return BadRequest(new SetupTwoFactorResponse
+                    {
+                        Success = false,
+                        Message = "Two-factor authentication is already enabled."
+                    });
+                }
+
+                var secret = _twoFactorService.GenerateSecret();
+                var qrCodeUrl = _twoFactorService.GenerateQrCodeUrl(user.Email, secret);
+                var backupCodes = _twoFactorService.GenerateBackupCodes();
+
+                user.TwoFactorSecret = secret;
+                user.TwoFactorBackupCodes = backupCodes;
+                user.TwoFactorSetupDate = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                var backupCodesList = System.Text.Json.JsonSerializer.Deserialize<List<string>>(backupCodes);
+
+                return Ok(new SetupTwoFactorResponse
+                {
+                    Success = true,
+                    Message = "Two-factor authentication setup successful.",
+                    QrCodeUrl = qrCodeUrl,
+                    Secret = secret,
+                    BackupCodes = backupCodesList
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new SetupTwoFactorResponse
+                {
+                    Success = false,
+                    Message = "An error occurred during 2FA setup."
+                });
+            }
+        }
+
+        // 2FA Verification
+        [HttpPost("2fa/verify")]
+        public async Task<ActionResult<VerifyTwoFactorResponse>> VerifyTwoFactor(VerifyTwoFactorRequest request)
+        {
+            try
+            {
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == request.Email && u.IsActive);
+
+                if (user == null)
+                {
+                    return BadRequest(new VerifyTwoFactorResponse
+                    {
+                        Success = false,
+                        Message = "User not found."
+                    });
+                }
+
+                if (!user.TwoFactorEnabled)
+                {
+                    return BadRequest(new VerifyTwoFactorResponse
+                    {
+                        Success = false,
+                        Message = "Two-factor authentication is not enabled."
+                    });
+                }
+
+                if (string.IsNullOrEmpty(user.TwoFactorSecret))
+                {
+                    return BadRequest(new VerifyTwoFactorResponse
+                    {
+                        Success = false,
+                        Message = "Two-factor authentication is not properly configured."
+                    });
+                }
+
+                // Check if it's a backup code
+                if (_twoFactorService.ValidateBackupCode(user.TwoFactorBackupCodes, request.Totp))
+                {
+                    // Remove used backup code
+                    user.TwoFactorBackupCodes = _twoFactorService.RemoveUsedBackupCode(user.TwoFactorBackupCodes, request.Totp);
+                    await _context.SaveChangesAsync();
+                }
+                else if (!_twoFactorService.ValidateTotp(user.TwoFactorSecret, request.Totp))
+                {
+                    return BadRequest(new VerifyTwoFactorResponse
+                    {
+                        Success = false,
+                        Message = "Invalid two-factor authentication code."
+                    });
+                }
+
+                // Update last login
+                user.LastLoginAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+
+                var token = _authService.GenerateJwtToken(user);
+
+                return Ok(new VerifyTwoFactorResponse
+                {
+                    Success = true,
+                    Message = "Two-factor authentication successful.",
+                    Token = token,
+                    User = _authService.MapToUserDto(user)
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new VerifyTwoFactorResponse
+                {
+                    Success = false,
+                    Message = "An error occurred during 2FA verification."
+                });
+            }
+        }
+
+        // Enable 2FA
+        [HttpPost("2fa/enable")]
+        public async Task<ActionResult<AuthResponse>> EnableTwoFactor(VerifyTwoFactorRequest request)
+        {
+            try
+            {
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == request.Email && u.IsActive);
+
+                if (user == null)
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "User not found."
+                    });
+                }
+
+                if (string.IsNullOrEmpty(user.TwoFactorSecret))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Two-factor authentication is not set up."
+                    });
+                }
+
+                if (!_twoFactorService.ValidateTotp(user.TwoFactorSecret, request.Totp))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Invalid two-factor authentication code."
+                    });
+                }
+
+                user.TwoFactorEnabled = true;
+                await _context.SaveChangesAsync();
+
+                return Ok(new AuthResponse
+                {
+                    Success = true,
+                    Message = "Two-factor authentication enabled successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new AuthResponse
+                {
+                    Success = false,
+                    Message = "An error occurred while enabling 2FA."
+                });
+            }
+        }
+
+        // Disable 2FA
+        [HttpPost("2fa/disable")]
+        public async Task<ActionResult<AuthResponse>> DisableTwoFactor(DisableTwoFactorRequest request)
+        {
+            try
+            {
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == request.Email && u.IsActive);
+
+                if (user == null)
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "User not found."
+                    });
+                }
+
+                if (!user.TwoFactorEnabled)
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Two-factor authentication is not enabled."
+                    });
+                }
+
+                if (!_twoFactorService.ValidateTotp(user.TwoFactorSecret, request.Totp))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Invalid two-factor authentication code."
+                    });
+                }
+
+                user.TwoFactorEnabled = false;
+                user.TwoFactorSecret = null;
+                user.TwoFactorBackupCodes = null;
+                user.TwoFactorSetupDate = null;
+                await _context.SaveChangesAsync();
+
+                return Ok(new AuthResponse
+                {
+                    Success = true,
+                    Message = "Two-factor authentication disabled successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new AuthResponse
+                {
+                    Success = false,
+                    Message = "An error occurred while disabling 2FA."
+                });
+            }
+        }
+
+        // Get 2FA Status
+        [HttpGet("2fa/status/{email}")]
+        public async Task<ActionResult<object>> GetTwoFactorStatus(string email)
+        {
+            try
+            {
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == email && u.IsActive);
+
+                if (user == null)
+                {
+                    return NotFound(new { message = "User not found." });
+                }
+
+                return Ok(new
+                {
+                    TwoFactorEnabled = user.TwoFactorEnabled,
+                    TwoFactorSetupDate = user.TwoFactorSetupDate,
+                    HasSecret = !string.IsNullOrEmpty(user.TwoFactorSecret)
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while getting 2FA status." });
             }
         }
     }

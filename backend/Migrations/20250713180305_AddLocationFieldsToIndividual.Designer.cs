@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using _241RunnersAwareness.BackendAPI.Data;
 
@@ -11,9 +12,11 @@ using _241RunnersAwareness.BackendAPI.Data;
 namespace _241RunnersAwareness.BackendAPI.Migrations
 {
     [DbContext(typeof(RunnersDbContext))]
-    partial class RunnersDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250713180305_AddLocationFieldsToIndividual")]
+    partial class AddLocationFieldsToIndividual
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,18 +232,6 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
 
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TwoFactorBackupCodes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("TwoFactorSecret")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("TwoFactorSetupDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Username")
                         .IsRequired()

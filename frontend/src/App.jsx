@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
+import Cases from "./pages/Cases";
+import Map from "./pages/Map";
 import AdminDashboard from "./pages/AdminDashboard";
 import UsersPage from "./pages/UsersPage";
 import SettingsPage from "./pages/SettingsPage";
@@ -16,6 +18,8 @@ function App() {
         {/* Public Layout with NavBar */}
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
+          <Route path="cases" element={<Cases />} />
+          <Route path="map" element={<Map />} />
           <Route path="register" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
 

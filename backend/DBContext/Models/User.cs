@@ -62,6 +62,12 @@ namespace _241RunnersAwareness.BackendAPI.Models
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiry { get; set; }
         
+        // 2FA fields
+        public bool TwoFactorEnabled { get; set; } = false;
+        public string? TwoFactorSecret { get; set; }
+        public string? TwoFactorBackupCodes { get; set; } // JSON array of backup codes
+        public DateTime? TwoFactorSetupDate { get; set; }
+        
         // Navigation properties
         public Individual? Individual { get; set; }
         public Guid? IndividualId { get; set; }

@@ -1,135 +1,400 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color-scheme: light dark;
-  color: #222;
-  background-color: #fff;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
+/* ===== Reset & Base Styles ===== */
 body {
   margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
   font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #ff3333 0%, #fff700 50%, #00c853 100%);
-  color: #222;
+  background: #ff0000; /* Default red background */
+  color: #000;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
+/* Dark mode styles */
+body.dark-mode {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+/* ===== Header ===== */
 header {
   background: #000;
   color: #fff;
-  text-align: center;
-  width: 100%;
+  padding: 0 20px 10px;
+  position: sticky;
+  top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.26);
-  padding-bottom: 10px;
-}
-
-h1 {
-  font-size: 2.2em;
+  transition: all 0.3s ease;
+  width: 100%;
   margin: 0;
-  padding: 16px 0 8px 0;
-  text-align: center;
-  background: #000;
-  color: #fff;
-  letter-spacing: 2px;
 }
 
-nav.navbar {
+/* Sticky header with scroll effect */
+header.scrolled {
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+  padding: 0 20px 5px;
+}
+
+/* Dark mode header */
+body.dark-mode header {
+  background: #2d2d2d;
+}
+
+body.dark-mode header.scrolled {
+  background: rgba(45, 45, 45, 0.95);
+}
+
+.header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding-top: 15px;
+  position: relative;
+  width: 100%;
+  margin: 0;
+}
+
+img {
+  width: 50px;
+  height: 50px;
+  border: 2px solid #fff;
+}
+
+/* ===== Traffic Light Dots ===== */
+.traffic-lights {
+  display: flex;
+  gap: 6px;
+  position: absolute;
+  left: 20px;
+  top: 18px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.red {
+  background-color: #ff4d4d;
+}
+.yellow {
+  background-color: #ffcc00;
+}
+.green {
+  background-color: #33cc33;
+}
+
+/* ===== Navbar ===== */
+nav {
+  background: #111;
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 12px 0;
+  flex-wrap: wrap;
+}
+
+/* Dark mode navigation */
+body.dark-mode nav {
+  background: #333;
+}
+
+/* Hamburger menu button */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  padding: 5px;
+  background: none;
+  border: none;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  z-index: 1001;
+}
+
+.hamburger span {
+  width: 25px;
+  height: 3px;
+  background: #fff;
+  margin: 3px 0;
+  transition: 0.3s;
+  border-radius: 2px;
+}
+
+/* Hamburger animation */
+.hamburger.active span:nth-child(1) {
+  transform: rotate(-45deg) translate(-5px, 6px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(45deg) translate(-5px, -6px);
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ===== Traffic Light Hover Shades ===== */
+nav a:nth-child(1):hover {
+  background-color: #e63946; /* Cherry Red */
+  color: #fff;
+}
+nav a:nth-child(2):hover {
+  background-color: #b00020; /* Deep Red */
+  color: #fff;
+}
+nav a:nth-child(3):hover {
+  background-color: #ffdd57; /* Bright Yellow */
+  color: #000;
+}
+nav a:nth-child(4):hover {
+  background-color: #f4c430; /* Gold Yellow */
+  color: #000;
+}
+nav a:nth-child(5):hover {
+  background-color: #38b000; /* Mint Green */
+  color: #fff;
+}
+nav a:nth-child(6):hover {
+  background-color: #2d6a4f; /* Emerald Green */
+  color: #fff;
+}
+
+/* Optional Glow on Hover */
+nav a:hover {
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== Main Content ===== */
+main {
+  padding: 40px 20px;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  min-height: 60vh;
+  flex: 1;
+}
+
+section {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+/* Dark mode section */
+body.dark-mode section {
+  background: #2d2d2d;
+  color: #fff;
+}
+
+/* ===== Theme Toggle ===== */
+.theme-toggle {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+  z-index: 1002;
+}
+
+.theme-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .theme-toggle {
+  color: #fff;
+}
+
+/* ===== Footer ===== */
+footer {
   background: #000;
-  padding: 10px 0;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+  margin-top: auto;
+}
+
+body.dark-mode footer {
+  background: #2d2d2d;
+}
+
+/* ===== Form Styling ===== */
+.form-header-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.form-header-group .form-title {
+  margin: 0;
+  color: #333;
+}
+
+.back-button {
+  margin-bottom: 20px;
+}
+
+.back-button a {
+  display: inline-flex;
+  align-items: center;
+  color: #666;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+  background: #f5f5f5;
+}
+
+.back-button a:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex;
+  }
+
+  .theme-toggle {
+    right: 60px;
+  }
+
+  nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #111;
+    flex-direction: column;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  nav.active {
+    display: flex;
+  }
+
+  nav a {
+    padding: 12px 16px;
+    margin: 4px 0;
+    text-align: center;
+  }
+
+  .header-bar {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .header-bar h1 {
+    font-size: 1.5em;
+  }
+
+  main {
+    padding: 20px 10px;
+  }
+
+  section {
+    padding: 20px;
+    margin: 10px;
+  }
+}
+
+/* ===== React-specific styling ===== */
+.navbar {
+  background: #111;
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 12px 0;
+  flex-wrap: wrap;
 }
 
 .nav-links {
   display: flex;
-  gap: 16px;
+  gap: 1.5rem;
+  align-items: center;
 }
 
 .nav-links a, .nav-links button {
   color: #fff;
   text-decoration: none;
-  padding: 10px 28px;
-  border-radius: 24px;
   font-weight: bold;
-  font-size: 1.1em;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease, color 0.3s ease;
   border: none;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  background: none;
   cursor: pointer;
+  font-size: inherit;
 }
 
-.nav-links .about {
-  background: #ff3333;
-}
-.nav-links .about:hover {
-  background: #c62828;
-}
-
-.nav-links .socials {
-  background: #fff700;
-  color: #222;
-}
-.nav-links .socials:hover {
-  background: #ffe066;
-  color: #222;
-}
-
-.nav-links .donate {
-  background: #00c853;
-}
-.nav-links .donate:hover {
-  background: #009624;
-}
-
-.nav-links .login {
-  background: #1976d2;
-}
-.nav-links .login:hover {
-  background: #0d47a1;
-}
-
-.nav-links .signup {
-  background: #222;
+/* Traffic Light Hover Shades for React nav */
+.nav-links a:nth-child(1):hover,
+.nav-links button:nth-child(1):hover {
+  background-color: #e63946; /* Cherry Red */
   color: #fff;
 }
-.nav-links .signup:hover {
-  background: #444;
-}
-
-.nav-links .logout {
-  background: #ff3333;
-}
-.nav-links .logout:hover {
-  background: #c62828;
-}
-
-main {
-  min-height: 80vh;
-  padding: 32px 0 24px 0;
-}
-
-footer {
-  background: #000;
+.nav-links a:nth-child(2):hover,
+.nav-links button:nth-child(2):hover {
+  background-color: #b00020; /* Deep Red */
   color: #fff;
-  text-align: center;
-  padding: 18px 0 10px 0;
-  font-size: 1em;
-  margin-top: 32px;
+}
+.nav-links a:nth-child(3):hover,
+.nav-links button:nth-child(3):hover {
+  background-color: #ffdd57; /* Bright Yellow */
+  color: #000;
+}
+.nav-links a:nth-child(4):hover,
+.nav-links button:nth-child(4):hover {
+  background-color: #f4c430; /* Gold Yellow */
+  color: #000;
+}
+.nav-links a:nth-child(5):hover,
+.nav-links button:nth-child(5):hover {
+  background-color: #38b000; /* Mint Green */
+  color: #fff;
+}
+.nav-links a:nth-child(6):hover,
+.nav-links button:nth-child(6):hover {
+  background-color: #2d6a4f; /* Emerald Green */
+  color: #fff;
 }
 
+/* Optional Glow on Hover for React nav */
+.nav-links a:hover,
+.nav-links button:hover {
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Form styling for React components */
 .form-container {
   max-width: 600px;
   margin: 32px auto;
@@ -221,194 +486,274 @@ footer {
   cursor: not-allowed;
 }
 
-.form-container .divider {
-  height: 1px;
-  background: #eee;
-  margin: 20px 0;
-  position: relative;
+/* Map page styling */
+.map-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.form-container .divider::before {
-  content: "or";
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #fff;
-  padding: 0 10px;
-  color: #666;
-  font-size: 14px;
+.back-home-container {
+  margin-bottom: 20px;
 }
 
-.form-container .google-login {
-  display: flex;
-  justify-content: center;
-  margin: 20px 0;
-}
-
-@media screen and (max-width: 768px) {
-  .form-container {
-    margin: 10px;
-    padding: 10px;
-  }
-  .form-section,
-  .individual-section {
-    padding: 8px;
-  }
-  nav.navbar {
-    flex-direction: column;
-    gap: 8px;
-  }
-  .nav-links {
-    flex-direction: column;
-    gap: 8px;
-  }
-}
-
-/* =============================
-   SHARED AUTHENTICATION STYLES
-============================= */
-.auth-container {
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 30px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.auth-container h2 {
-  text-align: center;
-  margin-bottom: 30px;
-  color: #333;
-}
-
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-group label {
-  font-weight: 600;
-  color: #555;
-  font-size: 14px;
-}
-
-.form-group input,
-.form-group select {
-  padding: 12px;
-  border: 2px solid #e1e5e9;
-  border-radius: 6px;
-  font-size: 16px;
-  transition: border-color 0.3s ease;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-}
-
-.auth-button {
-  background: #007bff;
-  color: white;
-  padding: 12px;
+.back-home-btn {
+  background: #333;
+  color: #fff;
   border: none;
+  padding: 10px 20px;
   border-radius: 6px;
-  font-size: 16px;
-  font-weight: 600;
   cursor: pointer;
+  font-weight: bold;
   transition: background-color 0.3s ease;
 }
 
-.auth-button:hover {
-  background: #0056b3;
+.back-home-btn:hover {
+  background: #555;
 }
 
-.auth-button:disabled {
-  background: #6c757d;
-  cursor: not-allowed;
-}
-
-.google-auth-container {
+.map-controls {
   display: flex;
-  justify-content: center;
-  margin: 20px 0;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
-.divider {
+.control-btn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.control-btn:hover {
+  background: #0d47a1;
+}
+
+.control-select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.map-container {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.map-info {
+  margin-top: 20px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.legend {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.legend-item {
   display: flex;
   align-items: center;
-  text-align: center;
-  margin: 20px 0;
-  color: #6c757d;
+  gap: 8px;
 }
 
-.divider::before,
-.divider::after {
-  content: '';
-  flex: 1;
-  border-bottom: 1px solid #e1e5e9;
-}
-
-.divider span {
-  padding: 0 10px;
-  background: white;
-  font-size: 14px;
-}
-
-.error-message {
-  color: #dc3545;
-  background: #f8d7da;
-  border: 1px solid #f5c6cb;
+.status-badge {
+  padding: 4px 8px;
   border-radius: 4px;
-  padding: 10px;
-  margin: 10px 0;
-  text-align: center;
+  font-weight: bold;
+  font-size: 0.9em;
 }
 
-.success-message {
-  color: #155724;
-  background: #d4edda;
-  border: 1px solid #c3e6cb;
+.status-found {
+  background: #ff6b6b;
+  color: #fff;
+}
+
+.status-missing {
+  background: #ffa500;
+  color: #fff;
+}
+
+.status-safe {
+  background: #51cf66;
+  color: #fff;
+}
+
+/* Cases page styling */
+.cases-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.cases-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.search-filter-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
   border-radius: 4px;
-  padding: 10px;
-  margin: 10px 0;
+  min-width: 200px;
+}
+
+.filter-select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.export-btn {
+  background: #00c853;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.export-btn:hover {
+  background: #009624;
+}
+
+.cases-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.cases-table th,
+.cases-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.cases-table th {
+  background: #f5f5f5;
+  font-weight: bold;
+}
+
+.cases-table tr:hover {
+  background: #f9f9f9;
+}
+
+/* Loading and error states */
+.loading {
   text-align: center;
+  padding: 40px;
+  font-size: 1.2em;
+  color: #666;
 }
 
-.auth-links {
+.error {
   text-align: center;
-  margin-top: 20px;
+  padding: 40px;
+  color: #d32f2f;
+  background: #ffebee;
+  border-radius: 8px;
+  margin: 20px;
 }
 
-.auth-links a {
-  color: #007bff;
-  text-decoration: none;
-  margin: 0 10px;
+.no-data {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  background: #f5f5f5;
+  border-radius: 8px;
+  margin: 20px;
 }
 
-.auth-links a:hover {
-  text-decoration: underline;
-}
-
-/* Mobile responsive auth styles */
-@media (max-width: 480px) {
-  .auth-container {
-    margin: 20px;
+/* Responsive design for React components */
+@media (max-width: 768px) {
+  .navbar {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #111;
+    flex-direction: column;
     padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   }
-  
-  .form-group input,
-  .form-group select {
-    font-size: 16px; /* Prevents zoom on iOS */
+
+  .navbar.active {
+    display: flex;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .nav-links a,
+  .nav-links button {
+    padding: 12px 16px;
+    margin: 4px 0;
+    text-align: center;
+  }
+
+  .form-container {
+    margin: 16px;
+    padding: 20px 16px 16px 16px;
+  }
+
+  .form-section,
+  .individual-section {
+    padding: 12px;
+  }
+
+  .map-controls {
+    flex-direction: column;
+  }
+
+  .cases-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-filter-container {
+    flex-direction: column;
+  }
+
+  .search-input {
+    min-width: auto;
+  }
+
+  .cases-table {
+    font-size: 0.9em;
+  }
+
+  .cases-table th,
+  .cases-table td {
+    padding: 8px;
   }
 }
