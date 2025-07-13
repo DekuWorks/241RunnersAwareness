@@ -148,6 +148,10 @@
       <a href="https://linktr.ee/241Runners" target="_blank">Follow Us</a>
     </nav>
     
+    <button class="theme-toggle" id="theme-toggle">
+      ☀️
+    </button>
+    
     <button class="hamburger">
       <span></span>
       <span></span>
@@ -253,6 +257,30 @@
       if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
         hamburger.classList.remove('active');
         nav.classList.remove('active');
+      }
+    });
+
+    // Dark mode toggle functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+    
+    // Check for saved theme preference or default to light mode
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+      body.classList.add('dark-mode');
+      themeToggle.textContent = '🌙';
+    }
+    
+    // Theme toggle click handler
+    themeToggle.addEventListener('click', function() {
+      body.classList.toggle('dark-mode');
+      
+      if (body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+        themeToggle.textContent = '🌙';
+      } else {
+        localStorage.setItem('theme', 'light');
+        themeToggle.textContent = '☀️';
       }
     });
   </script>

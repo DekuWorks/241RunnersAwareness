@@ -4,6 +4,13 @@ body {
   font-family: Arial, sans-serif;
   background: #ff0000; /* Default red background */
   color: #000;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+  background: #1a1a1a;
+  color: #fff;
 }
 
 /* ===== Header ===== */
@@ -23,6 +30,15 @@ header.scrolled {
   backdrop-filter: blur(10px);
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
   padding: 0 20px 5px;
+}
+
+/* Dark mode header */
+body.dark-mode header {
+  background: #2d2d2d;
+}
+
+body.dark-mode header.scrolled {
+  background: rgba(45, 45, 45, 0.95);
 }
 
 .header-bar {
@@ -74,6 +90,11 @@ nav {
   gap: 1.5rem;
   padding: 12px 0;
   flex-wrap: wrap;
+}
+
+/* Dark mode navigation */
+body.dark-mode nav {
+  background: #333;
 }
 
 /* Hamburger menu button */
@@ -169,6 +190,43 @@ section {
   width: 100%;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
   text-align: center;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Dark mode sections */
+body.dark-mode section {
+  background: #2d2d2d;
+  color: #fff;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+/* ===== Dark Mode Toggle ===== */
+.theme-toggle {
+  position: absolute;
+  right: 80px;
+  top: 20px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+  z-index: 1001;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .theme-toggle {
+  color: #fff;
 }
 
 /* ===== Footer ===== */
@@ -178,6 +236,12 @@ footer {
   color: #fff;
   padding: 20px;
   font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+/* Dark mode footer */
+body.dark-mode footer {
+  background: #2d2d2d;
 }
 
 /* ===== Responsive Design ===== */
@@ -185,6 +249,15 @@ footer {
   /* Show hamburger menu */
   .hamburger {
     display: flex;
+  }
+  
+  /* Adjust theme toggle position for mobile */
+  .theme-toggle {
+    right: 70px;
+    top: 15px;
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
   }
   
   /* Hide regular nav */
