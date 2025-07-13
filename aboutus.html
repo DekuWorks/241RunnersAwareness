@@ -93,6 +93,16 @@
       margin: 0 0 12px 0;
     }
     
+    .back-btn-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 18px;
+      margin-bottom: 0;
+    }
+    .back-btn-row .back-btn {
+      margin: 0 0 12px 0;
+    }
+    
     @media (max-width: 768px) {
       .about-content {
         padding: 20px;
@@ -138,15 +148,16 @@
       <span></span>
       <span></span>
     </button>
+    <div class="back-button">
+      <a href="index.html" class="back-btn">&larr; Back to Home</a>
+    </div>
   </header>
   
   <main role="main">
-    <div class="form-header-group">
-      <a href="index.html" class="back-btn">&larr; Back to Home</a>
-    </div>
     <div class="about-content">
-      <h2 id="about-heading">About 241 Runners Awareness</h2>
       
+      <h2 class="form-title" id="about-heading">About 241 Runners Awareness</h2>
+
       <div class="mission-statement">
         <h3>Our Mission</h3>
         <p>241 Runners Awareness is dedicated to supporting and protecting missing and vulnerable individuals through real-time alerts, secure data management, and community engagement. We believe that every person deserves to be safe and that technology can be a powerful tool in achieving this goal.</p>

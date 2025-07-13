@@ -126,6 +126,15 @@
     .form-header-group .back-btn {
       margin: 0 0 12px 0;
     }
+    .back-btn-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 18px;
+      margin-bottom: 0;
+    }
+    .back-btn-row .back-btn {
+      margin: 0 0 12px 0;
+    }
     @media (max-width: 600px) {
       .login-container {
         padding: 18px 6px 18px 6px;
@@ -158,14 +167,14 @@
       <span></span>
       <span></span>
     </button>
+    <div class="back-button">
+      <a href="index.html" class="back-btn">&larr; Back to Home</a>
+    </div>
   </header>
   
   <main role="main">
-    <div class="form-header-group">
-      <h2 class="form-title" id="login-heading">Login</h2>
-      <a href="index.html" class="back-btn">&larr; Back to Home</a>
-    </div>
     <form class="login-container" id="login-form" role="form" aria-labelledby="login-heading">
+      <h2 class="form-title" id="login-heading">Login</h2>
     <div class="google-btn-container">
       <div id="g_id_onload"
          data-client_id="933970195369-67fjn7t28p7q8a3grar5a46jad4mvinq.apps.googleusercontent.com"
