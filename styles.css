@@ -25,6 +25,8 @@ header {
   top: 0;
   z-index: 1000;
   transition: all 0.3s ease;
+  width: 100%;
+  margin: 0;
 }
 
 /* Sticky header with scroll effect */
@@ -51,6 +53,8 @@ body.dark-mode header.scrolled {
   gap: 10px;
   padding-top: 15px;
   position: relative;
+  width: 100%;
+  margin: 0;
 }
 
 img {
