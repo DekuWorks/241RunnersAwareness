@@ -11,6 +11,18 @@ header {
   background: #000;
   color: #fff;
   padding: 0 20px 10px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+/* Sticky header with scroll effect */
+header.scrolled {
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+  padding: 0 20px 5px;
 }
 
 .header-bar {
