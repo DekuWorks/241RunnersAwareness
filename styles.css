@@ -5,6 +5,9 @@ body {
   background: #ff0000; /* Default red background */
   color: #000;
   transition: background-color 0.3s ease, color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 /* Dark mode styles */
@@ -180,6 +183,7 @@ main {
   justify-content: center;
   align-items: center;
   min-height: 60vh;
+  flex: 1;
 }
 
 section {
