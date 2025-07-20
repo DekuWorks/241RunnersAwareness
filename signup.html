@@ -7,174 +7,245 @@
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <link rel="stylesheet" href="styles.css" />
   <style>
-    body {
-      background: #ff0000;
+    * {
       margin: 0;
-      font-family: Arial, sans-serif;
+      padding: 0;
+      box-sizing: border-box;
     }
-    .form-title {
+
+    body {
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      color: #333;
+    }
+
+    .header {
+      width: 100%;
+      background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+      color: #fff;
       text-align: center;
-      font-size: 2.2rem;
-      font-weight: bold;
-      margin-bottom: 18px;
-      color: #000;
+      padding: 2rem 0 1rem 0;
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
+
     .back-btn {
       display: inline-block;
-      margin: 12px 0 0 0;
-      background: #e53935;
+      margin: 1rem 0 0 0;
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
       color: #fff;
       border: none;
-      border-radius: 4px;
-      padding: 8px 18px;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
       font-size: 1rem;
+      font-weight: 600;
       cursor: pointer;
       text-decoration: none;
-      transition: background 0.2s;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
     }
+
     .back-btn:hover {
-      background: #b71c1c;
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
     }
+
     .signup-container {
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.13);
-      max-width: 400px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      max-width: 480px;
       width: 95%;
-      margin: 18px auto 0 auto;
-      padding: 32px 24px 24px 24px;
+      margin: 2rem auto 2rem auto;
+      padding: 2.5rem 2rem 2rem 2rem;
       display: flex;
       flex-direction: column;
       align-items: stretch;
+      border: 1px solid rgba(255,255,255,0.1);
     }
+
     .google-btn-container {
       display: flex;
       justify-content: center;
-      margin-bottom: 18px;
+      margin-bottom: 1.5rem;
     }
+
     .divider {
       display: flex;
       align-items: center;
       text-align: center;
-      margin: 18px 0 12px 0;
-      color: #888;
-      font-size: 14px;
+      margin: 1.5rem 0 1rem 0;
+      color: #6b7280;
+      font-size: 0.875rem;
+      font-weight: 500;
     }
+
     .divider::before, .divider::after {
       content: '';
       flex: 1;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid #e5e7eb;
     }
+
     .divider:not(:empty)::before {
-      margin-right: 10px;
+      margin-right: 1rem;
     }
+
     .divider:not(:empty)::after {
-      margin-left: 10px;
+      margin-left: 1rem;
     }
+
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 1.25rem;
       display: flex;
       flex-direction: column;
     }
+
     label {
       font-weight: 600;
-      margin-bottom: 6px;
-      color: #222;
+      margin-bottom: 0.5rem;
+      color: #374151;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
-    input[type="text"], input[type="email"], input[type="password"] {
-      padding: 10px;
-      border: 1.5px solid #ccc;
-      border-radius: 5px;
+
+    input[type="text"], input[type="email"], input[type="password"], input[type="tel"] {
+      padding: 0.875rem 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
       font-size: 1rem;
-      transition: border 0.2s;
+      transition: all 0.3s ease;
+      background: #f9fafb;
+      color: #374151;
     }
+
     input:focus {
-      border: 1.5px solid #007bff;
+      border: 2px solid #3b82f6;
       outline: none;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
+
+    input::placeholder {
+      color: #9ca3af;
+    }
+
     .submit-btn {
-      background: #007bff;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
       color: #fff;
       border: none;
-      border-radius: 5px;
-      padding: 12px;
-      font-size: 1.1rem;
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 1.125rem;
       font-weight: 600;
       cursor: pointer;
-      margin-top: 8px;
-      transition: background 0.2s;
+      margin-top: 1rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
+
     .submit-btn:hover {
-      background: #0056b3;
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
     }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
     .message {
       text-align: center;
-      margin: 10px 0 0 0;
-      font-size: 1rem;
-      color: #d32f2f;
+      margin: 1rem 0 0 0;
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 0.75rem;
+      border-radius: 6px;
+      transition: all 0.3s ease;
     }
-    .form-header-group {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 18px;
-      margin-bottom: 0;
+
+    .message.success {
+      color: #059669;
+      background: #d1fae5;
+      border: 1px solid #a7f3d0;
     }
-    .form-header-group .form-title {
-      margin-bottom: 8px;
+
+    .message.error {
+      color: #dc2626;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
     }
-    .form-header-group .back-btn {
-      margin: 0 0 12px 0;
+
+    .message.info {
+      color: #2563eb;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
     }
-    .back-btn-row {
-      display: flex;
-      justify-content: center;
-      margin-top: 18px;
-      margin-bottom: 0;
+
+    .login-link {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.875rem;
+      color: #6b7280;
     }
-    .back-btn-row .back-btn {
-      margin: 0 0 12px 0;
+
+    .login-link a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
     }
-    @media (max-width: 600px) {
+
+    .login-link a:hover {
+      color: #2563eb;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
       .signup-container {
-        padding: 18px 6px 18px 6px;
+        padding: 1.5rem 1rem;
+        margin: 1rem auto;
       }
+      
+      .header {
+        font-size: 1.75rem;
+        padding: 1.5rem 0 0.75rem 0;
+      }
+
+      .back-btn {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.875rem;
+      }
+    }
+
+    /* Loading state */
+    .submit-btn:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Google button styling */
+    .g_id_signin {
+      width: 100% !important;
     }
   </style>
 </head>
 <body>
-  <header role="banner">
-    <div class="header-bar">
-      <img src="/241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
-      <h1>241 Runners Awareness</h1>
-    </div>
-
-    <nav role="navigation" aria-label="Main navigation">
-      <a href="index.html">Home</a>
-      <a href="aboutus.html">About Us</a>
-      <a href="signup.html" aria-current="page">Sign Up</a>
-      <a href="login.html">Login</a>
-      <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
-      <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
-    </nav>
-    
-    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
-      ☀️
-    </button>
-    
-    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-navigation">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-    <div class="back-button">
-      <a href="index.html" class="back-btn">&larr; Back to Home</a>
-    </div>
-  </header>
-  
-  <main role="main">
-    <form class="signup-container" id="signupForm" role="form" aria-labelledby="signup-heading">
-      <h2 class="form-title" id="signup-heading">Sign Up</h2>
+  <div class="header">Sign Up</div>
+  <a href="/" class="back-btn">&larr; Back to Home</a>
+  <form class="signup-container" id="signupForm">
     <div class="google-btn-container">
       <div id="g_id_onload"
         data-client_id="933970195369-67fjn7t28p7q8a3grar5a46jad4mvinq.apps.googleusercontent.com"
@@ -193,67 +264,84 @@
     <div class="divider">or</div>
     <div class="form-group">
       <label for="fullName">Full Name *</label>
-      <input type="text" id="fullName" name="fullName" required autocomplete="name">
+      <input type="text" id="fullName" name="fullName" required autocomplete="name" placeholder="Enter your full name">
     </div>
     <div class="form-group">
       <label for="email">Email *</label>
-      <input type="email" id="email" name="email" required autocomplete="email">
+      <input type="email" id="email" name="email" required autocomplete="email" placeholder="Enter your email">
     </div>
     <div class="form-group">
       <label for="phoneNumber">Phone Number *</label>
-      <input type="tel" id="phoneNumber" name="phoneNumber" required autocomplete="tel">
+      <input type="tel" id="phoneNumber" name="phoneNumber" required autocomplete="tel" placeholder="Enter your phone number">
     </div>
     <div class="form-group">
       <label for="password">Password *</label>
-      <input type="password" id="password" name="password" required autocomplete="new-password">
+      <input type="password" id="password" name="password" required autocomplete="new-password" placeholder="Enter your password">
     </div>
-    <button type="submit" class="submit-btn">Continue</button>
+    <button type="submit" class="submit-btn">Create Account</button>
     <div class="message" id="message"></div>
+    <div class="login-link">
+      Already have an account? <a href="login.html">Log in</a>
+    </div>
   </form>
-  </main>
   <script>
-    // Backend API URL
-    const API_BASE_URL = 'http://localhost:5001/api';
+    // Backend API URL - SAME AS REACT APP
+    const API_BASE_URL = 'http://localhost:5113/api';
 
     // Google SSO handler
     function handleGoogleSignIn(response) {
       const messageDiv = document.getElementById('message');
-      messageDiv.style.color = '#007bff';
+      messageDiv.className = 'message info';
       messageDiv.textContent = 'Signing up with Google...';
+      
       fetch(`${API_BASE_URL}/auth/google-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ IdToken: response.credential })
       })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        return res.json();
+      })
       .then(data => {
         if (data.success) {
           localStorage.setItem('user', JSON.stringify(data));
-          messageDiv.style.color = '#388e3c';
+          messageDiv.className = 'message success';
           messageDiv.textContent = 'Sign up successful! Redirecting...';
           setTimeout(() => window.location.href = '/', 1200);
         } else {
-          messageDiv.style.color = '#d32f2f';
+          messageDiv.className = 'message error';
           messageDiv.textContent = data.message || 'Google sign up failed.';
         }
       })
-      .catch(() => {
-        messageDiv.style.color = '#d32f2f';
-        messageDiv.textContent = 'Network error. Please try again.';
+      .catch((error) => {
+        console.error('Google sign-in error:', error);
+        messageDiv.className = 'message error';
+        messageDiv.textContent = `Error: ${error.message}`;
       });
     }
 
-    // Traditional signup handler (optional: POST to your backend)
+    // Traditional signup handler - SAME BACKEND AS REACT APP
     document.getElementById('signupForm').addEventListener('submit', function(e) {
       e.preventDefault();
+      
+      const submitBtn = document.querySelector('.submit-btn');
+      const messageDiv = document.getElementById('message');
+      
+      // Disable button and show loading state
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating Account...';
+      messageDiv.className = 'message info';
+      messageDiv.textContent = 'Signing up...';
+      
       const fullName = document.getElementById('fullName').value;
       const email = document.getElementById('email').value;
       const phoneNumber = document.getElementById('phoneNumber').value;
       const password = document.getElementById('password').value;
-      const messageDiv = document.getElementById('message');
-      messageDiv.style.color = '#007bff';
-      messageDiv.textContent = 'Signing up...';
-      // Example: POST to your backend registration endpoint
+
+      // SAME API ENDPOINT AS REACT APP
       fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -264,86 +352,33 @@
           password
         })
       })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        return res.json();
+      })
       .then(data => {
         if (data.success) {
           localStorage.setItem('user', JSON.stringify(data));
-          messageDiv.style.color = '#388e3c';
+          messageDiv.className = 'message success';
           messageDiv.textContent = 'Sign up successful! Redirecting...';
           setTimeout(() => window.location.href = '/', 1200);
         } else {
-          messageDiv.style.color = '#d32f2f';
+          messageDiv.className = 'message error';
           messageDiv.textContent = data.message || 'Sign up failed.';
         }
       })
-      .catch(() => {
-        messageDiv.style.color = '#d32f2f';
-        messageDiv.textContent = 'Network error. Please try again.';
+      .catch((error) => {
+        console.error('Registration error:', error);
+        messageDiv.className = 'message error';
+        messageDiv.textContent = `Error: ${error.message}`;
+      })
+      .finally(() => {
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create Account';
       });
-    });
-
-    // Sticky navbar scroll effect
-    window.addEventListener('scroll', function() {
-      const header = document.querySelector('header');
-      if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
-      }
-    });
-
-    // Hamburger menu functionality
-    const hamburger = document.querySelector('.hamburger');
-    const nav = document.querySelector('nav');
-    
-    hamburger.addEventListener('click', function() {
-      const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
-      hamburger.setAttribute('aria-expanded', !isExpanded);
-      hamburger.classList.toggle('active');
-      nav.classList.toggle('active');
-    });
-    
-    // Close menu when clicking on a link
-    document.querySelectorAll('nav a').forEach(link => {
-      link.addEventListener('click', () => {
-        hamburger.classList.remove('active');
-        nav.classList.remove('active');
-      });
-    });
-    
-    // Close menu when clicking outside
-    document.addEventListener('click', function(e) {
-      if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
-        hamburger.classList.remove('active');
-        nav.classList.remove('active');
-      }
-    });
-
-    // Dark mode toggle functionality
-    const themeToggle = document.getElementById('theme-toggle');
-    const body = document.body;
-    
-    // Check for saved theme preference or default to light mode
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    if (currentTheme === 'dark') {
-      body.classList.add('dark-mode');
-      themeToggle.textContent = '🌙';
-      themeToggle.setAttribute('aria-pressed', 'true');
-    }
-    
-    // Theme toggle click handler
-    themeToggle.addEventListener('click', function() {
-      body.classList.toggle('dark-mode');
-      
-      if (body.classList.contains('dark-mode')) {
-        localStorage.setItem('theme', 'dark');
-        themeToggle.textContent = '🌙';
-        themeToggle.setAttribute('aria-pressed', 'true');
-      } else {
-        localStorage.setItem('theme', 'light');
-        themeToggle.textContent = '☀️';
-        themeToggle.setAttribute('aria-pressed', 'false');
-      }
     });
   </script>
 </body>

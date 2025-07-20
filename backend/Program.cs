@@ -36,8 +36,11 @@ namespace _241RunnersAwareness.BackendAPI
                             "https://app.241runnersawareness.org",
                             "http://localhost:3000",
                             "http://localhost:5173",
+                            "https://localhost:5173",
                             "http://localhost:5000",
-                            "http://localhost:5001"
+                            "http://localhost:5001",
+                            "https://localhost:5001",
+                            "http://localhost:5113"
                           )
                           .AllowAnyMethod()
                           .AllowAnyHeader()

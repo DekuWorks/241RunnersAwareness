@@ -5,7 +5,7 @@ const environment = import.meta.env.MODE || 'development';
 
 const config = {
   development: {
-    API_BASE_URL: 'http://localhost:5001/api',
+    API_BASE_URL: 'http://localhost:5113/api',
     GOOGLE_CLIENT_ID: '933970195369-67fjn7t28p7q8a3grar5a46jad4mvinq.apps.googleusercontent.com',
     APP_URL: 'http://localhost:5173',
     NODE_ENV: 'development'
