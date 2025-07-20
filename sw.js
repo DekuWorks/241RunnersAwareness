@@ -15,7 +15,7 @@ const STATIC_FILES = [
   '/cases.html',
   '/privacy.html',
   '/terms.html',
-  '/aboutus.html',
+        '/aboutus.html',
   '/styles.css',
   '/manifest.json',
   '/241-logo.jpg',
