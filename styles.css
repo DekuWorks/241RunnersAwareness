@@ -208,6 +208,10 @@ nav a:nth-child(10):hover {
   background-color: #ff4d4d; /* Bright Red */
   color: #fff;
 }
+nav a:nth-child(11):hover {
+  background-color: #e63946; /* Medium Red */
+  color: #fff;
+}
 
 /* Optional Glow on Hover */
 nav a:hover {
