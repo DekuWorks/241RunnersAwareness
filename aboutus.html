@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
+  <meta http-equiv="Last-Modified" content="Wed, 01 Jan 2025 00:00:00 GMT" />
   <title>About Us - 241 Runners Awareness</title>
-  <link rel="stylesheet" href="styles.css?v=20250101" />
+  <link rel="stylesheet" href="styles.css?v=20250101&t=20250101" />
   <style>
     .about-content {
       background: #fff;
@@ -263,6 +264,7 @@
     <div class="about-content">
       
       <h2 class="form-title" id="about-heading">About 241 Runners Awareness</h2>
+      <p style="text-align: center; color: #dc2626; font-weight: bold; margin-bottom: 20px;">UPDATED: 241 represents 2:41 AM when Israel Thomas passed away</p>
 
       <div class="mission-statement">
         <h3>Our Mission</h3>
@@ -328,6 +330,12 @@
   </footer>
 
   <script>
+    // Force reload if page is cached
+    if (performance.navigation.type === 1) {
+      // Page was reloaded, clear any cached content
+      window.location.reload(true);
+    }
+    
     // Sticky navbar scroll effect
     window.addEventListener('scroll', function() {
       const header = document.querySelector('header');
