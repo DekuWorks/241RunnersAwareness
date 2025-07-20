@@ -178,7 +178,7 @@
     <div class="google-btn-container">
       <div id="g_id_onload"
          data-client_id="933970195369-67fjn7t28p7q8a3grar5a46jad4mvinq.apps.googleusercontent.com"
-         data-login_uri="https://api.241runnersawareness.org/api/auth/google-login"
+         data-login_uri="http://localhost:5001/api/auth/google-login"
          data-auto_prompt="false">
       </div>
       <div class="g_id_signin"
@@ -210,7 +210,7 @@
 
   <script>
     // Backend API URL
-    const API_BASE_URL = 'https://api.241runnersawareness.org/api';
+            const API_BASE_URL = 'http://localhost:5001/api';
     let twoFARequired = false;
     let loginEmail = '';
     document.getElementById("login-form").addEventListener("submit", async (e) => {

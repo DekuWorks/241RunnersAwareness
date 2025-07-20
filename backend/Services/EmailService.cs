@@ -15,19 +15,31 @@ namespace _241RunnersAwareness.BackendAPI.Services
     public class EmailService : IEmailService
     {
         private readonly IConfiguration _configuration;
-        private readonly ISendGridClient _sendGridClient;
+        private readonly ISendGridClient? _sendGridClient;
 
         public EmailService(IConfiguration configuration)
         {
             _configuration = configuration;
             var apiKey = _configuration["SendGrid:ApiKey"];
-            _sendGridClient = new SendGridClient(apiKey);
+            
+            // Only create SendGrid client if API key is properly configured
+            if (!string.IsNullOrEmpty(apiKey) && apiKey != "your-sendgrid-api-key-here")
+            {
+                _sendGridClient = new SendGridClient(apiKey);
+            }
         }
 
         public async Task<bool> SendVerificationEmailAsync(string email, string name, string token)
         {
             try
             {
+                // For development, just return true without sending email
+                if (_sendGridClient == null)
+                {
+                    Console.WriteLine($"DEV MODE: Would send verification email to {email} with token {token}");
+                    return true;
+                }
+
                 var from = new EmailAddress(_configuration["SendGrid:FromEmail"] ?? "noreply@241runnersawareness.com", "241 Runners Awareness");
                 var to = new EmailAddress(email, name);
                 var subject = "Verify Your Email - 241 Runners Awareness";
@@ -65,6 +77,13 @@ namespace _241RunnersAwareness.BackendAPI.Services
         {
             try
             {
+                // For development, just return true without sending email
+                if (_sendGridClient == null)
+                {
+                    Console.WriteLine($"DEV MODE: Would send welcome email to {email}");
+                    return true;
+                }
+
                 var from = new EmailAddress(_configuration["SendGrid:FromEmail"] ?? "noreply@241runnersawareness.com", "241 Runners Awareness");
                 var to = new EmailAddress(email, name);
                 var subject = "Welcome to 241 Runners Awareness!";
