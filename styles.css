@@ -169,27 +169,43 @@ nav a {
 
 /* ===== Traffic Light Hover Shades ===== */
 nav a:nth-child(1):hover {
-  background-color: #e63946; /* Cherry Red */
+  background-color: #ff4d4d; /* Bright Red */
   color: #fff;
 }
 nav a:nth-child(2):hover {
-  background-color: #b00020; /* Deep Red */
+  background-color: #e63946; /* Medium Red */
   color: #fff;
 }
 nav a:nth-child(3):hover {
-  background-color: #ffdd57; /* Bright Yellow */
-  color: #000;
+  background-color: #b00020; /* Dark Red */
+  color: #fff;
 }
 nav a:nth-child(4):hover {
-  background-color: #f4c430; /* Gold Yellow */
+  background-color: #ffcc00; /* Bright Yellow */
   color: #000;
 }
 nav a:nth-child(5):hover {
-  background-color: #38b000; /* Mint Green */
-  color: #fff;
+  background-color: #f4c430; /* Gold Yellow */
+  color: #000;
 }
 nav a:nth-child(6):hover {
-  background-color: #2d6a4f; /* Emerald Green */
+  background-color: #ffdd57; /* Light Yellow */
+  color: #000;
+}
+nav a:nth-child(7):hover {
+  background-color: #33cc33; /* Bright Green */
+  color: #fff;
+}
+nav a:nth-child(8):hover {
+  background-color: #28a745; /* Medium Green */
+  color: #fff;
+}
+nav a:nth-child(9):hover {
+  background-color: #20c997; /* Teal Green */
+  color: #fff;
+}
+nav a:nth-child(10):hover {
+  background-color: #ff4d4d; /* Bright Red */
   color: #fff;
 }
 
