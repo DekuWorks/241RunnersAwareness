@@ -17,7 +17,7 @@ namespace _241RunnersAwareness.BackendAPI
             var builder = WebApplication.CreateBuilder(new WebApplicationOptions
             {
                 Args = args,
-                EnvironmentName = Environments.Production // Force to only use appsettings.json
+                EnvironmentName = Environments.Development // Use Development environment
             });
 
             // Add services to the container
@@ -99,6 +99,9 @@ namespace _241RunnersAwareness.BackendAPI
             app.UseAuthorization();
 
             app.MapControllers();
+
+            // Add a simple health check endpoint
+            app.MapGet("/health", () => "Backend is running!");
 
             app.Run();
         }

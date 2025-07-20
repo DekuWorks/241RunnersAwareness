@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - 241 Runners Awareness</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .welcome-section {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .welcome-section h2 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.75rem;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .user-avatar {
+      width: 50px;
+      height: 50px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .dashboard-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
+      transition: all 0.3s ease;
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .dashboard-card h3 {
+      margin: 0 0 1rem 0;
+      color: #374151;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .dashboard-card p {
+      color: #6b7280;
+      margin: 0 0 1rem 0;
+      line-height: 1.6;
+    }
+
+    .card-button {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    }
+
+    .card-button:hover {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+
+    .logout-btn {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+    }
+
+    .logout-btn:hover {
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #3b82f6;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: #6b7280;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    /* New Features */
+    .notifications-section {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
+    }
+
+    .notifications-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .notification-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      background: #f9fafb;
+      border-left: 4px solid #3b82f6;
+    }
+
+    .notification-item.alert {
+      border-left-color: #ef4444;
+      background: #fef2f2;
+    }
+
+    .notification-item.success {
+      border-left-color: #10b981;
+      background: #f0fdf4;
+    }
+
+    .notification-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .notification-content {
+      flex: 1;
+    }
+
+    .notification-title {
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.25rem;
+    }
+
+    .notification-time {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .recent-activity {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-title {
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.25rem;
+    }
+
+    .activity-description {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .quick-action-btn {
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: #374151;
+    }
+
+    .quick-action-btn:hover {
+      border-color: #3b82f6;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+    }
+
+    .quick-action-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .quick-action-label {
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .weather-widget {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .weather-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .weather-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .weather-temp {
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+
+    .weather-details {
+      font-size: 0.875rem;
+      opacity: 0.9;
+    }
+
+    .emergency-contact {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    .emergency-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .emergency-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      margin-right: 0.5rem;
+    }
+
+    .emergency-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .quick-actions {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header role="banner">
+    <div class="header-bar">
+      <img src="/241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
+      <h1>241 Runners Awareness</h1>
+    </div>
+
+    <nav role="navigation" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="aboutus.html">About Us</a>
+      <a href="cases.html">Cases</a>
+      <a href="map.html">Map</a>
+      <a href="dashboard.html" aria-current="page">Dashboard</a>
+      <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
+      <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
+    </nav>
+    
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
+      ☀️
+    </button>
+    
+    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <main role="main">
+    <div class="dashboard-container">
+      <div class="welcome-section">
+        <h2>Welcome to Your Dashboard</h2>
+        <p>Manage your account, view cases, and stay updated with 241 Runners Awareness.</p>
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar">U</div>
+          <div>
+            <div id="userName">User</div>
+            <div id="userEmail">user@example.com</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Emergency Contact Widget -->
+      <div class="emergency-contact">
+        <div class="emergency-header">
+          🚨 Emergency Contacts
+        </div>
+        <p style="margin-bottom: 1rem; opacity: 0.9;">Quick access to emergency services and support</p>
+        <a href="tel:911" class="emergency-btn">Call 911</a>
+        <a href="tel:1-800-843-5678" class="emergency-btn">Missing Persons Hotline</a>
+        <a href="mailto:emergency@241runnersawareness.org" class="emergency-btn">Email Support</a>
+      </div>
+
+      <!-- Weather Widget -->
+      <div class="weather-widget">
+        <div class="weather-header">
+          <h3 style="margin: 0;">🌤️ Local Weather</h3>
+          <span id="weatherLocation">Loading...</span>
+        </div>
+        <div class="weather-info">
+          <div class="weather-temp" id="weatherTemp">--°F</div>
+          <div class="weather-details">
+            <div id="weatherCondition">Loading...</div>
+            <div id="weatherHumidity">Humidity: --%</div>
+            <div id="weatherWind">Wind: -- mph</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">0</div>
+          <div class="stat-label">Active Cases</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">0</div>
+          <div class="stat-label">Alerts</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">0</div>
+          <div class="stat-label">Reports</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">0</div>
+          <div class="stat-label">Messages</div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <a href="cases.html" class="quick-action-btn">
+          <span class="quick-action-icon">📋</span>
+          <div class="quick-action-label">View Cases</div>
+        </a>
+        <a href="map.html" class="quick-action-btn">
+          <span class="quick-action-icon">🗺️</span>
+          <div class="quick-action-label">Interactive Map</div>
+        </a>
+        <a href="mailto:support@241runnersawareness.org" class="quick-action-btn">
+          <span class="quick-action-icon">📧</span>
+          <div class="quick-action-label">Contact Support</div>
+        </a>
+        <button class="quick-action-btn" onclick="showSettings()">
+          <span class="quick-action-icon">⚙️</span>
+          <div class="quick-action-label">Settings</div>
+        </button>
+        <button class="quick-action-btn" onclick="reportIncident()">
+          <span class="quick-action-icon">🚨</span>
+          <div class="quick-action-label">Report Incident</div>
+        </button>
+        <button class="quick-action-btn" onclick="shareLocation()">
+          <span class="quick-action-icon">📍</span>
+          <div class="quick-action-label">Share Location</div>
+        </button>
+      </div>
+
+      <!-- Notifications Section -->
+      <div class="notifications-section">
+        <div class="notifications-header">
+          <h3 style="margin: 0;">🔔 Recent Notifications</h3>
+          <button class="card-button" onclick="markAllRead()">Mark All Read</button>
+        </div>
+        <div id="notificationsList">
+          <div class="notification-item">
+            <div class="notification-icon">📢</div>
+            <div class="notification-content">
+              <div class="notification-title">Welcome to 241 Runners Awareness!</div>
+              <div class="notification-time">Just now</div>
+            </div>
+          </div>
+          <div class="notification-item success">
+            <div class="notification-icon">✅</div>
+            <div class="notification-content">
+              <div class="notification-title">Account created successfully</div>
+              <div class="notification-time">2 minutes ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="recent-activity">
+        <h3 style="margin: 0 0 1rem 0;">📈 Recent Activity</h3>
+        <div id="activityList">
+          <div class="activity-item">
+            <div class="activity-icon">👤</div>
+            <div class="activity-content">
+              <div class="activity-title">Account Created</div>
+              <div class="activity-description">You joined 241 Runners Awareness</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">📱</div>
+            <div class="activity-content">
+              <div class="activity-title">Profile Updated</div>
+              <div class="activity-description">Contact information verified</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <h3>📋 View Cases</h3>
+          <p>Browse and search through active missing persons cases in your area.</p>
+          <a href="cases.html" class="card-button">View Cases</a>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>🗺️ Interactive Map</h3>
+          <p>Explore cases and incidents on our interactive map with real-time updates.</p>
+          <a href="map.html" class="card-button">Open Map</a>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>📧 Contact Support</h3>
+          <p>Get in touch with our support team for assistance or to report issues.</p>
+          <a href="mailto:support@241runnersawareness.org" class="card-button">Contact Us</a>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>⚙️ Account Settings</h3>
+          <p>Update your profile information, change password, and manage preferences.</p>
+          <button class="card-button" onclick="showSettings()">Settings</button>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 2rem;">
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </main>
+
+  <footer role="contentinfo">
+    <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Check if user is logged in
+    function checkAuth() {
+      const user = localStorage.getItem('user');
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const userData = JSON.parse(user);
+        document.getElementById('userName').textContent = userData.user?.fullName || 'User';
+        document.getElementById('userEmail').textContent = userData.user?.email || 'user@example.com';
+        
+        // Set avatar initial
+        const avatar = document.getElementById('userAvatar');
+        const name = userData.user?.fullName || 'User';
+        avatar.textContent = name.charAt(0).toUpperCase();
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        window.location.href = 'login.html';
+      }
+    }
+
+    // Logout function
+    function logout() {
+      localStorage.removeItem('user');
+      window.location.href = 'index.html';
+    }
+
+    // New Dashboard Features
+    function showSettings() {
+      alert('Account settings panel coming soon!');
+    }
+
+    function reportIncident() {
+      const incident = prompt('Please describe the incident you want to report:');
+      if (incident) {
+        alert('Thank you for reporting. Our team will review this incident.');
+        addNotification('Incident reported', 'Your report has been submitted for review.', 'info');
+      }
+    }
+
+    function shareLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function(position) {
+            const location = `${position.coords.latitude}, ${position.coords.longitude}`;
+            alert(`Location shared: ${location}`);
+            addNotification('Location shared', 'Your location has been shared with the team.', 'success');
+          },
+          function(error) {
+            alert('Unable to get your location. Please check your browser settings.');
+          }
+        );
+      } else {
+        alert('Geolocation is not supported by this browser.');
+      }
+    }
+
+    function markAllRead() {
+      const notifications = document.querySelectorAll('.notification-item');
+      notifications.forEach(notification => {
+        notification.style.opacity = '0.6';
+      });
+      alert('All notifications marked as read!');
+    }
+
+    function addNotification(title, message, type = 'info') {
+      const notificationsList = document.getElementById('notificationsList');
+      const notification = document.createElement('div');
+      notification.className = `notification-item ${type}`;
+      
+      const icon = type === 'alert' ? '🚨' : type === 'success' ? '✅' : '📢';
+      
+      notification.innerHTML = `
+        <div class="notification-icon">${icon}</div>
+        <div class="notification-content">
+          <div class="notification-title">${title}</div>
+          <div class="notification-time">Just now</div>
+        </div>
+      `;
+      
+      notificationsList.insertBefore(notification, notificationsList.firstChild);
+    }
+
+    // Mock Weather Data
+    function loadWeather() {
+      // Simulate weather API call
+      setTimeout(() => {
+        document.getElementById('weatherLocation').textContent = 'Greenville, SC';
+        document.getElementById('weatherTemp').textContent = '72°F';
+        document.getElementById('weatherCondition').textContent = 'Partly Cloudy';
+        document.getElementById('weatherHumidity').textContent = 'Humidity: 65%';
+        document.getElementById('weatherWind').textContent = 'Wind: 8 mph';
+      }, 1000);
+    }
+
+    // Initialize dashboard
+    checkAuth();
+    loadWeather();
+
+    // Sticky navbar scroll effect
+    window.addEventListener('scroll', function() {
+      const header = document.querySelector('header');
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+
+    // Hamburger menu functionality
+    const hamburger = document.querySelector('.hamburger');
+    const nav = document.querySelector('nav');
+    
+    hamburger.addEventListener('click', function() {
+      const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+      hamburger.setAttribute('aria-expanded', !isExpanded);
+      hamburger.classList.toggle('active');
+      nav.classList.toggle('active');
+    });
+    
+    // Close menu when clicking on a link
+    document.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        nav.classList.remove('active');
+      });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
+        hamburger.classList.remove('active');
+        nav.classList.remove('active');
+      }
+    });
+
+    // Dark mode toggle functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+    
+    // Check for saved theme preference or default to light mode
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+      body.classList.add('dark-mode');
+      themeToggle.textContent = '🌙';
+      themeToggle.setAttribute('aria-pressed', 'true');
+    }
+    
+    // Theme toggle click handler
+    themeToggle.addEventListener('click', function() {
+      body.classList.toggle('dark-mode');
+      
+      if (body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+        themeToggle.textContent = '🌙';
+        themeToggle.setAttribute('aria-pressed', 'true');
+      } else {
+        localStorage.setItem('theme', 'light');
+        themeToggle.textContent = '☀️';
+        themeToggle.setAttribute('aria-pressed', 'false');
+      }
+    });
+  </script>
+</body>
+</html> 
