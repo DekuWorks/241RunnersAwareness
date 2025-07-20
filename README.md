@@ -30,6 +30,22 @@ Built with React, .NET 8, and modern deployment tools, this system empowers user
 - Role-based permissions for sensitive actions
 - Audit logging
 
+### 🛍️ 241RA x Varlo Shop
+- **Premium Athletic Wear**: Collaboration with Varlo for high-quality running and triathlon apparel
+- **Mission-Driven Merchandise**: Every purchase supports DNA collection and identification technology
+- **Campaign Support**: Active fundraising campaigns for specific initiatives
+- **Shopping Cart**: Full e-commerce functionality with cart management
+- **Donation Tracking**: Automatic donation calculations with each purchase
+- **Responsive Design**: Mobile-friendly interface for all devices
+
+### 🧬 DNA Tracking & Identification
+- **Secure Sample Collection**: Buccal swabs, blood samples, hair follicles
+- **Advanced Analysis**: STR markers, SNP analysis, haplotype determination
+- **Database Integration**: NAMUS, CODIS, and local law enforcement databases
+- **Real-Time Alerts**: Instant notifications for DNA matches
+- **Comprehensive Reports**: Detailed analysis with recommendations
+- **Lab Partnerships**: Integration with leading forensic laboratories
+
 ### 🧰 Tech Stack
 
 **Frontend:**
@@ -66,6 +82,8 @@ Built with React, .NET 8, and modern deployment tools, this system empowers user
 ├── signup.html        # Registration page
 ├── dashboard.html     # User dashboard
 ├── cases.html         # Case management
+├── shop.html          # 241RA x Varlo Shop
+├── dna-tracking.html  # DNA Tracking & Identification
 ├── privacy.html       # Privacy policy
 ├── terms.html         # Terms of use
 ├── manifest.json      # PWA manifest
@@ -233,6 +251,21 @@ dotnet test --collect:"XPlat Code Coverage" # Coverage
 - `PUT /api/individuals/{id}` - Update case
 - `DELETE /api/individuals/{id}` - Delete case
 
+### Shop & E-commerce
+- `GET /api/shop/products` - Get all products
+- `GET /api/shop/products/{id}` - Get product details
+- `POST /api/shop/orders` - Create new order
+- `GET /api/shop/campaigns` - Get active campaigns
+- `GET /api/shop/partners` - Get partner information
+
+### DNA Tracking
+- `POST /api/dna/samples` - Submit DNA sample
+- `GET /api/dna/samples/{id}` - Get DNA sample details
+- `POST /api/dna/compare` - Compare DNA sequences
+- `GET /api/dna/reports/{id}` - Generate DNA report
+- `POST /api/dna/export/namus` - Export to NAMUS database
+- `POST /api/dna/export/codis` - Export to CODIS database
+
 ### Export Features
 - `GET /api/export/csv` - Export cases to CSV
 - `GET /api/export/pdf` - Export cases to PDF
@@ -303,18 +336,25 @@ dotnet ef database update
 - PWA support and installability
 - Legal compliance (Privacy Policy, Terms of Use)
 - Mobile-responsive design
+- **241RA x Varlo Shop**: Complete e-commerce platform with donation tracking
+- **DNA Tracking & Identification**: Advanced DNA technology for missing persons cases
+- **Static Site Integration**: Full functionality on both static site and React app
 
 ### 🔄 In Progress
 - Cross-browser testing
 - Service worker implementation
 - App store preparation
 - Enhanced documentation
+- Payment processing integration
+- Real DNA database connections
 
 ### 📋 Planned
 - Notification system
 - Analytics integration
 - Advanced search features
 - Mobile app development
+- Advanced DNA analysis with machine learning
+- International expansion
 
 ---
 
@@ -334,6 +374,6 @@ dotnet ef database update
 
 ---
 
-*Last updated: January 2025*
+*Last updated: January 2025 - Added 241RA x Varlo Shop and DNA Tracking features*
 
 
