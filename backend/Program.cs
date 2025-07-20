@@ -75,6 +75,16 @@ namespace _241RunnersAwareness.BackendAPI
             builder.Services.AddScoped<ISmsService, SmsService>();
             builder.Services.AddScoped<ICsvExportService, CsvExportService>();
             builder.Services.AddScoped<ITwoFactorService, TwoFactorService>();
+            
+            // Register new services for real-time notifications and analytics
+            builder.Services.AddScoped<INotificationService, NotificationService>();
+            builder.Services.AddScoped<IRealTimeNotificationService, RealTimeNotificationService>();
+            builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+            builder.Services.AddScoped<IImageService, ImageService>();
+            builder.Services.AddScoped<IDNAService, DNAService>();
+            
+            // Add SignalR for real-time notifications
+            builder.Services.AddSignalR();
 
             // 🚀 ADD Swagger service here
             builder.Services.AddEndpointsApiExplorer();
@@ -99,6 +109,9 @@ namespace _241RunnersAwareness.BackendAPI
             app.UseAuthorization();
 
             app.MapControllers();
+            
+            // Map SignalR hub for real-time notifications
+            app.MapHub<NotificationHub>("/notificationHub");
 
             // Add a simple health check endpoint
             app.MapGet("/health", () => "Backend is running!");

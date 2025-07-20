@@ -3,6 +3,8 @@ import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Cases from "./pages/Cases";
 import Map from "./pages/Map";
+import Shop from "./pages/Shop";
+import DNATracking from "./pages/DNATracking";
 import AdminDashboard from "./pages/AdminDashboard";
 import UsersPage from "./pages/UsersPage";
 import SettingsPage from "./pages/SettingsPage";
@@ -20,6 +22,8 @@ function App() {
           <Route index element={<Home />} />
           <Route path="cases" element={<Cases />} />
           <Route path="map" element={<Map />} />
+          <Route path="shop" element={<Shop />} />
+          <Route path="dna-tracking" element={<DNATracking />} />
           <Route path="register" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
 

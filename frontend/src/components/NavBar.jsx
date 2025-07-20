@@ -58,6 +58,8 @@ const NavBar = () => {
           <a href="https://www.241runnersawareness.org/about_us.html" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>About Us</a>
           <Link to="/cases" onClick={closeMenu}>Cases</Link>
           <Link to="/map" onClick={closeMenu}>Map</Link>
+          <Link to="/shop" onClick={closeMenu}>🛍️ Shop</Link>
+          <Link to="/dna-tracking" onClick={closeMenu}>🧬 DNA</Link>
           <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>Socials</a>
           <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>Donate</a>
 

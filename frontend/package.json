@@ -23,7 +23,11 @@
     "react-redux": "^8.1.1",
     "react-router-dom": "^6.22.3",
     "redux": "^4.2.1",
-    "tailwindcss": "^4.1.10"
+    "tailwindcss": "^4.1.10",
+    "@microsoft/signalr": "^8.0.0",
+    "react-hot-toast": "^2.4.1",
+    "chart.js": "^4.4.0",
+    "react-chartjs-2": "^5.2.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.27.2",
