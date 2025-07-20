@@ -28,11 +28,7 @@ const NavBar = () => {
   return (
     <header>
       <div className="header-bar">
-        <div className="traffic-lights">
-          <span className="dot red"></span>
-          <span className="dot yellow"></span>
-          <span className="dot green"></span>
-        </div>
+
         <img src="/241-logo.jpg" alt="241 Runners Awareness Logo" />
         <h1>
           <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>
