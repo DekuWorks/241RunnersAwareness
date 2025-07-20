@@ -182,9 +182,6 @@ const Shop = () => {
         <h1>241RA x Varlo Collaboration</h1>
         <p>Premium athletic wear supporting missing persons awareness. Every purchase helps fund DNA collection and identification technology.</p>
         <div className="hero-buttons">
-          <button onClick={() => document.getElementById('campaigns').scrollIntoView({ behavior: 'smooth' })}>
-            💝 Support Campaigns
-          </button>
           <button onClick={() => document.getElementById('products').scrollIntoView({ behavior: 'smooth' })}>
             🛍️ Shop Now
           </button>
@@ -194,50 +191,7 @@ const Shop = () => {
         </div>
       </div>
 
-      {/* Active Campaigns */}
-      <div className="campaigns-section" id="campaigns">
-        <h2>Active Campaigns</h2>
-        <div className="campaigns-grid">
-          <div className="campaign-card">
-            <h3>Israel's Legacy Campaign</h3>
-            <p>Supporting DNA collection and identification technology in memory of Israel Thomas</p>
-            <div className="progress-bar">
-              <div className="progress-fill" style={{ width: '25%' }}></div>
-            </div>
-            <div className="campaign-stats">
-              <span>$12,500 raised</span>
-              <span>$50,000 goal</span>
-            </div>
-            <button className="campaign-btn">Support Campaign</button>
-          </div>
 
-          <div className="campaign-card">
-            <h3>Special Needs Awareness</h3>
-            <p>Raising awareness for missing persons with special needs</p>
-            <div className="progress-bar">
-              <div className="progress-fill" style={{ width: '35%' }}></div>
-            </div>
-            <div className="campaign-stats">
-              <span>$8,750 raised</span>
-              <span>$25,000 goal</span>
-            </div>
-            <button className="campaign-btn">Support Campaign</button>
-          </div>
-
-          <div className="campaign-card">
-            <h3>Law Enforcement Training</h3>
-            <p>Training programs for law enforcement on special needs cases</p>
-            <div className="progress-bar">
-              <div className="progress-fill" style={{ width: '21%' }}></div>
-            </div>
-            <div className="campaign-stats">
-              <span>$3,200 raised</span>
-              <span>$15,000 goal</span>
-            </div>
-            <button className="campaign-btn">Support Campaign</button>
-          </div>
-        </div>
-      </div>
 
       {/* DNA Technology Section */}
       <div className="dna-section" id="dna">

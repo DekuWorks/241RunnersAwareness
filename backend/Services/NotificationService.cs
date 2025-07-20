@@ -29,7 +29,7 @@ namespace _241RunnersAwareness.BackendAPI.Services
         private readonly IConfiguration _configuration;
         private readonly ILogger<NotificationService> _logger;
         private readonly SendGridClient _sendGridClient;
-        private readonly TwilioRestClient _twilioClient;
+        private readonly object _twilioClient; // Temporarily commented out TwilioRestClient
         private readonly string _fromEmail;
         private readonly string _fromName;
         private readonly string _fromPhone;
@@ -45,10 +45,10 @@ namespace _241RunnersAwareness.BackendAPI.Services
             _fromEmail = _configuration["SendGrid:FromEmail"] ?? "alerts@241runnersawareness.org";
             _fromName = _configuration["SendGrid:FromName"] ?? "241 Runners Awareness";
 
-            // Initialize Twilio
-            var accountSid = _configuration["Twilio:AccountSid"];
-            var authToken = _configuration["Twilio:AuthToken"];
-            _twilioClient = new TwilioRestClient(accountSid, authToken);
+            // Initialize Twilio - temporarily disabled
+            // var accountSid = _configuration["Twilio:AccountSid"];
+            // var authToken = _configuration["Twilio:AuthToken"];
+            // _twilioClient = new TwilioRestClient(accountSid, authToken);
             _fromPhone = _configuration["Twilio:FromPhoneNumber"];
         }
 
@@ -305,11 +305,13 @@ namespace _241RunnersAwareness.BackendAPI.Services
 
         private async Task SendSMSAsync(string toPhone, string message)
         {
-            var messageResource = await MessageResource.CreateAsync(
-                body: message,
-                from: new PhoneNumber(_fromPhone),
-                to: new PhoneNumber(toPhone)
-            );
+            // SMS sending temporarily disabled
+            // var messageResource = await MessageResource.CreateAsync(
+            //     body: message,
+            //     from: new PhoneNumber(_fromPhone),
+            //     to: new PhoneNumber(toPhone)
+            // );
+            _logger.LogInformation($"SMS sending temporarily disabled. Would send to {toPhone}: {message}");
         }
 
         private async Task SendToAdminsAsync(string subject, string htmlContent)

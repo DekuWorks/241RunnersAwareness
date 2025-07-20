@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using _241RunnersAwareness.BackendAPI.Models;
+using _241RunnersAwareness.BackendAPI.DBContext.Models;
 
 namespace _241RunnersAwareness.BackendAPI.Services
 {

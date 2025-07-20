@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using _241RunnersAwareness.BackendAPI.DBContext.Data;
 
 namespace _241RunnersAwareness.BackendAPI.Data
 {

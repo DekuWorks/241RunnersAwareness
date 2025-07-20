@@ -34,16 +34,13 @@ const Map = () => {
         setError(null);
 
         try {
-            const response = await fetch('/api/individuals');
+            const response = await fetch('/api/map/houston');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             
             const data = await response.json();
-            const runnersWithLocation = data.filter(runner => 
-                runner.latitude && runner.longitude && 
-                runner.latitude !== 0 && runner.longitude !== 0
-            );
+            const runnersWithLocation = data.individuals || [];
             
             setRunners(runnersWithLocation);
             setLoading(false);
@@ -52,6 +49,22 @@ const Map = () => {
             console.error('Error loading runners data:', error);
             setError(`Error loading data: ${error.message}`);
             setLoading(false);
+        }
+    };
+
+    const loadHoustonStats = async () => {
+        try {
+            const response = await fetch('/api/map/houston/stats');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const stats = await response.json();
+            alert(`Houston Area Statistics:\n\nTotal Cases: ${stats.totalIndividuals}\nMissing: ${stats.missingCases}\nFound: ${stats.foundCases}\nSafe: ${stats.safeCases}\nRecent (30 days): ${stats.recentCases}`);
+            
+        } catch (error) {
+            console.error('Error loading Houston stats:', error);
+            alert('Error loading Houston statistics');
         }
     };
 
@@ -123,12 +136,15 @@ const Map = () => {
                 </button>
             </div>
 
-            <h1>Map View</h1>
-            <p>View the locations of all registered runners on an interactive map.</p>
+            <h1>Houston Area Map</h1>
+            <p>View the locations of all registered runners in the Houston metropolitan area (50-mile radius).</p>
 
             <div className="map-controls">
                 <button onClick={loadRunnersData} className="control-btn">
                     🔄 Refresh Data
+                </button>
+                <button onClick={() => window.map?.setView([29.7604, -95.3698], 10)} className="control-btn houston-btn">
+                    🌆 Focus Houston
                 </button>
                 <select 
                     value={statusFilter} 
@@ -143,12 +159,15 @@ const Map = () => {
                 <button onClick={() => setClustersEnabled(!clustersEnabled)} className="control-btn">
                     🗂️ {clustersEnabled ? 'Disable' : 'Enable'} Clusters
                 </button>
+                <button onClick={loadHoustonStats} className="control-btn">
+                    📊 Houston Stats
+                </button>
             </div>
 
             <div className="map-container">
                 <MapContainer 
-                    center={[39.8283, -98.5795]} 
-                    zoom={4} 
+                    center={[29.7604, -95.3698]} 
+                    zoom={10} 
                     style={{ height: '70vh', width: '100%' }}
                 >
                     <TileLayer
@@ -242,6 +261,14 @@ const Map = () => {
 
                 .control-btn:hover {
                     background: var(--accent-hover);
+                }
+
+                .houston-btn {
+                    background: #ff6b6b !important;
+                }
+
+                .houston-btn:hover {
+                    background: #ff5252 !important;
                 }
 
                 .control-select {

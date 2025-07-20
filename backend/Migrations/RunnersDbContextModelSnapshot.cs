@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using _241RunnersAwareness.BackendAPI.Data;
+using _241RunnersAwareness.BackendAPI.DBContext.Data;
 
 #nullable disable
 

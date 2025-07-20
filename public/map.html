@@ -35,6 +35,14 @@
             background: var(--accent-hover);
         }
         
+        .houston-btn {
+            background: #ff6b6b !important;
+        }
+        
+        .houston-btn:hover {
+            background: #ff5252 !important;
+        }
+        
         .map-controls select {
             padding: 8px;
             border: 1px solid var(--border-color);
@@ -124,11 +132,12 @@
                 <a href="index.html" class="back-home-btn">← Back to Home</a>
             </div>
 
-            <h1>Map View</h1>
-            <p>View the locations of all registered runners on an interactive map.</p>
+            <h1>Houston Area Map</h1>
+            <p>View the locations of all registered runners in the Houston metropolitan area (50-mile radius).</p>
 
             <div class="map-controls">
                 <button id="refreshBtn">🔄 Refresh Data</button>
+                <button id="houstonBtn" class="houston-btn">🌆 Focus Houston</button>
                 <select id="statusFilter">
                     <option value="">All Statuses</option>
                     <option value="Found">Found</option>
@@ -137,6 +146,7 @@
                 </select>
                 <button id="centerMapBtn">📍 Center Map</button>
                 <button id="toggleClustersBtn">🗂️ Toggle Clusters</button>
+                <button id="statsBtn">📊 Houston Stats</button>
             </div>
 
             <div id="loading" class="loading">
@@ -188,9 +198,14 @@
         let markerClusterGroup;
         let currentData = [];
 
+        // Houston coordinates
+        const HOUSTON_LAT = 29.7604;
+        const HOUSTON_LNG = -95.3698;
+        const HOUSTON_RADIUS_MILES = 50;
+
         // Initialize map
         function initMap() {
-            map = L.map('map').setView([39.8283, -98.5795], 4); // Center of USA
+            map = L.map('map').setView([HOUSTON_LAT, HOUSTON_LNG], 10); // Center on Houston
             
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors'
@@ -198,6 +213,14 @@
 
             markerClusterGroup = L.markerClusterGroup();
             map.addLayer(markerClusterGroup);
+
+            // Add Houston area circle
+            const houstonCircle = L.circle([HOUSTON_LAT, HOUSTON_LNG], {
+                color: '#ff6b6b',
+                fillColor: '#ff6b6b',
+                fillOpacity: 0.1,
+                radius: HOUSTON_RADIUS_MILES * 1609.34 // Convert miles to meters
+            }).addTo(map);
         }
 
         // Create custom markers based on status
@@ -260,16 +283,13 @@
             noDataEl.style.display = 'none';
 
             try {
-                const response = await fetch('/api/individuals');
+                const response = await fetch('/api/map/houston');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 
                 const data = await response.json();
-                currentData = data.filter(runner => 
-                    runner.latitude && runner.longitude && 
-                    runner.latitude !== 0 && runner.longitude !== 0
-                );
+                currentData = data.individuals || [];
 
                 if (currentData.length === 0) {
                     loadingEl.style.display = 'none';
@@ -331,6 +351,51 @@
             }
         }
 
+        // Focus on Houston area
+        function focusHouston() {
+            map.setView([HOUSTON_LAT, HOUSTON_LNG], 10);
+        }
+
+        // Load Houston statistics
+        async function loadHoustonStats() {
+            try {
+                const response = await fetch('/api/map/houston/stats');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const stats = await response.json();
+                
+                // Create stats popup
+                const statsContent = `
+                    <div style="text-align: center; padding: 20px;">
+                        <h3>Houston Area Statistics</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;">
+                            <div><strong>Total Cases:</strong> ${stats.totalIndividuals}</div>
+                            <div><strong>Missing:</strong> ${stats.missingCases}</div>
+                            <div><strong>Found:</strong> ${stats.foundCases}</div>
+                            <div><strong>Safe:</strong> ${stats.safeCases}</div>
+                            <div><strong>Recent (30 days):</strong> ${stats.recentCases}</div>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <strong>Status Breakdown:</strong><br>
+                            ${stats.statusBreakdown.map(s => `${s.status}: ${s.count}`).join('<br>')}
+                        </div>
+                    </div>
+                `;
+                
+                // Show stats in a popup
+                L.popup()
+                    .setLatLng([HOUSTON_LAT, HOUSTON_LNG])
+                    .setContent(statsContent)
+                    .openOn(map);
+                    
+            } catch (error) {
+                console.error('Error loading Houston stats:', error);
+                alert('Error loading Houston statistics');
+            }
+        }
+
         // Toggle marker clustering
         function toggleClusters() {
             if (map.hasLayer(markerClusterGroup)) {
@@ -348,9 +413,11 @@
             loadRunnersData();
 
             document.getElementById('refreshBtn').addEventListener('click', loadRunnersData);
+            document.getElementById('houstonBtn').addEventListener('click', focusHouston);
             document.getElementById('statusFilter').addEventListener('change', filterRunners);
             document.getElementById('centerMapBtn').addEventListener('click', centerMap);
             document.getElementById('toggleClustersBtn').addEventListener('click', toggleClusters);
+            document.getElementById('statsBtn').addEventListener('click', loadHoustonStats);
         });
     </script>
 </body>

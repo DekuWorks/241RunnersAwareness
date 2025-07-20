@@ -255,7 +255,6 @@ dotnet test --collect:"XPlat Code Coverage" # Coverage
 - `GET /api/shop/products` - Get all products
 - `GET /api/shop/products/{id}` - Get product details
 - `POST /api/shop/orders` - Create new order
-- `GET /api/shop/campaigns` - Get active campaigns
 - `GET /api/shop/partners` - Get partner information
 
 ### DNA Tracking

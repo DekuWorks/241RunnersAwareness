@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using _241RunnersAwareness.BackendAPI.Data;
-using _241RunnersAwareness.BackendAPI.Models; // make sure this matches your project
+using _241RunnersAwareness.BackendAPI.DBContext.Data;
+using _241RunnersAwareness.BackendAPI.DBContext.Models;
 using _241RunnersAwareness.BackendAPI.Services;
 using System.Collections.Generic;
 using System.Linq;

@@ -5,7 +5,6 @@ const Shop = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [collections, setCollections] = useState([]);
-  const [campaigns, setCampaigns] = useState([]);
   const [partnerships, setPartnerships] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState([]);
@@ -25,26 +24,23 @@ const Shop = () => {
       setLoading(true);
       
       // Fetch all data in parallel
-      const [productsRes, categoriesRes, collectionsRes, campaignsRes, partnershipsRes] = await Promise.all([
+      const [productsRes, categoriesRes, collectionsRes, partnershipsRes] = await Promise.all([
         fetch('/api/shop/products'),
         fetch('/api/shop/categories'),
         fetch('/api/shop/collections'),
-        fetch('/api/shop/campaigns'),
         fetch('/api/shop/partnerships')
       ]);
 
-      const [productsData, categoriesData, collectionsData, campaignsData, partnershipsData] = await Promise.all([
+      const [productsData, categoriesData, collectionsData, partnershipsData] = await Promise.all([
         productsRes.json(),
         categoriesRes.json(),
         collectionsRes.json(),
-        campaignsRes.json(),
         partnershipsRes.json()
       ]);
 
       setProducts(productsData.Products || []);
       setCategories(categoriesData || []);
       setCollections(collectionsData || []);
-      setCampaigns(campaignsData || []);
       setPartnerships(partnershipsData || []);
     } catch (error) {
       console.error('Failed to fetch shop data:', error);
@@ -161,38 +157,7 @@ const Shop = () => {
         </div>
       </div>
 
-      {/* Campaigns Section */}
-      <div className="bg-gray-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Active Campaigns</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {campaigns.map((campaign, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-md p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">{campaign.Name}</h3>
-                  <span className="text-sm text-gray-500">{campaign.CampaignType}</span>
-                </div>
-                <p className="text-gray-600 mb-4">{campaign.Description}</p>
-                <div className="mb-4">
-                  <div className="flex justify-between text-sm mb-2">
-                    <span>Progress</span>
-                    <span>${campaign.CurrentAmount.toLocaleString()} / ${campaign.GoalAmount.toLocaleString()}</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${(campaign.CurrentAmount / campaign.GoalAmount) * 100}%` }}
-                    ></div>
-                  </div>
-                </div>
-                <button className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors">
-                  Support Campaign
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+
 
       {/* Partnerships Section */}
       <div className="py-8">

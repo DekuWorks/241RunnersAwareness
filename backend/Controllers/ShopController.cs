@@ -375,56 +375,7 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Get active campaigns
-        /// </summary>
-        [HttpGet("campaigns")]
-        public async Task<IActionResult> GetCampaigns()
-        {
-            try
-            {
-                var campaigns = new[]
-                {
-                    new
-                    {
-                        Name = "Israel's Legacy Campaign",
-                        Description = "Supporting DNA collection and identification technology in memory of Israel Thomas",
-                        CampaignType = "DNA Collection",
-                        GoalAmount = 50000.00m,
-                        CurrentAmount = 12500.00m,
-                        ImageUrl = "/images/campaigns/israel-legacy.jpg",
-                        IsActive = true
-                    },
-                    new
-                    {
-                        Name = "Special Needs Awareness",
-                        Description = "Raising awareness for missing persons with special needs",
-                        CampaignType = "Awareness",
-                        GoalAmount = 25000.00m,
-                        CurrentAmount = 8750.00m,
-                        ImageUrl = "/images/campaigns/special-needs.jpg",
-                        IsActive = true
-                    },
-                    new
-                    {
-                        Name = "Law Enforcement Training",
-                        Description = "Training programs for law enforcement on special needs cases",
-                        CampaignType = "Training",
-                        GoalAmount = 15000.00m,
-                        CurrentAmount = 3200.00m,
-                        ImageUrl = "/images/campaigns/le-training.jpg",
-                        IsActive = true
-                    }
-                };
 
-                return Ok(campaigns);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to get campaigns");
-                return StatusCode(500, new { Error = "Failed to retrieve campaigns" });
-            }
-        }
 
         #region Private Methods
 

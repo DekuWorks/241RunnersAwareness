@@ -3,11 +3,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using _241RunnersAwareness.BackendAPI.Data;
-using _241RunnersAwareness.BackendAPI.Models;
+using _241RunnersAwareness.BackendAPI.DBContext.Data;
+using _241RunnersAwareness.BackendAPI.DBContext.Models;
 using _241RunnersAwareness.BackendAPI.Services;
 using Google.Apis.Auth;
 using System.Collections.Generic;
+using _241RunnersAwareness.BackendAPI.Models;
 
 namespace _241RunnersAwareness.BackendAPI.Controllers
 {

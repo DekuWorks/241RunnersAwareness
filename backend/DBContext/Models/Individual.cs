@@ -30,6 +30,9 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Models
         [StringLength(200)]
         public string? LastKnownAddress { get; set; }
 
+        [StringLength(200)]
+        public string? Address { get; set; }
+
         [StringLength(100)]
         public string? City { get; set; }
 
@@ -38,6 +41,10 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Models
 
         [StringLength(10)]
         public string? ZipCode { get; set; }
+
+        public double? Latitude { get; set; }
+
+        public double? Longitude { get; set; }
 
         [StringLength(20)]
         public string? PhoneNumber { get; set; }
