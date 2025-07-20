@@ -252,6 +252,33 @@ body.dark-mode footer {
   background: #2d2d2d;
 }
 
+/* Footer content and links */
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footer-links {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.footer-links a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #dc2626;
+  text-decoration: underline;
+}
+
 /* ===== Form Header Group (for Back to Home and Heading) ===== */
 .form-header-group {
   display: flex;

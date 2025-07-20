@@ -1,0 +1,97 @@
+{
+  "name": "241 Runners Awareness",
+  "short_name": "241Runners",
+  "description": "Secure platform for reporting and managing missing individuals",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#dc2626",
+  "theme_color": "#dc2626",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["social", "utilities", "health"],
+  "icons": [
+    {
+      "src": "/241-logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/241-logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/homepage.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Homepage of 241 Runners Awareness"
+    },
+    {
+      "src": "/screenshots/dashboard.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "User Dashboard"
+    },
+    {
+      "src": "/screenshots/mobile-home.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile Homepage"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Report Case",
+      "short_name": "Report",
+      "description": "Report a missing individual case",
+      "url": "/signup.html",
+      "icons": [
+        {
+          "src": "/icons/report.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "View Cases",
+      "short_name": "Cases",
+      "description": "View current missing person cases",
+      "url": "/cases.html",
+      "icons": [
+        {
+          "src": "/icons/cases.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Login",
+      "short_name": "Login",
+      "description": "Access your account",
+      "url": "/login.html",
+      "icons": [
+        {
+          "src": "/icons/login.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
+} 
