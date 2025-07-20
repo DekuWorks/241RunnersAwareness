@@ -82,11 +82,29 @@ img {
 .red {
   background-color: #ff4d4d;
 }
+.red-2 {
+  background-color: #e63946;
+}
+.red-3 {
+  background-color: #b00020;
+}
 .yellow {
   background-color: #ffcc00;
 }
+.yellow-2 {
+  background-color: #f4c430;
+}
+.yellow-3 {
+  background-color: #ffdd57;
+}
 .green {
   background-color: #33cc33;
+}
+.green-2 {
+  background-color: #28a745;
+}
+.green-3 {
+  background-color: #20c997;
 }
 
 /* ===== Navbar ===== */

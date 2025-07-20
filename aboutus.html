@@ -65,6 +65,68 @@
       margin-top: 0;
     }
     
+    .new-features-section {
+      margin: 40px 0;
+      text-align: center;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    
+    .feature-card {
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      border-radius: 12px;
+      padding: 2rem;
+      border: 1px solid #e2e8f0;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-align: center;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    
+    .feature-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    
+    .feature-card h4 {
+      color: #1f2937;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+    
+    .feature-card p {
+      color: #6b7280;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+    
+    .feature-link {
+      display: inline-block;
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+    }
+    
+    .feature-link:hover {
+      background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+    }
+    
     .back-btn {
       display: inline-block;
       margin: 12px 0 0 0;
@@ -126,6 +188,17 @@
 <body>
   <header role="banner">
     <div class="header-bar">
+      <div class="traffic-lights">
+        <span class="dot red"></span>
+        <span class="dot red-2"></span>
+        <span class="dot red-3"></span>
+        <span class="dot yellow"></span>
+        <span class="dot yellow-2"></span>
+        <span class="dot yellow-3"></span>
+        <span class="dot green"></span>
+        <span class="dot green-2"></span>
+        <span class="dot green-3"></span>
+      </div>
       <img src="/241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
       <h1>241 Runners Awareness</h1>
     </div>
@@ -167,6 +240,24 @@
         <p>241 Runners Awareness is dedicated to supporting and protecting missing and vulnerable individuals through real-time alerts, secure data management, and community engagement. We believe that every person deserves to be safe and that technology can be a powerful tool in achieving this goal.</p>
       </div>
 
+      <div class="new-features-section">
+        <h3>Our Latest Initiatives</h3>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🛍️</div>
+            <h4>241RA x Varlo Shop</h4>
+            <p>Premium athletic wear supporting missing persons awareness. Every purchase helps fund DNA collection and identification technology.</p>
+            <a href="shop.html" class="feature-link">Shop Now</a>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🧬</div>
+            <h4>DNA Tracking & Identification</h4>
+            <p>Advanced DNA technology for missing persons cases. Secure sample collection, analysis, and national database integration.</p>
+            <a href="dna-tracking.html" class="feature-link">Learn More</a>
+          </div>
+        </div>
+      </div>
+
       <h3>Who We Are</h3>
       <p>Founded by passionate runners and community advocates, 241 Runners Awareness emerged from a deep commitment to public safety and community well-being. Our name "241" represents the 2.41 miles that many runners cover in their daily routines, symbolizing the continuous journey we all take together in building safer communities.</p>
 
@@ -177,6 +268,8 @@
         <li><strong>Secure Data Management:</strong> Protected storage of critical information for emergency situations</li>
         <li><strong>Community Integration:</strong> Connecting runners, law enforcement, and community members in safety efforts</li>
         <li><strong>Emergency Response Coordination:</strong> Streamlined communication between all parties during critical situations</li>
+        <li><strong>DNA Technology:</strong> Advanced DNA collection and identification for missing persons cases</li>
+        <li><strong>Fundraising Support:</strong> Premium merchandise sales supporting our mission and technology</li>
       </ul>
 
       <h3>Our Technology</h3>
