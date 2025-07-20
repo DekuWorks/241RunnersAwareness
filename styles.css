@@ -218,6 +218,7 @@ nav a:hover {
 main {
   padding: 40px 20px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 60vh;
@@ -228,7 +229,7 @@ section {
   background: #fff;
   padding: 30px;
   border-radius: 12px;
-  max-width: 600px;
+  max-width: 800px;
   width: 100%;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
   text-align: center;
@@ -421,6 +422,8 @@ body.dark-mode footer {
   padding: 2rem;
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   margin: 2rem 0;
+  max-width: 800px;
+  width: 100%;
 }
 
 body.dark-mode .features-section {
@@ -428,10 +431,12 @@ body.dark-mode .features-section {
 }
 
 .features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 2rem;
   margin-top: 2rem;
+  max-width: 800px;
+  width: 100%;
 }
 
 .feature-card {
