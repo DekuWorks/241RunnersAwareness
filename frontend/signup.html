@@ -152,12 +152,16 @@
     </div>
     <div class="divider">or</div>
     <div class="form-group">
-      <label for="username">Username *</label>
-      <input type="text" id="username" name="username" required autocomplete="username">
+      <label for="fullName">Full Name *</label>
+      <input type="text" id="fullName" name="fullName" required autocomplete="name">
     </div>
     <div class="form-group">
       <label for="email">Email *</label>
       <input type="email" id="email" name="email" required autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label for="phoneNumber">Phone Number *</label>
+      <input type="tel" id="phoneNumber" name="phoneNumber" required autocomplete="tel">
     </div>
     <div class="form-group">
       <label for="password">Password *</label>
@@ -201,8 +205,9 @@
     // Traditional signup handler (optional: POST to your backend)
     document.getElementById('signupForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      const username = document.getElementById('username').value;
+      const fullName = document.getElementById('fullName').value;
       const email = document.getElementById('email').value;
+      const phoneNumber = document.getElementById('phoneNumber').value;
       const password = document.getElementById('password').value;
       const messageDiv = document.getElementById('message');
       messageDiv.style.color = '#007bff';
@@ -212,8 +217,9 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          username,
+          fullName,
           email,
+          phoneNumber,
           password
         })
       })
