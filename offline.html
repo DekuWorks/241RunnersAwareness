@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline - 241Runners Awareness</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .offline-container {
+      max-width: 600px;
+      margin: 4rem auto;
+      padding: 2rem;
+      text-align: center;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+    }
+
+    .offline-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      color: #dc2626;
+    }
+
+    .offline-title {
+      color: #dc2626;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .offline-message {
+      color: #6b7280;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .offline-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .retry-btn {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 1rem 2rem;
+      font-size: 1.125rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .retry-btn:hover {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+    }
+
+    .home-btn {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    }
+
+    .home-btn:hover {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+
+    .emergency-info {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      text-align: left;
+    }
+
+    .emergency-info h3 {
+      color: #dc2626;
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+    }
+
+    .emergency-info ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .emergency-info li {
+      margin-bottom: 0.5rem;
+      color: #374151;
+    }
+
+    .emergency-info strong {
+      color: #dc2626;
+    }
+
+    @media (max-width: 768px) {
+      .offline-container {
+        margin: 2rem 1rem;
+        padding: 1.5rem;
+      }
+      
+      .offline-title {
+        font-size: 1.5rem;
+      }
+      
+      .offline-message {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">Offline</div>
+  
+  <div class="offline-container">
+    <div class="offline-icon">📡</div>
+    <h1 class="offline-title">You're Offline</h1>
+    <p class="offline-message">
+      It looks like you've lost your internet connection. Some features may not be available while you're offline.
+    </p>
+    
+    <div class="offline-actions">
+      <button class="retry-btn" onclick="retryConnection()">Try Again</button>
+      <a href="/" class="home-btn">Go to Homepage</a>
+    </div>
+    
+    <div class="emergency-info">
+      <h3>🚨 Emergency Information</h3>
+      <p>If you need immediate assistance for a missing person:</p>
+      <ul>
+        <li><strong>Emergency Services:</strong> Call 911 immediately</li>
+        <li><strong>National Center for Missing & Exploited Children:</strong> 1-800-THE-LOST</li>
+        <li><strong>Local Law Enforcement:</strong> Contact your local police department</li>
+        <li><strong>Amber Alert:</strong> Check local news and radio stations</li>
+      </ul>
+      <p><em>This information is available offline for emergency situations.</em></p>
+    </div>
+  </div>
+
+  <script>
+    // Check connection status
+    function checkConnection() {
+      if (navigator.onLine) {
+        window.location.reload();
+      }
+    }
+
+    // Retry connection
+    function retryConnection() {
+      const retryBtn = document.querySelector('.retry-btn');
+      retryBtn.textContent = 'Checking...';
+      retryBtn.disabled = true;
+      
+      // Try to fetch a small resource to test connection
+      fetch('/styles.css', { method: 'HEAD' })
+        .then(() => {
+          window.location.reload();
+        })
+        .catch(() => {
+          retryBtn.textContent = 'Try Again';
+          retryBtn.disabled = false;
+          alert('Still offline. Please check your internet connection.');
+        });
+    }
+
+    // Listen for online/offline events
+    window.addEventListener('online', () => {
+      console.log('Connection restored');
+      window.location.reload();
+    });
+
+    window.addEventListener('offline', () => {
+      console.log('Connection lost');
+    });
+
+    // Check connection every 30 seconds
+    setInterval(checkConnection, 30000);
+
+    // Register service worker if not already registered
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then((registration) => {
+          console.log('Service Worker registered:', registration);
+        })
+        .catch((error) => {
+          console.error('Service Worker registration failed:', error);
+        });
+    }
+  </script>
+</body>
+</html> 
