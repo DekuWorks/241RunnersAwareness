@@ -5,14 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Houston Area Map - 241 Runners Awareness</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="styles.css">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            color: #333;
         }
 
         .container {
@@ -393,8 +397,91 @@
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
-    <script src="mock-api.js"></script>
     <script>
+        // Mock API data directly in the HTML to ensure it loads
+        const mockHoustonData = {
+            individuals: [
+                {
+                    id: 1,
+                    fullName: "Sarah Johnson",
+                    currentStatus: "Missing",
+                    dateOfBirth: "1995-03-15",
+                    gender: "Female",
+                    address: "123 Main St",
+                    city: "Houston",
+                    state: "TX",
+                    latitude: 29.7604,
+                    longitude: -95.3698,
+                    dateAdded: "2025-01-15T10:30:00Z"
+                },
+                {
+                    id: 2,
+                    fullName: "Michael Chen",
+                    currentStatus: "Found",
+                    dateOfBirth: "1988-07-22",
+                    gender: "Male",
+                    address: "456 Oak Ave",
+                    city: "Spring",
+                    state: "TX",
+                    latitude: 30.0799,
+                    longitude: -95.4172,
+                    dateAdded: "2025-01-10T14:20:00Z"
+                },
+                {
+                    id: 3,
+                    fullName: "Emily Rodriguez",
+                    currentStatus: "Safe",
+                    dateOfBirth: "1992-11-08",
+                    gender: "Female",
+                    address: "789 Pine Rd",
+                    city: "Katy",
+                    state: "TX",
+                    latitude: 29.7858,
+                    longitude: -95.8244,
+                    dateAdded: "2025-01-08T09:15:00Z"
+                },
+                {
+                    id: 4,
+                    fullName: "David Thompson",
+                    currentStatus: "Missing",
+                    dateOfBirth: "1990-05-12",
+                    gender: "Male",
+                    address: "321 Elm St",
+                    city: "Sugar Land",
+                    state: "TX",
+                    latitude: 29.6197,
+                    longitude: -95.6349,
+                    dateAdded: "2025-01-12T16:45:00Z"
+                },
+                {
+                    id: 5,
+                    fullName: "Lisa Wang",
+                    currentStatus: "Found",
+                    dateOfBirth: "1987-09-30",
+                    gender: "Female",
+                    address: "654 Maple Dr",
+                    city: "The Woodlands",
+                    state: "TX",
+                    latitude: 30.1658,
+                    longitude: -95.4612,
+                    dateAdded: "2025-01-05T11:30:00Z"
+                }
+            ]
+        };
+
+        const mockHoustonStats = {
+            totalIndividuals: 5,
+            missingCases: 2,
+            foundCases: 2,
+            safeCases: 1,
+            recentCases: 3,
+            statusBreakdown: [
+                { status: "Missing", count: 2 },
+                { status: "Found", count: 2 },
+                { status: "Safe", count: 1 }
+            ]
+        };
+
         let map;
         let markers = [];
         let markerClusterGroup;
@@ -487,7 +574,7 @@
             try {
                 // Use mock data instead of API call
                 await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate loading
-                const data = window.mockHoustonData;
+                const data = mockHoustonData;
                 currentData = data.individuals || [];
 
                 if (currentData.length === 0) {
@@ -559,7 +646,7 @@
         async function loadHoustonStats() {
             try {
                 // Use mock stats instead of API call
-                const stats = window.mockHoustonStats;
+                const stats = mockHoustonStats;
                 
                 // Create stats popup
                 const statsContent = `
