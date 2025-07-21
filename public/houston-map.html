@@ -68,90 +68,59 @@
             border-color: #dc2626;
         }
         
-        .runner-popup {
-            text-align: center;
-            padding: 10px;
-        }
-        
-        .runner-popup h3 {
-            margin: 0 0 15px 0;
-            color: #dc2626;
-            font-size: 1.2rem;
-        }
-        
-        .runner-popup p {
-            margin: 8px 0;
-            font-size: 14px;
-            color: #666;
-        }
-        
         .status-badge {
             display: inline-block;
             padding: 4px 12px;
             border-radius: 15px;
             font-size: 12px;
             font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .status-found { background: #dc2626; color: white; }
-        .status-missing { background: #f59e0b; color: white; }
-        .status-safe { background: #10b981; color: white; }
-        
-        .loading {
-            text-align: center;
-            padding: 60px;
-            color: #666;
-            font-size: 1.1rem;
-        }
-        
-        .error {
-            background: #dc2626;
             color: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
         }
         
-        .no-data {
-            text-align: center;
-            padding: 60px;
-            color: #666;
-            font-style: italic;
-            font-size: 1.1rem;
-        }
-
-        .map-info {
-            margin-top: 40px;
-            padding: 30px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .map-info h3 {
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-        }
+        .status-found { background: #dc2626; }
+        .status-missing { background: #f59e0b; }
+        .status-safe { background: #10b981; }
 
         .legend {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .legend h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .legend-items {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background: white;
+            gap: 8px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 18px;
+        }
+
+        .error {
+            background: #dc2626;
+            color: white;
+            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            text-align: center;
         }
 
         /* Dark mode adjustments */
@@ -159,17 +128,16 @@
             filter: brightness(0.8) contrast(1.2);
         }
 
-        body.dark-mode .map-info {
+        body.dark-mode .legend {
             background: rgba(45, 45, 45, 0.95);
             color: #fff;
         }
 
-        body.dark-mode .map-info h3 {
+        body.dark-mode .legend h3 {
             color: #fff;
         }
 
         body.dark-mode .legend-item {
-            background: #333;
             color: #fff;
         }
 
@@ -244,25 +212,16 @@
                     <option value="Safe">Safe</option>
                 </select>
                 <button id="centerMapBtn">📍 Center Map</button>
-                <button id="toggleClustersBtn">🗂️ Toggle Clusters</button>
                 <button id="statsBtn">📊 Houston Stats</button>
             </div>
 
-            <div id="loading" class="loading">
-                Loading map data...
-            </div>
-
+            <div id="loading" class="loading">Loading map data...</div>
             <div id="error" class="error" style="display: none;"></div>
-
             <div id="map"></div>
 
-            <div id="noData" class="no-data" style="display: none;">
-                No location data available. Runners need to have latitude and longitude coordinates to appear on the map.
-            </div>
-
-            <div class="map-info">
+            <div class="legend">
                 <h3>Map Legend</h3>
-                <div class="legend">
+                <div class="legend-items">
                     <div class="legend-item">
                         <span class="status-badge status-found">Found</span>
                         <span>Runner has been found</span>
@@ -292,12 +251,9 @@
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
     <script>
-        // Mock API data directly in the HTML to ensure it loads
-        const mockHoustonData = {
+        // Mock data
+        const mockData = {
             individuals: [
                 {
                     id: 1,
@@ -367,50 +323,32 @@
             ]
         };
 
-        const mockHoustonStats = {
-            totalIndividuals: 5,
-            missingCases: 2,
-            foundCases: 2,
-            safeCases: 1,
-            recentCases: 3,
-            statusBreakdown: [
-                { status: "Missing", count: 2 },
-                { status: "Found", count: 2 },
-                { status: "Safe", count: 1 }
-            ]
-        };
-
         let map;
         let markers = [];
-        let markerClusterGroup;
         let currentData = [];
 
         // Houston coordinates
         const HOUSTON_LAT = 29.7604;
         const HOUSTON_LNG = -95.3698;
-        const HOUSTON_RADIUS_MILES = 50;
 
         // Initialize map
         function initMap() {
-            map = L.map('map').setView([HOUSTON_LAT, HOUSTON_LNG], 10); // Center on Houston
+            map = L.map('map').setView([HOUSTON_LAT, HOUSTON_LNG], 10);
             
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors'
             }).addTo(map);
 
-            markerClusterGroup = L.markerClusterGroup();
-            map.addLayer(markerClusterGroup);
-
             // Add Houston area circle
-            const houstonCircle = L.circle([HOUSTON_LAT, HOUSTON_LNG], {
+            L.circle([HOUSTON_LAT, HOUSTON_LNG], {
                 color: '#dc2626',
                 fillColor: '#dc2626',
                 fillOpacity: 0.1,
-                radius: HOUSTON_RADIUS_MILES * 1609.34 // Convert miles to meters
+                radius: 50 * 1609.34 // 50 miles in meters
             }).addTo(map);
         }
 
-        // Create custom markers based on status
+        // Create custom markers
         function createCustomMarker(lat, lng, status) {
             const colors = {
                 'Found': '#dc2626',
@@ -418,11 +356,9 @@
                 'Safe': '#10b981'
             };
             
-            const color = colors[status] || '#666';
-            
             return L.circleMarker([lat, lng], {
                 radius: 10,
-                fillColor: color,
+                fillColor: colors[status] || '#666',
                 color: '#fff',
                 weight: 3,
                 opacity: 1,
@@ -434,8 +370,8 @@
         function createPopupContent(runner) {
             const statusClass = runner.currentStatus?.toLowerCase().replace(/\s+/g, '-') || 'unknown';
             return `
-                <div class="runner-popup">
-                    <h3>${runner.fullName}</h3>
+                <div style="text-align: center; padding: 10px;">
+                    <h3 style="margin: 0 0 15px 0; color: #dc2626;">${runner.fullName}</h3>
                     <p><strong>Status:</strong> <span class="status-badge status-${statusClass}">${runner.currentStatus || 'Unknown'}</span></p>
                     <p><strong>Age:</strong> ${calculateAge(runner.dateOfBirth)} years old</p>
                     <p><strong>Gender:</strong> ${runner.gender || 'Not specified'}</p>
@@ -446,7 +382,7 @@
             `;
         }
 
-        // Calculate age from date of birth
+        // Calculate age
         function calculateAge(dateOfBirth) {
             if (!dateOfBirth) return 'Unknown';
             const birthDate = new Date(dateOfBirth);
@@ -459,43 +395,31 @@
             return age;
         }
 
-        // Load and display runners data using mock data
-        async function loadRunnersData() {
+        // Load data
+        async function loadData() {
             const loadingEl = document.getElementById('loading');
             const errorEl = document.getElementById('error');
-            const noDataEl = document.getElementById('noData');
             
             loadingEl.style.display = 'block';
             errorEl.style.display = 'none';
-            noDataEl.style.display = 'none';
 
             try {
-                // Use mock data instead of API call
                 await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate loading
-                const data = mockHoustonData;
-                currentData = data.individuals || [];
-
-                if (currentData.length === 0) {
-                    loadingEl.style.display = 'none';
-                    noDataEl.style.display = 'block';
-                    return;
-                }
-
+                currentData = mockData.individuals;
                 displayRunners(currentData);
                 loadingEl.style.display = 'none';
-                
             } catch (error) {
-                console.error('Error loading runners data:', error);
+                console.error('Error loading data:', error);
                 loadingEl.style.display = 'none';
                 errorEl.style.display = 'block';
                 errorEl.textContent = `Error loading data: ${error.message}`;
             }
         }
 
-        // Display runners on map
+        // Display runners
         function displayRunners(runners) {
             // Clear existing markers
-            markerClusterGroup.clearLayers();
+            markers.forEach(marker => map.removeLayer(marker));
             markers = [];
 
             runners.forEach(runner => {
@@ -508,12 +432,12 @@
                 const popupContent = createPopupContent(runner);
                 marker.bindPopup(popupContent);
                 
-                markerClusterGroup.addLayer(marker);
+                marker.addTo(map);
                 markers.push(marker);
             });
         }
 
-        // Filter runners by status
+        // Filter runners
         function filterRunners() {
             const statusFilter = document.getElementById('statusFilter').value;
             let filteredData = currentData;
@@ -527,7 +451,7 @@
             displayRunners(filteredData);
         }
 
-        // Center map on all markers
+        // Center map
         function centerMap() {
             if (markers.length > 0) {
                 const group = new L.featureGroup(markers);
@@ -535,69 +459,46 @@
             }
         }
 
-        // Focus on Houston area
+        // Focus Houston
         function focusHouston() {
             map.setView([HOUSTON_LAT, HOUSTON_LNG], 10);
         }
 
-        // Load Houston statistics using mock data
-        async function loadHoustonStats() {
-            try {
-                // Use mock stats instead of API call
-                const stats = mockHoustonStats;
-                
-                // Create stats popup
-                const statsContent = `
-                    <div style="text-align: center; padding: 20px;">
-                        <h3>Houston Area Statistics</h3>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;">
-                            <div><strong>Total Cases:</strong> ${stats.totalIndividuals}</div>
-                            <div><strong>Missing:</strong> ${stats.missingCases}</div>
-                            <div><strong>Found:</strong> ${stats.foundCases}</div>
-                            <div><strong>Safe:</strong> ${stats.safeCases}</div>
-                            <div><strong>Recent (30 days):</strong> ${stats.recentCases}</div>
-                        </div>
-                        <div style="margin-top: 15px;">
-                            <strong>Status Breakdown:</strong><br>
-                            ${stats.statusBreakdown.map(s => `${s.status}: ${s.count}`).join('<br>')}
-                        </div>
-                    </div>
-                `;
-                
-                // Show stats in a popup
-                L.popup()
-                    .setLatLng([HOUSTON_LAT, HOUSTON_LNG])
-                    .setContent(statsContent)
-                    .openOn(map);
-                    
-            } catch (error) {
-                console.error('Error loading Houston stats:', error);
-                alert('Error loading Houston statistics');
-            }
-        }
-
-        // Toggle marker clustering
-        function toggleClusters() {
-            if (map.hasLayer(markerClusterGroup)) {
-                map.removeLayer(markerClusterGroup);
-                markers.forEach(marker => map.addLayer(marker));
-            } else {
-                markers.forEach(marker => map.removeLayer(marker));
-                map.addLayer(markerClusterGroup);
-            }
+        // Show stats
+        function showStats() {
+            const stats = {
+                total: currentData.length,
+                missing: currentData.filter(r => r.currentStatus === 'Missing').length,
+                found: currentData.filter(r => r.currentStatus === 'Found').length,
+                safe: currentData.filter(r => r.currentStatus === 'Safe').length
+            };
+            
+            const statsContent = `
+                <div style="text-align: center; padding: 20px;">
+                    <h3>Houston Area Statistics</h3>
+                    <p><strong>Total Cases:</strong> ${stats.total}</p>
+                    <p><strong>Missing:</strong> ${stats.missing}</p>
+                    <p><strong>Found:</strong> ${stats.found}</p>
+                    <p><strong>Safe:</strong> ${stats.safe}</p>
+                </div>
+            `;
+            
+            L.popup()
+                .setLatLng([HOUSTON_LAT, HOUSTON_LNG])
+                .setContent(statsContent)
+                .openOn(map);
         }
 
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
             initMap();
-            loadRunnersData();
+            loadData();
 
-            document.getElementById('refreshBtn').addEventListener('click', loadRunnersData);
+            document.getElementById('refreshBtn').addEventListener('click', loadData);
             document.getElementById('houstonBtn').addEventListener('click', focusHouston);
             document.getElementById('statusFilter').addEventListener('change', filterRunners);
             document.getElementById('centerMapBtn').addEventListener('click', centerMap);
-            document.getElementById('toggleClustersBtn').addEventListener('click', toggleClusters);
-            document.getElementById('statsBtn').addEventListener('click', loadHoustonStats);
+            document.getElementById('statsBtn').addEventListener('click', showStats);
 
             // Theme toggle functionality
             const themeToggle = document.getElementById('theme-toggle');
