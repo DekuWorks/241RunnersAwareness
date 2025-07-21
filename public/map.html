@@ -3,75 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map View - 241 Runners Awareness</title>
+    <title>Houston Area Map - 241 Runners Awareness</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/styles.css">
     <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nav-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .nav-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-home-container {
+            margin-bottom: 30px;
+        }
+
+        .back-home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .back-home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-description {
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
         #map {
             height: 70vh;
             width: 100%;
-            border-radius: 8px;
+            border-radius: 15px;
             margin: 20px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
         
         .map-controls {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 15px;
+            margin-bottom: 30px;
             flex-wrap: wrap;
+            justify-content: center;
         }
         
         .map-controls button {
-            padding: 8px 16px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 4px;
-            background: var(--accent-color);
+            border-radius: 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
         
         .map-controls button:hover {
-            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
         
         .houston-btn {
-            background: #ff6b6b !important;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%) !important;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3) !important;
         }
         
         .houston-btn:hover {
-            background: #ff5252 !important;
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4) !important;
         }
         
         .map-controls select {
-            padding: 8px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            background: var(--bg-color);
-            color: var(--text-color);
+            padding: 12px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            background: white;
+            color: #333;
+            font-weight: 500;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        
+        .map-controls select:focus {
+            outline: none;
+            border-color: #667eea;
         }
         
         .runner-popup {
             text-align: center;
+            padding: 10px;
         }
         
         .runner-popup h3 {
-            margin: 0 0 10px 0;
-            color: var(--accent-color);
+            margin: 0 0 15px 0;
+            color: #667eea;
+            font-size: 1.2rem;
         }
         
         .runner-popup p {
-            margin: 5px 0;
+            margin: 8px 0;
             font-size: 14px;
+            color: #666;
         }
         
         .status-badge {
             display: inline-block;
-            padding: 2px 8px;
-            border-radius: 12px;
+            padding: 4px 12px;
+            border-radius: 15px;
             font-size: 12px;
             font-weight: bold;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .status-found { background: #ff6b6b; color: white; }
@@ -80,23 +217,96 @@
         
         .loading {
             text-align: center;
-            padding: 40px;
-            color: var(--text-muted);
+            padding: 60px;
+            color: #666;
+            font-size: 1.1rem;
         }
         
         .error {
-            background: #ff6b6b;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
             color: white;
-            padding: 15px;
-            border-radius: 8px;
+            padding: 20px;
+            border-radius: 15px;
             margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
         }
         
         .no-data {
             text-align: center;
-            padding: 40px;
-            color: var(--text-muted);
+            padding: 60px;
+            color: #666;
             font-style: italic;
+            font-size: 1.1rem;
+        }
+
+        .map-info {
+            margin-top: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .map-info h3 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: white;
+            padding: 20px;
+        }
+
+        .footer-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .map-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .map-controls button,
+            .map-controls select {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
         }
     </style>
 </head>
@@ -116,14 +326,6 @@
                     <li><a href="login.html">Login</a></li>
                     <li><a href="signup.html">Sign Up</a></li>
                 </ul>
-                <div class="hamburger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-                <button class="theme-toggle" aria-label="Toggle dark mode">
-                    <span class="theme-icon">🌙</span>
-                </button>
             </div>
         </nav>
 
@@ -133,7 +335,7 @@
             </div>
 
             <h1>Houston Area Map</h1>
-            <p>View the locations of all registered runners in the Houston metropolitan area (50-mile radius).</p>
+            <p class="page-description">View the locations of all registered runners in the Houston metropolitan area (50-mile radius).</p>
 
             <div class="map-controls">
                 <button id="refreshBtn">🔄 Refresh Data</button>
@@ -182,7 +384,7 @@
 
         <footer class="footer">
             <div class="footer-content">
-                <p>&copy; 2024 241 Runners Awareness. All rights reserved.</p>
+                <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
             </div>
         </footer>
     </div>
@@ -191,7 +393,7 @@
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
-    <script src="scripts.js"></script>
+    <script src="mock-api.js"></script>
     <script>
         let map;
         let markers = [];
@@ -234,10 +436,10 @@
             const color = colors[status] || '#666';
             
             return L.circleMarker([lat, lng], {
-                radius: 8,
+                radius: 10,
                 fillColor: color,
                 color: '#fff',
-                weight: 2,
+                weight: 3,
                 opacity: 1,
                 fillOpacity: 0.8
             });
@@ -272,7 +474,7 @@
             return age;
         }
 
-        // Load and display runners data
+        // Load and display runners data using mock data
         async function loadRunnersData() {
             const loadingEl = document.getElementById('loading');
             const errorEl = document.getElementById('error');
@@ -283,12 +485,9 @@
             noDataEl.style.display = 'none';
 
             try {
-                const response = await fetch('/api/map/houston');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
+                // Use mock data instead of API call
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate loading
+                const data = window.mockHoustonData;
                 currentData = data.individuals || [];
 
                 if (currentData.length === 0) {
@@ -356,15 +555,11 @@
             map.setView([HOUSTON_LAT, HOUSTON_LNG], 10);
         }
 
-        // Load Houston statistics
+        // Load Houston statistics using mock data
         async function loadHoustonStats() {
             try {
-                const response = await fetch('/api/map/houston/stats');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const stats = await response.json();
+                // Use mock stats instead of API call
+                const stats = window.mockHoustonStats;
                 
                 // Create stats popup
                 const statsContent = `

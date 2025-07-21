@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using BCrypt.Net;
+using _241RunnersAwareness.BackendAPI.DBContext.Models;
 using _241RunnersAwareness.BackendAPI.Models;
 
 namespace _241RunnersAwareness.BackendAPI.Services

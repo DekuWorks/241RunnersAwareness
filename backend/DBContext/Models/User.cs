@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using _241RunnersAwareness.BackendAPI.DBContext.Models;
 
-namespace _241RunnersAwareness.BackendAPI.Models
+namespace _241RunnersAwareness.BackendAPI.DBContext.Models
 {
     public class User
     {

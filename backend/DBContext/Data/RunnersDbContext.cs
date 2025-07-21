@@ -12,6 +12,7 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Data
         // Existing Models
         public DbSet<Individual> Individuals { get; set; }
         public DbSet<EmergencyContact> EmergencyContacts { get; set; }
+        public DbSet<User> Users { get; set; }
 
         // New E-commerce Models
         public DbSet<Product> Products { get; set; }

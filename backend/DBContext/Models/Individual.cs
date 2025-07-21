@@ -10,6 +10,10 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Models
         [Key]
         public int Id { get; set; }
 
+        // Alias for Id to maintain compatibility
+        [NotMapped]
+        public int IndividualId => Id;
+
         [Required]
         [StringLength(100)]
         public string FirstName { get; set; }
@@ -119,6 +123,10 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Models
         [StringLength(50)]
         public string? CaseStatus { get; set; } // "Active", "Resolved", "Closed"
 
+        // Current Status for map functionality
+        [StringLength(50)]
+        public string? CurrentStatus { get; set; } // "Missing", "Found", "Safe"
+
         public DateTime? LastSeenDate { get; set; }
 
         [StringLength(200)]
@@ -155,11 +163,29 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Models
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
+        // Alias for CreatedAt to maintain compatibility
+        [NotMapped]
+        public DateTime DateAdded => CreatedAt;
+
         [StringLength(100)]
         public string? CreatedBy { get; set; }
 
         [StringLength(100)]
         public string? UpdatedBy { get; set; }
+
+        // Additional fields for compatibility
+        [StringLength(500)]
+        public string? Notes { get; set; }
+
+        [StringLength(500)]
+        public string? SpecialNeedsDescription { get; set; }
+
+        public bool? HasBeenAdopted { get; set; }
+
+        [StringLength(100)]
+        public string? PlacementStatus { get; set; }
+
+        public DateTime? AdoptionDate { get; set; }
 
         // Navigation Properties
         public virtual ICollection<EmergencyContact> EmergencyContacts { get; set; } = new List<EmergencyContact>();
