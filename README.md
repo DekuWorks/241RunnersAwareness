@@ -7,6 +7,32 @@ Built with React, .NET 8, and modern deployment tools, this system empowers user
 
 ---
 
+## 👥 Our Team
+
+### **Lisa Thomas** - Founder
+*Leading the mission to honor Israel Thomas and support missing persons cases*
+
+### **Marcus Brown** - Lead Front End Developer
+*Expert in React, modern web technologies, and user experience design*
+
+### **Daniel Carey** - Full Stack Developer
+*Specialized in .NET Core, database design, and API development*
+
+### **Tina Matthews** - Program Director
+*Overseeing community outreach and program coordination*
+
+### **Ralph Frank** - Event Coordinator
+*Managing community events and awareness campaigns*
+
+### **Arquelle Gilder** - Real Estate Broker / Sponsor
+*Supporting our mission through strategic partnerships and sponsorship*
+
+---
+
+*In memory of Israel Thomas, who passed away at 2:41 AM. Our organization works tirelessly to prevent similar tragedies and support families affected by missing persons cases.*
+
+---
+
 ## 🚀 Features
 
 ### 🔐 Authentication

@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="../buildMultiTargeting/241RunnersAwareness.BackendAPI.props" />
-</Project>
