@@ -1,31 +1,40 @@
+/* ===== 241 Runners Awareness - Main Stylesheet ===== */
+/* 
+ * This stylesheet contains all global styles for the 241 Runners Awareness website.
+ * Features include: responsive design, dark mode support, traffic light navigation colors,
+ * and optimized performance for missing persons awareness platform.
+ */
+
 /* ===== Reset & Base Styles ===== */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #ff0000; /* Default red background */
+  background: #ff0000; /* Default red background - brand color */
   color: #000;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme transitions */
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  overflow-x: hidden;
+  min-height: 100vh; /* Full viewport height */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
-/* Dark mode styles */
+/* ===== Dark Mode Support ===== */
+/* Dark mode styles for better accessibility and user preference */
 body.dark-mode {
-  background: #1a1a1a;
-  color: #fff;
+  background: #1a1a1a; /* Dark background */
+  color: #fff; /* Light text for contrast */
 }
 
-/* ===== Header ===== */
+/* ===== Header & Navigation ===== */
+/* Main header containing logo, title, and navigation menu */
 header {
-  background: #000;
-  color: #fff;
+  background: #000; /* Black header background */
+  color: #fff; /* White text */
   padding: 0 20px 10px;
-  position: sticky;
+  position: sticky; /* Stays at top when scrolling */
   top: 0;
-  z-index: 1000;
-  transition: all 0.3s ease;
+  z-index: 1000; /* High z-index to stay above content */
+  transition: all 0.3s ease; /* Smooth transitions */
   width: 100%;
   margin: 0;
 }

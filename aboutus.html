@@ -10,6 +10,9 @@
   <title>About Us - 241 Runners Awareness</title>
   <link rel="stylesheet" href="styles.css?v=20250124" />
   <style>
+    /* ===== About Us Page Specific Styles ===== */
+    
+    /* Main content container */
     .about-content {
       background: #fff;
       padding: 40px;
@@ -21,6 +24,7 @@
       line-height: 1.6;
     }
     
+    /* Typography styles */
     .about-content h2 {
       color: #000;
       text-align: center;
@@ -29,7 +33,7 @@
     }
     
     .about-content h3 {
-      color: #d32f2f;
+      color: #d32f2f; /* Brand red color */
       margin-top: 30px;
       margin-bottom: 15px;
       font-size: 1.4rem;
@@ -40,8 +44,9 @@
       font-size: 1.1rem;
     }
     
+    /* ===== Mission Statement Section ===== */
     .mission-statement {
-      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); /* Brand gradient */
       color: white;
       padding: 3rem 2rem;
       border-radius: 16px;
@@ -67,15 +72,16 @@
       font-weight: 500;
     }
     
+    /* ===== Israel's Legacy Section ===== */
     .israel-legacy-section {
-      background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+      background: linear-gradient(135deg, #1f2937 0%, #111827 100%); /* Dark gradient */
       color: white;
       padding: 3rem 2rem;
       border-radius: 16px;
       margin: 40px 0;
       text-align: center;
       box-shadow: 0 8px 32px rgba(31, 41, 55, 0.3);
-      border: 3px solid #dc2626;
+      border: 3px solid #dc2626; /* Brand red border */
     }
     
     .israel-legacy-section h3 {
@@ -94,30 +100,32 @@
       opacity: 0.9;
     }
     
+    /* ===== Team Grid Layout ===== */
     .who-we-are-images {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
       gap: 25px;
       margin: 30px 0;
-      contain: layout style paint;
+      contain: layout style paint; /* Performance optimization */
     }
     
+    /* ===== Team Headshot Images ===== */
     .who-we-are-images img {
       width: 100%;
       height: 300px;
-      object-fit: contain;
+      object-fit: contain; /* Ensures faces are fully visible */
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
-      background-color: #f8f9fa;
+      background-color: #f8f9fa; /* Light background for better contrast */
       padding: 10px;
       display: block;
       max-width: 100%;
       min-height: 300px;
-      will-change: transform;
-      backface-visibility: hidden;
-      transform: translateZ(0);
-      opacity: 0;
+      will-change: transform; /* Optimizes GPU acceleration */
+      backface-visibility: hidden; /* Prevents flickering */
+      transform: translateZ(0); /* Forces hardware acceleration */
+      opacity: 1; /* Fixed: Make images visible by default */
     }
     
     .who-we-are-images img:hover {
@@ -125,13 +133,15 @@
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     }
     
+    /* ===== Team Member Container ===== */
     .team-member {
       display: flex;
       flex-direction: column;
       align-items: center;
-      contain: layout style paint;
+      contain: layout style paint; /* Performance optimization */
     }
     
+    /* ===== Image Caption Styling ===== */
     .image-caption {
       text-align: center;
       margin-top: 10px;
@@ -140,7 +150,9 @@
       font-style: italic;
     }
     
-    /* Responsive improvements for team photos */
+    /* ===== Responsive Design for Team Photos ===== */
+    
+    /* Tablet breakpoint */
     @media (max-width: 768px) {
       .who-we-are-images {
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -152,9 +164,10 @@
       }
     }
     
+    /* Mobile breakpoint */
     @media (max-width: 480px) {
       .who-we-are-images {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* Single column on mobile */
         gap: 15px;
       }
       
@@ -163,10 +176,11 @@
       }
     }
     
+    /* ===== Back Button Styling ===== */
     .back-btn {
       display: inline-block;
       margin: 12px 0 0 0;
-      background: #e53935;
+      background: #e53935; /* Brand red */
       color: #fff;
       border: none;
       border-radius: 4px;
@@ -177,7 +191,7 @@
       transition: background 0.2s;
     }
     .back-btn:hover {
-      background: #b71c1c;
+      background: #b71c1c; /* Darker red on hover */
     }
   </style>
 </head>
@@ -295,10 +309,13 @@
   </footer>
 
   <script>
-    // Remove problematic infinite reload code
+    /* ===== About Us Page JavaScript ===== */
+    
+    // Note: Removed problematic infinite reload code
     // The performance.navigation.type check was causing infinite reloads
     
-    // Sticky navbar scroll effect
+    /* ===== Sticky Navigation Bar ===== */
+    // Adds scroll effect to header for better UX
     window.addEventListener('scroll', function() {
       const header = document.querySelector('header');
       if (window.scrollY > 50) {
@@ -308,33 +325,36 @@
       }
     });
     
-    // Debug: Check for scrolling issues
+    /* ===== Debug Information ===== */
+    // Log page load status and dimensions for troubleshooting
     console.log('Page loaded successfully');
     console.log('Body height:', document.body.scrollHeight);
     console.log('Window height:', window.innerHeight);
     
-    // Optimize image loading to prevent blinking
+    /* ===== Image Loading Optimization ===== */
+    // Prevents layout shifts and blinking when images load
     document.addEventListener('DOMContentLoaded', function() {
       const teamImages = document.querySelectorAll('.who-we-are-images img');
       
       teamImages.forEach(img => {
-        // Preload images to prevent layout shifts
+        // Check if image is already loaded
         if (img.complete) {
-          img.style.opacity = '1';
+          img.style.opacity = '1'; // Show immediately if loaded
         } else {
-          img.style.opacity = '0';
+          img.style.opacity = '0'; // Start hidden
           img.addEventListener('load', function() {
-            this.style.opacity = '1';
+            this.style.opacity = '1'; // Fade in when loaded
           });
           img.addEventListener('error', function() {
             console.error('Failed to load image:', this.src);
-            this.style.opacity = '1'; // Show anyway
+            this.style.opacity = '1'; // Show anyway on error
           });
         }
       });
     });
 
-    // Hamburger menu functionality
+    /* ===== Mobile Navigation Menu ===== */
+    // Handles hamburger menu functionality for mobile devices
     const hamburger = document.querySelector('.hamburger');
     const nav = document.querySelector('nav');
     
@@ -345,7 +365,8 @@
       nav.classList.toggle('active');
     });
     
-    // Close menu when clicking on a link
+    /* ===== Menu Auto-Close ===== */
+    // Closes mobile menu when clicking on navigation links
     document.querySelectorAll('nav a').forEach(link => {
       link.addEventListener('click', () => {
         hamburger.classList.remove('active');
@@ -353,7 +374,8 @@
       });
     });
     
-    // Close menu when clicking outside
+    /* ===== Click Outside to Close ===== */
+    // Closes mobile menu when clicking outside the navigation
     document.addEventListener('click', function(e) {
       if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
         hamburger.classList.remove('active');
@@ -361,7 +383,8 @@
       }
     });
 
-    // Dark mode toggle functionality
+    /* ===== Dark Mode Toggle ===== */
+    // Handles theme switching between light and dark modes
     const themeToggle = document.getElementById('theme-toggle');
     const body = document.body;
     
