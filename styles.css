@@ -133,20 +133,20 @@ nav a {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* ===== Traffic Light Hover Shades ===== */
-nav a:nth-child(1):hover {
+/* ===== Traffic Light Hover Shades (Right to Left) ===== */
+nav a:nth-child(9):hover {
   background-color: #ff4d4d; /* Bright Red */
   color: #fff;
 }
-nav a:nth-child(2):hover {
+nav a:nth-child(8):hover {
   background-color: #e63946; /* Medium Red */
   color: #fff;
 }
-nav a:nth-child(3):hover {
+nav a:nth-child(7):hover {
   background-color: #b00020; /* Dark Red */
   color: #fff;
 }
-nav a:nth-child(4):hover {
+nav a:nth-child(6):hover {
   background-color: #ffcc00; /* Bright Yellow */
   color: #000;
 }
@@ -154,28 +154,20 @@ nav a:nth-child(5):hover {
   background-color: #f4c430; /* Gold Yellow */
   color: #000;
 }
-nav a:nth-child(6):hover {
+nav a:nth-child(4):hover {
   background-color: #ffdd57; /* Light Yellow */
   color: #000;
 }
-nav a:nth-child(7):hover {
+nav a:nth-child(3):hover {
   background-color: #33cc33; /* Bright Green */
   color: #fff;
 }
-nav a:nth-child(8):hover {
+nav a:nth-child(2):hover {
   background-color: #28a745; /* Medium Green */
   color: #fff;
 }
-nav a:nth-child(9):hover {
+nav a:nth-child(1):hover {
   background-color: #20c997; /* Teal Green */
-  color: #fff;
-}
-nav a:nth-child(10):hover {
-  background-color: #ff4d4d; /* Bright Red */
-  color: #fff;
-}
-nav a:nth-child(11):hover {
-  background-color: #e63946; /* Medium Red */
   color: #fff;
 }
 
@@ -472,4 +464,38 @@ body.dark-mode .feature-card p {
   background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+}
+
+/* ===== Traffic Light Colors for Nav Buttons (Right to Left) ===== */
+.nav-btn:nth-child(8):hover {
+  background-color: #ff4d4d; /* Bright Red */
+  color: #fff;
+}
+.nav-btn:nth-child(7):hover {
+  background-color: #e63946; /* Medium Red */
+  color: #fff;
+}
+.nav-btn:nth-child(6):hover {
+  background-color: #b00020; /* Dark Red */
+  color: #fff;
+}
+.nav-btn:nth-child(5):hover {
+  background-color: #ffcc00; /* Bright Yellow */
+  color: #000;
+}
+.nav-btn:nth-child(4):hover {
+  background-color: #f4c430; /* Gold Yellow */
+  color: #000;
+}
+.nav-btn:nth-child(3):hover {
+  background-color: #ffdd57; /* Light Yellow */
+  color: #000;
+}
+.nav-btn:nth-child(2):hover {
+  background-color: #33cc33; /* Bright Green */
+  color: #fff;
+}
+.nav-btn:nth-child(1):hover {
+  background-color: #28a745; /* Medium Green */
+  color: #fff;
 }
