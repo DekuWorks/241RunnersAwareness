@@ -99,6 +99,7 @@
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 25px;
       margin: 30px 0;
+      contain: layout style paint;
     }
     
     .who-we-are-images img {
@@ -107,14 +108,28 @@
       object-fit: contain;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
       background-color: #f8f9fa;
       padding: 10px;
+      display: block;
+      max-width: 100%;
+      min-height: 300px;
+      will-change: transform;
+      backface-visibility: hidden;
+      transform: translateZ(0);
+      opacity: 0;
     }
     
     .who-we-are-images img:hover {
       transform: translateY(-5px);
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .team-member {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      contain: layout style paint;
     }
     
     .image-caption {
@@ -222,31 +237,30 @@
       <p>Founded by passionate runners and community advocates, 241 Runners Awareness emerged from a deep commitment to public safety and community well-being. Our name "241" represents <strong>2:41 AM</strong>, the time when Israel Thomas passed away, symbolizing our mission to honor his memory and prevent similar tragedies through awareness, technology, and community support.</p>
       
       <div class="who-we-are-images">
-        <div>
-          <img src="IMG_1178.JPG" alt="Lisa Thomas - Founder of 241 Runners Awareness" />
+        <div class="team-member">
+          <img src="IMG_1178.JPG" alt="Lisa Thomas - Founder of 241 Runners Awareness" loading="lazy" />
           <div class="image-caption">Lisa Thomas - Founder</div>
         </div>
-        <div>
-          <img src="7B0987ED-8681-4E9B-AE36-C54B7E59C0B6.JPG" alt="Marcus Brown - Lead Front End Developer" />
+        <div class="team-member">
+          <img src="7B0987ED-8681-4E9B-AE36-C54B7E59C0B6.JPG" alt="Marcus Brown - Lead Front End Developer" loading="lazy" />
           <div class="image-caption">Marcus Brown - Lead Front End Developer</div>
         </div>
-        <div>
-          <img src="DSC00405.JPG" alt="Daniel Carey - Full Stack Developer" />
+        <div class="team-member">
+          <img src="DSC00405.JPG" alt="Daniel Carey - Full Stack Developer" loading="lazy" />
           <div class="image-caption">Daniel Carey - Full Stack Developer</div>
         </div>
-        <div>
-          <img src="IMG_1468.JPG" alt="Tina Matthews - Program Director" />
+        <div class="team-member">
+          <img src="IMG_1468.JPG" alt="Tina Matthews - Program Director" loading="lazy" />
           <div class="image-caption">Tina Matthews - Program Director</div>
         </div>
-        <div>
-          <img src="IMG_0834.JPG" alt="Ralph Frank - Event Coordinator" />
+        <div class="team-member">
+          <img src="IMG_0834.JPG" alt="Ralph Frank - Event Coordinator" loading="lazy" />
           <div class="image-caption">Ralph Frank - Event Coordinator</div>
         </div>
-        <div>
-          <img src="/123_1.JPEG" alt=" Arquelle Gilder - Real Estate Broker / Sponsor" />
+        <div class="team-member">
+          <img src="/123_1.JPEG" alt="Arquelle Gilder - Real Estate Broker / Sponsor" loading="lazy" />
           <div class="image-caption">Arquelle Gilder - Real Estate Broker / Sponsor</div>
         </div>
-        
       </div>
 
       <h3>What We Do</h3>
@@ -299,6 +313,27 @@
     console.log('Page loaded successfully');
     console.log('Body height:', document.body.scrollHeight);
     console.log('Window height:', window.innerHeight);
+    
+    // Optimize image loading to prevent blinking
+    document.addEventListener('DOMContentLoaded', function() {
+      const teamImages = document.querySelectorAll('.who-we-are-images img');
+      
+      teamImages.forEach(img => {
+        // Preload images to prevent layout shifts
+        if (img.complete) {
+          img.style.opacity = '1';
+        } else {
+          img.style.opacity = '0';
+          img.addEventListener('load', function() {
+            this.style.opacity = '1';
+          });
+          img.addEventListener('error', function() {
+            console.error('Failed to load image:', this.src);
+            this.style.opacity = '1'; // Show anyway
+          });
+        }
+      });
+    });
 
     // Hamburger menu functionality
     const hamburger = document.querySelector('.hamburger');
