@@ -282,11 +282,8 @@
   </footer>
 
   <script>
-    // Force reload if page is cached
-    if (performance.navigation.type === 1) {
-      // Page was reloaded, clear any cached content
-      window.location.reload(true);
-    }
+    // Remove problematic infinite reload code
+    // The performance.navigation.type check was causing infinite reloads
     
     // Sticky navbar scroll effect
     window.addEventListener('scroll', function() {
@@ -297,6 +294,11 @@
         header.classList.remove('scrolled');
       }
     });
+    
+    // Debug: Check for scrolling issues
+    console.log('Page loaded successfully');
+    console.log('Body height:', document.body.scrollHeight);
+    console.log('Window height:', window.innerHeight);
 
     // Hamburger menu functionality
     const hamburger = document.querySelector('.hamburger');

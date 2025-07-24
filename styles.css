@@ -8,6 +8,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 /* Dark mode styles */
@@ -333,7 +334,7 @@ body.dark-mode footer {
     top: 0;
     right: -100%;
     width: 250px;
-    height: 100vh;
+    height: 100%;
     background: rgba(0, 0, 0, 0.95);
     backdrop-filter: blur(10px);
     flex-direction: column;
@@ -342,6 +343,7 @@ body.dark-mode footer {
     padding-top: 80px;
     transition: right 0.3s ease;
     z-index: 1000;
+    overflow-y: auto;
   }
   
   /* Show nav when active */
