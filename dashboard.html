@@ -391,7 +391,7 @@
       <a href="index.html">Home</a>
       <a href="aboutus.html">About Us</a>
       <a href="cases.html">Cases</a>
-      <a href="map.html">Map</a>
+      <!-- Map link removed - requires authentication -->
       <a href="dashboard.html" aria-current="page">Dashboard</a>
       <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
       <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
@@ -474,7 +474,7 @@
           <span class="quick-action-icon">📋</span>
           <div class="quick-action-label">View Cases</div>
         </a>
-        <a href="map.html" class="quick-action-btn">
+        <a href="map.html" class="quick-action-btn" id="mapLink" style="display: none;">
           <span class="quick-action-icon">🗺️</span>
           <div class="quick-action-label">Interactive Map</div>
         </a>
@@ -548,7 +548,7 @@
           <a href="cases.html" class="card-button">View Cases</a>
         </div>
 
-        <div class="dashboard-card">
+        <div class="dashboard-card" id="mapCard" style="display: none;">
           <h3>🗺️ Interactive Map</h3>
           <p>Explore cases and incidents on our interactive map with real-time updates.</p>
           <a href="map.html" class="card-button">Open Map</a>
@@ -595,6 +595,13 @@
         const avatar = document.getElementById('userAvatar');
         const name = userData.user?.fullName || 'User';
         avatar.textContent = name.charAt(0).toUpperCase();
+        
+        // Show map elements for authenticated users
+        const mapLink = document.getElementById('mapLink');
+        const mapCard = document.getElementById('mapCard');
+        if (mapLink) mapLink.style.display = 'flex';
+        if (mapCard) mapCard.style.display = 'block';
+        
       } catch (error) {
         console.error('Error parsing user data:', error);
         window.location.href = 'login.html';
