@@ -69,14 +69,15 @@ namespace _241RunnersAwareness.BackendAPI.Services
                 // await _context.SaveChangesAsync();
 
                 // Track analytics
-                await _analyticsService.TrackUserActionAsync("dna_sample_stored", 
+                await _analyticsService.TrackUserActionAsync("system", "dna_sample_stored", 
                     $"Individual: {individualId}, Type: {sampleType}, Lab: {labReference}");
 
                 // Send notification to law enforcement
                 await _notificationService.SendLawEnforcementAlertAsync(
-                    "DNA Sample Collected",
-                    $"DNA sample collected for individual ID: {individualId}. Sample type: {sampleType}, Lab reference: {labReference}",
-                    new List<string> { "dna_analysis", "missing_persons" });
+                    individualId.ToString(),
+                    $"Individual {individualId}",
+                    "DNA Collection Lab",
+                    $"DNA sample collected. Sample type: {sampleType}, Lab reference: {labReference}");
 
                 return true;
             }
@@ -130,7 +131,7 @@ namespace _241RunnersAwareness.BackendAPI.Services
                 _logger.LogInformation($"DNA comparison result: {similarity:P2} similarity, Match: {isMatch}");
 
                 // Track analytics
-                await _analyticsService.TrackUserActionAsync("dna_comparison_performed", 
+                await _analyticsService.TrackUserActionAsync("system", "dna_comparison_performed", 
                     $"Similarity: {similarity:P2}, Match: {isMatch}");
 
                 return isMatch;
@@ -168,8 +169,8 @@ namespace _241RunnersAwareness.BackendAPI.Services
                 // }
 
                 // Track analytics
-                await _analyticsService.TrackUserActionAsync("dna_search_performed", 
-                    $"Sequence length: {dnaSequence.Length}, Results: {matches.Count}");
+                await _analyticsService.TrackUserActionAsync("system", "dna_search_performed", 
+                    $"Sequence length: {dnaSequence.Length}, Results: 0");
 
                 return new List<Individual>(); // Mock result
             }
@@ -247,7 +248,7 @@ This report is generated for law enforcement and missing persons investigation p
 ";
 
                 // Track analytics
-                await _analyticsService.TrackUserActionAsync("dna_report_generated", 
+                await _analyticsService.TrackUserActionAsync("system", "dna_report_generated", 
                     $"Individual: {individualId}, Sequence Length: {dnaSample.Length}");
 
                 return report;
@@ -283,13 +284,14 @@ This report is generated for law enforcement and missing persons investigation p
 
                 if (success)
                 {
-                    await _analyticsService.TrackUserActionAsync("dna_exported_to_namus", 
+                    await _analyticsService.TrackUserActionAsync("system", "dna_exported_to_namus", 
                         $"Individual: {individualId}");
 
                     await _notificationService.SendLawEnforcementAlertAsync(
-                        "DNA Exported to NAMUS",
-                        $"DNA data for individual {individualId} has been successfully exported to NAMUS database.",
-                        new List<string> { "namus", "dna_export" });
+                        individualId.ToString(),
+                        $"Individual {individualId}",
+                        "NAMUS Database",
+                        "DNA data successfully exported to NAMUS database");
                 }
 
                 return success;
@@ -325,13 +327,14 @@ This report is generated for law enforcement and missing persons investigation p
 
                 if (success)
                 {
-                    await _analyticsService.TrackUserActionAsync("dna_exported_to_codis", 
+                    await _analyticsService.TrackUserActionAsync("system", "dna_exported_to_codis", 
                         $"Individual: {individualId}");
 
                     await _notificationService.SendLawEnforcementAlertAsync(
-                        "DNA Exported to CODIS",
-                        $"DNA data for individual {individualId} has been successfully exported to CODIS database.",
-                        new List<string> { "codis", "dna_export" });
+                        individualId.ToString(),
+                        $"Individual {individualId}",
+                        "CODIS Database",
+                        "DNA data successfully exported to CODIS database");
                 }
 
                 return success;

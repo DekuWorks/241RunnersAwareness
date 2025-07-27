@@ -91,7 +91,7 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                 var products = filteredProducts.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
                 // Track analytics
-                await _analyticsService.TrackUserActionAsync("shop_products_viewed", 
+                await _analyticsService.TrackUserActionAsync("anonymous", "shop_products_viewed", 
                     $"Category: {category}, Brand: {brand}, Page: {page}");
 
                 return Ok(new
@@ -129,7 +129,7 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                     return NotFound(new { Error = "Product not found" });
 
                 // Track product view
-                await _analyticsService.TrackUserActionAsync("product_viewed", 
+                await _analyticsService.TrackUserActionAsync("anonymous", "product_viewed", 
                     $"Product: {product.Name}, ID: {id}");
 
                 return Ok(product);
@@ -286,7 +286,7 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                 };
 
                 // Track order creation
-                await _analyticsService.TrackUserActionAsync("order_created", 
+                await _analyticsService.TrackUserActionAsync("anonymous", "order_created", 
                     $"Order: {orderNumber}, Total: ${order.Total}, Donation: ${order.DonationAmount}");
 
                 return Ok(new

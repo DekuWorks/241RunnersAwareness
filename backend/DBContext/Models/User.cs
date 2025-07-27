@@ -71,6 +71,6 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Models
         
         // Navigation properties
         public Individual? Individual { get; set; }
-        public Guid? IndividualId { get; set; }
+        public int? IndividualId { get; set; }
     }
 } 

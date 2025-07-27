@@ -99,7 +99,7 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Relationship).HasMaxLength(50);
-                entity.Property(e => e.PhoneNumber).HasMaxLength(20);
+                entity.Property(e => e.Phone).HasMaxLength(20);
                 entity.Property(e => e.Email).HasMaxLength(100);
                 entity.Property(e => e.Address).HasMaxLength(200);
             });

@@ -91,11 +91,10 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                 {
                     var individual = new Individual
                     {
-                        IndividualId = Guid.NewGuid(),
-                        FullName = request.Individual.FullName,
+                        FirstName = request.Individual.FullName.Split(' ')[0],
+                        LastName = request.Individual.FullName.Split(' ').Length > 1 ? string.Join(" ", request.Individual.FullName.Split(' ').Skip(1)) : "",
                         DateOfBirth = request.Individual.DateOfBirth ?? DateTime.MinValue,
                         Gender = request.Individual.Gender,
-                        DateAdded = DateTime.UtcNow,
                         EmergencyContacts = new List<EmergencyContact>()
                     };
 
@@ -112,7 +111,7 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                     _context.Individuals.Add(individual);
                     await _context.SaveChangesAsync();
 
-                    user.IndividualId = individual.IndividualId;
+                    user.IndividualId = individual.Id;
                 }
 
                 _context.Users.Add(user);

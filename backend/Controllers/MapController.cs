@@ -4,6 +4,7 @@ using _241RunnersAwareness.BackendAPI.DBContext.Data;
 using _241RunnersAwareness.BackendAPI.DBContext.Models;
 using _241RunnersAwareness.BackendAPI.Services;
 using System.Text.Json;
+using System;
 
 namespace _241RunnersAwareness.BackendAPI.Controllers
 {
@@ -62,7 +63,7 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
 
                 await _analyticsService.TrackMapInteractionAsync(
                     User.Identity?.Name ?? "anonymous",
-                    AnalyticsService.MapView,
+                    AnalyticsEventTypes.MapView,
                     "houston",
                     null
                 );
@@ -117,7 +118,7 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
 
                 await _analyticsService.TrackMapInteractionAsync(
                     User.Identity?.Name ?? "anonymous",
-                    AnalyticsService.MapSearch,
+                    AnalyticsEventTypes.MapSearch,
                     "houston_area",
                     null
                 );
@@ -236,7 +237,7 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
 
                 await _analyticsService.TrackMapInteractionAsync(
                     User.Identity?.Name ?? "anonymous",
-                    AnalyticsService.MapClick,
+                    AnalyticsEventTypes.MapClick,
                     $"{request.Latitude},{request.Longitude}",
                     id.ToString()
                 );

@@ -298,6 +298,7 @@ namespace _241RunnersAwareness.BackendAPI.Services
     public static class AnalyticsEventTypes
     {
         // Map interactions
+        public const string MapView = "map_view";
         public const string MapZoom = "map_zoom";
         public const string MapPan = "map_pan";
         public const string MapClick = "map_click";

@@ -29,7 +29,6 @@ namespace _241RunnersAwareness.BackendAPI.Services
         private readonly IConfiguration _configuration;
         private readonly ILogger<NotificationService> _logger;
         private readonly SendGridClient _sendGridClient;
-        private readonly object _twilioClient; // Temporarily commented out TwilioRestClient
         private readonly string _fromEmail;
         private readonly string _fromName;
         private readonly string _fromPhone;
