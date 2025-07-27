@@ -1,14 +1,24 @@
-/* ===== 241 Runners Awareness - Main Stylesheet ===== */
+/* ===== 241 Runners Awareness - Unified Stylesheet ===== */
 /* 
- * This stylesheet contains all global styles for the 241 Runners Awareness website.
- * Features include: responsive design, dark mode support, traffic light navigation colors,
+ * This stylesheet contains ALL styles for the 241 Runners Awareness website.
+ * Features include: responsive design, dark mode support, cross-browser compatibility,
  * and optimized performance for missing persons awareness platform.
+ * 
+ * Version: 20250724b - Unified and Cleaned
  */
 
 /* ===== Reset & Base Styles ===== */
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box; /* Safari/Chrome */
+  -moz-box-sizing: border-box; /* Firefox */
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #ff0000; /* Default red background - brand color */
   color: #000;
   -webkit-transition: background-color 0.3s ease, color 0.3s ease; /* Safari/Chrome */
@@ -24,17 +34,17 @@ body {
   flex-direction: column;
   min-height: 100vh; /* Full viewport height */
   overflow-x: hidden; /* Prevent horizontal scrolling */
+  align-items: center;
+  justify-content: flex-start;
 }
 
 /* ===== Dark Mode Support ===== */
-/* Dark mode styles for better accessibility and user preference */
 body.dark-mode {
   background: #1a1a1a; /* Dark background */
   color: #fff; /* Light text for contrast */
 }
 
 /* ===== Header & Navigation ===== */
-/* Main header containing logo, title, and navigation menu */
 header {
   background: #000; /* Black header background */
   color: #fff; /* White text */
@@ -378,68 +388,405 @@ body.dark-mode footer {
   transform: translateY(-1px);
 }
 
-/* ===== Responsive Design ===== */
-@media (max-width: 768px) {
-  .hamburger {
-    display: block;
-  }
-  
-  .theme-toggle {
-    right: 70px;
-    top: 15px;
-  }
-  
-  nav {
-    position: fixed;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.95);
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-    -webkit-transition: left 0.3s ease; /* Safari/Chrome */
-    -moz-transition: left 0.3s ease; /* Firefox */
-    -o-transition: left 0.3s ease; /* Opera */
-    transition: left 0.3s ease;
-    z-index: 1000;
-  }
-  
-  nav.active {
-    left: 0;
-  }
-  
-  nav a {
-    font-size: 1.2rem;
-    padding: 15px 20px;
-    margin: 5px 0;
-  }
-  
-  .header-bar {
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    gap: 5px;
-  }
-  
-  .header-bar h1 {
-    font-size: 1.5rem;
-  }
-  
-  main {
-    padding: 10px;
-  }
-  
-  section {
-    padding: 1rem;
-    margin: 1rem 0;
-  }
+/* ===== Form Styles ===== */
+.login-container,
+.signup-container {
+  background: #ffffff;
+  border-radius: 16px;
+  -webkit-box-shadow: 0 8px 32px rgba(0,0,0,0.12); /* Safari/Chrome */
+  -moz-box-shadow: 0 8px 32px rgba(0,0,0,0.12); /* Firefox */
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  max-width: 480px;
+  width: 95%;
+  margin: 2rem auto 2rem auto;
+  padding: 2.5rem 2rem 2rem 2rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: stretch;
+  -ms-flex-align: stretch;
+  align-items: stretch;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.google-btn-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.divider {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  text-align: center;
+  margin: 1.5rem 0 1rem 0;
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.divider::before, .divider::after {
+  content: '';
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.divider:not(:empty)::before {
+  margin-right: 1rem;
+}
+
+.divider:not(:empty)::after {
+  margin-left: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  -webkit-transition: border-color 0.3s ease; /* Safari/Chrome */
+  -moz-transition: border-color 0.3s ease; /* Firefox */
+  -o-transition: border-color 0.3s ease; /* Opera */
+  transition: border-color 0.3s ease;
+  background: #fff;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #dc2626;
+  -webkit-box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); /* Safari/Chrome */
+  -moz-box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); /* Firefox */
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.form-group input[type="submit"],
+.form-group button {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-transition: all 0.3s ease; /* Safari/Chrome */
+  -moz-transition: all 0.3s ease; /* Firefox */
+  -o-transition: all 0.3s ease; /* Opera */
+  transition: all 0.3s ease;
+  -webkit-box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3); /* Safari/Chrome */
+  -moz-box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3); /* Firefox */
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+}
+
+.form-group input[type="submit"]:hover,
+.form-group button:hover {
+  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+  -webkit-transform: translateY(-2px); /* Safari/Chrome */
+  -ms-transform: translateY(-2px); /* IE */
+  transform: translateY(-2px);
+  -webkit-box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4); /* Safari/Chrome */
+  -moz-box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4); /* Firefox */
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+}
+
+/* ===== About Us Page Styles ===== */
+.about-content {
+  background: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  max-width: 900px;
+  width: 100%;
+  -webkit-box-shadow: 0 0 15px rgba(0, 0, 0, 0.15); /* Safari/Chrome */
+  -moz-box-shadow: 0 0 15px rgba(0, 0, 0, 0.15); /* Firefox */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+  text-align: left;
+  line-height: 1.6;
+  margin: 0 auto;
+}
+
+.about-content h2 {
+  color: #000;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2.2rem;
+  font-weight: bold;
+}
+
+.about-content h3 {
+  color: #d32f2f; /* Brand red color */
+  margin-top: 30px;
+  margin-bottom: 15px;
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.about-content p {
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+}
+
+/* Mission Statement Section */
+.mission-statement {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); /* Brand gradient */
+  color: white;
+  padding: 3rem 2rem;
+  border-radius: 16px;
+  margin: 40px 0;
+  text-align: center;
+  -webkit-box-shadow: 0 8px 32px rgba(220, 38, 38, 0.3); /* Safari/Chrome */
+  -moz-box-shadow: 0 8px 32px rgba(220, 38, 38, 0.3); /* Firefox */
+  box-shadow: 0 8px 32px rgba(220, 38, 38, 0.3);
+  border: 3px solid #fff;
+  -webkit-border-radius: 16px; /* Safari/Chrome */
+  -moz-border-radius: 16px; /* Firefox */
+}
+
+.mission-statement h3 {
+  color: white;
+  margin-top: 0;
+  font-size: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+}
+
+.mission-statement p {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  margin-bottom: 0;
+  font-weight: 500;
+}
+
+/* Israel's Legacy Section */
+.israel-legacy-section {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%); /* Dark gradient */
+  color: white;
+  padding: 3rem 2rem;
+  border-radius: 16px;
+  margin: 40px 0;
+  text-align: center;
+  -webkit-box-shadow: 0 8px 32px rgba(31, 41, 55, 0.3); /* Safari/Chrome */
+  -moz-box-shadow: 0 8px 32px rgba(31, 41, 55, 0.3); /* Firefox */
+  box-shadow: 0 8px 32px rgba(31, 41, 55, 0.3);
+  border: 3px solid #dc2626; /* Brand red border */
+  -webkit-border-radius: 16px; /* Safari/Chrome */
+  -moz-border-radius: 16px; /* Firefox */
+}
+
+.israel-legacy-section h3 {
+  color: #dc2626;
+  font-size: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+}
+
+.israel-legacy-section p {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  margin-bottom: 0;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+/* Team Grid Layout */
+.who-we-are-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
+  gap: 25px;
+  margin: 30px 0;
+  contain: layout style paint; /* Performance optimization */
+}
+
+/* Team Headshot Images */
+.who-we-are-images img {
+  max-height: 280px; /* Slightly reduced to ensure faces fit */
+  width: auto; /* Let width adjust automatically */
+  max-width: 100%;
+  object-fit: contain; /* Show full faces without cropping */
+  object-position: center center; /* Center the image content */
+  border-radius: 12px;
+  -webkit-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Safari/Chrome */
+  -moz-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Firefox */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  -webkit-transition: transform 0.3s ease, box-shadow 0.3s ease; /* Safari/Chrome */
+  -moz-transition: transform 0.3s ease, box-shadow 0.3s ease; /* Firefox */
+  -o-transition: transform 0.3s ease, box-shadow 0.3s ease; /* Opera */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #f8f9fa; /* Light background for better contrast */
+  display: block;
+  will-change: transform; /* Optimizes GPU acceleration */
+  backface-visibility: hidden; /* Prevents flickering */
+  transform: translateZ(0); /* Forces hardware acceleration */
+  opacity: 1; /* Fixed: Make images visible by default */
+  border: 2px solid #e5e7eb; /* Added border for better definition */
+  padding: 15px; /* Added padding to ensure faces aren't cut off */
+}
+
+/* Specific styling for Tina and Ralph's images to ensure faces are visible */
+.who-we-are-images img[src*="IMG_1468"],
+.who-we-are-images img[src*="IMG_0834"] {
+  object-fit: contain;
+  object-position: center top; /* Position faces at the top */
+  background-color: #f3f4f6; /* Slightly different background for better contrast */
+  padding: 20px; /* Extra padding for these specific images */
+  max-height: 260px; /* Slightly smaller to ensure faces fit */
+}
+
+.who-we-are-images img:hover {
+  -webkit-transform: translateY(-5px); /* Safari/Chrome */
+  -ms-transform: translateY(-5px); /* IE */
+  transform: translateY(-5px);
+  -webkit-box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); /* Safari/Chrome */
+  -moz-box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); /* Firefox */
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  border-color: #dc2626; /* Brand red border on hover */
+}
+
+/* Team Member Container */
+.team-member {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  contain: layout style paint; /* Performance optimization */
+  text-align: center;
+  min-height: 350px; /* Ensure consistent height for all team members */
+}
+
+/* Image Caption Styling */
+.image-caption {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 1rem;
+  color: #374151;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* What We Do Section */
+.what-we-do-section {
+  background: #f9fafb;
+  padding: 2rem;
+  border-radius: 12px;
+  margin: 30px 0;
+  border-left: 4px solid #dc2626;
+}
+
+.what-we-do-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.what-we-do-section li {
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e7eb;
+  position: relative;
+  padding-left: 25px;
+}
+
+.what-we-do-section li:before {
+  content: "✓";
+  color: #dc2626;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+  top: 10px;
+}
+
+.what-we-do-section li:last-child {
+  border-bottom: none;
+}
+
+/* Technology Section */
+.technology-section {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  padding: 2rem;
+  border-radius: 12px;
+  margin: 30px 0;
+  border: 2px solid #d1d5db;
+}
+
+/* Get Involved Section */
+.get-involved-section {
+  background: #dc2626;
+  color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  margin: 30px 0;
+  text-align: center;
+}
+
+.get-involved-section h3 {
+  color: white;
+  margin-top: 0;
+}
+
+.get-involved-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  text-align: left;
+}
+
+.get-involved-section li {
+  padding: 8px 0;
+  position: relative;
+  padding-left: 25px;
+}
+
+.get-involved-section li:before {
+  content: "→";
+  color: white;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+  top: 8px;
 }
 
 /* ===== Features Section ===== */
@@ -553,36 +900,121 @@ body.dark-mode .feature-card p {
   box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
 }
 
-/* ===== Traffic Light Colors for Nav Buttons (Right to Left) ===== */
-.nav-btn:nth-child(8):hover {
-  background-color: #ff4d4d; /* Bright Red */
-  color: #fff;
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+  
+  .theme-toggle {
+    right: 70px;
+    top: 15px;
+  }
+  
+  nav {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.95);
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-transition: left 0.3s ease; /* Safari/Chrome */
+    -moz-transition: left 0.3s ease; /* Firefox */
+    -o-transition: left 0.3s ease; /* Opera */
+    transition: left 0.3s ease;
+    z-index: 1000;
+  }
+  
+  nav.active {
+    left: 0;
+  }
+  
+  nav a {
+    font-size: 1.2rem;
+    padding: 15px 20px;
+    margin: 5px 0;
+  }
+  
+  .header-bar {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .header-bar h1 {
+    font-size: 1.5rem;
+  }
+  
+  main {
+    padding: 10px;
+  }
+  
+  section {
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+  
+  /* About Us responsive */
+  .about-content {
+    padding: 20px;
+    margin: 10px;
+  }
+  
+  .who-we-are-images {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  .who-we-are-images img {
+    max-height: 220px; /* Adjusted for tablet */
+  }
+  
+  .who-we-are-images img[src*="IMG_1468"],
+  .who-we-are-images img[src*="IMG_0834"] {
+    max-height: 200px; /* Smaller for Tina and Ralph on tablet */
+  }
+  
+  .mission-statement,
+  .israel-legacy-section {
+    padding: 2rem 1rem;
+  }
 }
-.nav-btn:nth-child(7):hover {
-  background-color: #e63946; /* Medium Red */
-  color: #fff;
-}
-.nav-btn:nth-child(6):hover {
-  background-color: #b00020; /* Dark Red */
-  color: #fff;
-}
-.nav-btn:nth-child(5):hover {
-  background-color: #ffcc00; /* Bright Yellow */
-  color: #000;
-}
-.nav-btn:nth-child(4):hover {
-  background-color: #f4c430; /* Gold Yellow */
-  color: #000;
-}
-.nav-btn:nth-child(3):hover {
-  background-color: #ffdd57; /* Light Yellow */
-  color: #000;
-}
-.nav-btn:nth-child(2):hover {
-  background-color: #33cc33; /* Bright Green */
-  color: #fff;
-}
-.nav-btn:nth-child(1):hover {
-  background-color: #28a745; /* Medium Green */
-  color: #fff;
+
+@media (max-width: 480px) {
+  .about-content {
+    padding: 15px;
+    margin: 5px;
+  }
+  
+  .who-we-are-images {
+    grid-template-columns: 1fr; /* Single column on mobile */
+    gap: 15px;
+  }
+  
+  .who-we-are-images img {
+    max-height: 180px; /* Adjusted for mobile */
+  }
+  
+  .who-we-are-images img[src*="IMG_1468"],
+  .who-we-are-images img[src*="IMG_0834"] {
+    max-height: 160px; /* Smaller for Tina and Ralph on mobile */
+  }
+  
+  .about-content h2 {
+    font-size: 1.8rem;
+  }
+  
+  .mission-statement h3,
+  .israel-legacy-section h3 {
+    font-size: 1.5rem;
+  }
 }

@@ -5,403 +5,259 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - 241Runners Awareness</title>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <link rel="stylesheet" href="styles.css" />
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-      min-height: 100vh;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      color: #333;
-    }
-
-    .header {
-      width: 100%;
-      background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-      color: #fff;
-      text-align: center;
-      padding: 2rem 0 1rem 0;
-      font-size: 2.5rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    .back-btn {
-      display: inline-block;
-      margin: 1rem 0 0 0;
-      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
-    }
-
-    .back-btn:hover {
-      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
-    }
-
-    .login-container {
-      background: #ffffff;
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-      max-width: 480px;
-      width: 95%;
-      margin: 2rem auto 2rem auto;
-      padding: 2.5rem 2rem 2rem 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .google-btn-container {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 1.5rem;
-    }
-
-    .divider {
-      display: flex;
-      align-items: center;
-      text-align: center;
-      margin: 1.5rem 0 1rem 0;
-      color: #6b7280;
-      font-size: 0.875rem;
-      font-weight: 500;
-    }
-
-    .divider::before, .divider::after {
-      content: '';
-      flex: 1;
-      border-bottom: 1px solid #e5e7eb;
-    }
-
-    .divider:not(:empty)::before {
-      margin-right: 1rem;
-    }
-
-    .divider:not(:empty)::after {
-      margin-left: 1rem;
-    }
-
-    .form-group {
-      margin-bottom: 1.25rem;
-      display: flex;
-      flex-direction: column;
-    }
-
-    label {
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: #374151;
-      font-size: 0.875rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    input[type="email"], input[type="password"] {
-      padding: 0.875rem 1rem;
-      border: 2px solid #e5e7eb;
-      border-radius: 8px;
-      font-size: 1rem;
-      transition: all 0.3s ease;
-      background: #f9fafb;
-      color: #374151;
-    }
-
-    input:focus {
-      border: 2px solid #3b82f6;
-      outline: none;
-      background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-
-    input::placeholder {
-      color: #9ca3af;
-    }
-
-    .submit-btn {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 1rem;
-      font-size: 1.125rem;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 1rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .submit-btn:hover {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
-    }
-
-    .submit-btn:active {
-      transform: translateY(0);
-    }
-
-    .message {
-      text-align: center;
-      margin: 1rem 0 0 0;
-      font-size: 0.875rem;
-      font-weight: 500;
-      padding: 0.75rem;
-      border-radius: 6px;
-      transition: all 0.3s ease;
-    }
-
-    .message.success {
-      color: #059669;
-      background: #d1fae5;
-      border: 1px solid #a7f3d0;
-    }
-
-    .message.error {
-      color: #dc2626;
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-    }
-
-    .message.info {
-      color: #2563eb;
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-    }
-
-    .signup-link {
-      text-align: center;
-      margin-top: 1.5rem;
-      font-size: 0.875rem;
-      color: #6b7280;
-    }
-
-    .signup-link a {
-      color: #3b82f6;
-      text-decoration: none;
-      font-weight: 600;
-      transition: color 0.3s ease;
-    }
-
-    .signup-link a:hover {
-      color: #2563eb;
-      text-decoration: underline;
-    }
-
-    @media (max-width: 640px) {
-      .login-container {
-        padding: 1.5rem 1rem;
-        margin: 1rem auto;
-      }
-      
-      .header {
-        font-size: 1.75rem;
-        padding: 1.5rem 0 0.75rem 0;
-      }
-
-      .back-btn {
-        padding: 0.625rem 1.25rem;
-        font-size: 0.875rem;
-      }
-    }
-
-    /* Loading state */
-    .submit-btn:disabled {
-      background: #9ca3af;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-
-    /* Google button styling */
-    .g_id_signin {
-      width: 100% !important;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css?v=20250724b" />
 </head>
 <body>
-  <div class="header">Login</div>
-  <a href="/" class="back-btn">&larr; Back to Home</a>
-  <form class="login-container" id="loginForm">
-    <div class="google-btn-container">
-      <div id="g_id_onload"
-        data-client_id="933970195369-67fjn7t28p7q8a3grar5a46jad4mvinq.apps.googleusercontent.com"
-        data-callback="handleGoogleSignIn"
-        data-auto_prompt="false">
+  <header role="banner">
+    <div class="header-bar">
+      <img src="/241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
+      <h1>241 Runners Awareness</h1>
+    </div>
+
+    <nav role="navigation" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="aboutus.html">About Us</a>
+      <a href="cases.html">Cases</a>
+      <a href="shop.html">🛍️ Shop</a>
+      <a href="dna-tracking.html">🧬 DNA</a>
+      <a href="signup.html">Sign Up</a>
+      <a href="login.html" aria-current="page">Login</a>
+      <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
+      <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
+    </nav>
+    
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
+      ☀️
+    </button>
+    
+    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="back-button">
+      <a href="index.html" class="back-btn">&larr; Back to Home</a>
+    </div>
+  </header>
+
+  <main role="main">
+    <div class="login-container">
+      <h2>Login to Your Account</h2>
+      
+      <div class="google-btn-container">
+        <div id="g_id_onload"
+             data-client_id="YOUR_GOOGLE_CLIENT_ID"
+             data-context="signin"
+             data-ux_mode="popup"
+             data-callback="handleCredentialResponse"
+             data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin"
+             data-type="standard"
+             data-shape="rectangular"
+             data-theme="outline"
+             data-text="signin_with"
+             data-size="large"
+             data-logo_alignment="left">
+        </div>
       </div>
-      <div class="g_id_signin"
-        data-type="standard"
-        data-size="large"
-        data-theme="outline"
-        data-text="signin_with"
-        data-shape="rectangular"
-        data-logo_alignment="left">
+
+      <div class="divider">or</div>
+
+      <form id="loginForm" class="login-form">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" required placeholder="Enter your email">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required placeholder="Enter your password">
+        </div>
+
+        <div class="form-group">
+          <input type="submit" value="Sign In" class="submit-btn">
+        </div>
+      </form>
+
+      <div id="message" class="message" style="display: none;"></div>
+
+      <div class="signup-link">
+        Don't have an account? <a href="signup.html">Sign up here</a>
+      </div>
+
+      <div class="forgot-password">
+        <a href="#" onclick="forgotPassword()">Forgot your password?</a>
       </div>
     </div>
-    <div class="divider">or</div>
-    <div class="form-group">
-      <label for="email">Email *</label>
-      <input type="email" id="email" name="email" required autocomplete="email" placeholder="Enter your email">
-    </div>
-    <div class="form-group">
-      <label for="password">Password *</label>
-      <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter your password">
-    </div>
-    <button type="submit" class="submit-btn">Sign In</button>
-    <div class="message" id="message"></div>
-    <div class="signup-link">
-      Don't have an account? <a href="signup.html">Sign up</a>
-    </div>
-  </form>
+  </main>
+
+  <footer role="contentinfo">
+    <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
+  </footer>
+
   <script>
-    // Backend API URL - SAME AS REACT APP
-    const API_BASE_URL = 'http://localhost:5113/api';
+    // Google OAuth handling
+    function handleCredentialResponse(response) {
+      // Decode the JWT token
+      const responsePayload = decodeJwtResponse(response.credential);
+      
+      console.log("ID: " + responsePayload.sub);
+      console.log('Full Name: ' + responsePayload.name);
+      console.log('Given Name: ' + responsePayload.given_name);
+      console.log('Family Name: ' + responsePayload.family_name);
+      console.log("Image URL: " + responsePayload.picture);
+      console.log("Email: " + responsePayload.email);
+      
+      // Send to backend for verification
+      loginWithGoogle(response.credential);
+    }
 
-    // Test backend connectivity
-    async function testBackendConnection() {
+    function decodeJwtResponse(token) {
+      var base64Url = token.split('.')[1];
+      var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(jsonPayload);
+    }
+
+    async function loginWithGoogle(idToken) {
       try {
-        const response = await fetch(`${API_BASE_URL.replace('/api', '')}/health`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' }
+        const response = await fetch('/api/auth/google-login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ idToken })
         });
-        return response.ok;
-      } catch (error) {
-        console.log('Backend not available, using mock mode');
-        return false;
-      }
-    }
 
-    // Mock API for testing when backend is not available
-    function mockLogin(userData) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          // Simulate successful login
-          resolve({
-            success: true,
-            message: 'Login successful! (Mock mode)',
-            user: {
-              id: 'mock-user-id',
-              email: userData.email,
-              fullName: 'Mock User'
-            }
-          });
-        }, 1000);
-      });
-    }
+        const data = await response.json();
 
-    // Google SSO handler
-    function handleGoogleSignIn(response) {
-      const messageDiv = document.getElementById('message');
-      messageDiv.className = 'message info';
-      messageDiv.textContent = 'Signing in with Google...';
-      
-      // For now, use mock response since backend isn't running
-      setTimeout(() => {
-        messageDiv.className = 'message success';
-        messageDiv.textContent = 'Google login successful! (Mock mode)';
-        setTimeout(() => window.location.href = 'dashboard.html', 1200);
-      }, 1000);
-    }
-
-    // Traditional login handler - SAME BACKEND AS REACT APP
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const submitBtn = document.querySelector('.submit-btn');
-      const messageDiv = document.getElementById('message');
-      
-      // Disable button and show loading state
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Signing In...';
-      messageDiv.className = 'message info';
-      messageDiv.textContent = 'Signing in...';
-      
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-
-      const userData = {
-        email,
-        password
-      };
-
-      try {
-        // Test if backend is available
-        const backendAvailable = await testBackendConnection();
-        
-        if (backendAvailable) {
-          // Use real backend
-          const response = await fetch(`${API_BASE_URL}/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(userData)
-          });
-
-          if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-          }
-
-          const data = await response.json();
-          
-          if (data.success) {
-            localStorage.setItem('user', JSON.stringify(data));
-            messageDiv.className = 'message success';
-            messageDiv.textContent = 'Login successful! Redirecting...';
-            setTimeout(() => window.location.href = 'dashboard.html', 1200);
-          } else {
-            messageDiv.className = 'message error';
-            messageDiv.textContent = data.message || 'Login failed.';
-          }
-        } else {
-          // Use mock API
-          const data = await mockLogin(userData);
+        if (response.ok) {
           localStorage.setItem('user', JSON.stringify(data));
-          messageDiv.className = 'message success';
-          messageDiv.textContent = data.message;
-          setTimeout(() => window.location.href = 'dashboard.html', 1200);
+          showMessage('Login successful! Redirecting...', 'success');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1500);
+        } else {
+          showMessage(data.message || 'Login failed', 'error');
         }
       } catch (error) {
         console.error('Login error:', error);
-        messageDiv.className = 'message error';
-        messageDiv.textContent = `Error: ${error.message}. Using mock mode for testing.`;
-        
-        // Fallback to mock mode
-        try {
-          const data = await mockLogin(userData);
+        showMessage('Network error. Please try again.', 'error');
+      }
+    }
+
+    // Traditional login form handling
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
           localStorage.setItem('user', JSON.stringify(data));
-          messageDiv.className = 'message success';
-          messageDiv.textContent = data.message;
-          setTimeout(() => window.location.href = 'dashboard.html', 1200);
-        } catch (mockError) {
-          messageDiv.className = 'message error';
-          messageDiv.textContent = 'Login failed. Please try again.';
+          showMessage('Login successful! Redirecting...', 'success');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1500);
+        } else {
+          showMessage(data.message || 'Login failed', 'error');
         }
-      } finally {
-        // Re-enable button
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Sign In';
+      } catch (error) {
+        console.error('Login error:', error);
+        showMessage('Network error. Please try again.', 'error');
+      }
+    });
+
+    function showMessage(message, type) {
+      const messageDiv = document.getElementById('message');
+      messageDiv.textContent = message;
+      messageDiv.className = `message ${type}`;
+      messageDiv.style.display = 'block';
+      
+      setTimeout(() => {
+        messageDiv.style.display = 'none';
+      }, 5000);
+    }
+
+    function forgotPassword() {
+      showMessage('Password reset functionality coming soon!', 'info');
+    }
+
+    // Sticky navbar scroll effect
+    window.addEventListener('scroll', function() {
+      const header = document.querySelector('header');
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+
+    // Hamburger menu functionality
+    const hamburger = document.querySelector('.hamburger');
+    const nav = document.querySelector('nav');
+    
+    hamburger.addEventListener('click', function() {
+      const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+      hamburger.setAttribute('aria-expanded', !isExpanded);
+      hamburger.classList.toggle('active');
+      nav.classList.toggle('active');
+    });
+    
+    // Close menu when clicking on a link
+    document.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        nav.classList.remove('active');
+      });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
+        hamburger.classList.remove('active');
+        nav.classList.remove('active');
+      }
+    });
+
+    // Dark mode toggle functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+    
+    // Check for saved theme preference or default to light mode
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+      body.classList.add('dark-mode');
+      themeToggle.textContent = '🌙';
+      themeToggle.setAttribute('aria-pressed', 'true');
+    }
+    
+    // Theme toggle click handler
+    themeToggle.addEventListener('click', function() {
+      body.classList.toggle('dark-mode');
+      
+      if (body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+        themeToggle.textContent = '🌙';
+        themeToggle.setAttribute('aria-pressed', 'true');
+      } else {
+        localStorage.setItem('theme', 'light');
+        themeToggle.textContent = '☀️';
+        themeToggle.setAttribute('aria-pressed', 'false');
       }
     });
   </script>
