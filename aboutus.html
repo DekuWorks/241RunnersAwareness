@@ -17,11 +17,12 @@
       background: #fff;
       padding: 40px;
       border-radius: 12px;
-      max-width: 800px;
+      max-width: 900px;
       width: 100%;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
       text-align: left;
       line-height: 1.6;
+      margin: 0 auto;
     }
     
     /* Typography styles */
@@ -30,6 +31,7 @@
       text-align: center;
       margin-bottom: 30px;
       font-size: 2.2rem;
+      font-weight: bold;
     }
     
     .about-content h3 {
@@ -37,6 +39,7 @@
       margin-top: 30px;
       margin-bottom: 15px;
       font-size: 1.4rem;
+      font-weight: bold;
     }
     
     .about-content p {
@@ -63,6 +66,7 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       margin-bottom: 1.5rem;
+      font-weight: bold;
     }
     
     .mission-statement p {
@@ -90,6 +94,7 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       margin-bottom: 1.5rem;
+      font-weight: bold;
     }
     
     .israel-legacy-section p {
@@ -111,26 +116,48 @@
     
     /* ===== Team Headshot Images ===== */
     .who-we-are-images img {
-      width: 100%;
-      height: 300px;
-      object-fit: contain; /* Ensures faces are fully visible */
+      max-height: 280px; /* Slightly reduced to ensure faces fit */
+      width: auto; /* Let width adjust automatically */
+      max-width: 100%;
+      object-fit: contain; /* Show full faces without cropping */
+      object-position: center center; /* Center the image content */
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
       background-color: #f8f9fa; /* Light background for better contrast */
-      padding: 10px;
       display: block;
-      max-width: 100%;
-      min-height: 300px;
       will-change: transform; /* Optimizes GPU acceleration */
       backface-visibility: hidden; /* Prevents flickering */
       transform: translateZ(0); /* Forces hardware acceleration */
       opacity: 1; /* Fixed: Make images visible by default */
+      border: 2px solid #e5e7eb; /* Added border for better definition */
+      padding: 15px; /* Added padding to ensure faces aren't cut off */
+    }
+    
+    /* Specific styling for Tina and Ralph's images to ensure faces are visible */
+    .who-we-are-images img[src*="IMG_1468"],
+    .who-we-are-images img[src*="IMG_0834"] {
+      object-fit: contain;
+      object-position: center top; /* Position faces at the top */
+      background-color: #f3f4f6; /* Slightly different background for better contrast */
+      padding: 20px; /* Extra padding for these specific images */
+      max-height: 260px; /* Slightly smaller to ensure faces fit */
+    }
+    
+    /* Ensure proper aspect ratio and face visibility */
+    .team-member {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      contain: layout style paint; /* Performance optimization */
+      text-align: center;
+      min-height: 350px; /* Ensure consistent height for all team members */
     }
     
     .who-we-are-images img:hover {
       transform: translateY(-5px);
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      border-color: #dc2626; /* Brand red border on hover */
     }
     
     /* ===== Team Member Container ===== */
@@ -139,40 +166,157 @@
       flex-direction: column;
       align-items: center;
       contain: layout style paint; /* Performance optimization */
+      text-align: center;
     }
     
     /* ===== Image Caption Styling ===== */
     .image-caption {
       text-align: center;
-      margin-top: 10px;
-      font-size: 0.9rem;
-      color: #666;
-      font-style: italic;
+      margin-top: 15px;
+      font-size: 1rem;
+      color: #374151;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    
+    /* ===== What We Do Section ===== */
+    .what-we-do-section {
+      background: #f9fafb;
+      padding: 2rem;
+      border-radius: 12px;
+      margin: 30px 0;
+      border-left: 4px solid #dc2626;
+    }
+    
+    .what-we-do-section ul {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0;
+    }
+    
+    .what-we-do-section li {
+      padding: 10px 0;
+      border-bottom: 1px solid #e5e7eb;
+      position: relative;
+      padding-left: 25px;
+    }
+    
+    .what-we-do-section li:before {
+      content: "✓";
+      color: #dc2626;
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+      top: 10px;
+    }
+    
+    .what-we-do-section li:last-child {
+      border-bottom: none;
+    }
+    
+    /* ===== Technology Section ===== */
+    .technology-section {
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+      padding: 2rem;
+      border-radius: 12px;
+      margin: 30px 0;
+      border: 2px solid #d1d5db;
+    }
+    
+    /* ===== Get Involved Section ===== */
+    .get-involved-section {
+      background: #dc2626;
+      color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      margin: 30px 0;
+      text-align: center;
+    }
+    
+    .get-involved-section h3 {
+      color: white;
+      margin-top: 0;
+    }
+    
+    .get-involved-section ul {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0;
+      text-align: left;
+    }
+    
+    .get-involved-section li {
+      padding: 8px 0;
+      position: relative;
+      padding-left: 25px;
+    }
+    
+    .get-involved-section li:before {
+      content: "→";
+      color: white;
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+      top: 8px;
     }
     
     /* ===== Responsive Design for Team Photos ===== */
     
     /* Tablet breakpoint */
     @media (max-width: 768px) {
+      .about-content {
+        padding: 20px;
+        margin: 10px;
+      }
+      
       .who-we-are-images {
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 20px;
       }
       
       .who-we-are-images img {
-        height: 250px;
+        max-height: 220px; /* Adjusted for tablet */
+      }
+      
+      .who-we-are-images img[src*="IMG_1468"],
+      .who-we-are-images img[src*="IMG_0834"] {
+        max-height: 200px; /* Smaller for Tina and Ralph on tablet */
+      }
+      
+      .mission-statement,
+      .israel-legacy-section {
+        padding: 2rem 1rem;
       }
     }
     
     /* Mobile breakpoint */
     @media (max-width: 480px) {
+      .about-content {
+        padding: 15px;
+        margin: 5px;
+      }
+      
       .who-we-are-images {
         grid-template-columns: 1fr; /* Single column on mobile */
         gap: 15px;
       }
       
       .who-we-are-images img {
-        height: 200px;
+        max-height: 180px; /* Adjusted for mobile */
+      }
+      
+      .who-we-are-images img[src*="IMG_1468"],
+      .who-we-are-images img[src*="IMG_0834"] {
+        max-height: 160px; /* Smaller for Tina and Ralph on mobile */
+      }
+      
+      .about-content h2 {
+        font-size: 1.8rem;
+      }
+      
+      .mission-statement h3,
+      .israel-legacy-section h3 {
+        font-size: 1.5rem;
       }
     }
     
@@ -180,7 +324,7 @@
     .back-btn {
       display: inline-block;
       margin: 12px 0 0 0;
-      background: #e53935; /* Brand red */
+      background: #dc2626; /* Brand red */
       color: #fff;
       border: none;
       border-radius: 4px;
@@ -189,9 +333,28 @@
       cursor: pointer;
       text-decoration: none;
       transition: background 0.2s;
+      font-weight: 500;
     }
     .back-btn:hover {
-      background: #b71c1c; /* Darker red on hover */
+      background: #b91c1c; /* Darker red on hover */
+    }
+    
+    /* ===== Cross-browser compatibility fixes ===== */
+    .about-content {
+      -webkit-box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+      -moz-box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .mission-statement,
+    .israel-legacy-section {
+      -webkit-border-radius: 16px;
+      -moz-border-radius: 16px;
+    }
+    
+    .who-we-are-images img {
+      -webkit-transition: transform 0.3s ease, box-shadow 0.3s ease;
+      -moz-transition: transform 0.3s ease, box-shadow 0.3s ease;
+      -o-transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
   </style>
 </head>
@@ -271,26 +434,30 @@
           <div class="image-caption">Ralph Frank - Event Coordinator</div>
         </div>
         <div class="team-member">
-          <img src="/123_1.JPEG" alt="Arquelle Gilder - Real Estate Broker / Sponsor" loading="lazy" />
+          <img src="123_1.JPEG" alt="Arquelle Gilder - Real Estate Broker / Sponsor" loading="lazy" />
           <div class="image-caption">Arquelle Gilder - Real Estate Broker / Sponsor</div>
         </div>
       </div>
 
-      <h3>What We Do</h3>
-      <p>Our platform provides a comprehensive solution for tracking and protecting vulnerable individuals through:</p>
-      <ul>
-        <li><strong>Real-time Alerts:</strong> Instant notifications when vulnerable individuals are reported missing or in distress</li>
-        <li><strong>Secure Data Management:</strong> Protected storage of critical information for emergency situations</li>
-        <li><strong>Community Integration:</strong> Connecting runners, law enforcement, and community members in safety efforts</li>
-        <li><strong>Emergency Response Coordination:</strong> Streamlined communication between all parties during critical situations</li>
-        <li><strong>DNA Technology:</strong> Advanced DNA collection and identification for missing persons cases</li>
-        <li><strong>Fundraising Support:</strong> Premium merchandise sales supporting our mission and technology</li>
-      </ul>
+      <div class="what-we-do-section">
+        <h3>What We Do</h3>
+        <p>Our platform provides a comprehensive solution for tracking and protecting vulnerable individuals through:</p>
+        <ul>
+          <li><strong>Real-time Alerts:</strong> Instant notifications when vulnerable individuals are reported missing or in distress</li>
+          <li><strong>Secure Data Management:</strong> Protected storage of critical information for emergency situations</li>
+          <li><strong>Community Integration:</strong> Connecting runners, law enforcement, and community members in safety efforts</li>
+          <li><strong>Emergency Response Coordination:</strong> Streamlined communication between all parties during critical situations</li>
+          <li><strong>DNA Technology:</strong> Advanced DNA collection and identification for missing persons cases</li>
+          <li><strong>Fundraising Support:</strong> Premium merchandise sales supporting our mission and technology</li>
+        </ul>
+      </div>
 
-      <h3>Our Technology</h3>
-      <p>We leverage cutting-edge technology to create a seamless experience for users while maintaining the highest standards of security and privacy. Our platform is designed to be accessible, reliable, and user-friendly for everyone from individual runners to law enforcement agencies.</p>
+      <div class="technology-section">
+        <h3>Our Technology</h3>
+        <p>We leverage cutting-edge technology to create a seamless experience for users while maintaining the highest standards of security and privacy. Our platform is designed to be accessible, reliable, and user-friendly for everyone from individual runners to law enforcement agencies.</p>
+      </div>
 
-      <div class="contact-info">
+      <div class="get-involved-section">
         <h3>Get Involved</h3>
         <p>Whether you're a runner, community member, or organization interested in supporting our mission, there are many ways to get involved:</p>
         <ul>
@@ -310,9 +477,6 @@
 
   <script>
     /* ===== About Us Page JavaScript ===== */
-    
-    // Note: Removed problematic infinite reload code
-    // The performance.navigation.type check was causing infinite reloads
     
     /* ===== Sticky Navigation Bar ===== */
     // Adds scroll effect to header for better UX
@@ -348,6 +512,9 @@
           img.addEventListener('error', function() {
             console.error('Failed to load image:', this.src);
             this.style.opacity = '1'; // Show anyway on error
+            // Add fallback styling for failed images
+            this.style.backgroundColor = '#f3f4f6';
+            this.style.border = '2px dashed #d1d5db';
           });
         }
       });
@@ -410,6 +577,26 @@
         themeToggle.setAttribute('aria-pressed', 'false');
       }
     });
+    
+    /* ===== Cross-browser compatibility ===== */
+    // Ensure smooth scrolling works across browsers
+    if ('scrollBehavior' in document.documentElement.style) {
+      // Modern browsers support smooth scrolling
+    } else {
+      // Fallback for older browsers
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      });
+    }
   </script>
 </body>
 </html> 
