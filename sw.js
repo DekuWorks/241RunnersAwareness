@@ -1,9 +1,9 @@
 // Service Worker for 241 Runners Awareness
-// Version: 1.0.0
+// Version: 1.0.2 - Updated for better cache management
 
-const CACHE_NAME = '241runners-v1.0.0';
-const STATIC_CACHE = 'static-v1.0.0';
-const DYNAMIC_CACHE = 'dynamic-v1.0.0';
+const CACHE_NAME = '241runners-v1.0.2';
+const STATIC_CACHE = 'static-v1.0.2';
+const DYNAMIC_CACHE = 'dynamic-v1.0.2';
 
 // Files to cache for offline functionality
 const STATIC_FILES = [
@@ -15,7 +15,7 @@ const STATIC_FILES = [
   '/cases.html',
   '/privacy.html',
   '/terms.html',
-        '/aboutus.html',
+  '/aboutus.html',
   '/styles.css',
   '/manifest.json',
   '/241-logo.jpg',
@@ -94,7 +94,7 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(fetch(request));
 });
 
-// Handle API requests with cache-first strategy
+// Handle API requests with network-first strategy
 async function handleApiRequest(request) {
   try {
     // Try network first
@@ -133,25 +133,48 @@ async function handleApiRequest(request) {
   }
 }
 
-// Handle static file requests with cache-first strategy
+// Handle static file requests with network-first strategy for HTML files
 async function handleStaticRequest(request) {
+  const url = new URL(request.url);
+  const isHtmlFile = url.pathname.endsWith('.html') || url.pathname === '/';
+  
   try {
-    // Try cache first
-    const cachedResponse = await caches.match(request);
-    if (cachedResponse) {
-      return cachedResponse;
+    if (isHtmlFile) {
+      // For HTML files, use network-first strategy
+      try {
+        const networkResponse = await fetch(request);
+        if (networkResponse.ok) {
+          // Cache successful responses
+          const cache = await caches.open(STATIC_CACHE);
+          cache.put(request, networkResponse.clone());
+        }
+        return networkResponse;
+      } catch (error) {
+        // If network fails, try cache
+        const cachedResponse = await caches.match(request);
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        throw error;
+      }
+    } else {
+      // For other static files, use cache-first strategy
+      const cachedResponse = await caches.match(request);
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      
+      // If not in cache, try network
+      const networkResponse = await fetch(request);
+      
+      if (networkResponse.ok) {
+        // Cache successful responses
+        const cache = await caches.open(STATIC_CACHE);
+        cache.put(request, networkResponse.clone());
+      }
+      
+      return networkResponse;
     }
-    
-    // If not in cache, try network
-    const networkResponse = await fetch(request);
-    
-    if (networkResponse.ok) {
-      // Cache successful responses
-      const cache = await caches.open(STATIC_CACHE);
-      cache.put(request, networkResponse.clone());
-    }
-    
-    return networkResponse;
   } catch (error) {
     console.error('Service Worker: Static request failed', error);
     

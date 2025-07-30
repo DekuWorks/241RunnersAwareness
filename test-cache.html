@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cache Test - 241 Runners</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .success {
+            color: #155724;
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .info {
+            color: #0c5460;
+            background: #d1ecf1;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #b91c1c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cache Test - 241 Runners Awareness</h1>
+        
+        <div class="success">
+            ✅ <strong>Cache Test Successful!</strong><br>
+            If you can see this page, cache busting is working.
+        </div>
+        
+        <div class="info">
+            <strong>Current Version:</strong> 20250724d<br>
+            <strong>Timestamp:</strong> 20250724<br>
+            <strong>Service Worker:</strong> v1.0.2
+        </div>
+        
+        <h3>Cache Status:</h3>
+        <ul>
+            <li>✅ CSS cache busting: <code>styles.css?v=20250724d&t=20250724</code></li>
+            <li>✅ Service Worker: <code>sw.js?v=20250724d</code></li>
+            <li>✅ Network-first strategy for HTML files</li>
+            <li>✅ Cache-first strategy for static assets</li>
+        </ul>
+        
+        <button onclick="window.location.href='/'">Go to Home Page</button>
+        <button onclick="window.location.reload()">Reload This Page</button>
+        
+        <h3>Next Steps:</h3>
+        <ol>
+            <li>Visit your main site: <a href="/">https://241runnersawareness.org/</a></li>
+            <li>Hard refresh: <code>Ctrl+F5</code> or <code>Cmd+Shift+R</code></li>
+            <li>Check if your changes appear</li>
+        </ol>
+    </div>
+</body>
+</html> 

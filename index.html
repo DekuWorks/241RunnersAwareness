@@ -14,8 +14,8 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <!-- CACHE-BUST VERSION: 20250724a - FORCE DEPLOY -->
-  <link rel="stylesheet" href="styles.css?v=20250724b" />
+  <!-- CACHE-BUST VERSION: 20250724d - FORCE DEPLOY -->
+  <link rel="stylesheet" href="styles.css?v=20250127a&t=20250127" />
 </head>
 <body>
   <header role="banner">
@@ -174,9 +174,22 @@
     // Register service worker for PWA functionality
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('/sw.js?v=20250724d')
           .then((registration) => {
             console.log('Service Worker registered successfully:', registration);
+            
+            // Force update if there's a new version
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  // New service worker is available
+                  console.log('New service worker available');
+                  // Reload the page to activate the new service worker
+                  window.location.reload();
+                }
+              });
+            });
           })
           .catch((error) => {
             console.error('Service Worker registration failed:', error);
