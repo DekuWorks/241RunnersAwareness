@@ -5,6 +5,51 @@
 const HOUSTON_LAT = 29.7604;
 const HOUSTON_LNG = -95.3698;
 
+// Mock API endpoints for testing
+const mockApi = {
+  '/api/auth/login': {
+    method: 'POST',
+    response: (data) => {
+      console.log('Mock login attempt:', data);
+      if (data.email && data.password) {
+        return {
+          success: true,
+          message: 'Login successful (mock)',
+          token: 'mock-jwt-token',
+          user: {
+            id: 'mock-user-id',
+            email: data.email,
+            fullName: 'Mock User',
+            role: 'user'
+          }
+        };
+      } else {
+        return {
+          success: false,
+          message: 'Invalid credentials (mock)'
+        };
+      }
+    }
+  },
+  '/api/auth/google-login': {
+    method: 'POST',
+    response: (data) => {
+      console.log('Mock Google login attempt:', data);
+      return {
+        success: true,
+        message: 'Google login successful (mock)',
+        token: 'mock-jwt-token',
+        user: {
+          id: 'mock-google-user-id',
+          email: 'mock@google.com',
+          fullName: 'Mock Google User',
+          role: 'user'
+        }
+      };
+    }
+  }
+};
+
 // Enhanced mock data for Houston area individuals
 const mockHoustonData = {
     individuals: [
@@ -98,107 +143,11 @@ const mockHoustonData = {
             city: "Pearland",
             state: "TX",
             latitude: 29.5636,
-            longitude: -95.2860,
-            dateAdded: "2025-01-20T22:15:00Z",
-            lastSeen: "2025-01-20T20:30:00Z",
-            description: "African American male, short hair, wearing hoodie",
+            longitude: -95.2864,
+            dateAdded: "2025-01-14T13:20:00Z",
+            lastSeen: "2025-01-14T12:00:00Z",
+            description: "African American male, short hair, wearing athletic wear",
             contactInfo: "281-555-0606"
-        },
-        {
-            id: 7,
-            fullName: "Maria Garcia",
-            currentStatus: "Missing",
-            dateOfBirth: "1998-04-18",
-            gender: "Female",
-            address: "147 Willow Way",
-            city: "Cypress",
-            state: "TX",
-            latitude: 29.9691,
-            longitude: -95.6972,
-            dateAdded: "2025-01-18T13:45:00Z",
-            lastSeen: "2025-01-18T12:00:00Z",
-            description: "Hispanic female, curly hair, wearing dress",
-            contactInfo: "281-555-0707"
-        },
-        {
-            id: 8,
-            fullName: "Robert Davis",
-            currentStatus: "Safe",
-            dateOfBirth: "1985-08-25",
-            gender: "Male",
-            address: "258 Birch Blvd",
-            city: "Tomball",
-            state: "TX",
-            latitude: 30.0952,
-            longitude: -95.6160,
-            dateAdded: "2025-01-14T08:20:00Z",
-            lastSeen: "2025-01-14T06:45:00Z",
-            description: "Caucasian male, gray hair, wearing work uniform",
-            contactInfo: "281-555-0808"
-        },
-        {
-            id: 9,
-            fullName: "Jennifer Lee",
-            currentStatus: "Urgent",
-            dateOfBirth: "1996-06-12",
-            gender: "Female",
-            address: "369 Spruce St",
-            city: "League City",
-            state: "TX",
-            latitude: 29.5074,
-            longitude: -95.0949,
-            dateAdded: "2025-01-21T19:30:00Z",
-            lastSeen: "2025-01-21T18:00:00Z",
-            description: "Asian female, long black hair, wearing athletic wear",
-            contactInfo: "281-555-0909"
-        },
-        {
-            id: 10,
-            fullName: "Christopher Brown",
-            currentStatus: "Found",
-            dateOfBirth: "1991-02-28",
-            gender: "Male",
-            address: "741 Aspen Ave",
-            city: "Friendswood",
-            state: "TX",
-            latitude: 29.5294,
-            longitude: -95.2010,
-            dateAdded: "2025-01-16T15:10:00Z",
-            lastSeen: "2025-01-16T13:30:00Z",
-            description: "Caucasian male, brown hair, wearing casual clothes",
-            contactInfo: "281-555-1010"
-        },
-        {
-            id: 11,
-            fullName: "Amanda Taylor",
-            currentStatus: "Missing",
-            dateOfBirth: "1994-10-07",
-            gender: "Female",
-            address: "852 Poplar Pl",
-            city: "Missouri City",
-            state: "TX",
-            latitude: 29.6185,
-            longitude: -95.5377,
-            dateAdded: "2025-01-19T11:25:00Z",
-            lastSeen: "2025-01-19T09:45:00Z",
-            description: "African American female, braided hair, wearing jeans",
-            contactInfo: "281-555-1111"
-        },
-        {
-            id: 12,
-            fullName: "Kevin Martinez",
-            currentStatus: "Safe",
-            dateOfBirth: "1989-01-15",
-            gender: "Male",
-            address: "963 Sycamore Dr",
-            city: "Rosenberg",
-            state: "TX",
-            latitude: 29.5572,
-            longitude: -95.8085,
-            dateAdded: "2025-01-13T07:40:00Z",
-            lastSeen: "2025-01-13T06:00:00Z",
-            description: "Hispanic male, dark hair, wearing work clothes",
-            contactInfo: "281-555-1212"
         }
     ]
 };
@@ -288,6 +237,41 @@ function simulateRealtimeData() {
     };
     
     return newCase;
+}
+
+// Mock API server for testing
+if (typeof window !== 'undefined') {
+  // Browser environment - override fetch for testing
+  const originalFetch = window.fetch;
+  window.fetch = async function(url, options = {}) {
+    const urlObj = new URL(url);
+    const path = urlObj.pathname;
+    
+    if (mockApi[path] && mockApi[path].method === options.method) {
+      console.log(`Mock API called: ${options.method} ${path}`);
+      
+      let requestData = null;
+      if (options.body) {
+        try {
+          requestData = JSON.parse(options.body);
+        } catch (e) {
+          console.error('Failed to parse request body:', e);
+        }
+      }
+      
+      const response = mockApi[path].response(requestData);
+      
+      return new Response(JSON.stringify(response), {
+        status: response.success ? 200 : 400,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    }
+    
+    // Fall back to original fetch for non-mock endpoints
+    return originalFetch(url, options);
+  };
 }
 
 // Export for use in HTML
