@@ -1085,3 +1085,84 @@ body.dark-mode .feature-card p {
     font-size: 1.5rem;
   }
 }
+
+/* 
+ * ============================================
+ * LOGOUT BUTTON STYLING
+ * ============================================
+ * 
+ * Styles for the logout button that appears when users are authenticated.
+ * Matches the overall navigation design while being clearly identifiable.
+ */
+
+/* Logout button base styling */
+.logout-btn {
+  background: #dc2626; /* Brand red color */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin: 0 5px;
+  font-family: inherit;
+}
+
+/* Hover effect for logout button */
+.logout-btn:hover {
+  background: #b91c1c; /* Darker red on hover */
+  transform: translateY(-1px);
+}
+
+/* Active state for logout button */
+.logout-btn:active {
+  transform: translateY(0);
+  background: #991b1b;
+}
+
+/* Focus state for accessibility */
+.logout-btn:focus {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* Dark mode logout button */
+body.dark-mode .logout-btn {
+  background: #dc2626;
+  color: white;
+}
+
+body.dark-mode .logout-btn:hover {
+  background: #b91c1c;
+}
+
+/* Mobile responsive logout button */
+@media (max-width: 768px) {
+  .logout-btn {
+    font-size: 13px;
+    padding: 6px 12px;
+    margin: 5px 0;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Logout confirmation message styling */
+.logout-message {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

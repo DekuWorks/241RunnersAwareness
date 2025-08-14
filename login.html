@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - 241Runners Awareness</title>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="mock-api.js"></script>
+  <script src="auth-utils.js"></script>
   <link rel="stylesheet" href="styles.css?v=20250127a&t=20250127" />
 </head>
 <body>
@@ -21,8 +21,10 @@
       <a href="cases.html">Cases</a>
       <a href="shop.html">🛍️ Shop</a>
       <a href="dna-tracking.html">🧬 DNA</a>
-      <a href="signup.html">Sign Up</a>
-      <a href="login.html" aria-current="page">Login</a>
+      <a href="signup.html" id="signupLink">Sign Up</a>
+      <a href="login.html" id="loginLink" aria-current="page">Login</a>
+      <a href="dashboard.html" id="dashboardLink" style="display: none;">Dashboard</a>
+      <button id="logoutBtn" style="display: none;" class="logout-btn">Logout</button>
       <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
       <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
     </nav>
@@ -47,7 +49,7 @@
       
       <div class="google-btn-container">
         <div id="g_id_onload"
-             data-client_id="YOUR_GOOGLE_CLIENT_ID"
+             data-client_id=""
              data-context="signin"
              data-ux_mode="popup"
              data-callback="handleCredentialResponse"
@@ -157,30 +159,8 @@
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       
-      try {
-        const response = await fetch('http://localhost:5113/api/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, password })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          localStorage.setItem('user', JSON.stringify(data));
-          showMessage('Login successful! Redirecting...', 'success');
-          setTimeout(() => {
-            window.location.href = 'dashboard.html';
-          }, 1500);
-        } else {
-          showMessage(data.message || 'Login failed', 'error');
-        }
-      } catch (error) {
-        console.error('Login error:', error);
-        showMessage('Network error. Please try again.', 'error');
-      }
+      // Use universal authentication handler
+      await handleLogin(email, password);
     });
 
     function showMessage(message, type) {

@@ -53,6 +53,13 @@
   <meta http-equiv="Expires" content="0" />
   <!-- CACHE-BUST VERSION: 20250724d - FORCE DEPLOY -->
   <link rel="stylesheet" href="styles.css?v=20250127a&t=20250127" />
+  
+  <!-- 
+    Authentication Utilities
+    - Provides logout functionality and navigation state management
+    - Handles user authentication across all pages
+  -->
+  <script src="auth-utils.js"></script>
 </head>
 <body>
   <!-- 
@@ -78,7 +85,7 @@
       Main Navigation
       - Primary navigation links to all major sections
       - Includes external links for donations and social media
-      - Dynamic authentication links (signup/login)
+      - Dynamic authentication links (signup/login/logout/dashboard)
     -->
     <nav role="navigation" aria-label="Main navigation">
       <a href="index.html" aria-current="page">Home</a>
@@ -88,6 +95,8 @@
       <a href="dna-tracking.html">🧬 DNA</a>
       <a href="signup.html" id="signupLink">Sign Up</a>
       <a href="login.html" id="loginLink">Login</a>
+      <a href="dashboard.html" id="dashboardLink" style="display: none;">Dashboard</a>
+      <button id="logoutBtn" style="display: none;" class="logout-btn">Logout</button>
       <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
       <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
     </nav>
@@ -286,28 +295,12 @@
     // AUTHENTICATION STATE MANAGEMENT
     // ============================================
     
-    // Dynamic navigation updates based on user authentication status
-    function updateNavigation() {
-      const user = localStorage.getItem('user');
-      const signupLink = document.getElementById('signupLink');
-      const loginLink = document.getElementById('loginLink');
-      const dashboardLink = document.getElementById('dashboardLink');
-
-      if (user) {
-        // User is logged in - hide auth links, show dashboard
-        signupLink.style.display = 'none';
-        loginLink.style.display = 'none';
-        dashboardLink.style.display = 'inline-block';
-      } else {
-        // User is not logged in - show auth links, hide dashboard
-        signupLink.style.display = 'inline-block';
-        loginLink.style.display = 'inline-block';
-        dashboardLink.style.display = 'none';
-      }
-    }
-
-    // Initialize navigation state on page load
-    updateNavigation();
+    // Authentication functionality is now handled by auth-utils.js
+    // The auth-utils.js file provides:
+    // - updateNavigation() function for managing navigation state
+    // - handleLogout() function for user logout
+    // - showNotification() function for user feedback
+    // - Auto-initialization on page load
 
     // 
     // ============================================
