@@ -192,13 +192,12 @@ async function mockRegister(userData) {
  */
 
 /**
- * Handle login with fallback to mock system
+ * Handle login with real backend
  * @param {string} email - User email
  * @param {string} password - User password
  */
 async function handleLogin(email, password) {
   try {
-    // Try real backend first
     const response = await fetch('http://localhost:5113/api/auth/login', {
       method: 'POST',
       headers: {
@@ -207,39 +206,29 @@ async function handleLogin(email, password) {
       body: JSON.stringify({ email, password })
     });
 
+    const data = await response.json();
+
     if (response.ok) {
-      const data = await response.json();
       localStorage.setItem('user', JSON.stringify(data));
       showNotification('Login successful! Redirecting...', 'success');
       setTimeout(() => {
         window.location.href = 'dashboard.html';
       }, 1500);
     } else {
-      throw new Error('Backend login failed');
+      showNotification(data.message || 'Login failed', 'error');
     }
   } catch (error) {
-    console.log('Backend not available, using mock authentication');
-
-    try {
-      const result = await mockLogin(email, password);
-      localStorage.setItem('user', JSON.stringify(result.user));
-      showNotification('Login successful! (Mock Mode) Redirecting...', 'success');
-      setTimeout(() => {
-        window.location.href = 'dashboard.html';
-      }, 1500);
-    } catch (mockError) {
-      showNotification(mockError.message, 'error');
-    }
+    console.error('Login error:', error);
+    showNotification('Network error. Please try again.', 'error');
   }
 }
 
 /**
- * Handle registration with fallback to mock system
+ * Handle registration with real backend
  * @param {Object} userData - User registration data
  */
 async function handleRegister(userData) {
   try {
-    // Try real backend first
     const response = await fetch('http://localhost:5113/api/auth/register', {
       method: 'POST',
       headers: {
@@ -248,29 +237,20 @@ async function handleRegister(userData) {
       body: JSON.stringify(userData)
     });
 
+    const data = await response.json();
+
     if (response.ok) {
-      const data = await response.json();
       localStorage.setItem('user', JSON.stringify(data));
       showNotification('Registration successful! Redirecting...', 'success');
       setTimeout(() => {
         window.location.href = 'dashboard.html';
       }, 1500);
     } else {
-      throw new Error('Backend registration failed');
+      showNotification(data.message || 'Registration failed', 'error');
     }
   } catch (error) {
-    console.log('Backend not available, using mock authentication');
-
-    try {
-      const result = await mockRegister(userData);
-      localStorage.setItem('user', JSON.stringify(result.user));
-      showNotification('Registration successful! (Mock Mode) Redirecting...', 'success');
-      setTimeout(() => {
-        window.location.href = 'dashboard.html';
-      }, 1500);
-    } catch (mockError) {
-      showNotification(mockError.message, 'error');
-    }
+    console.error('Registration error:', error);
+    showNotification('Network error. Please try again.', 'error');
   }
 }
 

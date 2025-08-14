@@ -57,7 +57,7 @@ namespace _241RunnersAwareness.BackendAPI
          * 
          * @param args Command line arguments
          */
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             // 
             // ============================================
@@ -177,6 +177,7 @@ namespace _241RunnersAwareness.BackendAPI
             builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();                 // Analytics and reporting
             builder.Services.AddScoped<IImageService, ImageService>();                         // Image processing and storage
             builder.Services.AddScoped<IDNAService, DNAService>();                             // DNA tracking and identification
+            builder.Services.AddScoped<SeedDataService, SeedDataService>();                    // Database seeding service
             
             // 
             // ============================================
@@ -250,6 +251,18 @@ namespace _241RunnersAwareness.BackendAPI
             // Simple health check endpoint for monitoring
             // Returns "Backend is running!" to verify API availability
             app.MapGet("/health", () => "Backend is running!");
+
+            // 
+            // ============================================
+            // DATABASE SEEDING
+            // ============================================
+            
+            // Seed the database with initial data
+            using (var scope = app.Services.CreateScope())
+            {
+                var seedService = scope.ServiceProvider.GetRequiredService<SeedDataService>();
+                await seedService.SeedDataAsync();
+            }
 
             // 
             // ============================================

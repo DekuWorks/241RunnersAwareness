@@ -49,8 +49,8 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Models
         public bool EmailVerified { get; set; } = false;
         public bool PhoneVerified { get; set; } = false;
         
-        public string EmailVerificationToken { get; set; }
-        public string PhoneVerificationCode { get; set; }
+        public string? EmailVerificationToken { get; set; }
+        public string? PhoneVerificationCode { get; set; }
         
         public DateTime? EmailVerificationExpiry { get; set; }
         public DateTime? PhoneVerificationExpiry { get; set; }

@@ -916,7 +916,6 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EmailVerificationToken")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("EmailVerified")
@@ -959,7 +958,6 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneVerificationCode")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("PhoneVerificationExpiry")
