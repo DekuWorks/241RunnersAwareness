@@ -1,13 +1,39 @@
-/* ===== 241 Runners Awareness - Unified Stylesheet ===== */
-/* 
+/**
+ * ============================================
+ * 241 RUNNERS AWARENESS - UNIFIED STYLESHEET
+ * ============================================
+ * 
  * This stylesheet contains ALL styles for the 241 Runners Awareness website.
- * Features include: responsive design, dark mode support, cross-browser compatibility,
- * and optimized performance for missing persons awareness platform.
+ * It provides a comprehensive design system for the missing persons awareness platform.
+ * 
+ * Design Philosophy:
+ * - Accessibility-first approach with high contrast and readable fonts
+ * - Mobile-responsive design that works on all devices
+ * - Dark mode support for user preference and reduced eye strain
+ * - Brand consistency with red (#ff0000) as primary color
+ * - Performance optimized with efficient CSS selectors
+ * 
+ * Features:
+ * - Responsive navigation with hamburger menu
+ * - Dark/light theme toggle with smooth transitions
+ * - Cross-browser compatibility with vendor prefixes
+ * - Progressive enhancement for modern browsers
+ * - Optimized for missing persons awareness content
  * 
  * Version: 20250724b - Unified and Cleaned
+ * Last Updated: January 2025
  */
 
-/* ===== Reset & Base Styles ===== */
+/* 
+ * ============================================
+ * CSS RESET & BASE STYLES
+ * ============================================
+ * 
+ * Normalizes browser defaults and establishes consistent base styling.
+ * Ensures predictable rendering across different browsers and devices.
+ */
+
+/* Universal box-sizing reset for consistent sizing */
 * {
   margin: 0;
   padding: 0;
@@ -16,15 +42,27 @@
   box-sizing: border-box;
 }
 
+/* 
+ * ============================================
+ * BODY STYLING & LAYOUT FOUNDATION
+ * ============================================
+ * 
+ * Sets up the main document structure with flexbox layout.
+ * Establishes brand colors and responsive behavior.
+ */
 body {
   margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern, readable font stack */
   background: #ff0000; /* Default red background - brand color */
   color: #000;
+  
+  /* Smooth theme transitions for better UX */
   -webkit-transition: background-color 0.3s ease, color 0.3s ease; /* Safari/Chrome */
   -moz-transition: background-color 0.3s ease, color 0.3s ease; /* Firefox */
   -o-transition: background-color 0.3s ease, color 0.3s ease; /* Opera */
   transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme transitions */
+  
+  /* Flexbox layout for full-height design */
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -38,13 +76,29 @@ body {
   justify-content: flex-start;
 }
 
-/* ===== Dark Mode Support ===== */
+/* 
+ * ============================================
+ * DARK MODE THEME SUPPORT
+ * ============================================
+ * 
+ * Provides alternative color scheme for user preference.
+ * Reduces eye strain and provides better contrast in low-light conditions.
+ */
 body.dark-mode {
   background: #1a1a1a; /* Dark background */
   color: #fff; /* Light text for contrast */
 }
 
-/* ===== Header & Navigation ===== */
+/* 
+ * ============================================
+ * HEADER & NAVIGATION STYLING
+ * ============================================
+ * 
+ * Main navigation area with sticky positioning and responsive design.
+ * Includes logo, navigation links, and theme toggle functionality.
+ */
+
+/* Main header container */
 header {
   background: #000; /* Black header background */
   color: #fff; /* White text */
@@ -53,6 +107,8 @@ header {
   position: sticky; /* Stays at top when scrolling */
   top: 0;
   z-index: 1000; /* High z-index to stay above content */
+  
+  /* Smooth transitions for interactive elements */
   -webkit-transition: all 0.3s ease; /* Safari/Chrome */
   -moz-transition: all 0.3s ease; /* Firefox */
   -o-transition: all 0.3s ease; /* Opera */
@@ -61,7 +117,12 @@ header {
   margin: 0;
 }
 
-/* Sticky header with scroll effect */
+/* 
+ * Sticky header scroll effect
+ * 
+ * Adds visual feedback when user scrolls down the page.
+ * Creates a more polished, modern navigation experience.
+ */
 header.scrolled {
   background: rgba(0, 0, 0, 0.95);
   -webkit-backdrop-filter: blur(10px); /* Safari */
@@ -72,7 +133,7 @@ header.scrolled {
   padding: 0 20px 5px;
 }
 
-/* Dark mode header */
+/* Dark mode header styling */
 body.dark-mode header {
   background: #2d2d2d;
 }
@@ -81,6 +142,12 @@ body.dark-mode header.scrolled {
   background: rgba(45, 45, 45, 0.95);
 }
 
+/* 
+ * Header bar container
+ * 
+ * Contains the logo and main title.
+ * Uses flexbox for centered alignment and responsive spacing.
+ */
 .header-bar {
   display: -webkit-box;
   display: -ms-flexbox;

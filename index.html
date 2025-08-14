@@ -1,16 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- 
+    ============================================
+    241 RUNNERS AWARENESS - MAIN LANDING PAGE
+    ============================================
+    
+    This is the primary entry point for the 241 Runners Awareness website.
+    The page serves as a landing page with navigation to all major sections
+    including cases, shop, DNA tracking, and authentication.
+    
+    Key Features:
+    - Progressive Web App (PWA) support
+    - Dark mode toggle
+    - Responsive navigation
+    - Google OAuth integration
+    - Cache busting for deployment
+  -->
+  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>241 Runners Awareness</title>
+  
+  <!-- 
+    PWA Configuration
+    - manifest.json: Defines app behavior, icons, and display properties
+    - theme-color: Sets the browser UI color theme
+    - apple-mobile-web-app-*: iOS-specific PWA settings
+  -->
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#dc2626">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="241Runners">
   <link rel="apple-touch-icon" href="/241-logo.jpg">
+  
+  <!-- 
+    Google OAuth Integration
+    - Loads Google Sign-In API for authentication
+    - Enables social login functionality
+  -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  
+  <!-- 
+    Cache Control Headers
+    - Prevents browser caching during development
+    - Forces fresh content loading
+    - Cache busting version parameter for deployment
+  -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
@@ -18,12 +55,31 @@
   <link rel="stylesheet" href="styles.css?v=20250127a&t=20250127" />
 </head>
 <body>
+  <!-- 
+    ============================================
+    HEADER SECTION
+    ============================================
+    
+    Contains the main navigation and branding elements.
+    Features responsive design with hamburger menu for mobile.
+  -->
   <header role="banner">
+    <!-- 
+      Header Bar
+      - Contains logo and main title
+      - Sticky positioning for better UX
+    -->
     <div class="header-bar">
       <img src="/241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
       <h1>241 Runners Awareness</h1>
     </div>
 
+    <!-- 
+      Main Navigation
+      - Primary navigation links to all major sections
+      - Includes external links for donations and social media
+      - Dynamic authentication links (signup/login)
+    -->
     <nav role="navigation" aria-label="Main navigation">
       <a href="index.html" aria-current="page">Home</a>
       <a href="aboutus.html">About Us</a>
@@ -36,10 +92,22 @@
       <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
     </nav>
     
+    <!-- 
+      Theme Toggle Button
+      - Allows users to switch between light and dark modes
+      - Persists preference in localStorage
+      - Accessible with proper ARIA labels
+    -->
     <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
       ☀️
     </button>
     
+    <!-- 
+      Hamburger Menu Button
+      - Mobile navigation toggle
+      - Three-line icon for menu indication
+      - Accessible with proper ARIA attributes
+    -->
     <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-navigation">
       <span></span>
       <span></span>
@@ -47,21 +115,50 @@
     </button>
   </header>
 
+  <!-- 
+    ============================================
+    MAIN CONTENT AREA
+    ============================================
+    
+    Contains the primary content sections including welcome message
+    and feature highlights for new functionality.
+  -->
   <main role="main">
+    <!-- 
+      Welcome Section
+      - Introduces the organization and mission
+      - Clear value proposition for visitors
+    -->
     <section aria-labelledby="welcome-heading">
       <h2 id="welcome-heading">Welcome to 241 Runners Awareness</h2>
       <p>Our mission is to support and protect missing and vulnerable individuals with real-time alerts and secure data.</p>
     </section>
 
+    <!-- 
+      Features Section
+      - Highlights new and important features
+      - Shop integration for fundraising
+      - DNA tracking capabilities
+    -->
     <section aria-labelledby="features-heading" class="features-section">
       <h2 id="features-heading">New Features</h2>
       <div class="features-grid">
+        <!-- 
+          Shop Feature Card
+          - Promotes the Varlo partnership
+          - Explains fundraising benefits
+        -->
         <div class="feature-card">
           <div class="feature-icon">🛍️</div>
           <h3>241RA x Varlo Shop</h3>
           <p>Premium athletic wear supporting missing persons awareness. Every purchase helps fund DNA collection and identification technology.</p>
           <a href="shop.html" class="feature-btn">Shop Now</a>
         </div>
+        <!-- 
+          DNA Tracking Feature Card
+          - Showcases advanced DNA technology
+          - Explains the identification process
+        -->
         <div class="feature-card">
           <div class="feature-icon">🧬</div>
           <h3>DNA Tracking & Identification</h3>
@@ -72,6 +169,14 @@
     </section>
   </main>
 
+  <!-- 
+    ============================================
+    FOOTER SECTION
+    ============================================
+    
+    Contains copyright information and legal links.
+    Maintains consistent branding and navigation.
+  -->
   <footer role="contentinfo">
     <div class="footer-content">
       <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
@@ -83,8 +188,22 @@
     </div>
   </footer>
 
+  <!-- 
+    ============================================
+    JAVASCRIPT FUNCTIONALITY
+    ============================================
+    
+    All interactive features including navigation, theme switching,
+    authentication state management, and service worker registration.
+  -->
   <script>
+    // 
+    // ============================================
+    // NAVIGATION AND UI INTERACTIONS
+    // ============================================
+    
     // Sticky navbar scroll effect
+    // Adds visual feedback when user scrolls down the page
     window.addEventListener('scroll', function() {
       const header = document.querySelector('header');
       if (window.scrollY > 50) {
@@ -94,10 +213,16 @@
       }
     });
 
-    // Hamburger menu functionality
+    // 
+    // ============================================
+    // HAMBURGER MENU FUNCTIONALITY
+    // ============================================
+    
+    // Mobile navigation toggle system
     const hamburger = document.querySelector('.hamburger');
     const nav = document.querySelector('nav');
     
+    // Toggle menu visibility and update ARIA attributes
     hamburger.addEventListener('click', function() {
       const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
       hamburger.setAttribute('aria-expanded', !isExpanded);
@@ -105,7 +230,8 @@
       nav.classList.toggle('active');
     });
     
-    // Close menu when clicking on a link
+    // Close menu when clicking on navigation links
+    // Improves mobile UX by auto-closing menu after selection
     document.querySelectorAll('nav a').forEach(link => {
       link.addEventListener('click', () => {
         hamburger.classList.remove('active');
@@ -113,7 +239,8 @@
       });
     });
     
-    // Close menu when clicking outside
+    // Close menu when clicking outside navigation area
+    // Prevents menu from staying open when clicking elsewhere
     document.addEventListener('click', function(e) {
       if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
         hamburger.classList.remove('active');
@@ -121,11 +248,16 @@
       }
     });
 
-    // Dark mode toggle functionality
+    // 
+    // ============================================
+    // DARK MODE THEME TOGGLE
+    // ============================================
+    
+    // Theme management system with localStorage persistence
     const themeToggle = document.getElementById('theme-toggle');
     const body = document.body;
     
-    // Check for saved theme preference or default to light mode
+    // Initialize theme from saved preference or default to light mode
     const currentTheme = localStorage.getItem('theme') || 'light';
     if (currentTheme === 'dark') {
       body.classList.add('dark-mode');
@@ -134,6 +266,7 @@
     }
     
     // Theme toggle click handler
+    // Switches between light and dark modes with visual feedback
     themeToggle.addEventListener('click', function() {
       body.classList.toggle('dark-mode');
       
@@ -148,7 +281,12 @@
       }
     });
 
-    // Check authentication status and update navigation
+    // 
+    // ============================================
+    // AUTHENTICATION STATE MANAGEMENT
+    // ============================================
+    
+    // Dynamic navigation updates based on user authentication status
     function updateNavigation() {
       const user = localStorage.getItem('user');
       const signupLink = document.getElementById('signupLink');
@@ -156,36 +294,40 @@
       const dashboardLink = document.getElementById('dashboardLink');
 
       if (user) {
-        // User is logged in
+        // User is logged in - hide auth links, show dashboard
         signupLink.style.display = 'none';
         loginLink.style.display = 'none';
         dashboardLink.style.display = 'inline-block';
       } else {
-        // User is not logged in
+        // User is not logged in - show auth links, hide dashboard
         signupLink.style.display = 'inline-block';
         loginLink.style.display = 'inline-block';
         dashboardLink.style.display = 'none';
       }
     }
 
-    // Initialize navigation
+    // Initialize navigation state on page load
     updateNavigation();
 
-    // Register service worker for PWA functionality
+    // 
+    // ============================================
+    // SERVICE WORKER REGISTRATION
+    // ============================================
+    
+    // Progressive Web App functionality for offline support and caching
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js?v=20250724d')
           .then((registration) => {
             console.log('Service Worker registered successfully:', registration);
             
-            // Force update if there's a new version
+            // Force update if there's a new version available
             registration.addEventListener('updatefound', () => {
               const newWorker = registration.installing;
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  // New service worker is available
+                  // New service worker is available - reload to activate
                   console.log('New service worker available');
-                  // Reload the page to activate the new service worker
                   window.location.reload();
                 }
               });
