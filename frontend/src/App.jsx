@@ -35,6 +35,7 @@ import Shop from "./pages/Shop";
 import DNATracking from "./pages/DNATracking";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import Offline from "./pages/Offline";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 
@@ -99,6 +100,9 @@ function App() {
           {/* Legal pages - Privacy policy and terms of use */}
           <Route path="privacy" element={<Privacy />} />
           <Route path="terms" element={<Terms />} />
+          
+          {/* Offline page - Fallback when user is offline */}
+          <Route path="offline" element={<Offline />} />
           
           {/* Authentication pages - User registration and login */}
           <Route path="register" element={<RegisterPage />} />
