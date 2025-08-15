@@ -38,6 +38,8 @@ import Terms from "./pages/Terms";
 import Offline from "./pages/Offline";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 // Admin page components - protected by authentication and role
 import AdminDashboard from "./pages/AdminDashboard";
@@ -107,6 +109,8 @@ function App() {
           {/* Authentication pages - User registration and login */}
           <Route path="register" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="reset-password" element={<ResetPassword />} />
 
           {/* 
             ============================================

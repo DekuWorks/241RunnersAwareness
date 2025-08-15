@@ -227,6 +227,7 @@ namespace _241RunnersAwareness.BackendAPI
             builder.Services.AddScoped<ISmsService, SmsService>();             // SMS notifications
             builder.Services.AddScoped<ICsvExportService, CsvExportService>(); // Data export functionality
             builder.Services.AddScoped<ITwoFactorService, TwoFactorService>(); // 2FA implementation
+            builder.Services.AddScoped<IPasswordResetService, PasswordResetService>(); // Password reset functionality
             
             // Advanced platform services
             builder.Services.AddScoped<INotificationService, NotificationService>();           // Notification management

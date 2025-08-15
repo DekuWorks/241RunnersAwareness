@@ -2051,3 +2051,100 @@ tr:hover {
     text-align: center;
   }
 }
+
+/* Password Reset Styles */
+.password-reset-info {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(248, 250, 252, 0.8);
+  border-radius: 12px;
+  border-left: 4px solid #dc2626;
+}
+
+.password-reset-info h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.password-reset-info ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.password-reset-info li {
+  margin-bottom: 0.5rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+.reset-info {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.forgot-password-link {
+  text-align: right;
+  margin-top: 0.5rem;
+}
+
+.forgot-password-link a {
+  color: #dc2626;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.forgot-password-link a:hover {
+  text-decoration: underline;
+}
+
+/* Auth Message Styles */
+.auth-message {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid;
+}
+
+.auth-message.success {
+  background: rgba(34, 197, 94, 0.1);
+  border-left-color: #22c55e;
+  color: #166534;
+}
+
+.auth-message.error {
+  background: rgba(239, 68, 68, 0.1);
+  border-left-color: #ef4444;
+  color: #991b1b;
+}
+
+.auth-message p {
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Form Group Small Text */
+.form-group small {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: #666;
+}
+
+/* Responsive Design for Password Reset */
+@media (max-width: 768px) {
+  .password-reset-info {
+    margin-top: 1.5rem;
+    padding: 1rem;
+  }
+  
+  .password-reset-info h3 {
+    font-size: 1.1rem;
+  }
+  
+  .forgot-password-link {
+    text-align: center;
+  }
+}
