@@ -11,13 +11,15 @@
  * - Redux Toolkit for state management
  * - Google OAuth for authentication
  * - Progressive Web App with service worker
+ * - SEO with react-helmet-async
  * - Strict Mode for development debugging
  * 
  * Provider Hierarchy:
  * 1. React.StrictMode - Development mode checks
  * 2. Redux Provider - Global state management
  * 3. Google OAuth Provider - Authentication services
- * 4. App Component - Main application
+ * 4. HelmetProvider - SEO and meta tag management
+ * 5. App Component - Main application
  */
 
 // Core React imports
@@ -37,6 +39,9 @@ import { store } from './store'
 // Google OAuth authentication
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { GOOGLE_CLIENT_ID } from './config/api';
+
+// SEO management
+import { HelmetProvider } from 'react-helmet-async';
 
 /**
  * Service Worker Registration
@@ -69,13 +74,16 @@ if ('serviceWorker' in navigator) {
  * - StrictMode: Enables additional development checks and warnings
  * - Redux Provider: Provides global state management to all components
  * - Google OAuth Provider: Enables Google Sign-In functionality
+ * - HelmetProvider: Manages SEO meta tags and document head
  * - App Component: Main application with routing and layout
  */
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
       <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-        <App />
+        <HelmetProvider>
+          <App />
+        </HelmetProvider>
       </GoogleOAuthProvider>
     </Provider>
   </React.StrictMode>
