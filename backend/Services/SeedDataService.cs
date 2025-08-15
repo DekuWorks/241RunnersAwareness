@@ -60,12 +60,25 @@ namespace _241RunnersAwareness.BackendAPI.Services
                 new User
                 {
                     UserId = Guid.NewGuid(),
-                    Username = "testuser",
-                    Email = "test@example.com",
-                    FullName = "Test User",
-                    PhoneNumber = "+1234567891",
-                    PasswordHash = _authService.HashPassword("password123"),
-                    Role = "GeneralUser",
+                    Username = "marcus",
+                    Email = "dekuworks1@gmail.com",
+                    FullName = "Marcus Brown",
+                    PhoneNumber = "+1234567893",
+                    PasswordHash = _authService.HashPassword("marcus2025"),
+                    Role = "admin",
+                    EmailVerified = true,
+                    PhoneVerified = true,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new User
+                {
+                    UserId = Guid.NewGuid(),
+                    Username = "daniel",
+                    Email = "danielcarey9770@gmail.com",
+                    FullName = "Daniel Carey",
+                    PhoneNumber = "+1234567894",
+                    PasswordHash = _authService.HashPassword("daniel2025"),
+                    Role = "admin",
                     EmailVerified = true,
                     PhoneVerified = true,
                     CreatedAt = DateTime.UtcNow
@@ -79,6 +92,19 @@ namespace _241RunnersAwareness.BackendAPI.Services
                     PhoneNumber = "+1234567892",
                     PasswordHash = _authService.HashPassword("lisa2025"),
                     Role = "admin",
+                    EmailVerified = true,
+                    PhoneVerified = true,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new User
+                {
+                    UserId = Guid.NewGuid(),
+                    Username = "testuser",
+                    Email = "test@example.com",
+                    FullName = "Test User",
+                    PhoneNumber = "+1234567891",
+                    PasswordHash = _authService.HashPassword("password123"),
+                    Role = "GeneralUser",
                     EmailVerified = true,
                     PhoneVerified = true,
                     CreatedAt = DateTime.UtcNow
