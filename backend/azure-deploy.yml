@@ -1,0 +1,127 @@
+# Azure DevOps Pipeline for 241 Runners Awareness Backend
+# Deploy to Azure App Service with SQL Database
+
+trigger:
+  - main
+  - develop
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  dotNetVersion: '8.0.x'
+  azureSubscription: 'Your-Azure-Subscription'
+  webAppName: '241runnersawareness-api'
+  resourceGroupName: '241runnersawareness-rg'
+
+stages:
+- stage: Build
+  displayName: 'Build and Test'
+  jobs:
+  - job: Build
+    pool:
+      vmImage: 'ubuntu-latest'
+    
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET 8 SDK'
+      inputs:
+        version: '$(dotNetVersion)'
+        includePreviewVersions: false
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore NuGet packages'
+      inputs:
+        command: 'restore'
+        projects: '$(solution)'
+        feedsToUse: 'select'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Build solution'
+      inputs:
+        command: 'build'
+        projects: '$(solution)'
+        arguments: '--configuration $(buildConfiguration) --no-restore'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Run tests'
+      inputs:
+        command: 'test'
+        projects: '**/*Tests/*.csproj'
+        arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage"'
+        publishTestResults: true
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish artifacts'
+      inputs:
+        command: 'publish'
+        publishWebProjects: true
+        arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+        zipAfterPublish: true
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish build artifacts'
+      inputs:
+        pathToPublish: '$(Build.ArtifactStagingDirectory)'
+        artifactName: 'drop'
+
+- stage: DeployToStaging
+  displayName: 'Deploy to Staging'
+  dependsOn: Build
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+  jobs:
+  - deployment: Deploy
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: 'staging'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureWebApp@1
+            displayName: 'Deploy to Azure App Service (Staging)'
+            inputs:
+              azureSubscription: '$(azureSubscription)'
+              appName: '$(webAppName)-staging'
+              package: '$(Pipeline.Workspace)/drop/**/*.zip'
+              appType: 'webApp'
+              deploymentMethod: 'auto'
+
+- stage: DeployToProduction
+  displayName: 'Deploy to Production'
+  dependsOn: Build
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  jobs:
+  - deployment: Deploy
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: 'production'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureWebApp@1
+            displayName: 'Deploy to Azure App Service (Production)'
+            inputs:
+              azureSubscription: '$(azureSubscription)'
+              appName: '$(webAppName)'
+              package: '$(Pipeline.Workspace)/drop/**/*.zip'
+              appType: 'webApp'
+              deploymentMethod: 'auto'
+
+          - task: AzureCLI@2
+            displayName: 'Run database migrations'
+            inputs:
+              azureSubscription: '$(azureSubscription)'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                # Get the app service name
+                APP_NAME="$(webAppName)"
+                
+                # Run EF migrations
+                az webapp ssh --name $APP_NAME --resource-group $(resourceGroupName) --command "cd /home/site/wwwroot && dotnet ef database update --connection '$(DefaultConnection)'"
+                
+                # Verify deployment
+                echo "Deployment completed successfully!"
+                echo "Health check: https://$APP_NAME.azurewebsites.net/health"

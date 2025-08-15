@@ -12,7 +12,7 @@ const config = {
   },
   
   production: {
-    API_BASE_URL: 'https://api.241runnersawareness.org/api',
+    API_BASE_URL: 'https://241runnersawareness-api.azurewebsites.net/api',
     GOOGLE_CLIENT_ID: '933970195369-67fjn7t28p7q8a3grar5a46jad4mvinq.apps.googleusercontent.com',
     APP_URL: 'https://241runnersawareness.org',
     NODE_ENV: 'production'

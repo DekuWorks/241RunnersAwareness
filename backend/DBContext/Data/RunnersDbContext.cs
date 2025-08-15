@@ -30,7 +30,7 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Individual Configuration
+            // Performance Optimization: Add indexes for frequently queried fields
             modelBuilder.Entity<Individual>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -75,6 +75,16 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Data
                 entity.Property(e => e.SocialMediaPosts).HasMaxLength(500);
                 entity.Property(e => e.CreatedBy).HasMaxLength(100);
                 entity.Property(e => e.UpdatedBy).HasMaxLength(100);
+
+                // Performance: Add indexes for frequently queried fields
+                entity.HasIndex(e => e.CaseStatus).HasDatabaseName("IX_Individuals_CaseStatus");
+                entity.HasIndex(e => e.State).HasDatabaseName("IX_Individuals_State");
+                entity.HasIndex(e => e.City).HasDatabaseName("IX_Individuals_City");
+                entity.HasIndex(e => e.LastSeenDate).HasDatabaseName("IX_Individuals_LastSeenDate");
+                entity.HasIndex(e => e.CreatedAt).HasDatabaseName("IX_Individuals_CreatedAt");
+                entity.HasIndex(e => new { e.FirstName, e.LastName }).HasDatabaseName("IX_Individuals_Name");
+                entity.HasIndex(e => e.NAMUSCaseNumber).HasDatabaseName("IX_Individuals_NAMUSCaseNumber");
+                entity.HasIndex(e => e.LocalCaseNumber).HasDatabaseName("IX_Individuals_LocalCaseNumber");
 
                 // Relationships
                 entity.HasMany(e => e.EmergencyContacts)

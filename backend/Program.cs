@@ -39,6 +39,12 @@ using System.Text;
 // Application service imports
 using _241RunnersAwareness.BackendAPI.Services;
 
+// Performance and monitoring imports
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using System.Threading.RateLimiting;
+
 namespace _241RunnersAwareness.BackendAPI
 {
     /**
@@ -79,10 +85,61 @@ namespace _241RunnersAwareness.BackendAPI
             // Add MVC controllers for API endpoints
             builder.Services.AddControllers();
             
-            // Configure Entity Framework with SQL Server
-            // Uses connection string from configuration (appsettings.json)
+            // Configure Entity Framework with SQL Server and performance optimizations
             builder.Services.AddDbContext<RunnersDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            {
+                options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("DefaultConnection"),
+                    sqlOptions =>
+                    {
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 3,
+                            maxRetryDelay: TimeSpan.FromSeconds(30),
+                            errorNumbersToAdd: null);
+                        sqlOptions.CommandTimeout(30);
+                    }
+                );
+                
+                // Enable query tracking only when needed for better performance
+                options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            });
+
+            // 
+            // ============================================
+            // PERFORMANCE OPTIMIZATIONS
+            // ============================================
+            
+            // Add response compression for better performance
+            builder.Services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.Providers.Add<Microsoft.AspNetCore.ResponseCompression.BrotliCompressionProvider>();
+                options.Providers.Add<Microsoft.AspNetCore.ResponseCompression.GzipCompressionProvider>();
+            });
+
+            // Add rate limiting to prevent abuse
+            builder.Services.AddRateLimiter(options =>
+            {
+                options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: context.User.Identity?.Name ?? context.Request.Headers.Host.ToString(),
+                        factory: partition => new FixedWindowRateLimiterOptions
+                        {
+                            AutoReplenishment = true,
+                            PermitLimit = int.Parse(builder.Configuration["RateLimiting:PermitLimit"] ?? "100"),
+                            Window = TimeSpan.Parse(builder.Configuration["RateLimiting:Window"] ?? "00:01:00")
+                        }));
+            });
+
+            // Add health checks for monitoring
+            builder.Services.AddHealthChecks()
+                .AddDbContextCheck<RunnersDbContext>("database")
+                .AddCheck("memory", () =>
+                {
+                    var memoryThreshold = long.Parse(builder.Configuration["HealthChecks:MemoryThreshold"] ?? "1024");
+                    var memoryUsage = GC.GetTotalMemory(false) / 1024 / 1024; // MB
+                    return memoryUsage < memoryThreshold ? HealthCheckResult.Healthy() : HealthCheckResult.Degraded();
+                });
 
             // 
             // ============================================
@@ -178,6 +235,7 @@ namespace _241RunnersAwareness.BackendAPI
             builder.Services.AddScoped<IImageService, ImageService>();                         // Image processing and storage
             builder.Services.AddScoped<IDNAService, DNAService>();                             // DNA tracking and identification
             builder.Services.AddScoped<SeedDataService, SeedDataService>();                    // Database seeding service
+            builder.Services.AddScoped<IDataCleanupService, DataCleanupService>();             // Database cleanup and maintenance
             
             // 
             // ============================================
@@ -214,6 +272,12 @@ namespace _241RunnersAwareness.BackendAPI
             // Configure the HTTP request pipeline
             // Middleware order is important for proper request processing
             
+            // Enable response compression (must be early in pipeline)
+            app.UseResponseCompression();
+            
+            // Enable rate limiting
+            app.UseRateLimiter();
+            
             // Enable Swagger documentation in development and production
             if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
             {
@@ -245,12 +309,39 @@ namespace _241RunnersAwareness.BackendAPI
 
             // 
             // ============================================
-            // HEALTH CHECK ENDPOINT
+            // HEALTH CHECK ENDPOINTS
             // ============================================
             
-            // Simple health check endpoint for monitoring
-            // Returns "Backend is running!" to verify API availability
-            app.MapGet("/health", () => "Backend is running!");
+            // Comprehensive health check endpoints for monitoring
+            app.MapHealthChecks("/health", new HealthCheckOptions
+            {
+                ResponseWriter = async (context, report) =>
+                {
+                    context.Response.ContentType = "application/json";
+                    var response = new
+                    {
+                        status = report.Status.ToString(),
+                        checks = report.Entries.Select(e => new
+                        {
+                            name = e.Key,
+                            status = e.Value.Status.ToString(),
+                            description = e.Value.Description,
+                            duration = e.Value.Duration.ToString()
+                        })
+                    };
+                    await context.Response.WriteAsJsonAsync(response);
+                }
+            });
+            
+            app.MapHealthChecks("/health/ready", new HealthCheckOptions
+            {
+                Predicate = check => check.Tags.Contains("ready")
+            });
+            
+            app.MapHealthChecks("/health/live", new HealthCheckOptions
+            {
+                Predicate = _ => false
+            });
 
             // 
             // ============================================
