@@ -104,12 +104,6 @@ const mockUsers = [
     role: 'GeneralUser'
   },
   {
-    email: 'admin@241runners.org',
-    password: process.env.MOCK_ADMIN_PASSWORD || 'admin123',
-    fullName: 'Admin User',
-    role: 'admin'
-  },
-  {
     email: 'dekuworks1@gmail.com',
     password: process.env.MOCK_MARCUS_PASSWORD || 'marcus2025',
     fullName: 'Marcus Brown',
@@ -119,12 +113,6 @@ const mockUsers = [
     email: 'danielcarey9770@gmail.com',
     password: process.env.MOCK_DANIEL_PASSWORD || 'daniel2025',
     fullName: 'Daniel Carey',
-    role: 'admin'
-  },
-  {
-    email: 'lisa@241runners.org',
-    password: process.env.MOCK_LISA_PASSWORD || 'lisa2025',
-    fullName: 'Lisa Thomas',
     role: 'admin'
   }
 ];
