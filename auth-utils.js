@@ -99,13 +99,13 @@ function handleLogout() {
 const mockUsers = [
   {
     email: 'test@example.com',
-    password: 'password123',
+    password: process.env.MOCK_TEST_PASSWORD || 'password123',
     fullName: 'Test User',
     role: 'GeneralUser'
   },
   {
     email: 'admin@241runners.org',
-    password: 'admin123',
+    password: process.env.MOCK_ADMIN_PASSWORD || 'admin123',
     fullName: 'Admin User',
     role: 'admin'
   }

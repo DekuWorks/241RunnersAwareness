@@ -51,7 +51,7 @@ const NavBar = () => {
         </button>
         <div className={`nav-links ${isMenuOpen ? 'active' : ''}`} id="nav-links">
           <Link to="/" onClick={closeMenu}>Home</Link>
-          <a href="https://www.241runnersawareness.org/about_us.html" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>About Us</a>
+          <Link to="/about" onClick={closeMenu}>About Us</Link>
           <Link to="/cases" onClick={closeMenu}>Cases</Link>
           <Link to="/map" onClick={closeMenu}>Map</Link>
           <Link to="/shop" onClick={closeMenu}>🛍️ Shop</Link>
