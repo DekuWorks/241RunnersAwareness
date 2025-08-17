@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace _241RunnersAwareness.BackendAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialCreateWithDNA : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -228,39 +228,44 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    FullName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RelationshipToRunner = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LicenseNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Organization = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Credentials = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Specialization = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    YearsOfExperience = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    State = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ZipCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EmergencyContactName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EmergencyContactPhone = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EmergencyContactRelationship = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Role = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     EmailVerified = table.Column<bool>(type: "bit", nullable: false),
                     PhoneVerified = table.Column<bool>(type: "bit", nullable: false),
-                    EmailVerificationToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneVerificationCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EmailVerificationToken = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     EmailVerificationExpiry = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PhoneVerificationCode = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
                     PhoneVerificationExpiry = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastLoginAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PasswordResetCount = table.Column<int>(type: "int", nullable: false),
+                    LastPasswordResetAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PasswordResetYear = table.Column<int>(type: "int", nullable: false),
+                    PasswordResetToken = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    PasswordResetTokenExpiry = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    RelationshipToRunner = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    LicenseNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Organization = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Credentials = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Specialization = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    YearsOfExperience = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    State = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ZipCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    EmergencyContactName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    EmergencyContactPhone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    EmergencyContactRelationship = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RefreshToken = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     RefreshTokenExpiry = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorSecret = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TwoFactorBackupCodes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TwoFactorSecret = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    TwoFactorBackupCodes = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     TwoFactorSetupDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IndividualId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -271,7 +276,8 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                         name: "FK_Users_Individuals_IndividualId",
                         column: x => x.IndividualId,
                         principalTable: "Individuals",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -339,6 +345,57 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                         column: x => x.PartnershipId,
                         principalTable: "Partnerships",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DNAReports",
+                columns: table => new
+                {
+                    ReportId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ReporterUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IndividualId = table.Column<int>(type: "int", nullable: false),
+                    ReportTitle = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    ReportDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    DNASampleDescription = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    DNASampleType = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    DNASampleLocation = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    DNASampleCollectionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DNALabReference = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    DNASequence = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    DNASampleCollected = table.Column<bool>(type: "bit", nullable: false),
+                    DNASampleProcessed = table.Column<bool>(type: "bit", nullable: false),
+                    DNASampleMatched = table.Column<bool>(type: "bit", nullable: false),
+                    WeatherConditions = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ClothingDescription = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    PhysicalDescription = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    BehaviorDescription = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    WitnessName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    WitnessPhone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    WitnessEmail = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ResolutionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ResolutionNotes = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    ResolvedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DNAReports", x => x.ReportId);
+                    table.ForeignKey(
+                        name: "FK_DNAReports_Individuals_IndividualId",
+                        column: x => x.IndividualId,
+                        principalTable: "Individuals",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_DNAReports_Users_ReporterUserId",
+                        column: x => x.ReporterUserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -466,9 +523,74 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                 column: "IndividualId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DNAReports_CreatedAt",
+                table: "DNAReports",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DNAReports_IndividualId",
+                table: "DNAReports",
+                column: "IndividualId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DNAReports_ReportDate",
+                table: "DNAReports",
+                column: "ReportDate");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DNAReports_ReporterUserId",
+                table: "DNAReports",
+                column: "ReporterUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DNAReports_Status",
+                table: "DNAReports",
+                column: "Status");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EmergencyContacts_IndividualId",
                 table: "EmergencyContacts",
                 column: "IndividualId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Individuals_CaseStatus",
+                table: "Individuals",
+                column: "CaseStatus");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Individuals_City",
+                table: "Individuals",
+                column: "City");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Individuals_CreatedAt",
+                table: "Individuals",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Individuals_LastSeenDate",
+                table: "Individuals",
+                column: "LastSeenDate");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Individuals_LocalCaseNumber",
+                table: "Individuals",
+                column: "LocalCaseNumber");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Individuals_Name",
+                table: "Individuals",
+                columns: new[] { "FirstName", "LastName" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Individuals_NAMUSCaseNumber",
+                table: "Individuals",
+                column: "NAMUSCaseNumber");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Individuals_State",
+                table: "Individuals",
+                column: "State");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderItems_OrderId",
@@ -511,9 +633,36 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Users_CreatedAt",
+                table: "Users",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Email",
+                table: "Users",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_IndividualId",
                 table: "Users",
                 column: "IndividualId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_IsActive",
+                table: "Users",
+                column: "IsActive");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Role",
+                table: "Users",
+                column: "Role");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Username",
+                table: "Users",
+                column: "Username",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -524,6 +673,9 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "CaseImages");
+
+            migrationBuilder.DropTable(
+                name: "DNAReports");
 
             migrationBuilder.DropTable(
                 name: "EmergencyContacts");

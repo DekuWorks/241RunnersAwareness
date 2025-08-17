@@ -36,6 +36,97 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
             _twoFactorService = twoFactorService;
         }
 
+        [HttpGet("test")]
+        public ActionResult<object> Test()
+        {
+            return Ok(new { message = "Auth controller is working", timestamp = DateTime.UtcNow });
+        }
+
+        [HttpGet("test-db")]
+        public async Task<ActionResult<object>> TestDb()
+        {
+            try
+            {
+                var userCount = await _context.Users.CountAsync();
+                return Ok(new { message = "Database connection working", userCount = userCount });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Database error", error = ex.Message });
+            }
+        }
+
+        [HttpPost("register-simple")]
+        public async Task<ActionResult<AuthResponse>> RegisterSimple(RegisterRequest request)
+        {
+            try
+            {
+                // Check if user already exists
+                var existingUser = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == request.Email);
+
+                if (existingUser != null)
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "User with this email already exists."
+                    });
+                }
+
+                // Create new user with minimal fields
+                var user = new User
+                {
+                    UserId = Guid.NewGuid(),
+                    Username = request.Email.Split('@')[0],
+                    Email = request.Email,
+                    FullName = request.FullName,
+                    PasswordHash = _authService.HashPassword(request.Password),
+                    Role = request.Role ?? "user",
+                    CreatedAt = DateTime.UtcNow,
+                    IsActive = true
+                };
+
+                // Only set phone number if provided
+                if (!string.IsNullOrEmpty(request.PhoneNumber))
+                {
+                    user.PhoneNumber = request.PhoneNumber;
+                }
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                // Create a simple user DTO without complex mapping
+                var userDto = new Models.UserDto
+                {
+                    UserId = user.UserId,
+                    Email = user.Email,
+                    FullName = user.FullName,
+                    Role = user.Role,
+                    PhoneNumber = user.PhoneNumber,
+                    EmailVerified = user.EmailVerified,
+                    PhoneVerified = user.PhoneVerified,
+                    CreatedAt = user.CreatedAt
+                };
+
+                return Ok(new AuthResponse
+                {
+                    Success = true,
+                    Message = "Registration successful.",
+                    User = userDto,
+                    RequiresVerification = false
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new AuthResponse
+                {
+                    Success = false,
+                    Message = $"An error occurred during registration: {ex.Message}"
+                });
+            }
+        }
+
         [HttpPost("register")]
         public async Task<ActionResult<AuthResponse>> Register(RegisterRequest request)
         {
@@ -58,6 +149,7 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                 var user = new User
                 {
                     UserId = Guid.NewGuid(),
+                    Username = request.Email.Split('@')[0], // Generate username from email
                     Email = request.Email,
                     PhoneNumber = request.PhoneNumber,
                     FullName = request.FullName,
@@ -66,60 +158,26 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                     PhoneVerificationCode = _authService.GenerateVerificationCode(),
                     EmailVerificationExpiry = DateTime.UtcNow.AddHours(24),
                     PhoneVerificationExpiry = DateTime.UtcNow.AddMinutes(10),
-                    Role = request.Role ?? "user",
-                    
-                    // Role-specific fields
-                    RelationshipToRunner = request.RelationshipToRunner,
-                    LicenseNumber = request.LicenseNumber,
-                    Organization = request.Organization,
-                    Credentials = request.Credentials,
-                    Specialization = request.Specialization,
-                    YearsOfExperience = request.YearsOfExperience,
-                    
-                    // Common fields
-                    Address = request.Address,
-                    City = request.City,
-                    State = request.State,
-                    ZipCode = request.ZipCode,
-                    EmergencyContactName = request.EmergencyContactName,
-                    EmergencyContactPhone = request.EmergencyContactPhone,
-                    EmergencyContactRelationship = request.EmergencyContactRelationship
+                    Role = request.Role ?? "user"
                 };
 
-                // If role is not 'user' and Individual info is provided, create and link Individual
-                if (request.Role != null && request.Role != "user" && request.Individual != null)
-                {
-                    var individual = new Individual
-                    {
-                        FirstName = request.Individual.FullName.Split(' ')[0],
-                        LastName = request.Individual.FullName.Split(' ').Length > 1 ? string.Join(" ", request.Individual.FullName.Split(' ').Skip(1)) : "",
-                        DateOfBirth = request.Individual.DateOfBirth ?? DateTime.MinValue,
-                        Gender = request.Individual.Gender,
-                        EmergencyContacts = new List<EmergencyContact>()
-                    };
-
-                    // Add emergency contact if provided
-                    if (request.Individual.EmergencyContact != null)
-                    {
-                        individual.EmergencyContacts.Add(new EmergencyContact
-                        {
-                            Name = request.Individual.EmergencyContact.Name,
-                            Phone = request.Individual.EmergencyContact.Phone
-                        });
-                    }
-
-                    _context.Individuals.Add(individual);
-                    await _context.SaveChangesAsync();
-
-                    user.IndividualId = individual.Id;
-                }
+                // Individual creation logic temporarily disabled for testing
+                // if (request.Role != null && request.Role != "user" && request.Individual != null)
+                // {
+                //     // Individual creation code here
+                // }
 
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                // Send verification emails and SMS
-                await _emailService.SendVerificationEmailAsync(user.Email, user.FullName, user.EmailVerificationToken);
-                await _smsService.SendVerificationCodeAsync(user.PhoneNumber, user.PhoneVerificationCode);
+                // Send verification emails and SMS (temporarily disabled for testing)
+                try {
+                    await _emailService.SendVerificationEmailAsync(user.Email, user.FullName, user.EmailVerificationToken);
+                    await _smsService.SendVerificationCodeAsync(user.PhoneNumber, user.PhoneVerificationCode);
+                } catch (Exception ex) {
+                    // Log the error but don't fail the registration
+                    Console.WriteLine($"Verification sending failed: {ex.Message}");
+                }
 
                 return Ok(new AuthResponse
                 {
@@ -208,6 +266,7 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                     user = new User
                     {
                         UserId = Guid.NewGuid(),
+                        Username = payload.Email.Split('@')[0], // Generate username from email
                         Email = payload.Email,
                         FullName = payload.Name,
                         EmailVerified = true, // Google accounts are pre-verified
@@ -685,6 +744,242 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = "An error occurred while getting 2FA status." });
+            }
+        }
+
+        // Password Reset Request
+        [HttpPost("forgot-password")]
+        public async Task<ActionResult<AuthResponse>> ForgotPassword(ForgotPasswordRequest request)
+        {
+            try
+            {
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == request.Email && u.IsActive);
+
+                if (user == null)
+                {
+                    // Don't reveal if user exists or not for security
+                    return Ok(new AuthResponse
+                    {
+                        Success = true,
+                        Message = "If an account with this email exists, a password reset link has been sent."
+                    });
+                }
+
+                // Generate password reset token
+                user.PasswordResetToken = _authService.GenerateVerificationToken();
+                user.PasswordResetTokenExpiry = DateTime.UtcNow.AddHours(1);
+                user.PasswordResetCount++;
+                user.LastPasswordResetAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                // Send password reset email
+                await _emailService.SendPasswordResetEmailAsync(user.Email, user.FullName, user.PasswordResetToken);
+
+                return Ok(new AuthResponse
+                {
+                    Success = true,
+                    Message = "If an account with this email exists, a password reset link has been sent."
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new AuthResponse
+                {
+                    Success = false,
+                    Message = "An error occurred while processing password reset request."
+                });
+            }
+        }
+
+        // Password Reset Verification
+        [HttpPost("reset-password")]
+        public async Task<ActionResult<AuthResponse>> ResetPassword(ResetPasswordRequest request)
+        {
+            try
+            {
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.PasswordResetToken == request.Token && u.IsActive);
+
+                if (user == null)
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Invalid or expired password reset token."
+                    });
+                }
+
+                if (user.PasswordResetTokenExpiry < DateTime.UtcNow)
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Password reset token has expired."
+                    });
+                }
+
+                // Update password
+                user.PasswordHash = _authService.HashPassword(request.NewPassword);
+                user.PasswordResetToken = null;
+                user.PasswordResetTokenExpiry = null;
+                user.PasswordResetYear = DateTime.UtcNow.Year;
+
+                await _context.SaveChangesAsync();
+
+                // Send password change confirmation email
+                await _emailService.SendPasswordChangeConfirmationAsync(user.Email, user.FullName);
+
+                return Ok(new AuthResponse
+                {
+                    Success = true,
+                    Message = "Password has been reset successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new AuthResponse
+                {
+                    Success = false,
+                    Message = "An error occurred while resetting password."
+                });
+            }
+        }
+
+        // Change Password (for authenticated users)
+        [HttpPost("change-password")]
+        public async Task<ActionResult<AuthResponse>> ChangePassword(ChangePasswordRequest request)
+        {
+            try
+            {
+                // Get user from JWT token
+                var userEmail = User.Identity?.Name;
+                if (string.IsNullOrEmpty(userEmail))
+                {
+                    return Unauthorized(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "User not authenticated."
+                    });
+                }
+
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == userEmail && u.IsActive);
+
+                if (user == null)
+                {
+                    return NotFound(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "User not found."
+                    });
+                }
+
+                // Verify current password
+                if (!_authService.VerifyPassword(request.CurrentPassword, user.PasswordHash))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Current password is incorrect."
+                    });
+                }
+
+                // Update password
+                user.PasswordHash = _authService.HashPassword(request.NewPassword);
+                user.PasswordResetYear = DateTime.UtcNow.Year;
+
+                await _context.SaveChangesAsync();
+
+                // Send password change confirmation email
+                await _emailService.SendPasswordChangeConfirmationAsync(user.Email, user.FullName);
+
+                return Ok(new AuthResponse
+                {
+                    Success = true,
+                    Message = "Password changed successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new AuthResponse
+                {
+                    Success = false,
+                    Message = "An error occurred while changing password."
+                });
+            }
+        }
+
+        // Update Phone Number
+        [HttpPost("update-phone")]
+        public async Task<ActionResult<AuthResponse>> UpdatePhoneNumber(UpdatePhoneRequest request)
+        {
+            try
+            {
+                // Get user from JWT token
+                var userEmail = User.Identity?.Name;
+                if (string.IsNullOrEmpty(userEmail))
+                {
+                    return Unauthorized(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "User not authenticated."
+                    });
+                }
+
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == userEmail && u.IsActive);
+
+                if (user == null)
+                {
+                    return NotFound(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "User not found."
+                    });
+                }
+
+                // Check if phone number is already in use by another user
+                var existingUser = await _context.Users
+                    .FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber && u.UserId != user.UserId);
+
+                if (existingUser != null)
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Phone number is already in use by another account."
+                    });
+                }
+
+                // Update phone number
+                user.PhoneNumber = request.PhoneNumber;
+                user.PhoneVerified = false; // Reset verification status
+
+                // Generate new verification code
+                user.PhoneVerificationCode = _authService.GenerateVerificationCode();
+                user.PhoneVerificationExpiry = DateTime.UtcNow.AddMinutes(10);
+
+                await _context.SaveChangesAsync();
+
+                // Send verification SMS
+                await _smsService.SendVerificationCodeAsync(user.PhoneNumber, user.PhoneVerificationCode);
+
+                return Ok(new AuthResponse
+                {
+                    Success = true,
+                    Message = "Phone number updated. Please verify your new phone number.",
+                    RequiresVerification = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new AuthResponse
+                {
+                    Success = false,
+                    Message = "An error occurred while updating phone number."
+                });
             }
         }
     }

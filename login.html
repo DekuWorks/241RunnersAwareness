@@ -23,7 +23,6 @@
       <a href="dna-tracking.html">🧬 DNA</a>
       <a href="signup.html" id="signupLink">Sign Up</a>
       <a href="login.html" id="loginLink" aria-current="page">Login</a>
-      <a href="dashboard.html" id="dashboardLink" style="display: none;">Dashboard</a>
       <button id="logoutBtn" style="display: none;" class="logout-btn">Logout</button>
       <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
       <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
@@ -85,12 +84,24 @@
 
       <div id="message" class="message" style="display: none;"></div>
 
+      <!-- Demo Credentials -->
+      <div class="demo-credentials">
+        <h4>Demo Credentials</h4>
+        <div class="demo-info">
+          <div><strong>Admin:</strong> admin@example.com / ChangeMe123!</div>
+          <div class="demo-description">Full access to all features including user management</div>
+        </div>
+        <button type="button" class="demo-btn" onclick="fillDemoCredentials()">
+          Use Demo Admin
+        </button>
+      </div>
+
       <div class="signup-link">
         Don't have an account? <a href="signup.html">Sign up here</a>
       </div>
 
       <div class="forgot-password">
-        <a href="#" onclick="forgotPassword()">Forgot your password?</a>
+        <a href="forgot-password.html">Forgot your password?</a>
       </div>
     </div>
   </main>
@@ -141,7 +152,7 @@
           localStorage.setItem('user', JSON.stringify(data));
           showMessage('Login successful! Redirecting...', 'success');
           setTimeout(() => {
-            window.location.href = 'dashboard.html';
+            window.location.href = 'index.html';
           }, 1500);
         } else {
           showMessage(data.message || 'Login failed', 'error');
@@ -176,6 +187,12 @@
 
     function forgotPassword() {
       showMessage('Password reset functionality coming soon!', 'info');
+    }
+
+    function fillDemoCredentials() {
+      document.getElementById('email').value = 'admin@example.com';
+      document.getElementById('password').value = 'ChangeMe123!';
+      showMessage('Demo credentials filled! Click "Sign In" to continue.', 'success');
     }
 
     // Sticky navbar scroll effect

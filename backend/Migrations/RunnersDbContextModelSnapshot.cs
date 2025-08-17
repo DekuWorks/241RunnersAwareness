@@ -17,7 +17,7 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -143,6 +143,137 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                     b.HasIndex("IndividualId");
 
                     b.ToTable("CaseImages");
+                });
+
+            modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.DNAReport", b =>
+                {
+                    b.Property<Guid>("ReportId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BehaviorDescription")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ClothingDescription")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DNALabReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("DNASampleCollected")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("DNASampleCollectionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DNASampleDescription")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("DNASampleLocation")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("DNASampleMatched")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("DNASampleProcessed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("DNASampleType")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DNASequence")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("IndividualId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PhysicalDescription")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("ReportDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReportTitle")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid>("ReporterUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ResolutionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ResolutionNotes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ResolvedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("WeatherConditions")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("WitnessEmail")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("WitnessName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("WitnessPhone")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("ReportId");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_DNAReports_CreatedAt");
+
+                    b.HasIndex("IndividualId")
+                        .HasDatabaseName("IX_DNAReports_IndividualId");
+
+                    b.HasIndex("ReportDate")
+                        .HasDatabaseName("IX_DNAReports_ReportDate");
+
+                    b.HasIndex("ReporterUserId")
+                        .HasDatabaseName("IX_DNAReports_ReporterUserId");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("IX_DNAReports_Status");
+
+                    b.ToTable("DNAReports");
                 });
 
             modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.EmergencyContact", b =>
@@ -407,6 +538,30 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                         .HasColumnType("nvarchar(10)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CaseStatus")
+                        .HasDatabaseName("IX_Individuals_CaseStatus");
+
+                    b.HasIndex("City")
+                        .HasDatabaseName("IX_Individuals_City");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_Individuals_CreatedAt");
+
+                    b.HasIndex("LastSeenDate")
+                        .HasDatabaseName("IX_Individuals_LastSeenDate");
+
+                    b.HasIndex("LocalCaseNumber")
+                        .HasDatabaseName("IX_Individuals_LocalCaseNumber");
+
+                    b.HasIndex("NAMUSCaseNumber")
+                        .HasDatabaseName("IX_Individuals_NAMUSCaseNumber");
+
+                    b.HasIndex("State")
+                        .HasDatabaseName("IX_Individuals_State");
+
+                    b.HasIndex("FirstName", "LastName")
+                        .HasDatabaseName("IX_Individuals_Name");
 
                     b.ToTable("Individuals");
                 });
@@ -896,43 +1051,51 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("City")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Credentials")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("EmailVerificationExpiry")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EmailVerificationToken")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("EmailVerified")
                         .HasColumnType("bit");
 
                     b.Property<string>("EmergencyContactName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("EmergencyContactPhone")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("EmergencyContactRelationship")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int?>("IndividualId")
                         .HasColumnType("int");
@@ -943,22 +1106,41 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                     b.Property<DateTime?>("LastLoginAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("LastPasswordResetAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("LicenseNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Organization")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("PasswordResetCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PasswordResetToken")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("PasswordResetTokenExpiry")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PasswordResetYear")
+                        .HasColumnType("int");
+
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("PhoneVerificationCode")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<DateTime?>("PhoneVerificationExpiry")
                         .HasColumnType("datetime2");
@@ -967,50 +1149,76 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("RefreshToken")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<DateTime?>("RefreshTokenExpiry")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("RelationshipToRunner")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Specialization")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("State")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("TwoFactorBackupCodes")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
                     b.Property<string>("TwoFactorSecret")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("TwoFactorSetupDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("YearsOfExperience")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ZipCode")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("UserId");
 
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_Users_CreatedAt");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Users_Email");
+
                     b.HasIndex("IndividualId");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_Users_IsActive");
+
+                    b.HasIndex("Role")
+                        .HasDatabaseName("IX_Users_Role");
+
+                    b.HasIndex("Username")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Users_Username");
 
                     b.ToTable("Users");
                 });
@@ -1035,6 +1243,25 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Individual");
+                });
+
+            modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.DNAReport", b =>
+                {
+                    b.HasOne("_241RunnersAwareness.BackendAPI.DBContext.Models.Individual", "Individual")
+                        .WithMany()
+                        .HasForeignKey("IndividualId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("_241RunnersAwareness.BackendAPI.DBContext.Models.User", "Reporter")
+                        .WithMany()
+                        .HasForeignKey("ReporterUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Individual");
+
+                    b.Navigation("Reporter");
                 });
 
             modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.EmergencyContact", b =>
@@ -1122,7 +1349,8 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                 {
                     b.HasOne("_241RunnersAwareness.BackendAPI.DBContext.Models.Individual", "Individual")
                         .WithMany()
-                        .HasForeignKey("IndividualId");
+                        .HasForeignKey("IndividualId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Individual");
                 });

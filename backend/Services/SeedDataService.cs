@@ -47,14 +47,35 @@ namespace _241RunnersAwareness.BackendAPI.Services
                 new User
                 {
                     UserId = Guid.NewGuid(),
+                    Username = "admin",
+                    Email = "admin@example.com",
+                    FullName = "System Admin",
+                    PhoneNumber = "(555) 123-4567",
+                    PasswordHash = _authService.HashPassword("ChangeMe123!"),
+                    Role = "admin",
+                    EmailVerified = true,
+                    PhoneVerified = true,
+                    Organization = "241 Runners Awareness",
+                    Credentials = "System Administrator",
+                    Specialization = "Platform Management",
+                    YearsOfExperience = "5+",
+                    CreatedAt = DateTime.UtcNow
+                },
+                new User
+                {
+                    UserId = Guid.NewGuid(),
                     Username = "marcus",
                     Email = "dekuworks1@gmail.com",
                     FullName = "Marcus Brown",
-                    PhoneNumber = "+1234567893",
+                    PhoneNumber = "(555) 345-6789",
                     PasswordHash = _authService.HashPassword("marcus2025"),
                     Role = "admin",
                     EmailVerified = true,
                     PhoneVerified = true,
+                    Organization = "241 Runners Awareness",
+                    Credentials = "Co-Founder",
+                    Specialization = "Operations",
+                    YearsOfExperience = "3+",
                     CreatedAt = DateTime.UtcNow
                 },
                 new User
@@ -63,11 +84,15 @@ namespace _241RunnersAwareness.BackendAPI.Services
                     Username = "daniel",
                     Email = "danielcarey9770@gmail.com",
                     FullName = "Daniel Carey",
-                    PhoneNumber = "+1234567894",
+                    PhoneNumber = "(555) 456-7890",
                     PasswordHash = _authService.HashPassword("daniel2025"),
                     Role = "admin",
                     EmailVerified = true,
                     PhoneVerified = true,
+                    Organization = "241 Runners Awareness",
+                    Credentials = "Co-Founder",
+                    Specialization = "Technology",
+                    YearsOfExperience = "4+",
                     CreatedAt = DateTime.UtcNow
                 },
                 new User
@@ -76,9 +101,9 @@ namespace _241RunnersAwareness.BackendAPI.Services
                     Username = "testuser",
                     Email = "test@example.com",
                     FullName = "Test User",
-                    PhoneNumber = "+1234567891",
+                    PhoneNumber = "(555) 234-5678",
                     PasswordHash = _authService.HashPassword("password123"),
-                    Role = "GeneralUser",
+                    Role = "user",
                     EmailVerified = true,
                     PhoneVerified = true,
                     CreatedAt = DateTime.UtcNow

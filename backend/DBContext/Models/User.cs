@@ -24,7 +24,7 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Models
         public string FullName { get; set; }
         
         [StringLength(20)]
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
         
         [Required]
         public string PasswordHash { get; set; }
@@ -36,6 +36,14 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Models
         public bool EmailVerified { get; set; } = false;
         
         public bool PhoneVerified { get; set; } = false;
+        
+        // Email verification fields
+        public string? EmailVerificationToken { get; set; }
+        public DateTime? EmailVerificationExpiry { get; set; }
+        
+        // Phone verification fields
+        public string? PhoneVerificationCode { get; set; }
+        public DateTime? PhoneVerificationExpiry { get; set; }
         
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         

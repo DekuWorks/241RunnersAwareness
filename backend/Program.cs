@@ -39,6 +39,10 @@ using System.Text;
 // Application service imports
 using _241RunnersAwareness.BackendAPI.Services;
 
+// SignalR imports
+using Microsoft.AspNetCore.SignalR;
+using _241RunnersAwareness.BackendAPI.Hubs;
+
 // Performance and monitoring imports
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
