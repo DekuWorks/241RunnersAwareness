@@ -125,9 +125,85 @@ Built with React, .NET 8, and modern deployment tools, this system empowers user
 - Node.js 18+ and npm
 - .NET 8 SDK
 - Git
-- SQL Server or SQLite
+- SQLite (for development on Mac/Windows) or SQL Server (for production)
 
-### Frontend Setup (React)
+### 🍎 Mac Setup (Recommended)
+
+#### 1. Install Prerequisites
+```bash
+# Install Homebrew (if not already installed)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install Node.js
+brew install node
+
+# Install .NET SDK
+brew install --cask dotnet
+
+# Install Git (if not already installed)
+brew install git
+```
+
+#### 2. Clone and Setup
+```bash
+# Clone the repository
+git clone https://github.com/DekuWorks/241RunnersAwareness.git
+cd 241RunnersAwareness-2
+
+# Install Entity Framework tools
+dotnet tool install --global dotnet-ef
+
+# Add tools to PATH (add to ~/.zshrc for permanent)
+export PATH="$PATH:/Users/$USER/.dotnet/tools"
+```
+
+#### 3. Frontend Setup (React)
+```bash
+cd frontend
+npm install
+npm run dev          # Start development server on http://localhost:5173
+```
+
+#### 4. Backend Setup (.NET Core)
+```bash
+cd backend
+dotnet restore       # Restore packages
+dotnet build         # Build project
+dotnet ef database update    # Create and apply SQLite migrations
+dotnet run           # Start development server on http://localhost:5113
+```
+
+#### 5. Start Both Servers
+**Terminal 1 - Backend:**
+```bash
+cd backend
+dotnet run
+```
+
+**Terminal 2 - Frontend:**
+```bash
+cd frontend
+npm run dev
+```
+
+#### 6. Access the Application
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:5113
+- **Swagger Docs**: http://localhost:5113/swagger
+
+#### 7. Test Accounts (Pre-seeded)
+- **Admin**: `admin@241runners.org` / `admin123`
+- **Test User**: `test@example.com` / `password123`
+- **Lisa Thomas**: `lisa@241runners.org` / `lisa2025`
+
+### 🪟 Windows Setup
+
+#### 1. Install Prerequisites
+- Install [Node.js](https://nodejs.org/) (18+)
+- Install [.NET 8 SDK](https://dotnet.microsoft.com/download)
+- Install [Git](https://git-scm.com/)
+
+#### 2. Frontend Setup (React)
 ```bash
 cd frontend
 npm install
@@ -136,7 +212,7 @@ npm run build        # Build for production
 npm run test         # Run tests
 ```
 
-### Backend Setup (.NET Core)
+#### 3. Backend Setup (.NET Core)
 ```bash
 cd backend
 dotnet restore       # Restore packages

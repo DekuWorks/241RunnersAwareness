@@ -85,19 +85,11 @@ namespace _241RunnersAwareness.BackendAPI
             // Add MVC controllers for API endpoints
             builder.Services.AddControllers();
             
-            // Configure Entity Framework with SQL Server and performance optimizations
+            // Configure Entity Framework with SQLite for development
             builder.Services.AddDbContext<RunnersDbContext>(options =>
             {
-                options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("DefaultConnection"),
-                    sqlOptions =>
-                    {
-                        sqlOptions.EnableRetryOnFailure(
-                            maxRetryCount: 3,
-                            maxRetryDelay: TimeSpan.FromSeconds(30),
-                            errorNumbersToAdd: null);
-                        sqlOptions.CommandTimeout(30);
-                    }
+                options.UseSqlite(
+                    builder.Configuration.GetConnectionString("DefaultConnection")
                 );
                 
                 // Enable query tracking only when needed for better performance
