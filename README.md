@@ -1,155 +1,284 @@
-# 241RA Monorepo
+# 241 Runners Awareness - Complete Platform
 
-A comprehensive development platform for 241 Runners Awareness, built as a monorepo with shared design tokens and modern web technologies.
+A comprehensive development platform for 241 Runners Awareness, featuring a modern ASP.NET Core backend API, React frontend applications, and a complete database schema for missing persons tracking and management.
 
-## Structure
+## 🏗️ Project Structure
 
 ```
-241ra/
-├── packages/ui/           # Shared design tokens (CSS variables)
+241RunnersAwareness/
+├── backend/                    # ASP.NET Core 8.0 Backend API
+│   ├── Controllers/           # API endpoints
+│   ├── DBContext/            # Entity Framework models
+│   ├── Services/             # Business logic services
+│   ├── Migrations/           # Database migrations
+│   └── Program.cs            # Application entry point
+├── frontend/                  # React frontend application
+│   ├── src/
+│   │   ├── components/       # React components
+│   │   ├── pages/           # Page components
+│   │   ├── features/        # Redux slices
+│   │   └── utils/           # Utility functions
+│   └── package.json
 ├── apps/
-│   ├── static/           # Monorepo landing page (HTML + CSS)
-│   ├── admin/            # React admin dashboard (Vite + TS + Tailwind)
-│   └── api/              # .NET 8 API with Identity + JWT
-├── index.html            # Main 241RA static site
-├── login.html            # Authentication pages
-├── aboutus.html          # Public pages
-├── cases.html            # Missing persons cases
-├── shop.html             # E-commerce integration
-└── dna-tracking.html     # DNA technology showcase
+│   ├── admin/               # React admin dashboard
+│   ├── api/                 # Additional API services
+│   └── static/              # Static site generator
+├── packages/ui/             # Shared design tokens
+├── docs/                    # Documentation and assets
+└── *.html                   # Static HTML pages
 ```
 
-## Features
+## 🚀 Quick Start
 
-- **Shared Design System**: All apps use the same design tokens from `packages/ui/tokens.css`
-- **JWT Authentication**: Secure login with access + refresh tokens
-- **Role-Based Access**: Admin/Manager/Staff/User roles with policy-based guards
-- **Modern Stack**: React 18, TypeScript, Tailwind CSS, .NET 8, Entity Framework
-- **Monorepo**: Single repository for all related applications
-- **Static Site**: Main 241RA website with public pages and information
-- **E-commerce**: Shop integration with Varlo partnership
-- **DNA Technology**: Advanced DNA tracking and identification features
+### Backend API Setup
 
-## Quick Start
+1. **Prerequisites**
+   - .NET 8.0 SDK
+   - SQL Server (LocalDB or full instance)
+   - PowerShell (for scripts)
 
-### 1. Main Static Site
+2. **Database Setup**
+   ```powershell
+   # Run the database fix script
+   .\fix-database.ps1
+   ```
 
-The main 241RA website is served from the root directory:
-- Open `index.html` in a browser
-- Features: Cases, Shop, DNA tracking, About Us, Authentication
-- No build process required
+3. **Start Backend**
+   ```powershell
+   cd backend
+   dotnet run
+   ```
+   - API runs on: `http://localhost:5113`
+   - Swagger UI: `http://localhost:5113/swagger`
 
-### 2. Monorepo Landing
+### Frontend Setup
 
-Access the monorepo overview at `apps/static/index.html`:
-- Overview of all applications
-- Links to admin dashboard and API
-- Development status indicators
+1. **Install Dependencies**
+   ```bash
+   cd frontend
+   npm install
+   ```
 
-### 3. API Setup
+2. **Start Development Server**
+   ```bash
+   npm run dev
+   ```
+   - Frontend runs on: `http://localhost:5173`
 
-```bash
-cd apps/api/Api
-dotnet run
+### Testing Authentication
+
+Use the provided test scripts:
+```powershell
+# Test API connectivity and authentication
+.\test-auth.ps1
+
+# Simple login test
+.\test-login.ps1
 ```
 
-The API will:
-- Create the database automatically
-- Seed an admin user: `admin@example.com` / `ChangeMe123!`
-- Run on `https://localhost:5001`
+## 📊 Database Schema
 
-### 4. Admin Dashboard
+### Users Table
+Complete user management with authentication and role-based access:
 
-```bash
-cd apps/admin
-npm install
-npm run dev
+```sql
+Users (
+    UserId (Guid, PK),
+    Username (string),
+    Email (string, unique),
+    FullName (string),
+    PhoneNumber (string),
+    PasswordHash (string),
+    Role (string), -- admin, user, therapist, caregiver, parent, adoptive_parent
+    EmailVerified (bool),
+    PhoneVerified (bool),
+    Organization (string),
+    Credentials (string),
+    Specialization (string),
+    YearsOfExperience (string),
+    CreatedAt (DateTime),
+    IsActive (bool),
+    
+    -- Password Reset Fields
+    PasswordResetCount (int),
+    LastPasswordResetAt (DateTime),
+    PasswordResetToken (string),
+    PasswordResetTokenExpiry (DateTime),
+    PasswordResetYear (int),
+    
+    -- Two-Factor Authentication
+    TwoFactorEnabled (bool),
+    TwoFactorSecret (string),
+    TwoFactorBackupCodes (string),
+    TwoFactorSetupDate (DateTime),
+    
+    -- Refresh Tokens
+    RefreshToken (string),
+    RefreshTokenExpiry (DateTime),
+    
+    -- Email/Phone Verification
+    EmailVerificationToken (string),
+    EmailVerificationExpiry (DateTime),
+    PhoneVerificationCode (string),
+    PhoneVerificationExpiry (DateTime),
+    
+    -- Additional Fields
+    Address, City, State, ZipCode,
+    EmergencyContactName, EmergencyContactPhone, EmergencyContactRelationship,
+    RelationshipToRunner, LicenseNumber, IndividualId,
+    LastLoginAt
+)
 ```
 
-The admin app will run on `http://localhost:5173`
+### Other Tables
+- **Individuals**: Missing persons data
+- **DNAReports**: DNA analysis results
+- **Products**: E-commerce items
+- **EmergencyContacts**: Emergency contact information
 
-## Authentication Flow
+## 🔐 Authentication System
 
-1. **Login**: POST `/api/auth/login` with email/password
-2. **JWT Token**: Returns access token (15min) + refresh token (14 days)
-3. **Auto Refresh**: Axios interceptors handle token refresh automatically
-4. **Role Guards**: React Router guards protect routes based on user roles
+### JWT-Based Authentication
+- **Access Tokens**: 60-minute expiry
+- **Refresh Tokens**: 30-day expiry
+- **Role-Based Authorization**: Multiple user roles supported
 
-## API Endpoints
+### Available Endpoints
 
-### Auth
-- `POST /api/auth/login` - Login with email/password
-- `POST /api/auth/refresh` - Refresh access token
-- `GET /api/auth/me` - Get current user info
-- `POST /api/auth/register` - Register new user
+#### Authentication
+- `POST /api/auth/login` - User login
+- `POST /api/auth/register-simple` - Simple user registration
+- `POST /api/auth/register` - Full user registration with role-specific fields
+- `POST /api/auth/google-login` - Google OAuth integration
+- `GET /api/auth/test` - API connectivity test
 
-### Admin (Admin/Manager roles)
-- `GET /api/admin/users` - List users with search/pagination
-- `POST /api/admin/users/{id}/disable` - Disable user
-- `POST /api/admin/users/{id}/roles` - Update user roles
+#### User Management
+- `GET /api/usermanagement/users` - List all users
+- `GET /api/usermanagement/users/{id}` - Get specific user
+- `POST /api/usermanagement/users` - Create new user
+- `PUT /api/usermanagement/users/{id}` - Update user
 
-## Environment Variables
+#### Other Services
+- `GET /api/map` - Map data endpoints
+- `GET /api/dna` - DNA tracking endpoints
+- `GET /api/shop` - E-commerce endpoints
+- `GET /api/notifications` - Real-time notifications
 
-### API (.NET)
+## 🛠️ Development Status
+
+### ✅ Completed Features
+- **Backend API**: Fully functional ASP.NET Core 8.0 API
+- **Database Schema**: Complete with all required tables and relationships
+- **Authentication**: JWT-based auth with role management
+- **Swagger Documentation**: Interactive API documentation
+- **Database Migrations**: Entity Framework migrations
+- **Error Handling**: Comprehensive error handling and logging
+- **CORS Configuration**: Cross-origin resource sharing setup
+- **SignalR Integration**: Real-time notifications
+- **Email/SMS Services**: Integration with SendGrid and Twilio
+
+### 🔧 Current Issues
+- **Database Schema Sync**: Some password reset columns need final synchronization
+- **Authentication Testing**: Login/registration endpoints returning 500 errors (schema-related)
+
+### 🚧 In Progress
+- **Frontend Integration**: React app connecting to backend
+- **Admin Dashboard**: User management interface
+- **Testing Suite**: Comprehensive API testing
+
+## 🧪 Testing
+
+### API Testing Scripts
+- `test-auth.ps1`: Comprehensive authentication testing
+- `test-login.ps1`: Simple login verification
+- `fix-database.ps1`: Database schema repair
+
+### Manual Testing
+1. **Swagger UI**: Visit `http://localhost:5113/swagger`
+2. **API Endpoints**: Test all endpoints through Swagger
+3. **Database**: Use SQL Server Management Studio or sqlcmd
+
+## 🔧 Configuration
+
+### Backend Configuration (`backend/appsettings.json`)
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=AdminDb;Trusted_Connection=True;TrustServerCertificate=True"
+    "DefaultConnection": "Server=localhost;Database=RunnersDb;Trusted_Connection=true;TrustServerCertificate=True;MultipleActiveResultSets=true;"
   },
   "Jwt": {
-    "Issuer": "Api",
-    "Audience": "Admin", 
-    "Key": "REPLACE_WITH_LONG_RANDOM_SECRET",
-    "AccessMinutes": "15",
-    "RefreshDays": "14"
+    "SecretKey": "${JWT_SECRET_KEY}",
+    "Issuer": "241RunnersAwareness",
+    "Audience": "241RunnersAwareness",
+    "ExpiryInMinutes": 60,
+    "RefreshTokenExpiryInDays": 30
+  },
+  "Cors": {
+    "AllowedOrigins": [
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "http://localhost:5113"
+    ]
   }
 }
 ```
 
-### Admin (React)
-```env
-VITE_API_URL=https://localhost:5001/api
-```
+### Environment Variables
+- `JWT_SECRET_KEY`: Strong secret for JWT signing
+- `SENDGRID_API_KEY`: Email service API key
+- `TWILIO_ACCOUNT_SID`: SMS service credentials
+- `GOOGLE_CLIENT_ID`: Google OAuth credentials
 
-## Navigation
+## 🚀 Deployment
 
-### Main Site Navigation
-- **Home**: Main landing page
-- **About Us**: Organization information
-- **Cases**: Missing persons cases
-- **Shop**: E-commerce with Varlo partnership
-- **DNA**: DNA tracking technology
-- **Dev**: Link to monorepo overview
-- **Donate**: External donation link
-- **Follow Us**: Social media links
+### Backend Deployment
+1. **Azure**: Use provided Azure deployment scripts
+2. **Docker**: Dockerfile included for containerization
+3. **Local**: Direct deployment with `dotnet publish`
 
-### Authentication
-- **Sign Up**: User registration
-- **Login**: User authentication
-- **Logout**: Session termination
+### Frontend Deployment
+1. **Build**: `npm run build`
+2. **Deploy**: Static hosting (Netlify, Vercel, etc.)
 
-## Deployment
+### Database Deployment
+1. **Local**: SQL Server LocalDB
+2. **Production**: Azure SQL Database or SQL Server instance
+3. **Migrations**: Use Entity Framework migrations
 
-### Static Site
-- Deploy all HTML/CSS/JS files to any static hosting
-- No build process required
-- Works with Netlify, Vercel, GitHub Pages, etc.
+## 📚 Documentation
 
-### API (Azure/Render/Fly)
-- Set connection string, JWT key, and admin credentials
-- Configure CORS for your admin domain
+### API Documentation
+- **Swagger UI**: `http://localhost:5113/swagger`
+- **OpenAPI Spec**: Available through Swagger
 
-### Admin Dashboard
-- Build with `npm run build`
-- Deploy to any static hosting service
-- Configure API URL for production
+### Code Documentation
+- **Controllers**: Well-documented API endpoints
+- **Services**: Business logic with XML comments
+- **Models**: Entity Framework models with annotations
 
-## Security Best Practices
+## 🤝 Contributing
 
-- **JWT Keys**: Use strong, unique keys in production
-- **HTTPS**: Always use HTTPS in production
-- **CORS**: Configure CORS properly for your domains
-- **Environment Variables**: Never commit secrets to version control
-- **Database**: Use connection strings with proper authentication
+1. **Fork** the repository
+2. **Create** a feature branch
+3. **Make** your changes
+4. **Test** thoroughly
+5. **Submit** a pull request
+
+## 📞 Support
+
+For technical support or questions:
+- **Email**: Contact the development team
+- **Issues**: Use GitHub issues for bug reports
+- **Documentation**: Check the docs folder for detailed guides
+
+## 📄 License
+
+This project is proprietary software for 241 Runners Awareness.
+
+---
+
+**Last Updated**: August 17, 2025  
+**Version**: 1.0.0  
+**Status**: Development Phase
 
 
