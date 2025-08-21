@@ -2,6 +2,134 @@
 
 All notable changes to the 241 Runners Awareness project will be documented in this file.
 
+## [1.1.0] - 2025-08-17
+
+### 🎯 Enhanced Focus on Special Needs & Disabilities
+
+This release transforms the platform to specifically serve individuals with special needs and disabilities, with comprehensive real-time alert systems.
+
+### ✅ Added
+
+#### Enhanced Database Schema
+- **Special Needs Classification**: Added `PrimaryDisability` field for autism, Down syndrome, cerebral palsy, etc.
+- **Communication Abilities**: Added fields for non-verbal communication, AAC devices, sign language support
+- **Mobility Information**: Added wheelchair use, mobility devices, assistance requirements
+- **Sensory Needs**: Added visual/hearing impairments, sensory processing disorders, triggers and comforts
+- **Behavioral Safety**: Added wandering patterns, attraction to water/roads/lights, calming techniques
+- **Medical Conditions**: Enhanced medical tracking for seizures, diabetes, asthma, heart conditions
+- **Emergency Response**: Added specialized instructions for first responders and emergency contacts
+- **Real-Time Alert Configuration**: Added alert radius settings, GPS tracking, medical ID support
+- **Support Network**: Added caregiver information, support organizations, specialized contacts
+
+#### Real-Time Alert System
+- **Special Needs Urgent Alerts**: Enhanced alerts with disability-specific information
+- **Wandering/Elopement Alerts**: Immediate notifications for individuals who may wander
+- **Medical Emergency Alerts**: Rapid response for medical conditions and emergencies
+- **Sighting Reports**: Real-time community reporting system
+- **GPS Tracking Integration**: Support for GPS devices and location tracking
+- **Multi-Channel Notifications**: Email, SMS, push notifications, and social media alerts
+- **Geographic Targeting**: Alert radius configuration for targeted community notifications
+- **Support Organization Integration**: Direct alerts to relevant support organizations
+
+#### Alert Logging System
+- **AlertLog Model**: Comprehensive tracking of all alerts and responses
+- **Alert Status Tracking**: Active, resolved, and expired alert management
+- **Resolution Notes**: Detailed tracking of alert outcomes and responses
+- **Urgency Classification**: Priority-based alert system for critical situations
+
+#### Frontend Enhancements
+- **Real-Time Alert Dashboard**: Updated homepage with three-card layout showcasing key features
+- **Special Needs Focus**: Updated messaging to emphasize disability support and real-time alerts
+- **Enhanced Navigation**: Improved layout for better accessibility and user experience
+
+### 🔧 Updated
+
+#### Database Models
+- **Individual Model**: Completely enhanced with 50+ new fields for special needs support
+- **Computed Properties**: Added `IsHighRisk` and `RequiresImmediateAttention` properties
+- **Navigation Properties**: Added `AlertLogs` collection for comprehensive alert tracking
+
+#### Notification Service
+- **Enhanced Interface**: Added 6 new alert methods for specialized scenarios
+- **Specialized Email Templates**: Created disability-specific alert templates
+- **SMS Integration**: Enhanced SMS alerts with special needs information
+- **Support Organization Integration**: Direct communication with relevant organizations
+- **Medical Professional Alerts**: Specialized alerts for medical emergencies
+
+#### Frontend Styling
+- **Features Grid**: Updated to horizontal layout with three feature cards
+- **Responsive Design**: Enhanced mobile responsiveness for new layout
+- **Accessibility**: Improved contrast and readability for users with disabilities
+
+### 🚨 Critical Features
+
+#### Real-Time Alert Capabilities
+- **Immediate Response**: Alerts sent within seconds of incident reporting
+- **Geographic Targeting**: Alerts sent to subscribers within specified radius
+- **Multi-Channel Delivery**: Email, SMS, push notifications, and social media
+- **Specialized Content**: Disability-specific information and emergency instructions
+- **Support Network Integration**: Direct alerts to caregivers and support organizations
+
+#### Special Needs Support
+- **Wandering Prevention**: GPS tracking and immediate alerts for elopement
+- **Medical Emergency Response**: Rapid response for seizure disorders, diabetes, etc.
+- **Communication Support**: Non-verbal communication methods and AAC device support
+- **Sensory Accommodation**: Sensory triggers and comfort techniques
+- **Behavioral Safety**: Wandering patterns and attraction points tracking
+
+### 📊 Technical Implementation
+
+#### Database Schema Changes
+- Added 50+ new fields to Individual model
+- Created AlertLog model for comprehensive alert tracking
+- Enhanced navigation properties and computed fields
+- Maintained backward compatibility with legacy fields
+
+#### Notification System
+- Enhanced INotificationService interface with 6 new methods
+- Created specialized email templates for different alert types
+- Implemented geographic radius-based alert distribution
+- Added support organization and medical professional integration
+
+#### Frontend Updates
+- Updated homepage with three-feature card layout
+- Enhanced messaging to emphasize special needs focus
+- Improved responsive design for mobile devices
+- Added accessibility improvements
+
+### 🎯 Mission Alignment
+
+This release directly addresses the core mission of 241 Runners Awareness by:
+- **Focusing on Special Needs**: Specifically designed for individuals with disabilities
+- **Real-Time Response**: Immediate alerts to help locate missing individuals quickly
+- **Community Engagement**: Rapid community response through multiple channels
+- **Specialized Support**: Disability-specific information and emergency protocols
+- **Prevention**: GPS tracking and wandering prevention systems
+
+---
+
+## [1.0.1] - 2025-08-17
+
+### 🛑 Removed
+- **Shop Functionality**: Temporarily removed Varlo shop integration from entire platform
+  - Removed shop pages and components from frontend
+  - Disabled ShopController in backend
+  - Removed shop navigation links from all pages
+  - Updated documentation to reflect shop removal
+  - Shop functionality will be restored when needed
+- **Dev Button**: Removed development access button from public site
+  - Removed dev button from all static HTML pages
+  - Removed monorepo access from public navigation
+  - Admin dashboard will be moved to separate subdomain for better security
+  - Development access will be managed through separate admin portal
+
+### 🔧 Updated
+- **Navigation**: Removed shop links from all navigation menus
+- **Documentation**: Updated README, PROJECT_STATUS, and other docs to remove shop references
+- **Routing**: Removed shop routes from React application
+- **Sitemap**: Updated sitemap generation to exclude shop pages
+- **Admin Access**: Streamlined admin dashboard navigation for production use
+
 ## [1.0.0] - 2025-08-17
 
 ### 🎉 Major Release - Backend API Complete

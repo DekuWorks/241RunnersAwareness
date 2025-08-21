@@ -17,16 +17,14 @@
 
     <nav role="navigation" aria-label="Main navigation">
       <a href="index.html">Home</a>
-      <a href="aboutus.html">About Us</a>
-      <a href="cases.html">Cases</a>
-      <a href="shop.html">🛍️ Shop</a>
-      <a href="dna-tracking.html">🧬 DNA</a>
+      <a href="map.html">🗺️ Map</a>
+      <a href="dna-tracking.html">🧬 DNA Tracking</a>
+      <a href="aboutus.html">ℹ️ About</a>
       <a href="signup.html" id="signupLink">Sign Up</a>
       <a href="login.html" id="loginLink">Login</a>
       <a href="admin-dashboard.html" id="dashboardLink" aria-current="page">Dashboard</a>
       <a href="user-management.html" id="userManagementLink">User Management</a>
       <button id="logoutBtn" style="display: none;" class="logout-btn">Logout</button>
-      <a href="apps/static/" target="_blank" rel="noopener" aria-label="241RA Monorepo (opens in new window)">Dev</a>
       <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
       <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
     </nav>
@@ -70,7 +68,7 @@
         <div class="dashboard-card">
           <span class="feature-icon">📝</span>
           <h3>Content Management</h3>
-          <p>Manage cases, shop items, DNA tracking data, and site content</p>
+          <p>Manage cases, DNA tracking data, and site content</p>
           <button class="btn" onclick="showContentManagement()">Manage Content</button>
         </div>
 
@@ -104,12 +102,6 @@
       <div class="quick-actions">
         <h3>Quick Actions</h3>
         <div class="action-buttons">
-          <button class="btn" onclick="window.open('apps/admin', '_blank')">
-            🚀 Open React Admin
-          </button>
-          <button class="btn" onclick="window.open('apps/static/', '_blank')">
-            📁 View Monorepo
-          </button>
           <button class="btn" onclick="exportUserData()">
             📤 Export User Data
           </button>

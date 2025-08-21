@@ -16,7 +16,6 @@ import Home from './pages/Home.jsx'
 import About from './pages/About.jsx'
 import Cases from './pages/Cases.jsx'
 import Map from './pages/Map.jsx'
-import Shop from './pages/Shop.jsx'
 import DNATracking from './pages/DNATracking.jsx'
 import Privacy from './pages/Privacy.jsx'
 import Terms from './pages/Terms.jsx'
@@ -38,7 +37,6 @@ const routes = [
   { path: '/about', component: About },
   { path: '/cases', component: Cases },
   { path: '/map', component: Map },
-  { path: '/shop', component: Shop },
   { path: '/dna-tracking', component: DNATracking },
   { path: '/privacy', component: Privacy },
   { path: '/terms', component: Terms },

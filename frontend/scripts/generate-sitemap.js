@@ -20,7 +20,7 @@ const routes = [
   {
     url: '/about',
     changefreq: 'monthly',
-    priority: 0.8,
+    priority: 0.7,
     lastmod: new Date().toISOString()
   },
   {
@@ -36,15 +36,9 @@ const routes = [
     lastmod: new Date().toISOString()
   },
   {
-    url: '/shop',
-    changefreq: 'weekly',
-    priority: 0.7,
-    lastmod: new Date().toISOString()
-  },
-  {
     url: '/dna-tracking',
-    changefreq: 'monthly',
-    priority: 0.6,
+    changefreq: 'weekly',
+    priority: 0.8,
     lastmod: new Date().toISOString()
   },
   {

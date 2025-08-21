@@ -161,7 +161,6 @@ Users (
 #### Other Services
 - `GET /api/map` - Map data endpoints
 - `GET /api/dna` - DNA tracking endpoints
-- `GET /api/shop` - E-commerce endpoints
 - `GET /api/notifications` - Real-time notifications
 
 ## 🛠️ Development Status

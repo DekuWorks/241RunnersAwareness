@@ -7,7 +7,7 @@
  * and navigation for the 241 Runners Awareness platform.
  * 
  * Application Structure:
- * - Public pages: Home, About, Cases, Map, Shop, DNA Tracking, Privacy, Terms, Auth
+ * - Public pages: Home, About, Cases, Map, DNA Tracking, Privacy, Terms, Auth
  * - Protected admin routes with role-based access control
  * - Responsive layout with navigation components
  * - Progressive Web App capabilities
@@ -31,7 +31,6 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Cases from "./pages/Cases";
 import Map from "./pages/Map";
-import Shop from "./pages/Shop";
 import DNATracking from "./pages/DNATracking";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
@@ -92,9 +91,6 @@ function App() {
           
           {/* Map page - Interactive map with case locations */}
           <Route path="map" element={<Map />} />
-          
-          {/* Shop page - Fundraising through merchandise sales */}
-          <Route path="shop" element={<Shop />} />
           
           {/* DNA Tracking page - Information about DNA services */}
           <Route path="dna-tracking" element={<DNATracking />} />

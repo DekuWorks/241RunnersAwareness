@@ -26,10 +26,16 @@
       "chosenIconUrl": "https://241runnersawareness.org/241-logo.jpg"
     },
     {
-      "name": "Shop",
-      "shortName": "Shop",
-      "url": "https://241runnersawareness.org/shop",
-      "chosenIconUrl": "https://241runnersawareness.org/241-logo.jpg"
+      "name": "DNA Tracking",
+      "shortName": "DNA",
+      "url": "https://241runnersawareness.org/dna-tracking",
+      "description": "DNA tracking and identification services"
+    },
+    {
+      "name": "About",
+      "shortName": "About",
+      "url": "https://241runnersawareness.org/about",
+      "description": "About 241 Runners Awareness"
     }
   ],
   "shareTarget": {

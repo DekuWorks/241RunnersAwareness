@@ -34,7 +34,6 @@
 - **User Management**: CRUD operations for users
 - **DNA Tracking**: DNA analysis and reporting
 - **Map Services**: Geographic data and mapping
-- **Shop Integration**: E-commerce functionality
 - **Notifications**: Real-time messaging
 
 ### Database Schema

@@ -53,9 +53,8 @@ const NavBar = () => {
           <Link to="/" onClick={closeMenu}>Home</Link>
           <Link to="/about" onClick={closeMenu}>About Us</Link>
           <Link to="/cases" onClick={closeMenu}>Cases</Link>
-          <Link to="/map" onClick={closeMenu}>Map</Link>
-          <Link to="/shop" onClick={closeMenu}>🛍️ Shop</Link>
-          <Link to="/dna-tracking" onClick={closeMenu}>🧬 DNA</Link>
+          <Link to="/map" onClick={closeMenu}>🗺️ Map</Link>
+          <Link to="/dna-tracking" onClick={closeMenu}>🧬 DNA Tracking</Link>
           <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>Socials</a>
           <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>Donate</a>
 
