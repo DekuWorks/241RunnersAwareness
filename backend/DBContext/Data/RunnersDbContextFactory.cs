@@ -16,7 +16,7 @@ namespace _241RunnersAwareness.BackendAPI.Data
                 .Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<RunnersDbContext>();
-            optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            optionsBuilder.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
 
             return new RunnersDbContext(optionsBuilder.Options);
         }
