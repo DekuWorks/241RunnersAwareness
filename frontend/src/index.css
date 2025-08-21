@@ -1416,9 +1416,8 @@ body.dark-mode footer {
   box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
 }
 
-/* Responsive design for shop and DNA pages */
+/* Responsive design for DNA pages */
 @media (max-width: 768px) {
-  .shop-container,
   .dna-container,
   .home-container {
     padding: 1rem;
