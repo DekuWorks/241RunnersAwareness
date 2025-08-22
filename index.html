@@ -51,8 +51,8 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <!-- CACHE-BUST VERSION: 20250724d - FORCE DEPLOY -->
-  <link rel="stylesheet" href="styles.css?v=20250127a&t=20250127" />
+  <!-- CACHE-BUST VERSION: 20250127d - SHOP REMOVAL & UPDATES -->
+  <link rel="stylesheet" href="styles.css?v=20250127d&t=20250127" />
   
   <!-- 
     Authentication Utilities
@@ -325,7 +325,7 @@
     // Progressive Web App functionality for offline support and caching
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=20250724d')
+        navigator.serviceWorker.register('/sw.js?v=20250127d')
           .then((registration) => {
             console.log('Service Worker registered successfully:', registration);
             
