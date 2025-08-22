@@ -8,7 +8,7 @@
     
     This is the primary entry point for the 241 Runners Awareness website.
     The page serves as a landing page with navigation to all major sections
-    including cases, shop, DNA tracking, and authentication.
+    including cases, DNA tracking, and authentication.
     
     Key Features:
     - Progressive Web App (PWA) support
@@ -51,8 +51,8 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <!-- CACHE-BUST VERSION: 20250724d - FORCE DEPLOY -->
-  <link rel="stylesheet" href="styles.css?v=20250127a&t=20250127" />
+  <!-- CACHE-BUST VERSION: 20250127d - SHOP REMOVAL & UPDATES -->
+  <link rel="stylesheet" href="styles.css?v=20250127d&t=20250127" />
   
   <!-- 
     Authentication Utilities
@@ -91,11 +91,11 @@
       <a href="index.html" aria-current="page">Home</a>
       <a href="aboutus.html">About Us</a>
       <a href="cases.html">Cases</a>
-      <a href="shop.html">🛍️ Shop</a>
       <a href="dna-tracking.html">🧬 DNA</a>
+      <a href="profile.html" id="profileLink" style="display: none;">Profile</a>
       <a href="signup.html" id="signupLink">Sign Up</a>
       <a href="login.html" id="loginLink">Login</a>
-      <a href="dashboard.html" id="dashboardLink" style="display: none;">Dashboard</a>
+      <a href="admin-dashboard.html" id="dashboardLink" style="display: none;">Dashboard</a>
       <button id="logoutBtn" style="display: none;" class="logout-btn">Logout</button>
       <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
       <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
@@ -140,29 +140,20 @@
     -->
     <section aria-labelledby="welcome-heading">
       <h2 id="welcome-heading">Welcome to 241 Runners Awareness</h2>
-      <p>Our mission is to support and protect missing and vulnerable individuals with real-time alerts and secure data.</p>
+      <p>241 Runners Awareness is a comprehensive platform for missing persons awareness and support, 
+        specifically designed for individuals with special needs and disabilities. We provide real-time alerts 
+        and rapid response systems to help locate missing individuals quickly and safely.</p>
     </section>
 
     <!-- 
       Features Section
       - Highlights new and important features
-      - Shop integration for fundraising
       - DNA tracking capabilities
+      - Real-time alert system for special needs individuals
     -->
     <section aria-labelledby="features-heading" class="features-section">
-      <h2 id="features-heading">New Features</h2>
+      <h2 id="features-heading">Real-Time Alert System</h2>
       <div class="features-grid">
-        <!-- 
-          Shop Feature Card
-          - Promotes the Varlo partnership
-          - Explains fundraising benefits
-        -->
-        <div class="feature-card">
-          <div class="feature-icon">🛍️</div>
-          <h3>241RA x Varlo Shop</h3>
-          <p>Premium athletic wear supporting missing persons awareness. Every purchase helps fund DNA collection and identification technology.</p>
-          <a href="shop.html" class="feature-btn">Shop Now</a>
-        </div>
         <!-- 
           DNA Tracking Feature Card
           - Showcases advanced DNA technology
@@ -173,6 +164,30 @@
           <h3>DNA Tracking & Identification</h3>
           <p>Advanced DNA technology for missing persons cases. Secure sample collection, analysis, and national database integration.</p>
           <a href="dna-tracking.html" class="feature-btn">Learn More</a>
+        </div>
+
+        <!-- 
+          Real-Time Alerts Feature Card
+          - Showcases immediate alert system
+          - Explains rapid response capabilities
+        -->
+        <div class="feature-card">
+          <div class="feature-icon">🚨</div>
+          <h3>Real-Time Emergency Alerts</h3>
+          <p>Instant notifications for missing individuals with special needs. GPS tracking, wandering alerts, and immediate community response system.</p>
+          <a href="cases.html" class="feature-btn">View Active Cases</a>
+        </div>
+
+        <!-- 
+          Special Needs Support Feature Card
+          - Showcases specialized support
+          - Explains disability-specific features
+        -->
+        <div class="feature-card">
+          <div class="feature-icon">🤝</div>
+          <h3>Special Needs Support Network</h3>
+          <p>Comprehensive support for individuals with disabilities, autism, and special needs. Caregiver alerts, medical emergency notifications, and specialized search protocols.</p>
+          <a href="aboutus.html" class="feature-btn">Learn About Our Mission</a>
         </div>
       </div>
     </section>
@@ -310,7 +325,7 @@
     // Progressive Web App functionality for offline support and caching
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=20250724d')
+        navigator.serviceWorker.register('/sw.js?v=20250127d')
           .then((registration) => {
             console.log('Service Worker registered successfully:', registration);
             

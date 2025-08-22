@@ -1,9 +1,9 @@
 // Service Worker for 241 Runners Awareness
-// Version: 1.0.2 - Updated for better cache management
+// Version: 1.0.4 - Shop removal and latest updates
 
-const CACHE_NAME = '241runners-v1.0.2';
-const STATIC_CACHE = 'static-v1.0.2';
-const DYNAMIC_CACHE = 'dynamic-v1.0.2';
+const CACHE_NAME = '241runners-v1.0.4';
+const STATIC_CACHE = 'static-v1.0.4';
+const DYNAMIC_CACHE = 'dynamic-v1.0.4';
 
 // Files to cache for offline functionality
 const STATIC_FILES = [
@@ -140,11 +140,16 @@ async function handleStaticRequest(request) {
   
   try {
     if (isHtmlFile) {
-      // For HTML files, use network-first strategy
+      // For HTML files, always try network first and don't cache aggressively
       try {
-        const networkResponse = await fetch(request);
+        const networkResponse = await fetch(request, {
+          cache: 'no-cache',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
         if (networkResponse.ok) {
-          // Cache successful responses
+          // Only cache for very short time for HTML files
           const cache = await caches.open(STATIC_CACHE);
           cache.put(request, networkResponse.clone());
         }

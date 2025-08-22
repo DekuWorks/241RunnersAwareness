@@ -11,14 +11,27 @@ using _241RunnersAwareness.BackendAPI.DBContext.Data;
 namespace _241RunnersAwareness.BackendAPI.Migrations
 {
     [DbContext(typeof(RunnersDbContext))]
+<<<<<<<< HEAD:backend/Migrations/20250817032930_InitialCreateWithDNA.Designer.cs
+    [Migration("20250817032930_InitialCreateWithDNA")]
+    partial class InitialCreateWithDNA
+========
     [Migration("20250817151049_InitialCreate")]
     partial class InitialCreate
+>>>>>>>> main:backend/Migrations/20250817151049_InitialCreate.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
+<<<<<<<< HEAD:backend/Migrations/20250817032930_InitialCreateWithDNA.Designer.cs
+            modelBuilder
+                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+========
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
+>>>>>>>> main:backend/Migrations/20250817151049_InitialCreate.Designer.cs
 
             modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.Campaign", b =>
                 {
@@ -135,6 +148,137 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                     b.HasIndex("IndividualId");
 
                     b.ToTable("CaseImages");
+                });
+
+            modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.DNAReport", b =>
+                {
+                    b.Property<Guid>("ReportId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BehaviorDescription")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ClothingDescription")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DNALabReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("DNASampleCollected")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("DNASampleCollectionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DNASampleDescription")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("DNASampleLocation")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("DNASampleMatched")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("DNASampleProcessed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("DNASampleType")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DNASequence")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("IndividualId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PhysicalDescription")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("ReportDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReportTitle")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid>("ReporterUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ResolutionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ResolutionNotes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ResolvedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("WeatherConditions")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("WitnessEmail")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("WitnessName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("WitnessPhone")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("ReportId");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_DNAReports_CreatedAt");
+
+                    b.HasIndex("IndividualId")
+                        .HasDatabaseName("IX_DNAReports_IndividualId");
+
+                    b.HasIndex("ReportDate")
+                        .HasDatabaseName("IX_DNAReports_ReportDate");
+
+                    b.HasIndex("ReporterUserId")
+                        .HasDatabaseName("IX_DNAReports_ReporterUserId");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("IX_DNAReports_Status");
+
+                    b.ToTable("DNAReports");
                 });
 
             modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.EmergencyContact", b =>
@@ -894,32 +1038,73 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Address")
+<<<<<<<< HEAD:backend/Migrations/20250817032930_InitialCreateWithDNA.Designer.cs
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+========
                         .HasColumnType("TEXT");
 
                     b.Property<string>("City")
                         .HasColumnType("TEXT");
+>>>>>>>> main:backend/Migrations/20250817151049_InitialCreate.Designer.cs
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Credentials")
+<<<<<<<< HEAD:backend/Migrations/20250817032930_InitialCreateWithDNA.Designer.cs
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+========
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("TEXT");
+>>>>>>>> main:backend/Migrations/20250817151049_InitialCreate.Designer.cs
 
                     b.Property<DateTime?>("EmailVerificationExpiry")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("EmailVerificationToken")
+<<<<<<<< HEAD:backend/Migrations/20250817032930_InitialCreateWithDNA.Designer.cs
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+========
                         .HasColumnType("TEXT");
+>>>>>>>> main:backend/Migrations/20250817151049_InitialCreate.Designer.cs
 
                     b.Property<bool>("EmailVerified")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("EmergencyContactName")
+<<<<<<<< HEAD:backend/Migrations/20250817032930_InitialCreateWithDNA.Designer.cs
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("EmergencyContactPhone")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("EmergencyContactRelationship")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+========
                         .HasColumnType("TEXT");
 
                     b.Property<string>("EmergencyContactPhone")
@@ -931,6 +1116,7 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("TEXT");
+>>>>>>>> main:backend/Migrations/20250817151049_InitialCreate.Designer.cs
 
                     b.Property<int?>("IndividualId")
                         .HasColumnType("INTEGER");
@@ -941,22 +1127,56 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                     b.Property<DateTime?>("LastLoginAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("LastPasswordResetAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("LicenseNumber")
+<<<<<<<< HEAD:backend/Migrations/20250817032930_InitialCreateWithDNA.Designer.cs
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Organization")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+========
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Organization")
                         .HasColumnType("TEXT");
+>>>>>>>> main:backend/Migrations/20250817151049_InitialCreate.Designer.cs
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("PasswordResetCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PasswordResetToken")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("PasswordResetTokenExpiry")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PasswordResetYear")
+                        .HasColumnType("int");
+
                     b.Property<string>("PhoneNumber")
+<<<<<<<< HEAD:backend/Migrations/20250817032930_InitialCreateWithDNA.Designer.cs
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("PhoneVerificationCode")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+========
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PhoneVerificationCode")
                         .HasColumnType("TEXT");
+>>>>>>>> main:backend/Migrations/20250817151049_InitialCreate.Designer.cs
 
                     b.Property<DateTime?>("PhoneVerificationExpiry")
                         .HasColumnType("TEXT");
@@ -965,12 +1185,38 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("RefreshToken")
+<<<<<<<< HEAD:backend/Migrations/20250817032930_InitialCreateWithDNA.Designer.cs
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+========
                         .HasColumnType("TEXT");
+>>>>>>>> main:backend/Migrations/20250817151049_InitialCreate.Designer.cs
 
                     b.Property<DateTime?>("RefreshTokenExpiry")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("RelationshipToRunner")
+<<<<<<<< HEAD:backend/Migrations/20250817032930_InitialCreateWithDNA.Designer.cs
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Specialization")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("State")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("TwoFactorBackupCodes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+========
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Role")
@@ -985,18 +1231,36 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
 
                     b.Property<string>("TwoFactorBackupCodes")
                         .HasColumnType("TEXT");
+>>>>>>>> main:backend/Migrations/20250817151049_InitialCreate.Designer.cs
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("TwoFactorSecret")
+<<<<<<<< HEAD:backend/Migrations/20250817032930_InitialCreateWithDNA.Designer.cs
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+========
                         .HasColumnType("TEXT");
+>>>>>>>> main:backend/Migrations/20250817151049_InitialCreate.Designer.cs
 
                     b.Property<DateTime?>("TwoFactorSetupDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Username")
                         .IsRequired()
+<<<<<<<< HEAD:backend/Migrations/20250817032930_InitialCreateWithDNA.Designer.cs
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("YearsOfExperience")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ZipCode")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+========
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
@@ -1005,10 +1269,28 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
 
                     b.Property<string>("ZipCode")
                         .HasColumnType("TEXT");
+>>>>>>>> main:backend/Migrations/20250817151049_InitialCreate.Designer.cs
 
                     b.HasKey("UserId");
 
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_Users_CreatedAt");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Users_Email");
+
                     b.HasIndex("IndividualId");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_Users_IsActive");
+
+                    b.HasIndex("Role")
+                        .HasDatabaseName("IX_Users_Role");
+
+                    b.HasIndex("Username")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Users_Username");
 
                     b.ToTable("Users");
                 });
@@ -1033,6 +1315,25 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Individual");
+                });
+
+            modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.DNAReport", b =>
+                {
+                    b.HasOne("_241RunnersAwareness.BackendAPI.DBContext.Models.Individual", "Individual")
+                        .WithMany()
+                        .HasForeignKey("IndividualId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("_241RunnersAwareness.BackendAPI.DBContext.Models.User", "Reporter")
+                        .WithMany()
+                        .HasForeignKey("ReporterUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Individual");
+
+                    b.Navigation("Reporter");
                 });
 
             modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.EmergencyContact", b =>
@@ -1120,7 +1421,8 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                 {
                     b.HasOne("_241RunnersAwareness.BackendAPI.DBContext.Models.Individual", "Individual")
                         .WithMany()
-                        .HasForeignKey("IndividualId");
+                        .HasForeignKey("IndividualId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Individual");
                 });

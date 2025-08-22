@@ -39,6 +39,10 @@ using System.Text;
 // Application service imports
 using _241RunnersAwareness.BackendAPI.Services;
 
+// SignalR imports
+using Microsoft.AspNetCore.SignalR;
+using _241RunnersAwareness.BackendAPI.Hubs;
+
 // Performance and monitoring imports
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -219,6 +223,7 @@ namespace _241RunnersAwareness.BackendAPI
             builder.Services.AddScoped<ISmsService, SmsService>();             // SMS notifications
             builder.Services.AddScoped<ICsvExportService, CsvExportService>(); // Data export functionality
             builder.Services.AddScoped<ITwoFactorService, TwoFactorService>(); // 2FA implementation
+            builder.Services.AddScoped<IPasswordResetService, PasswordResetService>(); // Password reset functionality
             
             // Advanced platform services
             builder.Services.AddScoped<INotificationService, NotificationService>();           // Notification management

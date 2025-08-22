@@ -8,9 +8,8 @@ namespace _241RunnersAwareness.BackendAPI.Models
         [EmailAddress]
         public string Email { get; set; }
         
-        [Required]
         [Phone]
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
         
         [Required]
         public string FullName { get; set; }
@@ -21,7 +20,7 @@ namespace _241RunnersAwareness.BackendAPI.Models
 
         // Role and role-specific fields
         [Required]
-        public string Role { get; set; } = "user"; // user, parent, caregiver, aba_therapist, adoptive_parent
+        public string Role { get; set; } = "user"; // admin, user, therapist, caregiver, parent, adoptive_parent
         
         // Common fields
         public string? Address { get; set; }
@@ -93,7 +92,7 @@ namespace _241RunnersAwareness.BackendAPI.Models
     {
         public Guid UserId { get; set; }
         public string Email { get; set; }
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
         public string FullName { get; set; }
         public string Role { get; set; }
         public string? RelationshipToRunner { get; set; }
@@ -175,5 +174,41 @@ namespace _241RunnersAwareness.BackendAPI.Models
         public string Email { get; set; }
         [Required]
         public string BackupCode { get; set; }
+    }
+
+    // Password Reset DTOs
+    public class ForgotPasswordRequest
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+    }
+
+    public class ResetPasswordRequest
+    {
+        [Required]
+        public string Token { get; set; }
+        
+        [Required]
+        [MinLength(8)]
+        public string NewPassword { get; set; }
+    }
+
+    public class ChangePasswordRequest
+    {
+        [Required]
+        public string CurrentPassword { get; set; }
+        
+        [Required]
+        [MinLength(8)]
+        public string NewPassword { get; set; }
+    }
+
+    // Phone Number Update DTO
+    public class UpdatePhoneRequest
+    {
+        [Required]
+        [Phone]
+        public string PhoneNumber { get; set; }
     }
 } 

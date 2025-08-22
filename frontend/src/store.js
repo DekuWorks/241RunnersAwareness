@@ -1,62 +1,61 @@
 /**
  * ============================================
- * 241 RUNNERS AWARENESS - REDUX STORE CONFIGURATION
+ * REDUX STORE CONFIGURATION
  * ============================================
  * 
- * This file configures the Redux store using Redux Toolkit.
- * It sets up the global state management for the application.
+ * This file configures the Redux store for the 241 Runners Awareness application.
+ * It combines all reducers and applies middleware for development and production.
  * 
  * Store Structure:
- * - auth: Authentication state (user info, tokens, login status)
- * - Future slices: alerts, users, cases, notifications, etc.
+ * - auth: Authentication and user state
+ * - notifications: Real-time notification state
+ * - ui: User interface state (loading, modals, etc.)
  * 
- * Redux Toolkit Benefits:
- * - Simplified store setup with configureStore
- * - Built-in DevTools integration
- * - Immutable update logic with Immer
- * - Action creators and reducers in one place
+ * Middleware:
+ * - Redux Toolkit's default middleware
+ * - Redux Logger (development only)
+ * - Redux Persist (optional, for state persistence)
  */
 
-// Redux Toolkit imports
-import { configureStore } from '@reduxjs/toolkit'
+import { configureStore } from '@reduxjs/toolkit';
+import authReducer from './features/auth/authSlice';
 
-// Feature slices - modular state management
-import authReducer from './features/auth/authSlice'
+// Import other reducers as needed
+// import notificationsReducer from './features/notifications/notificationsSlice';
+// import uiReducer from './features/ui/uiSlice';
 
 /**
  * Redux Store Configuration
  * 
- * Creates the main Redux store with all feature reducers.
- * Each reducer manages a specific domain of the application state.
- * 
- * Current Reducers:
- * - auth: Handles user authentication, login/logout, user profile
- * 
- * Future Reducers (planned):
- * - alerts: System notifications and user alerts
- * - users: User management and profiles
- * - cases: Missing persons cases and data
- * - notifications: Real-time notifications
- * - shop: E-commerce and fundraising data
- * - dna: DNA tracking and identification data
+ * Combines all reducers and applies middleware for the application.
+ * Uses Redux Toolkit's configureStore for simplified setup.
  */
-export const store = configureStore({
+const store = configureStore({
   reducer: {
-    // Authentication state management
+    // Core application state
     auth: authReducer,
     
-    // TODO: Add additional reducers as features are developed
-    // alerts: alertsReducer,
-    // users: usersReducer,
-    // cases: casesReducer,
+    // Feature-specific state
     // notifications: notificationsReducer,
-    // shop: shopReducer,
-    // dna: dnaReducer,
+    // ui: uiReducer,
   },
   
-  // Redux Toolkit automatically includes:
-  // - Redux DevTools Extension
-  // - Redux Thunk middleware
-  // - Serializable state checking
-  // - Immutable state updates
-})
+  // Middleware configuration
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      // Configure serializable check for non-serializable values
+      serializableCheck: {
+        // Ignore specific action types that may contain non-serializable data
+        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+        // Ignore specific field paths in all actions
+        ignoredActionPaths: ['meta.arg', 'payload.timestamp'],
+        // Ignore specific field paths in state
+        ignoredPaths: ['some.path.to.ignore'],
+      },
+    }),
+  
+  // Development tools configuration
+  devTools: process.env.NODE_ENV !== 'production',
+});
+
+export default store;

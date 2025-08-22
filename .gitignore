@@ -4,8 +4,14 @@ obj/
 .vs/
 .vscode/
 
+# Frontend build artifacts
+frontend/dist/
+frontend/build/
+frontend/.vite/
+
 # Dependencies
 node_modules/
+**/node_modules/
 *.dll
 *.pdb
 *.exe
@@ -121,4 +127,18 @@ test-*.js
 docs/_build/
 
 # Local development
-*.local 
+*.local
+
+# Capacitor
+ios/
+android/
+
+# Bubblewrap
+bubblewrap/
+
+# PWA assets
+sw.js
+workbox-*.js
+
+# Azure deployment
+.azure/ 

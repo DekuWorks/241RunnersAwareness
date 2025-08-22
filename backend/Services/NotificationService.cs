@@ -9,12 +9,17 @@ using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
 using System.Linq;
+using _241RunnersAwareness.BackendAPI.DBContext.Models;
 
 namespace _241RunnersAwareness.BackendAPI.Services
 {
     public interface INotificationService
     {
         Task SendUrgentAlertAsync(string caseId, string individualName, string location, string description);
+        Task SendSpecialNeedsUrgentAlertAsync(string caseId, Individual individual, string location, string description);
+        Task SendWanderingAlertAsync(string caseId, Individual individual, string lastSeenLocation);
+        Task SendMedicalEmergencyAlertAsync(string caseId, Individual individual, string location, string medicalIssue);
+        Task SendSightingAlertAsync(string caseId, Individual individual, string sightingLocation, string description);
         Task SendNewCaseNotificationAsync(string caseId, string individualName, string reportedBy);
         Task SendCaseUpdateNotificationAsync(string caseId, string status, string updatedBy);
         Task SendEmergencyContactAlertAsync(string contactEmail, string contactPhone, string individualName, string caseId);
@@ -22,6 +27,7 @@ namespace _241RunnersAwareness.BackendAPI.Services
         Task SendMediaAlertAsync(string caseId, string individualName, string location, string description);
         Task SendFoundNotificationAsync(string caseId, string individualName, string foundLocation);
         Task SendDailyDigestAsync(List<string> caseIds);
+        Task SendRealTimeAlertToSubscribersAsync(string caseId, Individual individual, string alertType, string location, string description);
     }
 
     public class NotificationService : INotificationService
@@ -75,6 +81,162 @@ namespace _241RunnersAwareness.BackendAPI.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Failed to send urgent alert for case {caseId}");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Sends URGENT real-time alert specifically for special needs individuals
+        /// Enhanced with disability-specific information and emergency instructions
+        /// </summary>
+        public async Task SendSpecialNeedsUrgentAlertAsync(string caseId, Individual individual, string location, string description)
+        {
+            try
+            {
+                _logger.LogWarning($"🚨 SPECIAL NEEDS URGENT ALERT: Case {caseId} - {individual.FullName} reported missing at {location}");
+
+                var subject = $"🚨 URGENT: Special Needs Individual Missing - {individual.FullName}";
+                var htmlContent = GenerateSpecialNeedsUrgentAlertEmail(caseId, individual, location, description);
+
+                // Send to all emergency contacts, law enforcement, and media
+                await SendBulkUrgentNotificationsAsync(subject, htmlContent, caseId);
+
+                // Send SMS alerts for immediate notification
+                await SendSpecialNeedsSMSAlertsAsync(caseId, individual, location);
+
+                // Send to support organizations if available
+                if (!string.IsNullOrEmpty(individual.SupportOrganization))
+                {
+                    await SendSupportOrganizationAlertAsync(caseId, individual, location);
+                }
+
+                // Send to medical professionals if medical conditions exist
+                if (!string.IsNullOrEmpty(individual.MedicalConditions) || individual.HasSeizureDisorder == true || individual.HasDiabetes == true)
+                {
+                    await SendMedicalProfessionalAlertAsync(caseId, individual, location);
+                }
+
+                _logger.LogInformation($"Special needs urgent alert sent successfully for case {caseId}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed to send special needs urgent alert for case {caseId}");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Sends wandering/elopement alert for individuals who may wander
+        /// </summary>
+        public async Task SendWanderingAlertAsync(string caseId, Individual individual, string lastSeenLocation)
+        {
+            try
+            {
+                _logger.LogWarning($"🚨 WANDERING ALERT: Case {caseId} - {individual.FullName} may have wandered from {lastSeenLocation}");
+
+                var subject = $"🚨 WANDERING ALERT: {individual.FullName} - Special Needs Individual";
+                var htmlContent = GenerateWanderingAlertEmail(caseId, individual, lastSeenLocation);
+
+                // Send to caregivers and emergency contacts
+                await SendWanderingNotificationsAsync(subject, htmlContent, caseId, individual);
+
+                // Send SMS alerts
+                await SendWanderingSMSAlertsAsync(caseId, individual, lastSeenLocation);
+
+                _logger.LogInformation($"Wandering alert sent successfully for case {caseId}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed to send wandering alert for case {caseId}");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Sends medical emergency alert for individuals with medical conditions
+        /// </summary>
+        public async Task SendMedicalEmergencyAlertAsync(string caseId, Individual individual, string location, string medicalIssue)
+        {
+            try
+            {
+                _logger.LogWarning($"🚨 MEDICAL EMERGENCY: Case {caseId} - {individual.FullName} medical emergency at {location}");
+
+                var subject = $"🚨 MEDICAL EMERGENCY: {individual.FullName} - {medicalIssue}";
+                var htmlContent = GenerateMedicalEmergencyEmail(caseId, individual, location, medicalIssue);
+
+                // Send to medical professionals and emergency contacts
+                await SendMedicalEmergencyNotificationsAsync(subject, htmlContent, caseId, individual);
+
+                // Send SMS alerts
+                await SendMedicalEmergencySMSAlertsAsync(caseId, individual, location, medicalIssue);
+
+                _logger.LogInformation($"Medical emergency alert sent successfully for case {caseId}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed to send medical emergency alert for case {caseId}");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Sends sighting alert when someone reports seeing the individual
+        /// </summary>
+        public async Task SendSightingAlertAsync(string caseId, Individual individual, string sightingLocation, string description)
+        {
+            try
+            {
+                _logger.LogInformation($"👁️ SIGHTING ALERT: Case {caseId} - {individual.FullName} sighted at {sightingLocation}");
+
+                var subject = $"👁️ SIGHTING REPORT: {individual.FullName} - {sightingLocation}";
+                var htmlContent = GenerateSightingAlertEmail(caseId, individual, sightingLocation, description);
+
+                // Send to law enforcement and emergency contacts
+                await SendSightingNotificationsAsync(subject, htmlContent, caseId, individual);
+
+                _logger.LogInformation($"Sighting alert sent successfully for case {caseId}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed to send sighting alert for case {caseId}");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Sends real-time alert to all subscribers in the specified radius
+        /// </summary>
+        public async Task SendRealTimeAlertToSubscribersAsync(string caseId, Individual individual, string alertType, string location, string description)
+        {
+            try
+            {
+                _logger.LogInformation($"📡 REAL-TIME ALERT: Sending {alertType} alert for {individual.FullName} to subscribers");
+
+                var subject = $"🚨 REAL-TIME ALERT: {alertType} - {individual.FullName}";
+                var htmlContent = GenerateRealTimeAlertEmail(caseId, individual, alertType, location, description);
+
+                // Get subscribers in the alert radius
+                var subscribers = await GetSubscribersInRadiusAsync(individual.Latitude, individual.Longitude, individual.AlertRadiusMiles ?? 5);
+
+                // Send to all subscribers
+                foreach (var subscriber in subscribers)
+                {
+                    if (subscriber.EnableEmailAlerts == true)
+                    {
+                        await SendEmailAsync(subscriber.Email, subject, htmlContent);
+                    }
+
+                    if (subscriber.EnableSMSAlerts == true && !string.IsNullOrEmpty(subscriber.PhoneNumber))
+                    {
+                        await SendSMSAsync(subscriber.PhoneNumber, GenerateSMSMessage(individual, alertType, location));
+                    }
+                }
+
+                _logger.LogInformation($"Real-time alert sent to {subscribers.Count} subscribers for case {caseId}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed to send real-time alert to subscribers for case {caseId}");
                 throw;
             }
         }
@@ -287,6 +449,66 @@ namespace _241RunnersAwareness.BackendAPI.Services
             }
         }
 
+        private async Task SendSpecialNeedsSMSAlertsAsync(string caseId, Individual individual, string location)
+        {
+            var message = $"🚨 SPECIAL NEEDS URGENT: {individual.FullName} reported missing at {location}. Case ID: {caseId}. Call 911 immediately if seen.";
+            
+            // Send to emergency contacts and law enforcement
+            var phoneNumbers = await GetUrgentSMSRecipientsAsync(caseId);
+            
+            foreach (var phone in phoneNumbers)
+            {
+                try
+                {
+                    await SendSMSAsync(phone, message);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Failed to send SMS to {phone}");
+                }
+            }
+        }
+
+        private async Task SendWanderingSMSAlertsAsync(string caseId, Individual individual, string lastSeenLocation)
+        {
+            var message = $"🚨 WANDERING ALERT: {individual.FullName} last seen at {lastSeenLocation}. Case ID: {caseId}. Call 911 immediately if seen.";
+            
+            // Send to emergency contacts and law enforcement
+            var phoneNumbers = await GetUrgentSMSRecipientsAsync(caseId);
+            
+            foreach (var phone in phoneNumbers)
+            {
+                try
+                {
+                    await SendSMSAsync(phone, message);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Failed to send SMS to {phone}");
+                }
+            }
+        }
+
+        private async Task SendMedicalEmergencySMSAlertsAsync(string caseId, Individual individual, string location, string medicalIssue)
+        {
+            var message = $"🚨 MEDICAL EMERGENCY: {individual.FullName} medical emergency at {location}. Case ID: {caseId}. Call 911 immediately.";
+            
+            // Send to emergency contacts and law enforcement
+            var phoneNumbers = await GetUrgentSMSRecipientsAsync(caseId);
+            
+            foreach (var phone in phoneNumbers)
+            {
+                try
+                {
+                    await SendSMSAsync(phone, message);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Failed to send SMS to {phone}");
+                }
+            }
+        }
+
         private async Task SendEmailAsync(string toEmail, string subject, string htmlContent)
         {
             var from = new EmailAddress(_fromEmail, _fromName);
@@ -353,6 +575,56 @@ namespace _241RunnersAwareness.BackendAPI.Services
             }
         }
 
+        private async Task SendWanderingNotificationsAsync(string subject, string htmlContent, string caseId, Individual individual)
+        {
+            var caregivers = await GetCaregiversAsync(individual.CaregiverEmail);
+            
+            foreach (var caregiver in caregivers)
+            {
+                await SendEmailAsync(caregiver.Email, subject, htmlContent);
+            }
+        }
+
+        private async Task SendMedicalEmergencyNotificationsAsync(string subject, string htmlContent, string caseId, Individual individual)
+        {
+            var medicalProfessionals = await GetMedicalProfessionalsAsync(individual.MedicalConditions);
+            
+            foreach (var professional in medicalProfessionals)
+            {
+                await SendEmailAsync(professional.Email, subject, htmlContent);
+            }
+        }
+
+        private async Task SendSightingNotificationsAsync(string subject, string htmlContent, string caseId, Individual individual)
+        {
+            var lawEnforcementContacts = await GetLawEnforcementContactsAsync();
+            
+            foreach (var contact in lawEnforcementContacts)
+            {
+                await SendEmailAsync(contact.Email, subject, htmlContent);
+            }
+        }
+
+        private async Task SendSupportOrganizationAlertAsync(string caseId, Individual individual, string location)
+        {
+            var supportOrganizations = await GetSupportOrganizationsAsync(individual.SupportOrganization);
+            
+            foreach (var org in supportOrganizations)
+            {
+                await SendEmailAsync(org.Email, $"🚨 SUPPORT ORGANIZATION ALERT: {individual.FullName} - Missing", GenerateSupportOrganizationEmail(caseId, individual, location));
+            }
+        }
+
+        private async Task SendMedicalProfessionalAlertAsync(string caseId, Individual individual, string location)
+        {
+            var medicalProfessionals = await GetMedicalProfessionalsAsync(individual.MedicalConditions);
+            
+            foreach (var professional in medicalProfessionals)
+            {
+                await SendEmailAsync(professional.Email, $"🚨 MEDICAL PROFESSIONAL ALERT: {individual.FullName} - Medical Emergency", GenerateMedicalProfessionalEmail(caseId, individual, location));
+            }
+        }
+
         private async Task SendBulkFoundNotificationsAsync(string subject, string htmlContent, string caseId)
         {
             var recipients = await GetFoundNotificationRecipientsAsync(caseId);
@@ -379,6 +651,182 @@ namespace _241RunnersAwareness.BackendAPI.Services
                         <h2 style='color: #dc2626; margin-top: 0;'>Case ID: {caseId}</h2>
                         <p><strong>Name:</strong> {individualName}</p>
                         <p><strong>Last Seen:</strong> {location}</p>
+                        <p><strong>Description:</strong> {description}</p>
+                        <p><strong>Reported:</strong> {DateTime.Now:MM/dd/yyyy HH:mm}</p>
+                    </div>
+                    
+                    <div style='padding: 20px; background-color: #f0f9ff; border-left: 4px solid #3b82f6;'>
+                        <h3 style='color: #1e40af;'>IMMEDIATE ACTION REQUIRED</h3>
+                        <ul>
+                            <li>Call 911 immediately if you see this person</li>
+                            <li>Do not approach if they appear distressed</li>
+                            <li>Contact law enforcement with any information</li>
+                            <li>Share this alert on social media</li>
+                        </ul>
+                    </div>
+                    
+                    <div style='padding: 20px; text-align: center;'>
+                        <p style='color: #6b7280; font-size: 12px;'>
+                            This alert is sent by 241 Runners Awareness in memory of Israel Thomas.<br>
+                            Every minute counts in finding missing individuals with special needs.
+                        </p>
+                    </div>
+                </div>";
+        }
+
+        private string GenerateSpecialNeedsUrgentAlertEmail(string caseId, Individual individual, string location, string description)
+        {
+            return $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+                    <div style='background-color: #dc2626; color: white; padding: 20px; text-align: center;'>
+                        <h1 style='margin: 0;'>🚨 SPECIAL NEEDS URGENT MISSING PERSON ALERT</h1>
+                    </div>
+                    
+                    <div style='padding: 20px; background-color: #fef2f2; border-left: 4px solid #dc2626;'>
+                        <h2 style='color: #dc2626; margin-top: 0;'>Case ID: {caseId}</h2>
+                        <p><strong>Name:</strong> {individual.FullName}</p>
+                        <p><strong>Last Seen:</strong> {location}</p>
+                        <p><strong>Description:</strong> {description}</p>
+                        <p><strong>Reported:</strong> {DateTime.Now:MM/dd/yyyy HH:mm}</p>
+                    </div>
+                    
+                    <div style='padding: 20px; background-color: #f0f9ff; border-left: 4px solid #3b82f6;'>
+                        <h3 style='color: #1e40af;'>IMMEDIATE ACTION REQUIRED</h3>
+                        <ul>
+                            <li>Call 911 immediately if you see this person</li>
+                            <li>Do not approach if they appear distressed</li>
+                            <li>Contact law enforcement with any information</li>
+                            <li>Share this alert on social media</li>
+                        </ul>
+                    </div>
+                    
+                    <div style='padding: 20px; text-align: center;'>
+                        <p style='color: #6b7280; font-size: 12px;'>
+                            This alert is sent by 241 Runners Awareness in memory of Israel Thomas.<br>
+                            Every minute counts in finding missing individuals with special needs.
+                        </p>
+                    </div>
+                </div>";
+        }
+
+        private string GenerateWanderingAlertEmail(string caseId, Individual individual, string lastSeenLocation)
+        {
+            return $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+                    <div style='background-color: #dc2626; color: white; padding: 20px; text-align: center;'>
+                        <h1 style='margin: 0;'>🚨 WANDERING ALERT</h1>
+                    </div>
+                    
+                    <div style='padding: 20px; background-color: #fef2f2; border-left: 4px solid #dc2626;'>
+                        <h2 style='color: #dc2626; margin-top: 0;'>Case ID: {caseId}</h2>
+                        <p><strong>Name:</strong> {individual.FullName}</p>
+                        <p><strong>Last Seen:</strong> {lastSeenLocation}</p>
+                        <p><strong>Reported:</strong> {DateTime.Now:MM/dd/yyyy HH:mm}</p>
+                    </div>
+                    
+                    <div style='padding: 20px; background-color: #f0f9ff; border-left: 4px solid #3b82f6;'>
+                        <h3 style='color: #1e40af;'>IMMEDIATE ACTION REQUIRED</h3>
+                        <ul>
+                            <li>Call 911 immediately if you see this person</li>
+                            <li>Do not approach if they appear distressed</li>
+                            <li>Contact law enforcement with any information</li>
+                            <li>Share this alert on social media</li>
+                        </ul>
+                    </div>
+                    
+                    <div style='padding: 20px; text-align: center;'>
+                        <p style='color: #6b7280; font-size: 12px;'>
+                            This alert is sent by 241 Runners Awareness in memory of Israel Thomas.<br>
+                            Every minute counts in finding missing individuals with special needs.
+                        </p>
+                    </div>
+                </div>";
+        }
+
+        private string GenerateMedicalEmergencyEmail(string caseId, Individual individual, string location, string medicalIssue)
+        {
+            return $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+                    <div style='background-color: #dc2626; color: white; padding: 20px; text-align: center;'>
+                        <h1 style='margin: 0;'>🚨 MEDICAL EMERGENCY ALERT</h1>
+                    </div>
+                    
+                    <div style='padding: 20px; background-color: #fef2f2; border-left: 4px solid #dc2626;'>
+                        <h2 style='color: #dc2626; margin-top: 0;'>Case ID: {caseId}</h2>
+                        <p><strong>Name:</strong> {individual.FullName}</p>
+                        <p><strong>Medical Issue:</strong> {medicalIssue}</p>
+                        <p><strong>Location:</strong> {location}</p>
+                        <p><strong>Reported:</strong> {DateTime.Now:MM/dd/yyyy HH:mm}</p>
+                    </div>
+                    
+                    <div style='padding: 20px; background-color: #f0f9ff; border-left: 4px solid #3b82f6;'>
+                        <h3 style='color: #1e40af;'>IMMEDIATE ACTION REQUIRED</h3>
+                        <ul>
+                            <li>Call 911 immediately</li>
+                            <li>Provide immediate medical attention</li>
+                            <li>Do not move the individual unless it's absolutely necessary</li>
+                            <li>Monitor vital signs</li>
+                        </ul>
+                    </div>
+                    
+                    <div style='padding: 20px; text-align: center;'>
+                        <p style='color: #6b7280; font-size: 12px;'>
+                            This alert is sent by 241 Runners Awareness in memory of Israel Thomas.<br>
+                            Every minute counts in finding missing individuals with special needs.
+                        </p>
+                    </div>
+                </div>";
+        }
+
+        private string GenerateSightingAlertEmail(string caseId, Individual individual, string sightingLocation, string description)
+        {
+            return $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+                    <div style='background-color: #10b981; color: white; padding: 20px; text-align: center;'>
+                        <h1 style='margin: 0;'>👁️ SIGHTING REPORT</h1>
+                    </div>
+                    
+                    <div style='padding: 20px; background-color: #f0fdf4; border-left: 4px solid #10b981;'>
+                        <h2 style='color: #059669; margin-top: 0;'>Sighting Report</h2>
+                        <p><strong>Case ID:</strong> {caseId}</p>
+                        <p><strong>Name:</strong> {individual.FullName}</p>
+                        <p><strong>Sighting Location:</strong> {sightingLocation}</p>
+                        <p><strong>Description:</strong> {description}</p>
+                        <p><strong>Reported:</strong> {DateTime.Now:MM/dd/yyyy HH:mm}</p>
+                    </div>
+                    
+                    <div style='padding: 20px; background-color: #f0f9ff; border-left: 4px solid #3b82f6;'>
+                        <h3 style='color: #1e40af;'>IMMEDIATE ACTION REQUIRED</h3>
+                        <ul>
+                            <li>Call 911 immediately if you see this person</li>
+                            <li>Do not approach if they appear distressed</li>
+                            <li>Contact law enforcement with any information</li>
+                            <li>Share this alert on social media</li>
+                        </ul>
+                    </div>
+                    
+                    <div style='padding: 20px; text-align: center;'>
+                        <p style='color: #6b7280; font-size: 12px;'>
+                            This alert is sent by 241 Runners Awareness in memory of Israel Thomas.<br>
+                            Every minute counts in finding missing individuals with special needs.
+                        </p>
+                    </div>
+                </div>";
+        }
+
+        private string GenerateRealTimeAlertEmail(string caseId, Individual individual, string alertType, string location, string description)
+        {
+            return $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+                    <div style='background-color: #3b82f6; color: white; padding: 20px; text-align: center;'>
+                        <h1 style='margin: 0;'>🚨 REAL-TIME ALERT</h1>
+                    </div>
+                    
+                    <div style='padding: 20px; background-color: #f0f9ff; border-left: 4px solid #3b82f6;'>
+                        <h2 style='color: #1e40af; margin-top: 0;'>{alertType} Alert</h2>
+                        <p><strong>Case ID:</strong> {caseId}</p>
+                        <p><strong>Name:</strong> {individual.FullName}</p>
+                        <p><strong>Location:</strong> {location}</p>
                         <p><strong>Description:</strong> {description}</p>
                         <p><strong>Reported:</strong> {DateTime.Now:MM/dd/yyyy HH:mm}</p>
                     </div>
@@ -580,6 +1028,74 @@ namespace _241RunnersAwareness.BackendAPI.Services
                 </div>";
         }
 
+        private string GenerateSupportOrganizationEmail(string caseId, Individual individual, string location)
+        {
+            return $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+                    <div style='background-color: #3b82f6; color: white; padding: 20px; text-align: center;'>
+                        <h1 style='margin: 0;'>SUPPORT ORGANIZATION ALERT</h1>
+                    </div>
+                    
+                    <div style='padding: 20px; background-color: #f0f9ff; border-left: 4px solid #3b82f6;'>
+                        <h2 style='color: #1e40af; margin-top: 0;'>{individual.FullName} - Missing</h2>
+                        <p><strong>Case ID:</strong> {caseId}</p>
+                        <p><strong>Last Seen:</strong> {location}</p>
+                        <p><strong>Reported:</strong> {DateTime.Now:MM/dd/yyyy HH:mm}</p>
+                    </div>
+                    
+                    <div style='padding: 20px; background-color: #f0f9ff; border-left: 4px solid #3b82f6;'>
+                        <h3 style='color: #1e40af;'>IMMEDIATE ACTION REQUIRED</h3>
+                        <ul>
+                            <li>Contact law enforcement and local authorities</li>
+                            <li>Coordinate with local search and rescue teams</li>
+                            <li>Monitor social media and community alerts</li>
+                            <li>Provide any specific information about the individual</li>
+                        </ul>
+                    </div>
+                    
+                    <div style='padding: 20px; text-align: center;'>
+                        <p style='color: #6b7280; font-size: 12px;'>
+                            This alert is sent by 241 Runners Awareness in memory of Israel Thomas.<br>
+                            Every minute counts in finding missing individuals with special needs.
+                        </p>
+                    </div>
+                </div>";
+        }
+
+        private string GenerateMedicalProfessionalEmail(string caseId, Individual individual, string location)
+        {
+            return $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+                    <div style='background-color: #dc2626; color: white; padding: 20px; text-align: center;'>
+                        <h1 style='margin: 0;'>MEDICAL PROFESSIONAL ALERT</h1>
+                    </div>
+                    
+                    <div style='padding: 20px; background-color: #fef2f2; border-left: 4px solid #dc2626;'>
+                        <h2 style='color: #dc2626; margin-top: 0;'>{individual.FullName} - Medical Emergency</h2>
+                        <p><strong>Case ID:</strong> {caseId}</p>
+                        <p><strong>Location:</strong> {location}</p>
+                        <p><strong>Reported:</strong> {DateTime.Now:MM/dd/yyyy HH:mm}</p>
+                    </div>
+                    
+                    <div style='padding: 20px; background-color: #f0f9ff; border-left: 4px solid #3b82f6;'>
+                        <h3 style='color: #1e40af;'>IMMEDIATE ACTION REQUIRED</h3>
+                        <ul>
+                            <li>Provide immediate medical attention</li>
+                            <li>Monitor vital signs</li>
+                            <li>Do not move the individual unless it's absolutely necessary</li>
+                            <li>Contact law enforcement and emergency services</li>
+                        </ul>
+                    </div>
+                    
+                    <div style='padding: 20px; text-align: center;'>
+                        <p style='color: #6b7280; font-size: 12px;'>
+                            This alert is sent by 241 Runners Awareness in memory of Israel Thomas.<br>
+                            Every minute counts in finding missing individuals with special needs.
+                        </p>
+                    </div>
+                </div>";
+        }
+
         #endregion
 
         #region Data Access Methods (to be implemented with actual database queries)
@@ -641,6 +1157,33 @@ namespace _241RunnersAwareness.BackendAPI.Services
             {
                 new NotificationRecipient { Email = "news@khou.com", Phone = null },
                 new NotificationRecipient { Email = "news@abc13.com", Phone = null }
+            };
+        }
+
+        private async Task<List<NotificationRecipient>> GetCaregiversAsync(string caregiverEmail)
+        {
+            // TODO: Implement database query to get caregivers
+            return new List<NotificationRecipient>
+            {
+                new NotificationRecipient { Email = "caregiver@example.com", Phone = null }
+            };
+        }
+
+        private async Task<List<NotificationRecipient>> GetMedicalProfessionalsAsync(string medicalConditions)
+        {
+            // TODO: Implement database query to get medical professionals
+            return new List<NotificationRecipient>
+            {
+                new NotificationRecipient { Email = "doctor@example.com", Phone = null }
+            };
+        }
+
+        private async Task<List<NotificationRecipient>> GetSupportOrganizationsAsync(string supportOrganization)
+        {
+            // TODO: Implement database query to get support organizations
+            return new List<NotificationRecipient>
+            {
+                new NotificationRecipient { Email = "support@example.org", Phone = null }
             };
         }
 

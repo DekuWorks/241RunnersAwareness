@@ -1,0 +1,7 @@
+@import "../../../packages/ui/tokens.css";
+@tailwind base; @tailwind components; @tailwind utilities;
+:root{ color-scheme: dark; }
+.container{ @apply max-w-5xl mx-auto p-6; }
+.card{ @apply bg-panel rounded shadow-soft p-4; }
+.btn{ @apply inline-flex items-center gap-2 rounded-sm px-4 py-2 bg-accent text-white; }
+.badge{ @apply rounded-full border border-white/10 px-2 py-0.5 text-muted bg-panel; }

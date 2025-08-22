@@ -19,11 +19,11 @@
       <a href="index.html">Home</a>
       <a href="aboutus.html">About Us</a>
       <a href="cases.html">Cases</a>
-      <a href="shop.html">🛍️ Shop</a>
-      <a href="dna-tracking.html">🧬 DNA</a>
+      <a href="map.html">🗺️ Map</a>
+      <a href="dna-tracking.html">🧬 DNA Tracking</a>
+      <a href="aboutus.html">ℹ️ About</a>
       <a href="signup.html" id="signupLink" aria-current="page">Sign Up</a>
       <a href="login.html" id="loginLink">Login</a>
-      <a href="dashboard.html" id="dashboardLink" style="display: none;">Dashboard</a>
       <button id="logoutBtn" style="display: none;" class="logout-btn">Logout</button>
       <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
       <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
@@ -72,11 +72,11 @@
           <label for="role">Account Type *</label>
           <select id="role" name="role" required>
             <option value="">Select your role</option>
-            <option value="GeneralUser">General User</option>
-            <option value="Parent">Parent</option>
-            <option value="Caregiver">Caregiver</option>
-            <option value="ABATherapist">ABA Therapist</option>
-            <option value="AdoptiveParent">Adoptive Parent</option>
+            <option value="user">General User</option>
+            <option value="parent">Parent</option>
+            <option value="caregiver">Caregiver</option>
+            <option value="therapist">Therapist</option>
+            <option value="adoptive_parent">Adoptive Parent</option>
           </select>
         </div>
 
@@ -145,18 +145,97 @@
           </div>
         </div>
 
-        <!-- ABA Therapist specific fields -->
-        <div id="abaFields" style="display: none;">
-          <h3>Professional Information</h3>
+        <!-- Role-specific fields -->
+        <div id="roleSpecificFields" style="display: none;">
+          <h3>Role-Specific Information</h3>
+          
+          <!-- For parents, caregivers, adoptive parents -->
+          <div id="relationshipFields" style="display: none;">
+            <div class="form-group">
+              <label for="relationshipToRunner">Relationship to Runner</label>
+              <input type="text" id="relationshipToRunner" name="relationshipToRunner" placeholder="e.g., Mother, Father, Guardian">
+            </div>
+          </div>
+
+          <!-- For therapists -->
+          <div id="therapistFields" style="display: none;">
+            <div class="form-group">
+              <label for="licenseNumber">License Number</label>
+              <input type="text" id="licenseNumber" name="licenseNumber" placeholder="Enter your license number">
+            </div>
+
+            <div class="form-group">
+              <label for="organization">Organization</label>
+              <input type="text" id="organization" name="organization" placeholder="Enter your organization">
+            </div>
+
+            <div class="form-group">
+              <label for="credentials">Credentials</label>
+              <input type="text" id="credentials" name="credentials" placeholder="e.g., BCBA, LCSW, PhD">
+            </div>
+
+            <div class="form-group">
+              <label for="specialization">Specialization</label>
+              <input type="text" id="specialization" name="specialization" placeholder="e.g., ABA Therapy, Behavioral Analysis">
+            </div>
+
+            <div class="form-group">
+              <label for="yearsOfExperience">Years of Experience</label>
+              <input type="text" id="yearsOfExperience" name="yearsOfExperience" placeholder="e.g., 5+, 10+">
+            </div>
+          </div>
+
+          <!-- For caregivers -->
+          <div id="caregiverFields" style="display: none;">
+            <div class="form-group">
+              <label for="organization">Organization</label>
+              <input type="text" id="organization" name="organization" placeholder="Enter your organization">
+            </div>
+
+            <div class="form-group">
+              <label for="yearsOfExperience">Years of Experience</label>
+              <input type="text" id="yearsOfExperience" name="yearsOfExperience" placeholder="e.g., 3+, 7+">
+            </div>
+          </div>
+        </div>
+
+        <!-- Common additional fields -->
+        <div id="additionalFields" style="display: none;">
+          <h3>Additional Information</h3>
           
           <div class="form-group">
-            <label for="licenseNumber">License Number</label>
-            <input type="text" id="licenseNumber" name="licenseNumber" placeholder="Enter your license number">
+            <label for="address">Address</label>
+            <input type="text" id="address" name="address" placeholder="Enter your address">
           </div>
 
           <div class="form-group">
-            <label for="certification">Certification</label>
-            <input type="text" id="certification" name="certification" placeholder="Enter your certification">
+            <label for="city">City</label>
+            <input type="text" id="city" name="city" placeholder="Enter your city">
+          </div>
+
+          <div class="form-group">
+            <label for="state">State</label>
+            <input type="text" id="state" name="state" placeholder="Enter your state">
+          </div>
+
+          <div class="form-group">
+            <label for="zipCode">Zip Code</label>
+            <input type="text" id="zipCode" name="zipCode" placeholder="Enter your zip code">
+          </div>
+
+          <div class="form-group">
+            <label for="emergencyContactName">Emergency Contact Name</label>
+            <input type="text" id="emergencyContactName" name="emergencyContactName" placeholder="Emergency contact name">
+          </div>
+
+          <div class="form-group">
+            <label for="emergencyContactPhone">Emergency Contact Phone</label>
+            <input type="tel" id="emergencyContactPhone" name="emergencyContactPhone" placeholder="Emergency contact phone">
+          </div>
+
+          <div class="form-group">
+            <label for="emergencyContactRelationship">Emergency Contact Relationship</label>
+            <input type="text" id="emergencyContactRelationship" name="emergencyContactRelationship" placeholder="e.g., Spouse, Parent, Friend">
           </div>
         </div>
 
@@ -214,9 +293,9 @@
         if (response.ok) {
           localStorage.setItem('user', JSON.stringify(data));
           showMessage('Registration successful! Redirecting...', 'success');
-          setTimeout(() => {
-            window.location.href = 'dashboard.html';
-          }, 1500);
+                  setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 1500);
         } else {
           showMessage(data.message || 'Registration failed', 'error');
         }
@@ -230,17 +309,35 @@
     document.getElementById('role').addEventListener('change', function() {
       const role = this.value;
       const individualFields = document.getElementById('individualFields');
-      const abaFields = document.getElementById('abaFields');
+      const roleSpecificFields = document.getElementById('roleSpecificFields');
+      const additionalFields = document.getElementById('additionalFields');
+      const relationshipFields = document.getElementById('relationshipFields');
+      const therapistFields = document.getElementById('therapistFields');
+      const caregiverFields = document.getElementById('caregiverFields');
       
       // Hide all conditional fields first
       individualFields.style.display = 'none';
-      abaFields.style.display = 'none';
+      roleSpecificFields.style.display = 'none';
+      additionalFields.style.display = 'none';
+      relationshipFields.style.display = 'none';
+      therapistFields.style.display = 'none';
+      caregiverFields.style.display = 'none';
       
       // Show relevant fields based on role
-      if (role === 'Parent' || role === 'Caregiver' || role === 'AdoptiveParent') {
+      if (role === 'parent' || role === 'caregiver' || role === 'adoptive_parent') {
         individualFields.style.display = 'block';
-      } else if (role === 'ABATherapist') {
-        abaFields.style.display = 'block';
+        relationshipFields.style.display = 'block';
+        additionalFields.style.display = 'block';
+        
+        if (role === 'caregiver') {
+          caregiverFields.style.display = 'block';
+        }
+      } else if (role === 'therapist') {
+        individualFields.style.display = 'block';
+        therapistFields.style.display = 'block';
+        additionalFields.style.display = 'block';
+      } else if (role === 'user') {
+        additionalFields.style.display = 'block';
       }
     });
 
@@ -257,8 +354,32 @@
         return;
       }
       
+      // Map form fields to backend schema
+      const registrationData = {
+        email: userData.email,
+        password: userData.password,
+        fullName: userData.fullName,
+        phoneNumber: userData.phone,
+        role: userData.role,
+        // Role-specific fields
+        relationshipToRunner: userData.relationshipToRunner,
+        licenseNumber: userData.licenseNumber,
+        organization: userData.organization,
+        credentials: userData.credentials,
+        specialization: userData.specialization,
+        yearsOfExperience: userData.yearsOfExperience,
+        // Common fields
+        address: userData.address,
+        city: userData.city,
+        state: userData.state,
+        zipCode: userData.zipCode,
+        emergencyContactName: userData.emergencyContactName,
+        emergencyContactPhone: userData.emergencyContactPhone,
+        emergencyContactRelationship: userData.emergencyContactRelationship
+      };
+      
       // Use universal authentication handler
-      await handleRegister(userData);
+      await handleRegister(registrationData);
     });
 
     function showMessage(message, type) {

@@ -98,6 +98,9 @@ const LoginPage = () => {
               required
               placeholder="Enter your password"
             />
+            <div className="forgot-password-link">
+              <Link to="/forgot-password">Forgot your password?</Link>
+            </div>
           </div>
           <button 
             type="submit" 

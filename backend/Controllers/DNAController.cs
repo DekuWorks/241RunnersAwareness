@@ -5,355 +5,363 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using _241RunnersAwareness.BackendAPI.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using _241RunnersAwareness.BackendAPI.DBContext.Data;
+using _241RunnersAwareness.BackendAPI.DBContext.Models;
+using System.Security.Claims;
 
 namespace _241RunnersAwareness.BackendAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public class DNAController : ControllerBase
     {
+        private readonly RunnersDbContext _context;
         private readonly ILogger<DNAController> _logger;
-        private readonly IDNAService _dnaService;
 
-        public DNAController(ILogger<DNAController> logger, IDNAService dnaService)
+        public DNAController(RunnersDbContext context, ILogger<DNAController> logger)
         {
+            _context = context;
             _logger = logger;
-            _dnaService = dnaService;
         }
 
         /// <summary>
-        /// Store DNA sample for an individual
+        /// Get all DNA reports
         /// </summary>
-        [HttpPost("store")]
-        [Authorize(Roles = "Admin,LawEnforcement")]
-        public async Task<IActionResult> StoreDNASample([FromBody] StoreDNASampleRequest request)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<DNAReport>>> GetDNAReports()
         {
             try
             {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
+                var reports = await _context.DNAReports
+                    .Include(r => r.Reporter)
+                    .Include(r => r.Individual)
+                    .OrderByDescending(r => r.CreatedAt)
+                    .ToListAsync();
 
-                var success = await _dnaService.StoreDNASampleAsync(
-                    request.IndividualId,
-                    request.DNASequence,
-                    request.SampleType,
-                    request.LabReference);
+                return Ok(reports);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving DNA reports");
+                return StatusCode(500, "An error occurred while retrieving DNA reports");
+            }
+        }
 
-                if (success)
+        /// <summary>
+        /// Get DNA report by ID
+        /// </summary>
+        [HttpGet("{id}")]
+        public async Task<ActionResult<DNAReport>> GetDNAReport(Guid id)
+        {
+            try
+            {
+                var report = await _context.DNAReports
+                    .Include(r => r.Reporter)
+                    .Include(r => r.Individual)
+                    .FirstOrDefaultAsync(r => r.ReportId == id);
+
+                if (report == null)
                 {
-                    return Ok(new
-                    {
-                        Success = true,
-                        Message = "DNA sample stored successfully",
-                        IndividualId = request.IndividualId,
-                        SampleType = request.SampleType,
-                        LabReference = request.LabReference,
-                        StoredAt = DateTime.UtcNow
-                    });
+                    return NotFound("DNA report not found");
                 }
-                else
+
+                return Ok(report);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving DNA report {ReportId}", id);
+                return StatusCode(500, "An error occurred while retrieving the DNA report");
+            }
+        }
+
+        /// <summary>
+        /// Get DNA reports by individual ID
+        /// </summary>
+        [HttpGet("individual/{individualId}")]
+        public async Task<ActionResult<IEnumerable<DNAReport>>> GetDNAReportsByIndividual(int individualId)
+        {
+            try
+            {
+                var reports = await _context.DNAReports
+                    .Include(r => r.Reporter)
+                    .Include(r => r.Individual)
+                    .Where(r => r.IndividualId == individualId)
+                    .OrderByDescending(r => r.CreatedAt)
+                    .ToListAsync();
+
+                return Ok(reports);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving DNA reports for individual {IndividualId}", individualId);
+                return StatusCode(500, "An error occurred while retrieving DNA reports");
+            }
+        }
+
+        /// <summary>
+        /// Create a new DNA report
+        /// </summary>
+        [HttpPost]
+        public async Task<ActionResult<DNAReport>> CreateDNAReport([FromBody] CreateDNAReportRequest request)
+        {
+            try
+            {
+                // Get current user ID from claims
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
                 {
-                    return BadRequest(new
-                    {
-                        Success = false,
-                        Message = "Failed to store DNA sample. Please verify the DNA sequence format."
-                    });
+                    return Unauthorized("User not authenticated");
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Failed to store DNA sample for individual {request.IndividualId}");
-                return StatusCode(500, new { Error = "Internal server error" });
-            }
-        }
 
-        /// <summary>
-        /// Get DNA sample for an individual
-        /// </summary>
-        [HttpGet("sample/{individualId}")]
-        [Authorize(Roles = "Admin,LawEnforcement")]
-        public async Task<IActionResult> GetDNASample(int individualId)
-        {
-            try
-            {
-                var dnaSample = await _dnaService.GetDNASampleAsync(individualId);
-
-                if (dnaSample == null)
-                    return NotFound(new { Error = "No DNA sample found for this individual" });
-
-                return Ok(new
+                // Verify individual exists
+                var individual = await _context.Individuals.FindAsync(request.IndividualId);
+                if (individual == null)
                 {
-                    IndividualId = individualId,
-                    DNASequence = dnaSample,
-                    RetrievedAt = DateTime.UtcNow
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Failed to retrieve DNA sample for individual {individualId}");
-                return StatusCode(500, new { Error = "Internal server error" });
-            }
-        }
+                    return BadRequest("Individual not found");
+                }
 
-        /// <summary>
-        /// Compare two DNA samples
-        /// </summary>
-        [HttpPost("compare")]
-        [Authorize(Roles = "Admin,LawEnforcement")]
-        public async Task<IActionResult> CompareDNASamples([FromBody] CompareDNASamplesRequest request)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-
-                var isMatch = await _dnaService.CompareDNASamplesAsync(
-                    request.Sample1,
-                    request.Sample2);
-
-                return Ok(new
+                var report = new DNAReport
                 {
-                    IsMatch = isMatch,
-                    Sample1Length = request.Sample1.Length,
-                    Sample2Length = request.Sample2.Length,
-                    ComparedAt = DateTime.UtcNow
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to compare DNA samples");
-                return StatusCode(500, new { Error = "Internal server error" });
-            }
-        }
-
-        /// <summary>
-        /// Search for individuals by DNA sequence
-        /// </summary>
-        [HttpPost("search")]
-        [Authorize(Roles = "Admin,LawEnforcement")]
-        public async Task<IActionResult> SearchByDNA([FromBody] SearchByDNARequest request)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-
-                var matches = await _dnaService.SearchByDNAAsync(request.DNASequence);
-
-                return Ok(new
-                {
+                    ReportId = Guid.NewGuid(),
+                    ReporterUserId = userId,
+                    IndividualId = request.IndividualId,
+                    ReportTitle = request.ReportTitle,
+                    Description = request.Description,
+                    ReportDate = request.ReportDate ?? DateTime.UtcNow,
+                    Location = request.Location,
+                    Status = "Active",
+                    DNASampleDescription = request.DNASampleDescription,
+                    DNASampleType = request.DNASampleType,
+                    DNASampleLocation = request.DNASampleLocation,
+                    DNASampleCollectionDate = request.DNASampleCollectionDate,
+                    DNALabReference = request.DNALabReference,
                     DNASequence = request.DNASequence,
-                    SequenceLength = request.DNASequence.Length,
-                    MatchesFound = matches.Count,
-                    Matches = matches,
-                    SearchedAt = DateTime.UtcNow
-                });
+                    DNASampleCollected = request.DNASampleCollected,
+                    DNASampleProcessed = request.DNASampleProcessed,
+                    DNASampleMatched = request.DNASampleMatched,
+                    WeatherConditions = request.WeatherConditions,
+                    ClothingDescription = request.ClothingDescription,
+                    PhysicalDescription = request.PhysicalDescription,
+                    BehaviorDescription = request.BehaviorDescription,
+                    WitnessName = request.WitnessName,
+                    WitnessPhone = request.WitnessPhone,
+                    WitnessEmail = request.WitnessEmail,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.DNAReports.Add(report);
+                await _context.SaveChangesAsync();
+
+                // Return the created report with navigation properties
+                var createdReport = await _context.DNAReports
+                    .Include(r => r.Reporter)
+                    .Include(r => r.Individual)
+                    .FirstAsync(r => r.ReportId == report.ReportId);
+
+                return CreatedAtAction(nameof(GetDNAReport), new { id = report.ReportId }, createdReport);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to search by DNA");
-                return StatusCode(500, new { Error = "Internal server error" });
+                _logger.LogError(ex, "Error creating DNA report");
+                return StatusCode(500, "An error occurred while creating the DNA report");
             }
         }
 
         /// <summary>
-        /// Validate DNA sequence format
+        /// Update DNA report
         /// </summary>
-        [HttpPost("validate")]
-        public async Task<IActionResult> ValidateDNASequence([FromBody] ValidateDNARequest request)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateDNAReport(Guid id, [FromBody] UpdateDNAReportRequest request)
         {
             try
             {
-                var isValid = await _dnaService.ValidateDNASequenceAsync(request.DNASequence);
-
-                return Ok(new
+                var report = await _context.DNAReports.FindAsync(id);
+                if (report == null)
                 {
-                    DNASequence = request.DNASequence,
-                    IsValid = isValid,
-                    SequenceLength = request.DNASequence.Length,
-                    ValidatedAt = DateTime.UtcNow
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to validate DNA sequence");
-                return StatusCode(500, new { Error = "Internal server error" });
-            }
-        }
-
-        /// <summary>
-        /// Generate DNA report for an individual
-        /// </summary>
-        [HttpGet("report/{individualId}")]
-        [Authorize(Roles = "Admin,LawEnforcement")]
-        public async Task<IActionResult> GenerateDNAReport(int individualId)
-        {
-            try
-            {
-                var report = await _dnaService.GenerateDNAReportAsync(individualId);
-
-                return Ok(new
-                {
-                    IndividualId = individualId,
-                    Report = report,
-                    GeneratedAt = DateTime.UtcNow
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Failed to generate DNA report for individual {individualId}");
-                return StatusCode(500, new { Error = "Internal server error" });
-            }
-        }
-
-        /// <summary>
-        /// Export DNA data to NAMUS
-        /// </summary>
-        [HttpPost("export/namus/{individualId}")]
-        [Authorize(Roles = "Admin,LawEnforcement")]
-        public async Task<IActionResult> ExportToNAMUS(int individualId)
-        {
-            try
-            {
-                var success = await _dnaService.ExportToNAMUSAsync(individualId);
-
-                if (success)
-                {
-                    return Ok(new
-                    {
-                        Success = true,
-                        Message = "DNA data exported to NAMUS successfully",
-                        IndividualId = individualId,
-                        ExportedAt = DateTime.UtcNow
-                    });
+                    return NotFound("DNA report not found");
                 }
-                else
-                {
-                    return BadRequest(new
-                    {
-                        Success = false,
-                        Message = "Failed to export DNA data to NAMUS"
-                    });
-                }
+
+                // Update fields
+                if (!string.IsNullOrEmpty(request.ReportTitle))
+                    report.ReportTitle = request.ReportTitle;
+                
+                if (!string.IsNullOrEmpty(request.Description))
+                    report.Description = request.Description;
+                
+                if (!string.IsNullOrEmpty(request.Location))
+                    report.Location = request.Location;
+                
+                if (!string.IsNullOrEmpty(request.Status))
+                    report.Status = request.Status;
+                
+                if (!string.IsNullOrEmpty(request.DNASampleDescription))
+                    report.DNASampleDescription = request.DNASampleDescription;
+                
+                if (!string.IsNullOrEmpty(request.DNASampleType))
+                    report.DNASampleType = request.DNASampleType;
+                
+                if (!string.IsNullOrEmpty(request.DNASampleLocation))
+                    report.DNASampleLocation = request.DNASampleLocation;
+                
+                if (request.DNASampleCollectionDate.HasValue)
+                    report.DNASampleCollectionDate = request.DNASampleCollectionDate;
+                
+                if (!string.IsNullOrEmpty(request.DNALabReference))
+                    report.DNALabReference = request.DNALabReference;
+                
+                if (!string.IsNullOrEmpty(request.DNASequence))
+                    report.DNASequence = request.DNASequence;
+                
+                report.DNASampleCollected = request.DNASampleCollected ?? report.DNASampleCollected;
+                report.DNASampleProcessed = request.DNASampleProcessed ?? report.DNASampleProcessed;
+                report.DNASampleMatched = request.DNASampleMatched ?? report.DNASampleMatched;
+                
+                if (!string.IsNullOrEmpty(request.WeatherConditions))
+                    report.WeatherConditions = request.WeatherConditions;
+                
+                if (!string.IsNullOrEmpty(request.ClothingDescription))
+                    report.ClothingDescription = request.ClothingDescription;
+                
+                if (!string.IsNullOrEmpty(request.PhysicalDescription))
+                    report.PhysicalDescription = request.PhysicalDescription;
+                
+                if (!string.IsNullOrEmpty(request.BehaviorDescription))
+                    report.BehaviorDescription = request.BehaviorDescription;
+                
+                if (!string.IsNullOrEmpty(request.WitnessName))
+                    report.WitnessName = request.WitnessName;
+                
+                if (!string.IsNullOrEmpty(request.WitnessPhone))
+                    report.WitnessPhone = request.WitnessPhone;
+                
+                if (!string.IsNullOrEmpty(request.WitnessEmail))
+                    report.WitnessEmail = request.WitnessEmail;
+                
+                if (!string.IsNullOrEmpty(request.ResolutionNotes))
+                    report.ResolutionNotes = request.ResolutionNotes;
+                
+                if (!string.IsNullOrEmpty(request.ResolvedBy))
+                    report.ResolvedBy = request.ResolvedBy;
+                
+                if (request.ResolutionDate.HasValue)
+                    report.ResolutionDate = request.ResolutionDate;
+                
+                report.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                return NoContent();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Failed to export DNA to NAMUS for individual {individualId}");
-                return StatusCode(500, new { Error = "Internal server error" });
+                _logger.LogError(ex, "Error updating DNA report {ReportId}", id);
+                return StatusCode(500, "An error occurred while updating the DNA report");
             }
         }
 
         /// <summary>
-        /// Export DNA data to CODIS
+        /// Delete DNA report
         /// </summary>
-        [HttpPost("export/codis/{individualId}")]
-        [Authorize(Roles = "Admin,LawEnforcement")]
-        public async Task<IActionResult> ExportToCODIS(int individualId)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteDNAReport(Guid id)
         {
             try
             {
-                var success = await _dnaService.ExportToCODISAsync(individualId);
+                var report = await _context.DNAReports.FindAsync(id);
+                if (report == null)
+                {
+                    return NotFound("DNA report not found");
+                }
 
-                if (success)
-                {
-                    return Ok(new
-                    {
-                        Success = true,
-                        Message = "DNA data exported to CODIS successfully",
-                        IndividualId = individualId,
-                        ExportedAt = DateTime.UtcNow
-                    });
-                }
-                else
-                {
-                    return BadRequest(new
-                    {
-                        Success = false,
-                        Message = "Failed to export DNA data to CODIS"
-                    });
-                }
+                _context.DNAReports.Remove(report);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Failed to export DNA to CODIS for individual {individualId}");
-                return StatusCode(500, new { Error = "Internal server error" });
+                _logger.LogError(ex, "Error deleting DNA report {ReportId}", id);
+                return StatusCode(500, "An error occurred while deleting the DNA report");
             }
         }
 
         /// <summary>
-        /// Get DNA lab partners
+        /// Get DNA reports by status
         /// </summary>
-        [HttpGet("labs")]
-        public async Task<IActionResult> GetDNALabPartners()
+        [HttpGet("status/{status}")]
+        public async Task<ActionResult<IEnumerable<DNAReport>>> GetDNAReportsByStatus(string status)
         {
             try
             {
-                var labs = await _dnaService.GetDNALabPartnersAsync();
+                var reports = await _context.DNAReports
+                    .Include(r => r.Reporter)
+                    .Include(r => r.Individual)
+                    .Where(r => r.Status == status)
+                    .OrderByDescending(r => r.CreatedAt)
+                    .ToListAsync();
 
-                return Ok(new
-                {
-                    LabPartners = labs,
-                    RetrievedAt = DateTime.UtcNow
-                });
+                return Ok(reports);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to get DNA lab partners");
-                return StatusCode(500, new { Error = "Internal server error" });
-            }
-        }
-
-        /// <summary>
-        /// Get DNA statistics
-        /// </summary>
-        [HttpGet("statistics")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetDNAStatistics()
-        {
-            try
-            {
-                var statistics = await _dnaService.GetDNAStatisticsAsync();
-
-                return Ok(new
-                {
-                    Statistics = statistics,
-                    RetrievedAt = DateTime.UtcNow
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to get DNA statistics");
-                return StatusCode(500, new { Error = "Internal server error" });
+                _logger.LogError(ex, "Error retrieving DNA reports by status {Status}", status);
+                return StatusCode(500, "An error occurred while retrieving DNA reports");
             }
         }
     }
 
-    #region Request Models
-
-    public class StoreDNASampleRequest
+    // Request DTOs
+    public class CreateDNAReportRequest
     {
         public int IndividualId { get; set; }
-        public string DNASequence { get; set; }
-        public string SampleType { get; set; }
-        public string LabReference { get; set; }
+        public string ReportTitle { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public DateTime? ReportDate { get; set; }
+        public string Location { get; set; } = string.Empty;
+        public string? DNASampleDescription { get; set; }
+        public string? DNASampleType { get; set; }
+        public string? DNASampleLocation { get; set; }
+        public DateTime? DNASampleCollectionDate { get; set; }
+        public string? DNALabReference { get; set; }
+        public string? DNASequence { get; set; }
+        public bool DNASampleCollected { get; set; } = false;
+        public bool DNASampleProcessed { get; set; } = false;
+        public bool DNASampleMatched { get; set; } = false;
+        public string? WeatherConditions { get; set; }
+        public string? ClothingDescription { get; set; }
+        public string? PhysicalDescription { get; set; }
+        public string? BehaviorDescription { get; set; }
+        public string? WitnessName { get; set; }
+        public string? WitnessPhone { get; set; }
+        public string? WitnessEmail { get; set; }
     }
 
-    public class CompareDNASamplesRequest
+    public class UpdateDNAReportRequest
     {
-        public string Sample1 { get; set; }
-        public string Sample2 { get; set; }
+        public string? ReportTitle { get; set; }
+        public string? Description { get; set; }
+        public string? Location { get; set; }
+        public string? Status { get; set; }
+        public string? DNASampleDescription { get; set; }
+        public string? DNASampleType { get; set; }
+        public string? DNASampleLocation { get; set; }
+        public DateTime? DNASampleCollectionDate { get; set; }
+        public string? DNALabReference { get; set; }
+        public string? DNASequence { get; set; }
+        public bool? DNASampleCollected { get; set; }
+        public bool? DNASampleProcessed { get; set; }
+        public bool? DNASampleMatched { get; set; }
+        public string? WeatherConditions { get; set; }
+        public string? ClothingDescription { get; set; }
+        public string? PhysicalDescription { get; set; }
+        public string? BehaviorDescription { get; set; }
+        public string? WitnessName { get; set; }
+        public string? WitnessPhone { get; set; }
+        public string? WitnessEmail { get; set; }
+        public string? ResolutionNotes { get; set; }
+        public string? ResolvedBy { get; set; }
+        public DateTime? ResolutionDate { get; set; }
     }
-
-    public class SearchByDNARequest
-    {
-        public string DNASequence { get; set; }
-    }
-
-    public class ValidateDNARequest
-    {
-        public string DNASequence { get; set; }
-    }
-
-    #endregion
 } 

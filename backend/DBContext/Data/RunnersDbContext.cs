@@ -13,6 +13,7 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Data
         public DbSet<Individual> Individuals { get; set; }
         public DbSet<EmergencyContact> EmergencyContacts { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<DNAReport> DNAReports { get; set; }
 
         // New E-commerce Models
         public DbSet<Product> Products { get; set; }
@@ -101,6 +102,52 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Data
                     .WithOne(e => e.Individual)
                     .HasForeignKey(e => e.IndividualId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // User Configuration
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(e => e.UserId);
+                entity.Property(e => e.Username).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.FullName).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.PhoneNumber).HasMaxLength(20);
+                entity.Property(e => e.PasswordHash).IsRequired();
+                entity.Property(e => e.Role).IsRequired().HasMaxLength(20);
+                entity.Property(e => e.EmailVerificationToken).HasMaxLength(100);
+                entity.Property(e => e.PhoneVerificationCode).HasMaxLength(10);
+                entity.Property(e => e.PasswordResetToken).HasMaxLength(100);
+                entity.Property(e => e.RefreshToken).HasMaxLength(500);
+                entity.Property(e => e.TwoFactorSecret).HasMaxLength(100);
+                entity.Property(e => e.TwoFactorBackupCodes).HasMaxLength(1000);
+                
+                // Role-specific fields
+                entity.Property(e => e.RelationshipToRunner).HasMaxLength(100);
+                entity.Property(e => e.LicenseNumber).HasMaxLength(100);
+                entity.Property(e => e.Organization).HasMaxLength(200);
+                entity.Property(e => e.Credentials).HasMaxLength(200);
+                entity.Property(e => e.Specialization).HasMaxLength(200);
+                entity.Property(e => e.YearsOfExperience).HasMaxLength(50);
+                entity.Property(e => e.Address).HasMaxLength(200);
+                entity.Property(e => e.City).HasMaxLength(100);
+                entity.Property(e => e.State).HasMaxLength(50);
+                entity.Property(e => e.ZipCode).HasMaxLength(20);
+                entity.Property(e => e.EmergencyContactName).HasMaxLength(100);
+                entity.Property(e => e.EmergencyContactPhone).HasMaxLength(20);
+                entity.Property(e => e.EmergencyContactRelationship).HasMaxLength(100);
+
+                // Performance: Add indexes for frequently queried fields
+                entity.HasIndex(e => e.Email).IsUnique().HasDatabaseName("IX_Users_Email");
+                entity.HasIndex(e => e.Username).IsUnique().HasDatabaseName("IX_Users_Username");
+                entity.HasIndex(e => e.Role).HasDatabaseName("IX_Users_Role");
+                entity.HasIndex(e => e.IsActive).HasDatabaseName("IX_Users_IsActive");
+                entity.HasIndex(e => e.CreatedAt).HasDatabaseName("IX_Users_CreatedAt");
+
+                // Relationships
+                entity.HasOne(e => e.Individual)
+                    .WithMany()
+                    .HasForeignKey(e => e.IndividualId)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             // EmergencyContact Configuration
@@ -291,6 +338,56 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Data
                 entity.Property(e => e.DocumentType).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Description).HasMaxLength(500);
                 entity.Property(e => e.UploadedBy).HasMaxLength(100);
+            });
+
+            // DNAReport Configuration
+            modelBuilder.Entity<DNAReport>(entity =>
+            {
+                entity.HasKey(e => e.ReportId);
+                entity.Property(e => e.ReportTitle).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Description).IsRequired().HasMaxLength(1000);
+                entity.Property(e => e.Location).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Status).HasMaxLength(50);
+                
+                // DNA Sample fields
+                entity.Property(e => e.DNASampleDescription).HasMaxLength(500);
+                entity.Property(e => e.DNASampleType).HasMaxLength(100);
+                entity.Property(e => e.DNASampleLocation).HasMaxLength(100);
+                entity.Property(e => e.DNALabReference).HasMaxLength(100);
+                entity.Property(e => e.DNASequence).HasMaxLength(50);
+                
+                // Additional details
+                entity.Property(e => e.WeatherConditions).HasMaxLength(100);
+                entity.Property(e => e.ClothingDescription).HasMaxLength(100);
+                entity.Property(e => e.PhysicalDescription).HasMaxLength(100);
+                entity.Property(e => e.BehaviorDescription).HasMaxLength(100);
+                
+                // Contact information
+                entity.Property(e => e.WitnessName).HasMaxLength(100);
+                entity.Property(e => e.WitnessPhone).HasMaxLength(20);
+                entity.Property(e => e.WitnessEmail).HasMaxLength(100);
+                
+                // Resolution
+                entity.Property(e => e.ResolutionNotes).HasMaxLength(500);
+                entity.Property(e => e.ResolvedBy).HasMaxLength(100);
+
+                // Performance: Add indexes for frequently queried fields
+                entity.HasIndex(e => e.Status).HasDatabaseName("IX_DNAReports_Status");
+                entity.HasIndex(e => e.ReportDate).HasDatabaseName("IX_DNAReports_ReportDate");
+                entity.HasIndex(e => e.IndividualId).HasDatabaseName("IX_DNAReports_IndividualId");
+                entity.HasIndex(e => e.ReporterUserId).HasDatabaseName("IX_DNAReports_ReporterUserId");
+                entity.HasIndex(e => e.CreatedAt).HasDatabaseName("IX_DNAReports_CreatedAt");
+
+                // Relationships
+                entity.HasOne(e => e.Reporter)
+                    .WithMany()
+                    .HasForeignKey(e => e.ReporterUserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Individual)
+                    .WithMany()
+                    .HasForeignKey(e => e.IndividualId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

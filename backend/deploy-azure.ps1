@@ -38,18 +38,18 @@ function Invoke-AzureCLI {
     
     $azPath = Find-AzureCLI
     if (-not $azPath) {
-        Write-Error "Azure CLI not found. Please install Azure CLI first."
-        exit 1
-    }
-    
+    Write-Error "Azure CLI not found. Please install Azure CLI first."
+    exit 1
+}
+
     Write-Host "Executing: $azPath $Arguments"
     $result = & $azPath $Arguments.Split(' ')
     
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Azure CLI command failed: $Arguments"
-        exit 1
-    }
-    
+    exit 1
+}
+
     return $result
 }
 
@@ -202,7 +202,7 @@ function Deploy-AzureApplication {
     
     # Build the application
     Write-Host "📦 Building application..."
-    dotnet publish -c Release -o ./publish
+        dotnet publish -c Release -o ./publish
     
     if ($LASTEXITCODE -ne 0) {
         Write-Error "❌ Build failed"
@@ -245,8 +245,8 @@ function Invoke-AzureDatabaseMigration {
 function Test-AzureDeployment {
     Write-Host "🔍 Verifying deployment"
     
-    $appUrl = "https://$AppServiceName.azurewebsites.net"
-    
+$appUrl = "https://$AppServiceName.azurewebsites.net"
+
     Write-Host "🌐 App Service URL: $appUrl"
     Write-Host "📚 Swagger UI: $appUrl/swagger"
     Write-Host "❤️ Health Check: $appUrl/health"
