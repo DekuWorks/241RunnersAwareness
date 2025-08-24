@@ -49,6 +49,12 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System.Threading.RateLimiting;
 
+// Logging and monitoring imports
+using Serilog;
+using Serilog.Events;
+using Sentry;
+using Sentry.AspNetCore;
+
 namespace _241RunnersAwareness.BackendAPI
 {
     /**
@@ -71,20 +77,65 @@ namespace _241RunnersAwareness.BackendAPI
         {
             // 
             // ============================================
-            // APPLICATION BUILDER CONFIGURATION
+            // LOGGING CONFIGURATION
             // ============================================
             
-            // Create web application builder with development environment
-            var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+            // Configure Serilog for structured logging
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+                .Enrich.FromLogContext()
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+                .WriteTo.File("logs/app-.txt", 
+                    rollingInterval: RollingInterval.Day,
+                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}",
+                    retainedFileCountLimit: 30,
+                    fileSizeLimitBytes: 10 * 1024 * 1024) // 10MB
+                // TODO: Configure Sentry sink properly
+                // .WriteTo.Sentry(o =>
+                // {
+                //     o.Dsn = "https://your-sentry-dsn@your-sentry-instance.ingest.sentry.io/your-project-id"; // Replace with actual Sentry DSN
+                //     o.Environment = "development";
+                //     o.Release = "241runners-awareness@1.0.0";
+                //     o.TracesSampleRate = 1.0;
+                //     o.SendDefaultPii = false;
+                // })
+                .CreateLogger();
+
+            try
             {
-                Args = args,
-                EnvironmentName = Environments.Development // Use Development environment
-            });
+                Log.Information("Starting 241 Runners Awareness API");
+                
+                // 
+                // ============================================
+                // APPLICATION BUILDER CONFIGURATION
+                // ============================================
+                
+                // Create web application builder with development environment
+                var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+                {
+                    Args = args,
+                    EnvironmentName = Environments.Development // Use Development environment
+                });
 
             // 
             // ============================================
             // CORE SERVICES REGISTRATION
             // ============================================
+            
+            // Add Serilog to the application
+            builder.Host.UseSerilog();
+            
+            // Add Sentry to the application
+            builder.WebHost.UseSentry(options =>
+            {
+                options.Dsn = "https://your-sentry-dsn@your-sentry-instance.ingest.sentry.io/your-project-id"; // Replace with actual Sentry DSN
+                options.Environment = "development";
+                options.Release = "241runners-awareness@1.0.0";
+                options.TracesSampleRate = 1.0;
+                options.SendDefaultPii = false;
+            });
             
             // Add MVC controllers for API endpoints
             builder.Services.AddControllers();
@@ -359,6 +410,15 @@ namespace _241RunnersAwareness.BackendAPI
             
             // Start the web application
             app.Run();
+        }
+        catch (Exception ex)
+        {
+            Log.Fatal(ex, "Application terminated unexpectedly");
+        }
+        finally
+        {
+            Log.CloseAndFlush();
+        }
         }
     }
 }

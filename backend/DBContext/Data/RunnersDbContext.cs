@@ -27,6 +27,11 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Data
         public DbSet<CaseImage> CaseImages { get; set; }
         public DbSet<CaseDocument> CaseDocuments { get; set; }
 
+        // New Case Management Models
+        public DbSet<Case> Cases { get; set; }
+        public DbSet<CaseUpdate> CaseUpdates { get; set; }
+        public DbSet<CaseUpdateMedia> CaseUpdateMedia { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -338,6 +343,119 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Data
                 entity.Property(e => e.DocumentType).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Description).HasMaxLength(500);
                 entity.Property(e => e.UploadedBy).HasMaxLength(100);
+            });
+
+            // Case Configuration
+            modelBuilder.Entity<Case>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.CaseNumber).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.PublicSlug).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Description).HasMaxLength(2000);
+                entity.Property(e => e.LastSeenLocation).HasMaxLength(500);
+                entity.Property(e => e.Circumstances).HasMaxLength(1000);
+                entity.Property(e => e.Status).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.Priority).HasMaxLength(20);
+                entity.Property(e => e.Category).HasMaxLength(50);
+                entity.Property(e => e.RiskLevel).HasMaxLength(50);
+                entity.Property(e => e.ResolutionNotes).HasMaxLength(500);
+                entity.Property(e => e.LawEnforcementCaseNumber).HasMaxLength(100);
+                entity.Property(e => e.InvestigatingAgency).HasMaxLength(200);
+                entity.Property(e => e.InvestigatorName).HasMaxLength(100);
+                entity.Property(e => e.InvestigatorContact).HasMaxLength(100);
+                entity.Property(e => e.Tags).HasMaxLength(500);
+                entity.Property(e => e.SocialMediaHandles).HasMaxLength(500);
+                entity.Property(e => e.MediaContacts).HasMaxLength(1000);
+                entity.Property(e => e.CreatedBy).HasMaxLength(100);
+                entity.Property(e => e.UpdatedBy).HasMaxLength(100);
+
+                // Performance: Add indexes for frequently queried fields
+                entity.HasIndex(e => e.CaseNumber).IsUnique().HasDatabaseName("IX_Cases_CaseNumber");
+                entity.HasIndex(e => e.PublicSlug).IsUnique().HasDatabaseName("IX_Cases_PublicSlug");
+                entity.HasIndex(e => e.OwnerUserId).HasDatabaseName("IX_Cases_OwnerUserId");
+                entity.HasIndex(e => e.Status).HasDatabaseName("IX_Cases_Status");
+                entity.HasIndex(e => e.IsPublic).HasDatabaseName("IX_Cases_IsPublic");
+                entity.HasIndex(e => e.IsActive).HasDatabaseName("IX_Cases_IsActive");
+                entity.HasIndex(e => e.CreatedAt).HasDatabaseName("IX_Cases_CreatedAt");
+                entity.HasIndex(e => e.LastUpdatedAt).HasDatabaseName("IX_Cases_LastUpdatedAt");
+
+                // Relationships
+                entity.HasOne(e => e.Individual)
+                    .WithMany()
+                    .HasForeignKey(e => e.IndividualId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.OwnerUser)
+                    .WithMany()
+                    .HasForeignKey(e => e.OwnerUserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasMany(e => e.Updates)
+                    .WithOne(e => e.Case)
+                    .HasForeignKey(e => e.CaseId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Note: Images, Documents, and EmergencyContacts are managed through the Individual entity
+                // The Case entity references the Individual but doesn't directly manage these collections
+            });
+
+            // CaseUpdate Configuration
+            modelBuilder.Entity<CaseUpdate>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.UpdateType).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Content).IsRequired().HasMaxLength(2000);
+                entity.Property(e => e.Location).HasMaxLength(500);
+                entity.Property(e => e.CreatedBy).HasMaxLength(100);
+                entity.Property(e => e.UpdatedBy).HasMaxLength(100);
+
+                // Performance: Add indexes for frequently queried fields
+                entity.HasIndex(e => e.CaseId).HasDatabaseName("IX_CaseUpdates_CaseId");
+                entity.HasIndex(e => e.CreatedByUserId).HasDatabaseName("IX_CaseUpdates_CreatedByUserId");
+                entity.HasIndex(e => e.UpdateType).HasDatabaseName("IX_CaseUpdates_UpdateType");
+                entity.HasIndex(e => e.IsPublic).HasDatabaseName("IX_CaseUpdates_IsPublic");
+                entity.HasIndex(e => e.CreatedAt).HasDatabaseName("IX_CaseUpdates_CreatedAt");
+
+                // Relationships
+                entity.HasOne(e => e.Case)
+                    .WithMany(e => e.Updates)
+                    .HasForeignKey(e => e.CaseId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.CreatedByUser)
+                    .WithMany()
+                    .HasForeignKey(e => e.CreatedByUserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasMany(e => e.Media)
+                    .WithOne(e => e.CaseUpdate)
+                    .HasForeignKey(e => e.CaseUpdateId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // CaseUpdateMedia Configuration
+            modelBuilder.Entity<CaseUpdateMedia>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.MediaType).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.MediaUrl).IsRequired().HasMaxLength(500);
+                entity.Property(e => e.OriginalFilename).HasMaxLength(200);
+                entity.Property(e => e.MimeType).HasMaxLength(100);
+                entity.Property(e => e.Description).HasMaxLength(500);
+                entity.Property(e => e.UploadedBy).HasMaxLength(100);
+
+                // Performance: Add indexes for frequently queried fields
+                entity.HasIndex(e => e.CaseUpdateId).HasDatabaseName("IX_CaseUpdateMedia_CaseUpdateId");
+                entity.HasIndex(e => e.MediaType).HasDatabaseName("IX_CaseUpdateMedia_MediaType");
+                entity.HasIndex(e => e.CreatedAt).HasDatabaseName("IX_CaseUpdateMedia_CreatedAt");
+
+                // Relationships
+                entity.HasOne(e => e.CaseUpdate)
+                    .WithMany(e => e.Media)
+                    .HasForeignKey(e => e.CaseUpdateId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // DNAReport Configuration

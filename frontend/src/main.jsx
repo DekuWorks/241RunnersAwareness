@@ -42,6 +42,8 @@ import { GOOGLE_CLIENT_ID } from './config/api';
 
 // SEO management
 import { HelmetProvider } from 'react-helmet-async';
+import * as Sentry from "@sentry/react";
+import { BrowserTracing } from "@sentry/tracing";
 
 /**
  * Service Worker Registration
@@ -77,6 +79,26 @@ if ('serviceWorker' in navigator) {
  * - HelmetProvider: Manages SEO meta tags and document head
  * - App Component: Main application with routing and layout
  */
+
+// Initialize Sentry for error monitoring
+Sentry.init({
+  dsn: "https://your-sentry-dsn@your-sentry-instance.ingest.sentry.io/your-project-id", // Replace with actual Sentry DSN
+  integrations: [
+    new BrowserTracing({
+      tracePropagationTargets: ["localhost", "241runnersawareness.org", /^\//],
+    }),
+  ],
+  // Performance Monitoring
+  tracesSampleRate: 1.0,
+  // Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0,
+  // Environment
+  environment: import.meta.env.MODE,
+  // Release tracking
+  release: "241runners-awareness@1.0.0",
+});
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
