@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>241 Runners Awareness - Admin Portal</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-welcome {
+            text-align: center;
+            padding: 50px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .admin-welcome h1 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        .admin-welcome p {
+            margin-bottom: 30px;
+            color: var(--text-color);
+        }
+        .admin-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .admin-btn {
+            padding: 12px 24px;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        .admin-btn:hover {
+            background: var(--primary-dark);
+        }
+        .admin-btn.secondary {
+            background: var(--secondary-color);
+        }
+        .admin-btn.secondary:hover {
+            background: var(--secondary-dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-welcome">
+        <h1>🔐 241 Runners Awareness - Admin Portal</h1>
+        <p>Welcome to the administrative dashboard for 241 Runners Awareness. This portal provides access to user management, analytics, content management, and system settings.</p>
+        
+        <div class="admin-buttons">
+            <a href="admin-dashboard.html" class="admin-btn">📊 Admin Dashboard</a>
+            <a href="user-management.html" class="admin-btn secondary">👥 User Management</a>
+            <a href="login.html" class="admin-btn secondary">🔑 Login</a>
+        </div>
+        
+        <p style="margin-top: 40px; font-size: 0.9em; color: var(--text-muted);">
+            <strong>Note:</strong> This is the admin portal. For the public website, visit <a href="https://241runnersawareness.org" style="color: var(--primary-color);">241runnersawareness.org</a>
+        </p>
+    </div>
+
+    <script>
+        // Auto-redirect to admin dashboard after 3 seconds
+        setTimeout(() => {
+            window.location.href = 'admin-dashboard.html';
+        }, 3000);
+    </script>
+</body>
+</html>

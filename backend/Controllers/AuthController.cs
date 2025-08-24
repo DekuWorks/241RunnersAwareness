@@ -926,7 +926,6 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                 }
 
                 var user = await _context.Users
-                    .Include(u => u.Individuals)
                     .FirstOrDefaultAsync(u => u.Email == userEmail && u.IsActive);
 
                 if (user == null)

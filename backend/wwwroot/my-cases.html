@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Cases - 241 Runners Awareness</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link rel="stylesheet" href="styles.css?v=20250127a&t=20250127" />
+  <script src="auth-utils.js"></script>
+  <style>
+    /* Cases Container - matches React app layout */
+    .cases-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+      background-color: #f9fafb;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Page Header - matches React app styling */
+    .page-header {
+      margin-bottom: 2rem;
+      text-align: center;
+      width: 100%;
+    }
+
+    .page-header h1 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: #111827;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .page-header p {
+      color: #6b7280;
+      margin: 0;
+    }
+
+    /* Controls Section - matches React app styling */
+    .controls-section {
+      background: white;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      border: 1px solid #e5e7eb;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .controls-row {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 300px;
+      position: relative;
+      max-width: 400px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6b7280;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .filter-group label {
+      font-weight: 600;
+      color: #374151;
+      white-space: nowrap;
+      font-size: 0.875rem;
+    }
+
+    .filter-group select {
+      padding: 0.5rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .filter-group select:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    /* Buttons - matches React app styling */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: 1px solid transparent;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background-color: #2563eb;
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: #1d4ed8;
+    }
+
+    .btn-secondary {
+      background-color: #f3f4f6;
+      color: #374151;
+      border-color: #d1d5db;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background-color: #e5e7eb;
+    }
+
+    .btn-success {
+      background-color: #059669;
+      color: white;
+    }
+
+    .btn-success:hover:not(:disabled) {
+      background-color: #047857;
+    }
+
+    .btn-danger {
+      background-color: #dc2626;
+      color: white;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      background-color: #b91c1c;
+    }
+
+    /* Table - matches React app styling */
+    .cases-table {
+      background: white;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      border: 1px solid #e5e7eb;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .table-header {
+      background-color: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .table-header th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: #374151;
+      font-size: 0.875rem;
+    }
+
+    .table-body tr {
+      border-bottom: 1px solid #e5e7eb;
+      transition: background-color 0.3s ease;
+    }
+
+    .table-body tr:hover {
+      background-color: #f9fafb;
+    }
+
+    .table-body tr:last-child {
+      border-bottom: none;
+    }
+
+    .table-body td {
+      padding: 1rem;
+      color: #374151;
+      font-size: 0.875rem;
+    }
+
+    /* Status Badges - matches React app styling */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .status-badge.active {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-badge.missing {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-badge.resolved {
+      background-color: #dbeafe;
+      color: #1e40af;
+    }
+
+    .status-badge.closed {
+      background-color: #f3f4f6;
+      color: #374151;
+    }
+
+    /* Priority Badges - matches React app styling */
+    .priority-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .priority-badge.low {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+
+    .priority-badge.medium {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+
+    .priority-badge.high {
+      background-color: #fed7aa;
+      color: #c2410c;
+    }
+
+    .priority-badge.critical {
+      background-color: #fecaca;
+      color: #dc2626;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-sm {
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+    }
+
+    /* Empty State - matches React app styling */
+    .empty-state {
+      background: white;
+      border-radius: 0.5rem;
+      padding: 3rem 1.5rem;
+      text-align: center;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      color: #6b7280;
+      margin-bottom: 1rem;
+    }
+
+    .empty-title {
+      font-size: 1.125rem;
+      font-weight: 500;
+      color: #111827;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .empty-description {
+      color: #6b7280;
+      margin: 0 0 1.5rem 0;
+    }
+
+    /* Loading State - matches React app styling */
+    .loading-state {
+      background: white;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+    }
+
+    .loading-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: .5;
+      }
+    }
+
+    .loading-bar {
+      height: 1rem;
+      background-color: #e5e7eb;
+      border-radius: 0.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .loading-bar:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Pagination - matches React app styling */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+      width: 100%;
+    }
+
+    .pagination button {
+      padding: 0.5rem 1rem;
+      border: 1px solid #d1d5db;
+      background: white;
+      color: #374151;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .pagination button:hover:not(:disabled) {
+      background: #f3f4f6;
+    }
+
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .pagination button.active {
+      background: #2563eb;
+      color: white;
+      border-color: #2563eb;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .cases-container {
+        padding: 1rem;
+      }
+
+      .controls-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-box {
+        min-width: auto;
+        max-width: none;
+      }
+
+      .filter-group {
+        justify-content: space-between;
+      }
+
+      .cases-table {
+        font-size: 0.75rem;
+      }
+
+      .table-header th,
+      .table-body td {
+        padding: 0.5rem;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header role="banner">
+    <div class="header-bar">
+      <img src="/241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
+      <h1>241 Runners Awareness</h1>
+    </div>
+
+    <nav role="navigation" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="aboutus.html">About Us</a>
+      <a href="cases.html">Cases</a>
+      <a href="map.html">🗺️ Map</a>
+      <a href="dna-tracking.html">🧬 DNA Tracking</a>
+      <a href="signup.html" id="signupLink">Sign Up</a>
+      <a href="login.html" id="loginLink">Login</a>
+      <a href="dashboard.html" id="dashboardLink" style="display: none;">📊 Dashboard</a>
+      <a href="runner-profile.html?id=1" id="runnerProfileLink" style="display: none;">🏃 Runner Profile</a>
+      <button id="logoutBtn" style="display: none;" class="logout-btn">Logout</button>
+      <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
+      <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
+    </nav>
+    
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
+      ☀️
+    </button>
+    
+    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <main role="main">
+    <div class="cases-container">
+      <div class="page-header">
+        <h1>My Cases</h1>
+        <p>View and manage your missing person cases</p>
+      </div>
+
+      <!-- Controls Section -->
+      <div class="controls-section">
+        <div class="controls-row">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="Search cases..." onkeyup="filterCases()">
+          </div>
+          
+          <div class="filter-group">
+            <label for="statusFilter">Status:</label>
+            <select id="statusFilter" onchange="filterCases()">
+              <option value="">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="missing">Missing</option>
+              <option value="found">Found</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label for="priorityFilter">Priority:</label>
+            <select id="priorityFilter" onchange="filterCases()">
+              <option value="">All Priorities</option>
+              <option value="Critical">Critical</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+          
+          <a href="report-case.html" class="btn btn-primary">📝 Report New Case</a>
+        </div>
+      </div>
+
+      <!-- Cases Table -->
+      <div class="cases-table">
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead class="table-header">
+            <tr>
+              <th>Case</th>
+              <th>Status</th>
+              <th>Priority</th>
+              <th>Created</th>
+              <th>Updates</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody class="table-body" id="casesTableBody">
+            <!-- Cases will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination" id="pagination" style="display: none;">
+        <button onclick="changePage(-1)" id="prevBtn">Previous</button>
+        <span id="pageInfo">Page 1 of 1</span>
+        <button onclick="changePage(1)" id="nextBtn">Next</button>
+      </div>
+    </div>
+  </main>
+
+  <footer role="contentinfo">
+    <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // API Configuration
+    const API_BASE_URL = 'http://localhost:5113/api';
+    
+    let allCases = [];
+    let filteredCases = [];
+    let currentPage = 1;
+    const casesPerPage = 10;
+
+    // Check authentication
+    function checkAuth() {
+      const user = localStorage.getItem('user');
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+    }
+
+    // Load user's cases
+    async function loadCases() {
+      const tableBody = document.getElementById('casesTableBody');
+      tableBody.innerHTML = '<div class="loading"><div class="loading-spinner"></div><p>Loading cases...</p></div>';
+
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = user?.token || user?.accessToken;
+        
+        if (!token) {
+          console.log('No auth token available');
+          loadMockData();
+          return;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/cases/mine`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          allCases = await response.json();
+          filteredCases = [...allCases];
+          renderCases();
+        } else {
+          console.log('Failed to load cases:', response.status);
+          loadMockData();
+        }
+      } catch (error) {
+        console.error('Error loading cases:', error);
+        loadMockData();
+      }
+    }
+
+    // Load mock data for demo
+    function loadMockData() {
+      allCases = [
+        {
+          id: 1,
+          title: "Missing Person - John Doe",
+          description: "John was last seen at the local park on Friday evening. He was wearing a blue jacket and jeans.",
+          status: "active",
+          priority: "High",
+          createdAt: new Date().toISOString(),
+          updatesCount: 3
+        },
+        {
+          id: 2,
+          title: "Missing Person - Jane Smith",
+          description: "Jane disappeared from her home on Saturday morning. She may be heading to the downtown area.",
+          status: "missing",
+          priority: "Critical",
+          createdAt: new Date(Date.now() - 86400000).toISOString(),
+          updatesCount: 1
+        },
+        {
+          id: 3,
+          title: "Missing Person - Mike Johnson",
+          description: "Mike was last seen at the bus station. He was carrying a red backpack.",
+          status: "found",
+          priority: "Medium",
+          createdAt: new Date(Date.now() - 172800000).toISOString(),
+          updatesCount: 5
+        }
+      ];
+      filteredCases = [...allCases];
+      renderCases();
+    }
+
+    // Render cases table
+    function renderCases() {
+      const tableBody = document.getElementById('casesTableBody');
+      
+      if (filteredCases.length === 0) {
+        tableBody.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <h3>No cases found</h3>
+            <p>You haven't reported any cases yet, or no cases match your current filters.</p>
+            <a href="report-case.html" class="btn btn-primary">Report Your First Case</a>
+          </div>
+        `;
+        document.getElementById('pagination').style.display = 'none';
+        return;
+      }
+
+      const startIndex = (currentPage - 1) * casesPerPage;
+      const endIndex = startIndex + casesPerPage;
+      const pageCases = filteredCases.slice(startIndex, endIndex);
+
+      tableBody.innerHTML = pageCases.map(caseItem => `
+        <div class="table-row">
+          <div>
+            <div class="case-title">${caseItem.title}</div>
+            <div class="case-description">${caseItem.description}</div>
+          </div>
+          <div>
+            <span class="status-badge status-${caseItem.status}">${caseItem.status}</span>
+          </div>
+          <div>
+            <span class="priority-badge priority-${caseItem.priority.toLowerCase()}">${caseItem.priority}</span>
+          </div>
+          <div class="date">${new Date(caseItem.createdAt).toLocaleDateString()}</div>
+          <div class="date">${caseItem.updatesCount || 0} updates</div>
+          <div class="actions">
+            <button class="action-btn action-btn-view" onclick="viewCase(${caseItem.id})" title="View Details">👁️</button>
+            <button class="action-btn action-btn-edit" onclick="editCase(${caseItem.id})" title="Edit Case">✏️</button>
+            <button class="action-btn action-btn-delete" onclick="deleteCase(${caseItem.id})" title="Delete Case">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+
+      updatePagination();
+    }
+
+    // Filter cases
+    function filterCases() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const statusFilter = document.getElementById('statusFilter').value;
+      const priorityFilter = document.getElementById('priorityFilter').value;
+
+      filteredCases = allCases.filter(caseItem => {
+        const matchesSearch = caseItem.title.toLowerCase().includes(searchTerm) ||
+                            caseItem.description.toLowerCase().includes(searchTerm);
+        const matchesStatus = !statusFilter || caseItem.status === statusFilter;
+        const matchesPriority = !priorityFilter || caseItem.priority === priorityFilter;
+
+        return matchesSearch && matchesStatus && matchesPriority;
+      });
+
+      currentPage = 1;
+      renderCases();
+    }
+
+    // Pagination functions
+    function updatePagination() {
+      const totalPages = Math.ceil(filteredCases.length / casesPerPage);
+      const pagination = document.getElementById('pagination');
+      const pageInfo = document.getElementById('pageInfo');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+
+      if (totalPages <= 1) {
+        pagination.style.display = 'none';
+        return;
+      }
+
+      pagination.style.display = 'flex';
+      pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.disabled = currentPage === totalPages;
+    }
+
+    function changePage(delta) {
+      const totalPages = Math.ceil(filteredCases.length / casesPerPage);
+      const newPage = currentPage + delta;
+      
+      if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        renderCases();
+      }
+    }
+
+    // Case actions
+    function viewCase(caseId) {
+      window.location.href = `case-detail.html?id=${caseId}`;
+    }
+
+    function editCase(caseId) {
+      window.location.href = `edit-case.html?id=${caseId}`;
+    }
+
+    async function deleteCase(caseId) {
+      if (!confirm('Are you sure you want to delete this case? This action cannot be undone.')) {
+        return;
+      }
+
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = user?.token || user?.accessToken;
+        
+        if (!token) {
+          alert('Authentication required. Please log in again.');
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/cases/${caseId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          // Remove case from local arrays
+          allCases = allCases.filter(c => c.id !== caseId);
+          filteredCases = filteredCases.filter(c => c.id !== caseId);
+          renderCases();
+          alert('Case deleted successfully');
+        } else {
+          const error = await response.json();
+          alert(`Error deleting case: ${error.message || 'Unknown error'}`);
+        }
+      } catch (error) {
+        console.error('Error deleting case:', error);
+        alert('Error deleting case. Please try again.');
+      }
+    }
+
+    // Initialize
+    checkAuth();
+    loadCases();
+
+    // Sticky navbar scroll effect
+    window.addEventListener('scroll', function() {
+      const header = document.querySelector('header');
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+
+    // Hamburger menu functionality
+    const hamburger = document.querySelector('.hamburger');
+    const nav = document.querySelector('nav');
+    
+    hamburger.addEventListener('click', function() {
+      const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+      hamburger.setAttribute('aria-expanded', !isExpanded);
+      hamburger.classList.toggle('active');
+      nav.classList.toggle('active');
+    });
+    
+    // Close menu when clicking on a link
+    document.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        nav.classList.remove('active');
+      });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
+        hamburger.classList.remove('active');
+        nav.classList.remove('active');
+      }
+    });
+
+    // Dark mode toggle functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+    
+    // Check for saved theme preference or default to light mode
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+      body.classList.add('dark-mode');
+      themeToggle.textContent = '🌙';
+      themeToggle.setAttribute('aria-pressed', 'true');
+    }
+    
+    // Theme toggle click handler
+    themeToggle.addEventListener('click', function() {
+      body.classList.toggle('dark-mode');
+      
+      if (body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+        themeToggle.textContent = '🌙';
+        themeToggle.setAttribute('aria-pressed', 'true');
+      } else {
+        localStorage.setItem('theme', 'light');
+        themeToggle.textContent = '☀️';
+        themeToggle.setAttribute('aria-pressed', 'false');
+      }
+    });
+  </script>
+</body>
+</html>
