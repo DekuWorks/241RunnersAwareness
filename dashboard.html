@@ -154,8 +154,8 @@
       font-weight: 500;
     }
 
-    /* New Features */
-    .notifications-section {
+    /* Case Management Styles */
+    .cases-section {
       background: white;
       border-radius: 12px;
       padding: 1.5rem;
@@ -164,14 +164,14 @@
       border: 1px solid #e5e7eb;
     }
 
-    .notifications-header {
+    .cases-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1rem;
     }
 
-    .notification-item {
+    .case-item {
       display: flex;
       align-items: center;
       gap: 1rem;
@@ -180,19 +180,26 @@
       margin-bottom: 0.5rem;
       background: #f9fafb;
       border-left: 4px solid #3b82f6;
+      transition: all 0.3s ease;
+      cursor: pointer;
     }
 
-    .notification-item.alert {
+    .case-item:hover {
+      background: #f3f4f6;
+      transform: translateX(4px);
+    }
+
+    .case-item.urgent {
       border-left-color: #ef4444;
       background: #fef2f2;
     }
 
-    .notification-item.success {
+    .case-item.resolved {
       border-left-color: #10b981;
       background: #f0fdf4;
     }
 
-    .notification-icon {
+    .case-icon {
       width: 40px;
       height: 40px;
       border-radius: 50%;
@@ -202,66 +209,24 @@
       font-size: 1.2rem;
     }
 
-    .notification-content {
+    .case-content {
       flex: 1;
     }
 
-    .notification-title {
+    .case-title {
       font-weight: 600;
       color: #374151;
       margin-bottom: 0.25rem;
     }
 
-    .notification-time {
+    .case-status {
       font-size: 0.875rem;
       color: #6b7280;
     }
 
-    .recent-activity {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      border: 1px solid #e5e7eb;
-    }
-
-    .activity-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1rem 0;
-      border-bottom: 1px solid #e5e7eb;
-    }
-
-    .activity-item:last-child {
-      border-bottom: none;
-    }
-
-    .activity-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-    }
-
-    .activity-content {
-      flex: 1;
-    }
-
-    .activity-title {
-      font-weight: 600;
-      color: #374151;
-      margin-bottom: 0.25rem;
-    }
-
-    .activity-description {
-      font-size: 0.875rem;
-      color: #6b7280;
+    .case-date {
+      font-size: 0.75rem;
+      color: #9ca3af;
     }
 
     .quick-actions {
@@ -300,56 +265,24 @@
       font-size: 0.875rem;
     }
 
-    .weather-widget {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* Admin Section */
+    .admin-section {
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
       color: white;
       border-radius: 12px;
       padding: 1.5rem;
       margin-bottom: 2rem;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
     }
 
-    .weather-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    .weather-info {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .weather-temp {
-      font-size: 2.5rem;
-      font-weight: bold;
-    }
-
-    .weather-details {
-      font-size: 0.875rem;
-      opacity: 0.9;
-    }
-
-    .emergency-contact {
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      color: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-    }
-
-    .emergency-header {
+    .admin-section h3 {
+      margin: 0 0 1rem 0;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      margin-bottom: 1rem;
-      font-weight: 600;
     }
 
-    .emergency-btn {
+    .admin-btn {
       background: rgba(255, 255, 255, 0.2);
       color: white;
       border: 1px solid rgba(255, 255, 255, 0.3);
@@ -362,11 +295,37 @@
       text-decoration: none;
       display: inline-block;
       margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
     }
 
-    .emergency-btn:hover {
+    .admin-btn:hover {
       background: rgba(255, 255, 255, 0.3);
       transform: translateY(-1px);
+    }
+
+    /* Loading States */
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .loading::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      margin: -10px 0 0 -10px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     @media (max-width: 768px) {
@@ -393,17 +352,17 @@
 
     <nav role="navigation" aria-label="Main navigation">
       <a href="index.html">Home</a>
-              <a href="aboutus.html">About Us</a>
-        <a href="cases.html">Cases</a>
-        <a href="map.html">🗺️ Map</a>
-        <a href="dna-tracking.html">🧬 DNA Tracking</a>
-        <a href="aboutus.html">ℹ️ About</a>
-              <a href="signup.html" id="signupLink">Sign Up</a>
+      <a href="aboutus.html">About Us</a>
+      <a href="cases.html">Cases</a>
+      <a href="map.html">🗺️ Map</a>
+      <a href="dna-tracking.html">🧬 DNA Tracking</a>
+      <a href="aboutus.html">ℹ️ About</a>
+      <a href="signup.html" id="signupLink">Sign Up</a>
       <a href="login.html" id="loginLink">Login</a>
-      <a href="dashboard.html" id="dashboardLink" style="display: none;">Dashboard</a>
+      <a href="dashboard.html" id="dashboardLink" style="display: none;">📊 Dashboard</a>
       <button id="logoutBtn" style="display: none;" class="logout-btn">Logout</button>
-        <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
-        <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
+      <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
+      <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
     </nav>
     
     <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
@@ -420,159 +379,94 @@
   <main role="main">
     <div class="dashboard-container">
       <div class="welcome-section">
-        <h2>Welcome to Your Dashboard</h2>
-        <p>Manage your account, view cases, and stay updated with 241 Runners Awareness.</p>
+        <h2>Welcome back, <span id="userFirstName">User</span>!</h2>
+        <p>Here's what's happening with your cases and how you can help.</p>
         <div class="user-info">
           <div class="user-avatar" id="userAvatar">U</div>
           <div>
             <div id="userName">User</div>
             <div id="userEmail">user@example.com</div>
+            <div id="userRole" style="font-size: 0.875rem; opacity: 0.8;">Role: <span id="roleDisplay">User</span></div>
           </div>
         </div>
       </div>
 
-      <!-- Emergency Contact Widget -->
-      <div class="emergency-contact">
-        <div class="emergency-header">
-          🚨 Emergency Contacts
-        </div>
-        <p style="margin-bottom: 1rem; opacity: 0.9;">Quick access to emergency services and support</p>
-        <a href="tel:911" class="emergency-btn">Call 911</a>
-        <a href="tel:1-800-843-5678" class="emergency-btn">Missing Persons Hotline</a>
-        <a href="mailto:emergency@241runnersawareness.org" class="emergency-btn">Email Support</a>
-      </div>
-
-      <!-- Weather Widget -->
-      <div class="weather-widget">
-        <div class="weather-header">
-          <h3 style="margin: 0;">🌤️ Local Weather</h3>
-          <span id="weatherLocation">Loading...</span>
-        </div>
-        <div class="weather-info">
-          <div class="weather-temp" id="weatherTemp">--°F</div>
-          <div class="weather-details">
-            <div id="weatherCondition">Loading...</div>
-            <div id="weatherHumidity">Humidity: --%</div>
-            <div id="weatherWind">Wind: -- mph</div>
-          </div>
-        </div>
-      </div>
-
+      <!-- Stats Cards -->
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-number">0</div>
+          <div class="stat-number" id="totalCases">0</div>
+          <div class="stat-label">Total Cases</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="activeCases">0</div>
           <div class="stat-label">Active Cases</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number">0</div>
-          <div class="stat-label">Alerts</div>
+          <div class="stat-number" id="recentUpdates">0</div>
+          <div class="stat-label">Recent Updates</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number">0</div>
-          <div class="stat-label">Reports</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">0</div>
-          <div class="stat-label">Messages</div>
+          <div class="stat-number" id="urgentCases">0</div>
+          <div class="stat-label">Urgent Cases</div>
         </div>
       </div>
 
       <!-- Quick Actions -->
       <div class="quick-actions">
-        <a href="cases.html" class="quick-action-btn">
+        <a href="report-case.html" class="quick-action-btn">
+          <span class="quick-action-icon">📝</span>
+          <div class="quick-action-label">Report New Case</div>
+        </a>
+        <a href="my-cases.html" class="quick-action-btn">
           <span class="quick-action-icon">📋</span>
-          <div class="quick-action-label">View Cases</div>
+          <div class="quick-action-label">My Cases</div>
         </a>
-        <a href="map.html" class="quick-action-btn" id="mapLink" style="display: none;">
+        <a href="map.html" class="quick-action-btn">
           <span class="quick-action-icon">🗺️</span>
-          <div class="quick-action-label">Interactive Map</div>
+          <div class="quick-action-label">View Map</div>
         </a>
-        <a href="mailto:support@241runnersawareness.org" class="quick-action-btn">
-          <span class="quick-action-icon">📧</span>
-          <div class="quick-action-label">Contact Support</div>
-        </a>
-        <button class="quick-action-btn" onclick="showSettings()">
-          <span class="quick-action-icon">⚙️</span>
-          <div class="quick-action-label">Settings</div>
-        </button>
-        <button class="quick-action-btn" onclick="reportIncident()">
-          <span class="quick-action-icon">🚨</span>
-          <div class="quick-action-label">Report Incident</div>
-        </button>
-        <button class="quick-action-btn" onclick="shareLocation()">
-          <span class="quick-action-icon">📍</span>
-          <div class="quick-action-label">Share Location</div>
+        <button class="quick-action-btn" onclick="updateProfile()">
+          <span class="quick-action-icon">👤</span>
+          <div class="quick-action-label">Update Profile</div>
         </button>
       </div>
 
-      <!-- Notifications Section -->
-      <div class="notifications-section">
-        <div class="notifications-header">
-          <h3 style="margin: 0;">🔔 Recent Notifications</h3>
-          <button class="card-button" onclick="markAllRead()">Mark All Read</button>
+      <!-- Recent Cases Section -->
+      <div class="cases-section">
+        <div class="cases-header">
+          <h3 style="margin: 0;">📋 Recent Cases</h3>
+          <a href="my-cases.html" class="card-button">View All Cases</a>
         </div>
-        <div id="notificationsList">
-          <div class="notification-item">
-            <div class="notification-icon">📢</div>
-            <div class="notification-content">
-              <div class="notification-title">Welcome to 241 Runners Awareness!</div>
-              <div class="notification-time">Just now</div>
-            </div>
-          </div>
-          <div class="notification-item success">
-            <div class="notification-icon">✅</div>
-            <div class="notification-content">
-              <div class="notification-title">Account created successfully</div>
-              <div class="notification-time">2 minutes ago</div>
+        <div id="recentCasesList">
+          <div class="case-item" style="text-align: center; color: #6b7280;">
+            <div style="width: 100%;">
+              <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
+              <h4 style="margin: 0 0 0.5rem 0;">No cases yet</h4>
+              <p style="margin: 0 0 1rem 0;">Get started by reporting your first missing person case.</p>
+              <a href="report-case.html" class="card-button">Report New Case</a>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Recent Activity -->
-      <div class="recent-activity">
-        <h3 style="margin: 0 0 1rem 0;">📈 Recent Activity</h3>
-        <div id="activityList">
-          <div class="activity-item">
-            <div class="activity-icon">👤</div>
-            <div class="activity-content">
-              <div class="activity-title">Account Created</div>
-              <div class="activity-description">You joined 241 Runners Awareness</div>
-            </div>
-          </div>
-          <div class="activity-item">
-            <div class="activity-icon">📱</div>
-            <div class="activity-content">
-              <div class="activity-title">Profile Updated</div>
-              <div class="activity-description">Contact information verified</div>
-            </div>
-          </div>
-        </div>
+      <!-- Admin Section (only for admin users) -->
+      <div class="admin-section" id="adminSection" style="display: none;">
+        <h3>👑 Admin Panel</h3>
+        <p style="margin-bottom: 1rem; opacity: 0.9;">Administrative tools and system management</p>
+        <a href="admin-dashboard.html" class="admin-btn">Admin Dashboard</a>
+        <a href="user-management.html" class="admin-btn">User Management</a>
+        <a href="system-settings.html" class="admin-btn">System Settings</a>
+        <a href="audit-logs.html" class="admin-btn">Audit Logs</a>
       </div>
 
-      <div class="dashboard-grid">
-        <div class="dashboard-card">
-          <h3>📋 View Cases</h3>
-          <p>Browse and search through active missing persons cases in your area.</p>
-          <a href="cases.html" class="card-button">View Cases</a>
-        </div>
-
-        <div class="dashboard-card" id="mapCard" style="display: none;">
-          <h3>🗺️ Interactive Map</h3>
-          <p>Explore cases and incidents on our interactive map with real-time updates.</p>
-          <a href="map.html" class="card-button">Open Map</a>
-        </div>
-
-        <div class="dashboard-card">
-          <h3>📧 Contact Support</h3>
-          <p>Get in touch with our support team for assistance or to report issues.</p>
-          <a href="mailto:support@241runnersawareness.org" class="card-button">Contact Us</a>
-        </div>
-
-        <div class="dashboard-card">
-          <h3>⚙️ Account Settings</h3>
-          <p>Update your profile information, change password, and manage preferences.</p>
-          <button class="card-button" onclick="showSettings()">Settings</button>
+      <!-- Help Section -->
+      <div class="dashboard-card">
+        <h3>❓ Need Help?</h3>
+        <p>If you need assistance with reporting a case or have questions about the platform, our support team is here to help.</p>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <a href="mailto:support@241runnersawareness.org" class="card-button">📧 Contact Support</a>
+          <a href="aboutus.html" class="card-button">ℹ️ About Us</a>
+          <a href="tel:1-800-843-5678" class="card-button">📞 Emergency Hotline</a>
         </div>
       </div>
 
@@ -587,6 +481,9 @@
   </footer>
 
   <script>
+    // API Configuration
+    const API_BASE_URL = 'http://localhost:5113/api';
+    
     // Check if user is logged in
     function checkAuth() {
       const user = localStorage.getItem('user');
@@ -597,19 +494,28 @@
 
       try {
         const userData = JSON.parse(user);
-        document.getElementById('userName').textContent = userData.user?.fullName || 'User';
-        document.getElementById('userEmail').textContent = userData.user?.email || 'user@example.com';
+        const firstName = userData.user?.firstName || userData.user?.fullName?.split(' ')[0] || 'User';
+        const fullName = userData.user?.fullName || 'User';
+        const email = userData.user?.email || 'user@example.com';
+        const role = userData.user?.role || 'user';
+        
+        // Update user info display
+        document.getElementById('userFirstName').textContent = firstName;
+        document.getElementById('userName').textContent = fullName;
+        document.getElementById('userEmail').textContent = email;
+        document.getElementById('roleDisplay').textContent = role.charAt(0).toUpperCase() + role.slice(1);
         
         // Set avatar initial
         const avatar = document.getElementById('userAvatar');
-        const name = userData.user?.fullName || 'User';
-        avatar.textContent = name.charAt(0).toUpperCase();
+        avatar.textContent = firstName.charAt(0).toUpperCase();
         
-        // Show map elements for authenticated users
-        const mapLink = document.getElementById('mapLink');
-        const mapCard = document.getElementById('mapCard');
-        if (mapLink) mapLink.style.display = 'flex';
-        if (mapCard) mapCard.style.display = 'block';
+        // Show admin section for admin users
+        if (role === 'admin') {
+          document.getElementById('adminSection').style.display = 'block';
+        }
+        
+        // Load user's cases
+        loadUserCases();
         
       } catch (error) {
         console.error('Error parsing user data:', error);
@@ -617,83 +523,141 @@
       }
     }
 
+    // Load user's cases from API
+    async function loadUserCases() {
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = user?.token || user?.accessToken;
+        
+        if (!token) {
+          console.log('No auth token available');
+          return;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/cases/mine`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const cases = await response.json();
+          updateDashboardStats(cases);
+          updateRecentCases(cases);
+        } else {
+          console.log('Failed to load cases:', response.status);
+          // Fallback to mock data for demo
+          loadMockData();
+        }
+      } catch (error) {
+        console.error('Error loading cases:', error);
+        // Fallback to mock data for demo
+        loadMockData();
+      }
+    }
+
+    // Update dashboard statistics
+    function updateDashboardStats(cases) {
+      const totalCases = cases.length;
+      const activeCases = cases.filter(c => c.status === 'active' || c.status === 'missing').length;
+      const urgentCases = cases.filter(c => c.priority === 'High' || c.priority === 'Critical').length;
+      const recentUpdates = cases.reduce((total, c) => total + (c.updatesCount || 0), 0);
+
+      document.getElementById('totalCases').textContent = totalCases;
+      document.getElementById('activeCases').textContent = activeCases;
+      document.getElementById('recentUpdates').textContent = recentUpdates;
+      document.getElementById('urgentCases').textContent = urgentCases;
+    }
+
+    // Update recent cases display
+    function updateRecentCases(cases) {
+      const recentCasesList = document.getElementById('recentCasesList');
+      
+      if (cases.length === 0) {
+        recentCasesList.innerHTML = `
+          <div class="case-item" style="text-align: center; color: #6b7280;">
+            <div style="width: 100%;">
+              <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
+              <h4 style="margin: 0 0 0.5rem 0;">No cases yet</h4>
+              <p style="margin: 0 0 1rem 0;">Get started by reporting your first missing person case.</p>
+              <a href="report-case.html" class="card-button">Report New Case</a>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const recentCases = cases.slice(0, 3); // Show last 3 cases
+      recentCasesList.innerHTML = recentCases.map(caseItem => `
+        <div class="case-item ${caseItem.priority === 'High' || caseItem.priority === 'Critical' ? 'urgent' : ''} ${caseItem.status === 'found' ? 'resolved' : ''}" onclick="viewCase(${caseItem.id})">
+          <div class="case-icon">
+            ${caseItem.priority === 'High' || caseItem.priority === 'Critical' ? '🚨' : caseItem.status === 'found' ? '✅' : '📋'}
+          </div>
+          <div class="case-content">
+            <div class="case-title">${caseItem.title || 'Untitled Case'}</div>
+            <div class="case-status">Status: ${caseItem.status} | Priority: ${caseItem.priority}</div>
+            <div class="case-date">Created: ${new Date(caseItem.createdAt).toLocaleDateString()}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Load mock data for demo purposes
+    function loadMockData() {
+      const mockCases = [
+        {
+          id: 1,
+          title: "Missing Person - John Doe",
+          status: "active",
+          priority: "High",
+          createdAt: new Date().toISOString(),
+          updatesCount: 3
+        },
+        {
+          id: 2,
+          title: "Missing Person - Jane Smith",
+          status: "missing",
+          priority: "Medium",
+          createdAt: new Date(Date.now() - 86400000).toISOString(),
+          updatesCount: 1
+        }
+      ];
+      
+      updateDashboardStats(mockCases);
+      updateRecentCases(mockCases);
+    }
+
+    // View case details
+    function viewCase(caseId) {
+      window.location.href = `case-detail.html?id=${caseId}`;
+    }
+
+    // Update profile
+    function updateProfile() {
+      window.location.href = 'profile.html';
+    }
+
     // Logout function
     function logout() {
       localStorage.removeItem('user');
+      localStorage.removeItem('google_access_token');
+      localStorage.removeItem('userToken');
+      
+      // Revoke Google session if available
+      if (window.google && window.google.accounts) {
+        try {
+          window.google.accounts.oauth2.revoke(localStorage.getItem('google_access_token'));
+        } catch (error) {
+          console.log('Google session revocation failed:', error);
+        }
+      }
+      
       window.location.href = 'index.html';
-    }
-
-    // New Dashboard Features
-    function showSettings() {
-      alert('Account settings panel coming soon!');
-    }
-
-    function reportIncident() {
-      const incident = prompt('Please describe the incident you want to report:');
-      if (incident) {
-        alert('Thank you for reporting. Our team will review this incident.');
-        addNotification('Incident reported', 'Your report has been submitted for review.', 'info');
-      }
-    }
-
-    function shareLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          function(position) {
-            const location = `${position.coords.latitude}, ${position.coords.longitude}`;
-            alert(`Location shared: ${location}`);
-            addNotification('Location shared', 'Your location has been shared with the team.', 'success');
-          },
-          function(error) {
-            alert('Unable to get your location. Please check your browser settings.');
-          }
-        );
-      } else {
-        alert('Geolocation is not supported by this browser.');
-      }
-    }
-
-    function markAllRead() {
-      const notifications = document.querySelectorAll('.notification-item');
-      notifications.forEach(notification => {
-        notification.style.opacity = '0.6';
-      });
-      alert('All notifications marked as read!');
-    }
-
-    function addNotification(title, message, type = 'info') {
-      const notificationsList = document.getElementById('notificationsList');
-      const notification = document.createElement('div');
-      notification.className = `notification-item ${type}`;
-      
-      const icon = type === 'alert' ? '🚨' : type === 'success' ? '✅' : '📢';
-      
-      notification.innerHTML = `
-        <div class="notification-icon">${icon}</div>
-        <div class="notification-content">
-          <div class="notification-title">${title}</div>
-          <div class="notification-time">Just now</div>
-        </div>
-      `;
-      
-      notificationsList.insertBefore(notification, notificationsList.firstChild);
-    }
-
-    // Mock Weather Data
-    function loadWeather() {
-      // Simulate weather API call
-      setTimeout(() => {
-        document.getElementById('weatherLocation').textContent = 'Greenville, SC';
-        document.getElementById('weatherTemp').textContent = '72°F';
-        document.getElementById('weatherCondition').textContent = 'Partly Cloudy';
-        document.getElementById('weatherHumidity').textContent = 'Humidity: 65%';
-        document.getElementById('weatherWind').textContent = 'Wind: 8 mph';
-      }, 1000);
     }
 
     // Initialize dashboard
     checkAuth();
-    loadWeather();
 
     // Sticky navbar scroll effect
     window.addEventListener('scroll', function() {

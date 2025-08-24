@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Cases - 241 Runners Awareness</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link rel="stylesheet" href="styles.css?v=20250127a&t=20250127" />
+  <script src="auth-utils.js"></script>
+  <style>
+    .cases-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .page-header {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .page-header h1 {
+      margin: 0 0 0.5rem 0;
+      font-size: 2rem;
+    }
+
+    .page-header p {
+      margin: 0;
+      opacity: 0.9;
+    }
+
+    .controls-section {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
+    }
+
+    .controls-row {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 300px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6b7280;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .filter-group label {
+      font-weight: 600;
+      color: #374151;
+      white-space: nowrap;
+    }
+
+    .filter-group select {
+      padding: 0.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.875rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-secondary {
+      background: #6b7280;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #4b5563;
+    }
+
+    .cases-table {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
+    }
+
+    .table-header {
+      background: #f9fafb;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #e5e7eb;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .table-row {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #e5e7eb;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .table-row:hover {
+      background: #f9fafb;
+    }
+
+    .table-row:last-child {
+      border-bottom: none;
+    }
+
+    .case-title {
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.25rem;
+    }
+
+    .case-description {
+      font-size: 0.875rem;
+      color: #6b7280;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .status-active {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status-missing {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-found {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .status-resolved {
+      background: #f3e8ff;
+      color: #7c3aed;
+    }
+
+    .priority-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .priority-critical {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .priority-high {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .priority-medium {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .priority-low {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .date {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .action-btn {
+      padding: 0.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.875rem;
+    }
+
+    .action-btn-view {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .action-btn-view:hover {
+      background: #2563eb;
+    }
+
+    .action-btn-edit {
+      background: #f59e0b;
+      color: white;
+    }
+
+    .action-btn-edit:hover {
+      background: #d97706;
+    }
+
+    .action-btn-delete {
+      background: #ef4444;
+      color: white;
+    }
+
+    .action-btn-delete:hover {
+      background: #dc2626;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: #6b7280;
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+      margin: 0 0 0.5rem 0;
+      color: #374151;
+    }
+
+    .empty-state p {
+      margin: 0 0 1.5rem 0;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: #6b7280;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 2rem;
+      height: 2rem;
+      border: 3px solid #e5e7eb;
+      border-radius: 50%;
+      border-top-color: #3b82f6;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+
+    .pagination-btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid #d1d5db;
+      background: white;
+      color: #374151;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .pagination-btn:hover {
+      background: #f9fafb;
+    }
+
+    .pagination-btn.active {
+      background: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+    }
+
+    .pagination-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 768px) {
+      .table-header,
+      .table-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+
+      .table-header {
+        display: none;
+      }
+
+      .table-row {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        padding: 1rem;
+      }
+
+      .controls-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-box {
+        min-width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header role="banner">
+    <div class="header-bar">
+      <img src="/241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
+      <h1>241 Runners Awareness</h1>
+    </div>
+
+    <nav role="navigation" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="aboutus.html">About Us</a>
+      <a href="cases.html">Cases</a>
+      <a href="map.html">🗺️ Map</a>
+      <a href="dna-tracking.html">🧬 DNA Tracking</a>
+      <a href="aboutus.html">ℹ️ About</a>
+      <a href="signup.html" id="signupLink">Sign Up</a>
+      <a href="login.html" id="loginLink">Login</a>
+      <a href="dashboard.html" id="dashboardLink" style="display: none;">📊 Dashboard</a>
+      <button id="logoutBtn" style="display: none;" class="logout-btn">Logout</button>
+      <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
+      <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
+    </nav>
+    
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
+      ☀️
+    </button>
+    
+    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <main role="main">
+    <div class="cases-container">
+      <div class="page-header">
+        <h1>📋 My Cases</h1>
+        <p>View and manage your missing person cases</p>
+      </div>
+
+      <!-- Controls Section -->
+      <div class="controls-section">
+        <div class="controls-row">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="Search cases..." onkeyup="filterCases()">
+          </div>
+          
+          <div class="filter-group">
+            <label for="statusFilter">Status:</label>
+            <select id="statusFilter" onchange="filterCases()">
+              <option value="">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="missing">Missing</option>
+              <option value="found">Found</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label for="priorityFilter">Priority:</label>
+            <select id="priorityFilter" onchange="filterCases()">
+              <option value="">All Priorities</option>
+              <option value="Critical">Critical</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+          
+          <a href="report-case.html" class="btn btn-primary">📝 Report New Case</a>
+        </div>
+      </div>
+
+      <!-- Cases Table -->
+      <div class="cases-table">
+        <div class="table-header">
+          <div>Case</div>
+          <div>Status</div>
+          <div>Priority</div>
+          <div>Created</div>
+          <div>Updates</div>
+          <div>Actions</div>
+        </div>
+
+        <div id="casesTableBody">
+          <!-- Cases will be loaded here -->
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination" id="pagination" style="display: none;">
+        <button class="pagination-btn" onclick="changePage(-1)" id="prevBtn">Previous</button>
+        <span id="pageInfo">Page 1 of 1</span>
+        <button class="pagination-btn" onclick="changePage(1)" id="nextBtn">Next</button>
+      </div>
+    </div>
+  </main>
+
+  <footer role="contentinfo">
+    <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // API Configuration
+    const API_BASE_URL = 'http://localhost:5113/api';
+    
+    let allCases = [];
+    let filteredCases = [];
+    let currentPage = 1;
+    const casesPerPage = 10;
+
+    // Check authentication
+    function checkAuth() {
+      const user = localStorage.getItem('user');
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+    }
+
+    // Load user's cases
+    async function loadCases() {
+      const tableBody = document.getElementById('casesTableBody');
+      tableBody.innerHTML = '<div class="loading"><div class="loading-spinner"></div><p>Loading cases...</p></div>';
+
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = user?.token || user?.accessToken;
+        
+        if (!token) {
+          console.log('No auth token available');
+          loadMockData();
+          return;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/cases/mine`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          allCases = await response.json();
+          filteredCases = [...allCases];
+          renderCases();
+        } else {
+          console.log('Failed to load cases:', response.status);
+          loadMockData();
+        }
+      } catch (error) {
+        console.error('Error loading cases:', error);
+        loadMockData();
+      }
+    }
+
+    // Load mock data for demo
+    function loadMockData() {
+      allCases = [
+        {
+          id: 1,
+          title: "Missing Person - John Doe",
+          description: "John was last seen at the local park on Friday evening. He was wearing a blue jacket and jeans.",
+          status: "active",
+          priority: "High",
+          createdAt: new Date().toISOString(),
+          updatesCount: 3
+        },
+        {
+          id: 2,
+          title: "Missing Person - Jane Smith",
+          description: "Jane disappeared from her home on Saturday morning. She may be heading to the downtown area.",
+          status: "missing",
+          priority: "Critical",
+          createdAt: new Date(Date.now() - 86400000).toISOString(),
+          updatesCount: 1
+        },
+        {
+          id: 3,
+          title: "Missing Person - Mike Johnson",
+          description: "Mike was last seen at the bus station. He was carrying a red backpack.",
+          status: "found",
+          priority: "Medium",
+          createdAt: new Date(Date.now() - 172800000).toISOString(),
+          updatesCount: 5
+        }
+      ];
+      filteredCases = [...allCases];
+      renderCases();
+    }
+
+    // Render cases table
+    function renderCases() {
+      const tableBody = document.getElementById('casesTableBody');
+      
+      if (filteredCases.length === 0) {
+        tableBody.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <h3>No cases found</h3>
+            <p>You haven't reported any cases yet, or no cases match your current filters.</p>
+            <a href="report-case.html" class="btn btn-primary">Report Your First Case</a>
+          </div>
+        `;
+        document.getElementById('pagination').style.display = 'none';
+        return;
+      }
+
+      const startIndex = (currentPage - 1) * casesPerPage;
+      const endIndex = startIndex + casesPerPage;
+      const pageCases = filteredCases.slice(startIndex, endIndex);
+
+      tableBody.innerHTML = pageCases.map(caseItem => `
+        <div class="table-row">
+          <div>
+            <div class="case-title">${caseItem.title}</div>
+            <div class="case-description">${caseItem.description}</div>
+          </div>
+          <div>
+            <span class="status-badge status-${caseItem.status}">${caseItem.status}</span>
+          </div>
+          <div>
+            <span class="priority-badge priority-${caseItem.priority.toLowerCase()}">${caseItem.priority}</span>
+          </div>
+          <div class="date">${new Date(caseItem.createdAt).toLocaleDateString()}</div>
+          <div class="date">${caseItem.updatesCount || 0} updates</div>
+          <div class="actions">
+            <button class="action-btn action-btn-view" onclick="viewCase(${caseItem.id})" title="View Details">👁️</button>
+            <button class="action-btn action-btn-edit" onclick="editCase(${caseItem.id})" title="Edit Case">✏️</button>
+            <button class="action-btn action-btn-delete" onclick="deleteCase(${caseItem.id})" title="Delete Case">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+
+      updatePagination();
+    }
+
+    // Filter cases
+    function filterCases() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const statusFilter = document.getElementById('statusFilter').value;
+      const priorityFilter = document.getElementById('priorityFilter').value;
+
+      filteredCases = allCases.filter(caseItem => {
+        const matchesSearch = caseItem.title.toLowerCase().includes(searchTerm) ||
+                            caseItem.description.toLowerCase().includes(searchTerm);
+        const matchesStatus = !statusFilter || caseItem.status === statusFilter;
+        const matchesPriority = !priorityFilter || caseItem.priority === priorityFilter;
+
+        return matchesSearch && matchesStatus && matchesPriority;
+      });
+
+      currentPage = 1;
+      renderCases();
+    }
+
+    // Pagination functions
+    function updatePagination() {
+      const totalPages = Math.ceil(filteredCases.length / casesPerPage);
+      const pagination = document.getElementById('pagination');
+      const pageInfo = document.getElementById('pageInfo');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+
+      if (totalPages <= 1) {
+        pagination.style.display = 'none';
+        return;
+      }
+
+      pagination.style.display = 'flex';
+      pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.disabled = currentPage === totalPages;
+    }
+
+    function changePage(delta) {
+      const totalPages = Math.ceil(filteredCases.length / casesPerPage);
+      const newPage = currentPage + delta;
+      
+      if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        renderCases();
+      }
+    }
+
+    // Case actions
+    function viewCase(caseId) {
+      window.location.href = `case-detail.html?id=${caseId}`;
+    }
+
+    function editCase(caseId) {
+      window.location.href = `edit-case.html?id=${caseId}`;
+    }
+
+    async function deleteCase(caseId) {
+      if (!confirm('Are you sure you want to delete this case? This action cannot be undone.')) {
+        return;
+      }
+
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = user?.token || user?.accessToken;
+        
+        if (!token) {
+          alert('Authentication required. Please log in again.');
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/cases/${caseId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          // Remove case from local arrays
+          allCases = allCases.filter(c => c.id !== caseId);
+          filteredCases = filteredCases.filter(c => c.id !== caseId);
+          renderCases();
+          alert('Case deleted successfully');
+        } else {
+          const error = await response.json();
+          alert(`Error deleting case: ${error.message || 'Unknown error'}`);
+        }
+      } catch (error) {
+        console.error('Error deleting case:', error);
+        alert('Error deleting case. Please try again.');
+      }
+    }
+
+    // Initialize
+    checkAuth();
+    loadCases();
+
+    // Sticky navbar scroll effect
+    window.addEventListener('scroll', function() {
+      const header = document.querySelector('header');
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+
+    // Hamburger menu functionality
+    const hamburger = document.querySelector('.hamburger');
+    const nav = document.querySelector('nav');
+    
+    hamburger.addEventListener('click', function() {
+      const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+      hamburger.setAttribute('aria-expanded', !isExpanded);
+      hamburger.classList.toggle('active');
+      nav.classList.toggle('active');
+    });
+    
+    // Close menu when clicking on a link
+    document.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        nav.classList.remove('active');
+      });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
+        hamburger.classList.remove('active');
+        nav.classList.remove('active');
+      }
+    });
+
+    // Dark mode toggle functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+    
+    // Check for saved theme preference or default to light mode
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+      body.classList.add('dark-mode');
+      themeToggle.textContent = '🌙';
+      themeToggle.setAttribute('aria-pressed', 'true');
+    }
+    
+    // Theme toggle click handler
+    themeToggle.addEventListener('click', function() {
+      body.classList.toggle('dark-mode');
+      
+      if (body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+        themeToggle.textContent = '🌙';
+        themeToggle.setAttribute('aria-pressed', 'true');
+      } else {
+        localStorage.setItem('theme', 'light');
+        themeToggle.textContent = '☀️';
+        themeToggle.setAttribute('aria-pressed', 'false');
+      }
+    });
+  </script>
+</body>
+</html>
