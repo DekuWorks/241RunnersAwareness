@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { login, selectAuthStatus, selectAuthError, clearError } from '../features/auth/authSlice';
+import { useNavigate, Link } from 'react-router-dom';
+import { signup, selectAuthStatus, selectAuthError, clearError } from '../features/auth/authSlice';
 
-const LoginPage = () => {
+const SignupPage = () => {
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: '',
+    fullName: ''
   });
   const [errors, setErrors] = useState({});
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
   const authStatus = useSelector(selectAuthStatus);
   const authError = useSelector(selectAuthError);
-
-  const from = location.state?.from?.pathname || '/dashboard';
 
   useEffect(() => {
     // Clear any existing errors when component mounts
@@ -24,11 +23,11 @@ const LoginPage = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    // Redirect to dashboard on successful login
+    // Redirect to dashboard on successful signup
     if (authStatus === 'succeeded') {
-      navigate(from, { replace: true });
+      navigate('/dashboard', { replace: true });
     }
-  }, [authStatus, navigate, from]);
+  }, [authStatus, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,8 +46,29 @@ const LoginPage = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.email) newErrors.email = 'Email is required';
-    if (!formData.password) newErrors.password = 'Password is required';
+    
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email is invalid';
+    }
+    
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+    
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Please confirm your password';
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
+    
+    if (!formData.fullName) {
+      newErrors.fullName = 'Full name is required';
+    }
+    
     return newErrors;
   };
 
@@ -61,7 +81,8 @@ const LoginPage = () => {
       return;
     }
 
-    dispatch(login(formData));
+    const { confirmPassword, ...signupData } = formData;
+    dispatch(signup(signupData));
   };
 
   return (
@@ -69,12 +90,12 @@ const LoginPage = () => {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+            Create your account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Or{' '}
-            <Link to="/signup" className="font-medium text-blue-600 hover:text-blue-500">
-              create a new account
+            <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500">
+              sign in to your existing account
             </Link>
           </p>
         </div>
@@ -87,6 +108,28 @@ const LoginPage = () => {
           )}
           
           <div className="space-y-4">
+            <div>
+              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
+                Full Name
+              </label>
+              <input
+                id="fullName"
+                name="fullName"
+                type="text"
+                autoComplete="name"
+                required
+                value={formData.fullName}
+                onChange={handleChange}
+                className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${
+                  errors.fullName ? 'border-red-300' : 'border-gray-300'
+                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
+                placeholder="Enter your full name"
+              />
+              {errors.fullName && (
+                <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>
+              )}
+            </div>
+            
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email address
@@ -117,7 +160,7 @@ const LoginPage = () => {
                 id="password"
                 name="password"
                 type="password"
-                autoComplete="current-password"
+                autoComplete="new-password"
                 required
                 value={formData.password}
                 onChange={handleChange}
@@ -128,6 +171,28 @@ const LoginPage = () => {
               />
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+              )}
+            </div>
+            
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                Confirm Password
+              </label>
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                autoComplete="new-password"
+                required
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${
+                  errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
+                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
+                placeholder="Confirm your password"
+              />
+              {errors.confirmPassword && (
+                <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
               )}
             </div>
           </div>
@@ -141,7 +206,7 @@ const LoginPage = () => {
               {authStatus === 'loading' ? (
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
               ) : (
-                'Sign in'
+                'Create account'
               )}
             </button>
           </div>
@@ -151,4 +216,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage; 
+export default SignupPage;

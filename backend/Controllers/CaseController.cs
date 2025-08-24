@@ -74,6 +74,75 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
             }
         }
 
+        // GET: api/cases?individualId={id} - Get cases for a specific individual
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CaseDto>>> GetCasesByIndividual([FromQuery] int? individualId = null)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                var isAdmin = IsAdmin();
+
+                if (userId == null)
+                {
+                    return Unauthorized(new { message = "User not authenticated" });
+                }
+
+                var query = _context.Cases
+                    .Include(c => c.Individual)
+                    .Include(c => c.Updates.OrderByDescending(u => u.CreatedAt).Take(1))
+                    .AsQueryable();
+
+                // If individualId is provided, filter by it
+                if (individualId.HasValue)
+                {
+                    query = query.Where(c => c.IndividualId == individualId.Value);
+                }
+
+                // Apply ownership filter - non-admins can only see their own cases
+                if (!isAdmin)
+                {
+                    query = query.Where(c => c.OwnerUserId == userId);
+                }
+
+                var cases = await query
+                    .OrderByDescending(c => c.LastUpdatedAt)
+                    .Select(c => new CaseDto
+                    {
+                        Id = c.Id,
+                        CaseNumber = c.CaseNumber,
+                        PublicSlug = c.PublicSlug,
+                        Title = c.Title,
+                        Description = c.Description,
+                        Status = c.Status,
+                        Priority = c.Priority,
+                        RiskLevel = c.RiskLevel,
+                        LastSeenLocation = c.LastSeenLocation,
+                        LastSeenDate = c.LastSeenDate,
+                        IsPublic = c.IsPublic,
+                        CreatedAt = c.CreatedAt,
+                        UpdatedAt = c.UpdatedAt,
+                        LastUpdatedAt = c.LastUpdatedAt,
+                        IndividualName = c.Individual != null ? c.Individual.FullName : null,
+                        UpdateCount = c.Updates.Count,
+                        LatestUpdate = c.Updates.FirstOrDefault() != null ? new CaseUpdateDto
+                        {
+                            Id = c.Updates.First().Id,
+                            Title = c.Updates.First().Title,
+                            UpdateType = c.Updates.First().UpdateType,
+                            CreatedAt = c.Updates.First().CreatedAt
+                        } : null
+                    })
+                    .ToListAsync();
+
+                return Ok(cases);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while retrieving cases", error = ex.Message });
+            }
+        }
+
         // POST: api/cases
         [HttpPost]
         public async Task<ActionResult<CaseDto>> CreateCase(CreateCaseRequest request)

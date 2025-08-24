@@ -9,6 +9,7 @@ using _241RunnersAwareness.BackendAPI.Services;
 using Google.Apis.Auth;
 using System.Collections.Generic;
 using _241RunnersAwareness.BackendAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace _241RunnersAwareness.BackendAPI.Controllers
 {
@@ -908,6 +909,55 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                     Success = false,
                     Message = "An error occurred while changing password."
                 });
+            }
+        }
+
+        // Get current user profile with linked individuals
+        [Authorize]
+        [HttpGet("me")]
+        public async Task<ActionResult<object>> GetCurrentUser()
+        {
+            try
+            {
+                var userEmail = User.Identity?.Name;
+                if (string.IsNullOrEmpty(userEmail))
+                {
+                    return Unauthorized(new { message = "User not authenticated." });
+                }
+
+                var user = await _context.Users
+                    .Include(u => u.Individuals)
+                    .FirstOrDefaultAsync(u => u.Email == userEmail && u.IsActive);
+
+                if (user == null)
+                {
+                    return NotFound(new { message = "User not found." });
+                }
+
+                // Get linked individuals with case counts
+                var linkedIndividuals = await _context.Individuals
+                    .Where(i => i.OwnerUserId == user.UserId)
+                    .Select(i => new
+                    {
+                        id = i.Id,
+                        firstName = i.FirstName,
+                        lastName = i.LastName,
+                        status = i.Status,
+                        casesCount = i.Cases.Count
+                    })
+                    .ToListAsync();
+
+                return Ok(new
+                {
+                    id = user.UserId,
+                    email = user.Email,
+                    role = user.Role,
+                    linkedIndividuals = linkedIndividuals
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while fetching user profile." });
             }
         }
 

@@ -2,63 +2,79 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { fetchMyCases } from '../features/cases/casesSlice';
+import { listIndividuals } from '../features/individuals/individualsSlice';
+import { selectUser } from '../features/auth/authSlice';
 
 const DashboardHome = () => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
-  const { cases, loading } = useSelector((state) => state.cases);
+  const user = useSelector(selectUser);
+  const { cases, loading: casesLoading } = useSelector((state) => state.cases);
+  const { individuals, status: individualsStatus } = useSelector((state) => state.individuals);
   const [stats, setStats] = useState({
     totalCases: 0,
     activeCases: 0,
     recentUpdates: 0,
+    totalRunners: 0,
   });
 
   useEffect(() => {
     dispatch(fetchMyCases());
+    dispatch(listIndividuals({ page: 1, pageSize: 10 }));
   }, [dispatch]);
 
   useEffect(() => {
     if (cases) {
-      setStats({
+      setStats(prev => ({
+        ...prev,
         totalCases: cases.length,
         activeCases: cases.filter(c => c.status === 'active' || c.status === 'missing').length,
         recentUpdates: cases.reduce((total, c) => total + (c.updatesCount || 0), 0),
-      });
+      }));
     }
   }, [cases]);
 
+  useEffect(() => {
+    if (individuals) {
+      setStats(prev => ({
+        ...prev,
+        totalRunners: individuals.length,
+      }));
+    }
+  }, [individuals]);
+
   const quickActions = [
+    {
+      title: 'Add New Runner',
+      description: 'Create a new runner profile',
+      icon: '👤',
+      link: '/runners/new',
+      color: 'bg-blue-500 hover:bg-blue-600',
+    },
     {
       title: 'Report New Case',
       description: 'Create a new missing person case',
       icon: '📝',
       link: '/dashboard/reports/new',
-      color: 'bg-blue-500 hover:bg-blue-600',
+      color: 'bg-green-500 hover:bg-green-600',
     },
     {
       title: 'My Cases',
       description: 'View and manage your cases',
       icon: '📋',
       link: '/dashboard/cases',
-      color: 'bg-green-500 hover:bg-green-600',
+      color: 'bg-purple-500 hover:bg-purple-600',
     },
     {
       title: 'View Map',
       description: 'See cases on interactive map',
       icon: '🗺️',
       link: '/map',
-      color: 'bg-purple-500 hover:bg-purple-600',
-    },
-    {
-      title: 'Update Profile',
-      description: 'Edit your profile information',
-      icon: '👤',
-      link: '/settings',
       color: 'bg-orange-500 hover:bg-orange-600',
     },
   ];
 
   const recentCases = cases?.slice(0, 3) || [];
+  const recentRunners = individuals?.slice(0, 5) || [];
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -66,26 +82,42 @@ const DashboardHome = () => {
         {/* Welcome Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            Welcome back, {user?.firstName || user?.email}!
+            Welcome back, {user?.email}!
           </h1>
           <p className="mt-2 text-gray-600">
-            Here's what's happening with your cases and how you can help.
+            Here's what's happening with your runners and cases.
           </p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <span className="text-blue-600 text-lg">📊</span>
+                  <span className="text-blue-600 text-lg">👤</span>
+                </div>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500">My Runners</p>
+                <p className="text-2xl font-semibold text-gray-900">
+                  {individualsStatus === 'loading' ? '...' : stats.totalRunners}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                  <span className="text-green-600 text-lg">📊</span>
                 </div>
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Total Cases</p>
                 <p className="text-2xl font-semibold text-gray-900">
-                  {loading ? '...' : stats.totalCases}
+                  {casesLoading ? '...' : stats.totalCases}
                 </p>
               </div>
             </div>
@@ -101,7 +133,7 @@ const DashboardHome = () => {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Active Cases</p>
                 <p className="text-2xl font-semibold text-gray-900">
-                  {loading ? '...' : stats.activeCases}
+                  {casesLoading ? '...' : stats.activeCases}
                 </p>
               </div>
             </div>
@@ -110,14 +142,14 @@ const DashboardHome = () => {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                  <span className="text-green-600 text-lg">📝</span>
+                <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <span className="text-purple-600 text-lg">📝</span>
                 </div>
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Recent Updates</p>
                 <p className="text-2xl font-semibold text-gray-900">
-                  {loading ? '...' : stats.recentUpdates}
+                  {casesLoading ? '...' : stats.recentUpdates}
                 </p>
               </div>
             </div>
@@ -160,7 +192,7 @@ const DashboardHome = () => {
             </Link>
           </div>
 
-          {loading ? (
+          {casesLoading ? (
             <div className="bg-white rounded-lg shadow p-6">
               <div className="animate-pulse">
                 <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
@@ -213,6 +245,67 @@ const DashboardHome = () => {
                     {caseItem.updatesCount > 0 && (
                       <span className="ml-4">📝 {caseItem.updatesCount} updates</span>
                     )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Recent Runners */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold text-gray-900">Recent Runners</h2>
+            <Link
+              to="/runners"
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            >
+              View all runners →
+            </Link>
+          </div>
+
+          {individualsStatus === 'loading' ? (
+            <div className="bg-white rounded-lg shadow p-6">
+              <div className="animate-pulse">
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+              </div>
+            </div>
+          ) : recentRunners.length === 0 ? (
+            <div className="bg-white rounded-lg shadow p-6 text-center">
+              <div className="text-gray-500 mb-4">
+                <span className="text-4xl">👤</span>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No runners yet</h3>
+              <p className="text-gray-500 mb-4">
+                Get started by adding your first runner profile.
+              </p>
+              <Link
+                to="/runners/new"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+              >
+                Add New Runner
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {recentRunners.map((runner) => (
+                <Link
+                  key={runner.id}
+                  to={`/runners/${runner.id}`}
+                  className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow duration-200"
+                >
+                  <div className="flex items-center mb-2">
+                    <h3 className="text-lg font-medium text-gray-900 truncate">
+                      {runner.name}
+                    </h3>
+                  </div>
+                  <p className="text-sm text-gray-500 mb-3 line-clamp-2">
+                    {runner.description}
+                  </p>
+                  <div className="flex items-center text-xs text-gray-400">
+                    <span>📅 {new Date(runner.createdAt).toLocaleDateString()}</span>
                   </div>
                 </Link>
               ))}
