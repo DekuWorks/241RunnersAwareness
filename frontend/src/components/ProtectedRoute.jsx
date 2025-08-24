@@ -1,20 +1,12 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
-import { selectIsAuthenticated, selectAuthStatus, fetchMe } from '../features/auth/authSlice';
+import { selectIsAuthenticated, selectAuthStatus } from '../features/auth/authSlice';
 
 const ProtectedRoute = ({ children }) => {
-  const dispatch = useDispatch();
   const location = useLocation();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const authStatus = useSelector(selectAuthStatus);
-
-  useEffect(() => {
-    // If we have a token but no user data, fetch the user profile
-    if (isAuthenticated && authStatus === 'idle') {
-      dispatch(fetchMe());
-    }
-  }, [dispatch, isAuthenticated, authStatus]);
 
   // Show loading spinner while checking authentication
   if (authStatus === 'loading') {

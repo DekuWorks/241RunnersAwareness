@@ -1,287 +1,267 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign Up - 241 Runners Awareness</title>
-  <link rel="stylesheet" href="assets/styles/shared.css">
-  <link rel="stylesheet" href="styles.css">
-  <script src="js/auth.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - 241 Runners Awareness</title>
+    <meta name="description" content="Create your 241 Runners Awareness account">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/241-logo.jpg">
+    
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="/assets/styles/shared.css">
+    <link rel="stylesheet" href="/styles.css">
+    
+    <style>
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .auth-form {
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .auth-form h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #000;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .error-message {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.875rem;
+        }
+        
+        .auth-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .auth-links a {
+            color: #dc2626;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .error-text {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 5px;
+            display: block;
+        }
+    </style>
 </head>
 <body>
-  <!-- Include Header -->
-  <div id="header-placeholder"></div>
-
-  <main class="main-content">
     <div class="auth-container">
-      <div class="auth-card">
-        <div class="auth-header">
-          <h1 class="auth-title">Create Account</h1>
-          <p class="auth-subtitle">Join 241 Runners Awareness to help find missing loved ones</p>
+        <div class="auth-form">
+            <h2>Sign Up</h2>
+            
+            <div id="alertContainer"></div>
+            
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input 
+                        type="text" 
+                        id="fullName" 
+                        name="fullName" 
+                        required
+                        placeholder="Enter your full name"
+                    >
+                    <span class="error-text" id="fullNameError"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        required
+                        placeholder="Enter your email"
+                    >
+                    <span class="error-text" id="emailError"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        required
+                        minlength="8"
+                        placeholder="Enter your password (min 8 characters)"
+                    >
+                    <span class="error-text" id="passwordError"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="role">Role</label>
+                    <select id="role" name="role" required>
+                        <option value="User">User</option>
+                        <option value="Parent">Parent</option>
+                        <option value="Caregiver">Caregiver</option>
+                        <option value="ABA_Therapist">ABA Therapist</option>
+                        <option value="Adoptive_Parent">Adoptive Parent</option>
+                    </select>
+                    <span class="error-text" id="roleError"></span>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" id="submitBtn">
+                        <span id="submitText">Create Account</span>
+                        <div id="loadingSpinner" style="display: none;">
+                            <div class="spinner"></div>
+                        </div>
+                    </button>
+                </div>
+            </form>
+            
+            <div class="auth-links">
+                <a href="/login.html" id="loginLink">Already have an account? Sign in</a>
+            </div>
         </div>
-
-        <!-- Error/Success Messages -->
-        <div id="errorContainer"></div>
-        <div id="successContainer"></div>
-
-        <form id="signupForm" class="auth-form">
-          <div class="form-group">
-            <label for="fullName" class="form-label">Full Name</label>
-            <input 
-              type="text" 
-              id="fullName" 
-              name="fullName" 
-              class="form-input" 
-              required 
-              placeholder="Enter your full name"
-              autocomplete="name"
-            >
-          </div>
-
-          <div class="form-group">
-            <label for="email" class="form-label">Email Address</label>
-            <input 
-              type="email" 
-              id="email" 
-              name="email" 
-              class="form-input" 
-              required 
-              placeholder="Enter your email"
-              autocomplete="email"
-            >
-          </div>
-
-          <div class="form-group">
-            <label for="password" class="form-label">Password</label>
-            <input 
-              type="password" 
-              id="password" 
-              name="password" 
-              class="form-input" 
-              required 
-              placeholder="Create a password (min 6 characters)"
-              autocomplete="new-password"
-            >
-          </div>
-
-          <div class="form-group">
-            <label for="confirmPassword" class="form-label">Confirm Password</label>
-            <input 
-              type="password" 
-              id="confirmPassword" 
-              name="confirmPassword" 
-              class="form-input" 
-              required 
-              placeholder="Confirm your password"
-              autocomplete="new-password"
-            >
-          </div>
-
-          <div class="form-group">
-            <button type="submit" class="btn btn-primary w-full" id="signupButton">
-              Create Account
-            </button>
-          </div>
-        </form>
-
-        <div class="auth-footer">
-          <p class="auth-link-text">
-            Already have an account? 
-            <a href="login.html" class="auth-link">Sign in here</a>
-          </p>
-        </div>
-      </div>
     </div>
-  </main>
 
-  <!-- Include Footer -->
-  <div id="footer-placeholder"></div>
-
-  <style>
-  /* Auth-specific styles */
-  .main-content {
-    min-height: calc(100vh - 64px - 200px); /* Adjust for header/footer */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--spacing-lg);
-    background-color: var(--color-bg-secondary);
-  }
-
-  .auth-container {
-    width: 100%;
-    max-width: 400px;
-  }
-
-  .auth-card {
-    background-color: var(--color-bg-primary);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
-    padding: var(--spacing-2xl);
-  }
-
-  .auth-header {
-    text-align: center;
-    margin-bottom: var(--spacing-xl);
-  }
-
-  .auth-title {
-    font-size: var(--font-size-2xl);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-primary);
-    margin: 0 0 var(--spacing-sm) 0;
-  }
-
-  .auth-subtitle {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
-    margin: 0;
-  }
-
-  .auth-form {
-    margin-bottom: var(--spacing-lg);
-  }
-
-  .auth-footer {
-    text-align: center;
-  }
-
-  .auth-link-text {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
-    margin: var(--spacing-xs) 0;
-  }
-
-  .auth-link {
-    color: var(--color-primary);
-    text-decoration: none;
-    font-weight: var(--font-weight-medium);
-  }
-
-  .auth-link:hover {
-    text-decoration: underline;
-  }
-
-  /* Alert styles */
-  .alert {
-    padding: var(--spacing-md);
-    border-radius: var(--radius-md);
-    margin-bottom: var(--spacing-lg);
-    font-size: var(--font-size-sm);
-  }
-
-  .alert-error {
-    background-color: rgb(239 68 68 / 0.1);
-    border: 1px solid rgb(239 68 68 / 0.2);
-    color: var(--color-error);
-  }
-
-  .alert-success {
-    background-color: rgb(16 185 129 / 0.1);
-    border: 1px solid rgb(16 185 129 / 0.2);
-    color: var(--color-success);
-  }
-
-  /* Loading spinner */
-  .loading-spinner {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border: 2px solid transparent;
-    border-top: 2px solid currentColor;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-right: var(--spacing-xs);
-  }
-
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  </style>
-
-  <script>
-  // Load header and footer
-  document.addEventListener('DOMContentLoaded', function() {
-    // Load header
-    fetch('partials/header.html')
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById('header-placeholder').innerHTML = html;
-      })
-      .catch(error => console.error('Error loading header:', error));
-
-    // Load footer
-    fetch('partials/footer.html')
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById('footer-placeholder').innerHTML = html;
-      })
-      .catch(error => console.error('Error loading footer:', error));
-
-    // Check if user is already authenticated
-    if (window.Auth && window.Auth.redirectIfAuthenticated()) {
-      return;
-    }
-  });
-
-  // Handle form submission
-  document.addEventListener('DOMContentLoaded', function() {
-    const signupForm = document.getElementById('signupForm');
-    const signupButton = document.getElementById('signupButton');
-
-    if (signupForm) {
-      signupForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-
-        // Clear previous messages
-        window.Auth.clearMessages('errorContainer');
-        window.Auth.clearMessages('successContainer');
-
-        // Get form data
-        const formData = new FormData(signupForm);
-        const fullName = formData.get('fullName');
-        const email = formData.get('email');
-        const password = formData.get('password');
-        const confirmPassword = formData.get('confirmPassword');
-
-        // Validate form
-        const errors = window.Auth.validateForm({ 
-          fullName, 
-          email, 
-          password, 
-          confirmPassword 
+    <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('signupForm');
+            const alertContainer = document.getElementById('alertContainer');
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            
+            // Get next parameter from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const next = urlParams.get('next');
+            
+            // Update login link with next parameter
+            const loginLink = document.getElementById('loginLink');
+            if (next) {
+                loginLink.href = `/login.html?next=${encodeURIComponent(next)}`;
+            }
+            
+            function showAlert(message, type = 'error') {
+                alertContainer.innerHTML = `<div class="error-message">${message}</div>`;
+            }
+            
+            function clearErrors() {
+                document.querySelectorAll('.error-text').forEach(el => el.textContent = '');
+                alertContainer.innerHTML = '';
+            }
+            
+            function setLoading(loading) {
+                if (loading) {
+                    submitBtn.disabled = true;
+                    submitText.style.display = 'none';
+                    loadingSpinner.style.display = 'inline-block';
+                } else {
+                    submitBtn.disabled = false;
+                    submitText.style.display = 'inline';
+                    loadingSpinner.style.display = 'none';
+                }
+            }
+            
+            function validateForm() {
+                clearErrors();
+                let isValid = true;
+                
+                const fullName = document.getElementById('fullName').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+                const role = document.getElementById('role').value;
+                
+                if (!fullName) {
+                    document.getElementById('fullNameError').textContent = 'Full name is required';
+                    isValid = false;
+                }
+                
+                if (!email) {
+                    document.getElementById('emailError').textContent = 'Email is required';
+                    isValid = false;
+                } else if (!authUtils.isValidEmail(email)) {
+                    document.getElementById('emailError').textContent = 'Please enter a valid email address';
+                    isValid = false;
+                }
+                
+                if (!password) {
+                    document.getElementById('passwordError').textContent = 'Password is required';
+                    isValid = false;
+                } else if (password.length < 8) {
+                    document.getElementById('passwordError').textContent = 'Password must be at least 8 characters long';
+                    isValid = false;
+                }
+                
+                if (!role) {
+                    document.getElementById('roleError').textContent = 'Please select a role';
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+            
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                if (!validateForm()) {
+                    return;
+                }
+                
+                setLoading(true);
+                
+                const formData = {
+                    fullName: document.getElementById('fullName').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    password: document.getElementById('password').value,
+                    role: document.getElementById('role').value
+                };
+                
+                try {
+                    const response = await authUtils.fetchJson('/auth/register', {
+                        method: 'POST',
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    if (response.success) {
+                        authUtils.setAuth(response);
+                        authUtils.showToast('Account created successfully!', 'success');
+                        const redirectUrl = next || '/dashboard.html';
+                        window.location.href = redirectUrl;
+                    } else {
+                        showAlert(response.message || 'Signup failed');
+                    }
+                } catch (error) {
+                    console.error('Signup error:', error);
+                    showAlert(error.message || 'Signup failed. Please try again.');
+                } finally {
+                    setLoading(false);
+                }
+            });
         });
-        
-        if (Object.keys(errors).length > 0) {
-          const errorMessage = Object.values(errors)[0];
-          window.Auth.showError(errorMessage);
-          return;
-        }
-
-        try {
-          // Show loading state
-          window.Auth.showLoading(signupButton, 'Creating account...');
-
-          // Attempt signup
-          await window.Auth.signup(email, password, fullName);
-
-          // Show success message
-          window.Auth.showSuccess('Account created successfully! Redirecting...', 'successContainer');
-
-          // Redirect to dashboard
-          window.Auth.redirectWithDelay('/dashboard.html', 1000);
-
-        } catch (error) {
-          // Hide loading state
-          window.Auth.hideLoading(signupButton);
-
-          // Show error message
-          window.Auth.showError(error.message || 'Signup failed. Please try again.');
-        }
-      });
-    }
-  });
-  </script>
+    </script>
 </body>
-</html> 
+</html>

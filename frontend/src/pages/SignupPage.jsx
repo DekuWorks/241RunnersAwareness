@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom';
-import { signup, selectAuthStatus, selectAuthError, clearError } from '../features/auth/authSlice';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { register, selectAuthStatus, selectAuthError, clearError } from '../features/auth/authSlice';
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    confirmPassword: '',
-    fullName: ''
+    fullName: '',
+    role: 'User'
   });
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const authStatus = useSelector(selectAuthStatus);
   const authError = useSelector(selectAuthError);
+
+  // Get next parameter from URL
+  const next = new URLSearchParams(location.search).get('next');
 
   useEffect(() => {
     // Clear any existing errors when component mounts
@@ -25,9 +30,10 @@ const SignupPage = () => {
   useEffect(() => {
     // Redirect to dashboard on successful signup
     if (authStatus === 'succeeded') {
-      navigate('/dashboard', { replace: true });
+      const redirectUrl = next || '/dashboard';
+      navigate(redirectUrl, { replace: true });
     }
-  }, [authStatus, navigate]);
+  }, [authStatus, navigate, next]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,26 +53,24 @@ const SignupPage = () => {
   const validateForm = () => {
     const newErrors = {};
     
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = 'Full name is required';
+    }
+    
     if (!formData.email) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = 'Please enter a valid email address';
     }
     
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters long';
     }
     
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password';
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-    
-    if (!formData.fullName) {
-      newErrors.fullName = 'Full name is required';
+    if (!formData.role) {
+      newErrors.role = 'Please select a role';
     }
     
     return newErrors;
@@ -81,136 +85,102 @@ const SignupPage = () => {
       return;
     }
 
-    const { confirmPassword, ...signupData } = formData;
-    dispatch(signup(signupData));
+    setIsLoading(true);
+    
+    try {
+      await dispatch(register(formData)).unwrap();
+    } catch (error) {
+      console.error('Signup error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500">
-              sign in to your existing account
-            </Link>
-          </p>
+    <div className="auth-container">
+      <h2>Sign Up</h2>
+      
+      {authError && (
+        <div className="error-message">
+          {authError}
         </div>
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {authError && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-              {authError}
-            </div>
-          )}
-          
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
-                Full Name
-              </label>
-              <input
-                id="fullName"
-                name="fullName"
-                type="text"
-                autoComplete="name"
-                required
-                value={formData.fullName}
-                onChange={handleChange}
-                className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${
-                  errors.fullName ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
-                placeholder="Enter your full name"
-              />
-              {errors.fullName && (
-                <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>
-              )}
-            </div>
-            
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${
-                  errors.email ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
-                placeholder="Enter your email"
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-              )}
-            </div>
-            
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                required
-                value={formData.password}
-                onChange={handleChange}
-                className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${
-                  errors.password ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
-                placeholder="Enter your password"
-              />
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-              )}
-            </div>
-            
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                Confirm Password
-              </label>
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                autoComplete="new-password"
-                required
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${
-                  errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
-                placeholder="Confirm your password"
-              />
-              {errors.confirmPassword && (
-                <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
-              )}
-            </div>
-          </div>
+      )}
 
-          <div>
-            <button
-              type="submit"
-              disabled={authStatus === 'loading'}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {authStatus === 'loading' ? (
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-              ) : (
-                'Create account'
-              )}
-            </button>
-          </div>
-        </form>
+      <form onSubmit={handleSubmit} className="auth-form">
+        <div className="form-group">
+          <label htmlFor="fullName">Full Name</label>
+          <input
+            type="text"
+            id="fullName"
+            name="fullName"
+            value={formData.fullName}
+            onChange={handleChange}
+            required
+            placeholder="Enter your full name"
+            className={errors.fullName ? 'error' : ''}
+          />
+          {errors.fullName && <span className="error-text">{errors.fullName}</span>}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            placeholder="Enter your email"
+            className={errors.email ? 'error' : ''}
+          />
+          {errors.email && <span className="error-text">{errors.email}</span>}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            minLength={8}
+            placeholder="Enter your password (min 8 characters)"
+            className={errors.password ? 'error' : ''}
+          />
+          {errors.password && <span className="error-text">{errors.password}</span>}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="role">Role</label>
+          <select
+            id="role"
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            required
+            className={errors.role ? 'error' : ''}
+          >
+            <option value="User">User</option>
+            <option value="Parent">Parent</option>
+            <option value="Caregiver">Caregiver</option>
+            <option value="ABA_Therapist">ABA Therapist</option>
+            <option value="Adoptive_Parent">Adoptive Parent</option>
+          </select>
+          {errors.role && <span className="error-text">{errors.role}</span>}
+        </div>
+
+        <button type="submit" className="auth-button" disabled={isLoading}>
+          {isLoading ? 'Creating Account...' : 'Create Account'}
+        </button>
+      </form>
+      
+      <div className="auth-links">
+        <Link to={`/login${next ? `?next=${encodeURIComponent(next)}` : ''}`}>
+          Already have an account? Sign in
+        </Link>
       </div>
     </div>
   );
