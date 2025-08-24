@@ -51,6 +51,7 @@ import ReportCaseForm from "./pages/ReportCaseForm";
 import MyCasesTable from "./pages/MyCasesTable";
 import CaseDetail from "./pages/CaseDetail";
 import PublicCaseView from "./pages/PublicCaseView";
+import RunnerProfilePage from "./pages/RunnerProfilePage";
 
 // Utility components
 import NotFound from "./pages/NotFound.jsx";
@@ -166,6 +167,23 @@ function App() {
             These routes are accessible to all users for viewing public cases.
           */}
           <Route path="cases/:slug" element={<PublicCaseView />} />
+
+          {/* 
+            ============================================
+            RUNNER PROFILE ROUTES
+            ============================================
+            
+            These routes are for viewing runner profiles.
+            Protected routes require authentication.
+          */}
+          <Route
+            path="runners/:id"
+            element={
+              <ProtectedRoute>
+                <RunnerProfilePage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* 
             ============================================

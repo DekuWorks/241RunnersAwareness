@@ -1,0 +1,20 @@
+2025-08-24 14:05:46.630 -04:00 [INF] Starting 241 Runners Awareness API
+2025-08-24 14:05:46.827 -04:00 [FTL] Application terminated unexpectedly
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at _241RunnersAwareness.BackendAPI.Program.Main(String[] args) in C:\Users\mibro\OneDrive\Desktop\Dev Folders\241RunnersAwareness\backend\Program.cs:line 313
+2025-08-24 14:05:56.383 -04:00 [INF] Starting 241 Runners Awareness API
+2025-08-24 14:05:56.476 -04:00 [FTL] Application terminated unexpectedly
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at _241RunnersAwareness.BackendAPI.Program.Main(String[] args) in C:\Users\mibro\OneDrive\Desktop\Dev Folders\241RunnersAwareness\backend\Program.cs:line 313

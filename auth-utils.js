@@ -36,6 +36,7 @@ function updateNavigation() {
   const loginLink = document.getElementById('loginLink');
   const profileLink = document.getElementById('profileLink');
   const dashboardLink = document.getElementById('dashboardLink');
+  const runnerProfileLink = document.getElementById('runnerProfileLink');
   const userManagementLink = document.getElementById('userManagementLink');
   const logoutBtn = document.getElementById('logoutBtn');
 
@@ -51,6 +52,10 @@ function updateNavigation() {
     if (dashboardLink) {
       dashboardLink.style.display = 'inline-block';
     }
+    // Show runner profile link for all authenticated users
+    if (runnerProfileLink) {
+      runnerProfileLink.style.display = 'inline-block';
+    }
     // Show user management links for admin users only
     if (userManagementLink && userData.role === 'admin') {
       userManagementLink.style.display = 'inline-block';
@@ -61,6 +66,7 @@ function updateNavigation() {
     if (loginLink) loginLink.style.display = 'inline-block';
     if (profileLink) profileLink.style.display = 'none';
     if (dashboardLink) dashboardLink.style.display = 'none';
+    if (runnerProfileLink) runnerProfileLink.style.display = 'none';
     if (userManagementLink) userManagementLink.style.display = 'none';
     if (logoutBtn) logoutBtn.style.display = 'none';
   }
