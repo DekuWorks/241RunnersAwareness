@@ -10,37 +10,39 @@
   <link rel="stylesheet" href="styles.css?v=20250127a&t=20250127" />
   <script src="auth-utils.js"></script>
   <style>
+    /* Cases Container - matches React app layout */
     .cases-container {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 0 1rem;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+      background-color: #f9fafb;
     }
 
+    /* Page Header - matches React app styling */
     .page-header {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-      color: white;
-      padding: 2rem;
-      border-radius: 12px;
       margin-bottom: 2rem;
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
 
     .page-header h1 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: #111827;
       margin: 0 0 0.5rem 0;
-      font-size: 2rem;
     }
 
     .page-header p {
+      color: #6b7280;
       margin: 0;
-      opacity: 0.9;
     }
 
+    /* Controls Section - matches React app styling */
     .controls-section {
       background: white;
-      border-radius: 12px;
+      border-radius: 0.5rem;
       padding: 1.5rem;
       margin-bottom: 2rem;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
       border: 1px solid #e5e7eb;
     }
 
@@ -60,9 +62,16 @@
     .search-box input {
       width: 100%;
       padding: 0.75rem 1rem 0.75rem 2.5rem;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
+      border: 2px solid #e5e7eb;
+      border-radius: 0.5rem;
       font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
     .search-icon {
@@ -83,21 +92,318 @@
       font-weight: 600;
       color: #374151;
       white-space: nowrap;
+      font-size: 0.875rem;
     }
 
     .filter-group select {
       padding: 0.5rem;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
+      border: 2px solid #e5e7eb;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .filter-group select:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    /* Buttons - matches React app styling */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: 1px solid transparent;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background-color: #2563eb;
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: #1d4ed8;
+    }
+
+    .btn-secondary {
+      background-color: #f3f4f6;
+      color: #374151;
+      border-color: #d1d5db;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background-color: #e5e7eb;
+    }
+
+    .btn-success {
+      background-color: #059669;
+      color: white;
+    }
+
+    .btn-success:hover:not(:disabled) {
+      background-color: #047857;
+    }
+
+    .btn-danger {
+      background-color: #dc2626;
+      color: white;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      background-color: #b91c1c;
+    }
+
+    /* Table - matches React app styling */
+    .cases-table {
+      background: white;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      border: 1px solid #e5e7eb;
+    }
+
+    .table-header {
+      background-color: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .table-header th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: #374151;
       font-size: 0.875rem;
     }
 
-    .btn {
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
+    .table-body tr {
+      border-bottom: 1px solid #e5e7eb;
+      transition: background-color 0.3s ease;
+    }
+
+    .table-body tr:hover {
+      background-color: #f9fafb;
+    }
+
+    .table-body tr:last-child {
+      border-bottom: none;
+    }
+
+    .table-body td {
+      padding: 1rem;
+      color: #374151;
+      font-size: 0.875rem;
+    }
+
+    /* Status Badges - matches React app styling */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .status-badge.active {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-badge.missing {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-badge.resolved {
+      background-color: #dbeafe;
+      color: #1e40af;
+    }
+
+    .status-badge.closed {
+      background-color: #f3f4f6;
+      color: #374151;
+    }
+
+    /* Priority Badges - matches React app styling */
+    .priority-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .priority-badge.low {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+
+    .priority-badge.medium {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+
+    .priority-badge.high {
+      background-color: #fed7aa;
+      color: #c2410c;
+    }
+
+    .priority-badge.critical {
+      background-color: #fecaca;
+      color: #dc2626;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-sm {
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+    }
+
+    /* Empty State - matches React app styling */
+    .empty-state {
+      background: white;
+      border-radius: 0.5rem;
+      padding: 3rem 1.5rem;
+      text-align: center;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      color: #6b7280;
+      margin-bottom: 1rem;
+    }
+
+    .empty-title {
+      font-size: 1.125rem;
+      font-weight: 500;
+      color: #111827;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .empty-description {
+      color: #6b7280;
+      margin: 0 0 1.5rem 0;
+    }
+
+    /* Loading State - matches React app styling */
+    .loading-state {
+      background: white;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    }
+
+    .loading-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: .5;
+      }
+    }
+
+    .loading-bar {
+      height: 1rem;
+      background-color: #e5e7eb;
+      border-radius: 0.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .loading-bar:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Pagination - matches React app styling */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+
+    .pagination button {
+      padding: 0.5rem 1rem;
+      border: 1px solid #d1d5db;
+      background: white;
+      color: #374151;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .pagination button:hover:not(:disabled) {
+      background: #f3f4f6;
+    }
+
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .pagination button.active {
+      background: #2563eb;
+      color: white;
+      border-color: #2563eb;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .cases-container {
+        padding: 1rem;
+      }
+
+      .controls-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-box {
+        min-width: auto;
+      }
+
+      .filter-group {
+        justify-content: space-between;
+      }
+
+      .cases-table {
+        font-size: 0.75rem;
+      }
+
+      .table-header th,
+      .table-body td {
+        padding: 0.5rem;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+    }
       cursor: pointer;
       transition: all 0.3s ease;
       text-decoration: none;
@@ -419,7 +725,7 @@
   <main role="main">
     <div class="cases-container">
       <div class="page-header">
-        <h1>📋 My Cases</h1>
+        <h1>My Cases</h1>
         <p>View and manage your missing person cases</p>
       </div>
 
@@ -459,25 +765,28 @@
 
       <!-- Cases Table -->
       <div class="cases-table">
-        <div class="table-header">
-          <div>Case</div>
-          <div>Status</div>
-          <div>Priority</div>
-          <div>Created</div>
-          <div>Updates</div>
-          <div>Actions</div>
-        </div>
-
-        <div id="casesTableBody">
-          <!-- Cases will be loaded here -->
-        </div>
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead class="table-header">
+            <tr>
+              <th>Case</th>
+              <th>Status</th>
+              <th>Priority</th>
+              <th>Created</th>
+              <th>Updates</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody class="table-body" id="casesTableBody">
+            <!-- Cases will be loaded here -->
+          </tbody>
+        </table>
       </div>
 
       <!-- Pagination -->
       <div class="pagination" id="pagination" style="display: none;">
-        <button class="pagination-btn" onclick="changePage(-1)" id="prevBtn">Previous</button>
+        <button onclick="changePage(-1)" id="prevBtn">Previous</button>
         <span id="pageInfo">Page 1 of 1</span>
-        <button class="pagination-btn" onclick="changePage(1)" id="nextBtn">Next</button>
+        <button onclick="changePage(1)" id="nextBtn">Next</button>
       </div>
     </div>
   </main>

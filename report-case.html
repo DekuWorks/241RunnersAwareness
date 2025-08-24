@@ -10,38 +10,66 @@
   <link rel="stylesheet" href="styles.css?v=20250127a&t=20250127" />
   <script src="auth-utils.js"></script>
   <style>
+    /* Report Case Container - matches React app layout */
     .report-container {
       max-width: 800px;
-      margin: 2rem auto;
-      padding: 0 1rem;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+      background-color: #f9fafb;
     }
 
+    /* Form Header - matches React app styling */
     .form-header {
-      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-      color: white;
-      padding: 2rem;
-      border-radius: 12px;
       margin-bottom: 2rem;
-      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
       text-align: center;
     }
 
     .form-header h1 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: #111827;
       margin: 0 0 0.5rem 0;
-      font-size: 2rem;
     }
 
     .form-header p {
+      color: #6b7280;
       margin: 0;
-      opacity: 0.9;
     }
 
+    /* Progress Bar - matches React app styling */
+    .progress-container {
+      margin-bottom: 2rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 0.5rem;
+      background-color: #e5e7eb;
+      border-radius: 0.25rem;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: #2563eb;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      text-align: center;
+      margin-top: 0.5rem;
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    /* Form Steps - matches React app styling */
     .form-step {
       background: white;
-      border-radius: 12px;
-      padding: 2rem;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
       margin-bottom: 1rem;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
       border: 1px solid #e5e7eb;
       display: none;
     }
@@ -50,54 +78,187 @@
       display: block;
     }
 
-    .step-indicator {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 2rem;
-    }
-
-    .step {
-      display: flex;
-      align-items: center;
-      margin: 0 1rem;
-    }
-
-    .step-number {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #e5e7eb;
-      color: #6b7280;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      margin-right: 0.5rem;
-    }
-
-    .step.active .step-number {
-      background: #3b82f6;
-      color: white;
-    }
-
-    .step.completed .step-number {
-      background: #10b981;
-      color: white;
-    }
-
-    .step-label {
-      font-weight: 500;
-      color: #374151;
-    }
-
+    /* Form Groups - matches React app styling */
     .form-group {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
     }
 
     .form-group label {
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 600;
+      color: #374151;
+      font-size: 0.875rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+      background: #fff;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    /* File Upload - matches React app styling */
+    .file-upload {
+      border: 2px dashed #d1d5db;
+      border-radius: 0.5rem;
+      padding: 2rem;
+      text-align: center;
+      background: #f9fafb;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .file-upload:hover {
+      border-color: #2563eb;
+      background: #f0f9ff;
+    }
+
+    .file-upload.dragover {
+      border-color: #2563eb;
+      background: #f0f9ff;
+    }
+
+    .file-upload input[type="file"] {
+      display: none;
+    }
+
+    .upload-icon {
+      font-size: 2rem;
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+    }
+
+    .upload-text {
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+
+    /* Navigation Buttons - matches React app styling */
+    .form-navigation {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background-color: #f3f4f6;
+      color: #374151;
+      border-color: #d1d5db;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background-color: #e5e7eb;
+    }
+
+    .btn-primary {
+      background-color: #2563eb;
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: #1d4ed8;
+    }
+
+    .btn-success {
+      background-color: #059669;
+      color: white;
+    }
+
+    .btn-success:hover:not(:disabled) {
+      background-color: #047857;
+    }
+
+    /* Validation Messages */
+    .error-message {
+      color: #dc2626;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+
+    .success-message {
+      color: #059669;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+
+    /* Loading State */
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #2563eb;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 0.5rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .report-container {
+        padding: 1rem;
+      }
+
+      .form-navigation {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
       color: #374151;
     }
 
@@ -288,33 +449,16 @@
   <main role="main">
     <div class="report-container">
       <div class="form-header">
-        <h1>🚨 Report Missing Person Case</h1>
+        <h1>Report Missing Person Case</h1>
         <p>Help us find missing individuals by providing detailed information</p>
       </div>
 
-      <!-- Step Indicator -->
-      <div class="step-indicator">
-        <div class="step active" data-step="1">
-          <div class="step-number">1</div>
-          <div class="step-label">Basic Information</div>
-        </div>
-        <div class="step" data-step="2">
-          <div class="step-number">2</div>
-          <div class="step-label">Physical Description</div>
-        </div>
-        <div class="step" data-step="3">
-          <div class="step-number">3</div>
-          <div class="step-label">Last Known Location</div>
-        </div>
-        <div class="step" data-step="4">
-          <div class="step-number">4</div>
-          <div class="step-label">Additional Details</div>
-        </div>
-      </div>
-
       <!-- Progress Bar -->
-      <div class="progress-bar">
-        <div class="progress-fill" id="progressFill" style="width: 25%;"></div>
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill" style="width: 25%;"></div>
+        </div>
+        <div class="progress-text">Step 1 of 4</div>
       </div>
 
       <!-- Step 1: Basic Information -->
@@ -414,7 +558,7 @@
           <textarea id="clothing" name="clothing" rows="3" placeholder="Describe what they were wearing when last seen..."></textarea>
         </div>
 
-        <div class="form-actions">
+        <div class="form-navigation">
           <button class="btn btn-secondary" onclick="prevStep()">Previous</button>
           <button class="btn btn-primary" onclick="nextStep()">Next Step</button>
         </div>
@@ -451,7 +595,7 @@
           <textarea id="circumstances" name="circumstances" rows="4" placeholder="Describe the circumstances surrounding the disappearance..."></textarea>
         </div>
 
-        <div class="form-actions">
+        <div class="form-navigation">
           <button class="btn btn-secondary" onclick="prevStep()">Previous</button>
           <button class="btn btn-primary" onclick="nextStep()">Next Step</button>
         </div>
@@ -509,7 +653,7 @@
           </div>
         </div>
 
-        <div class="form-actions">
+        <div class="form-navigation">
           <button class="btn btn-secondary" onclick="prevStep()">Previous</button>
           <button class="btn btn-success" onclick="submitCase()">Submit Case</button>
         </div>
