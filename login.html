@@ -3,261 +3,333 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - 241Runners Awareness</title>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="auth-utils.js"></script>
-  <link rel="stylesheet" href="styles.css?v=20250127a&t=20250127" />
+  <title>Login - 241 Runners Awareness</title>
+  <link rel="stylesheet" href="assets/styles/shared.css">
+  <link rel="stylesheet" href="styles.css">
+  <script src="js/auth.js" defer></script>
 </head>
 <body>
-  <header role="banner">
-    <div class="header-bar">
-      <img src="/241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
-      <h1>241 Runners Awareness</h1>
-    </div>
+  <!-- Include Header -->
+  <div id="header-placeholder"></div>
 
-    <nav role="navigation" aria-label="Main navigation">
-      <a href="index.html">Home</a>
-      <a href="aboutus.html">About Us</a>
-      <a href="cases.html">Cases</a>
-      <a href="map.html">🗺️ Map</a>
-      <a href="dna-tracking.html">🧬 DNA Tracking</a>
-      <a href="signup.html" id="signupLink">Sign Up</a>
-      <a href="login.html" id="loginLink" aria-current="page">Login</a>
-      <button id="logoutBtn" style="display: none;" class="logout-btn">Logout</button>
-      <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
-      <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
-    </nav>
-    
-    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
-      ☀️
-    </button>
-    
-    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-navigation">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-    <div class="back-button">
-      <a href="index.html" class="back-btn">&larr; Back to Home</a>
-    </div>
-  </header>
-
-  <main role="main">
-    <div class="login-container">
-      <h2>Login to Your Account</h2>
-      
-      <div class="google-btn-container">
-        <div id="g_id_onload"
-             data-client_id=""
-             data-context="signin"
-             data-ux_mode="popup"
-             data-callback="handleCredentialResponse"
-             data-auto_prompt="false">
-        </div>
-        <div class="g_id_signin"
-             data-type="standard"
-             data-shape="rectangular"
-             data-theme="outline"
-             data-text="signin_with"
-             data-size="large"
-             data-logo_alignment="left">
-        </div>
-      </div>
-
-      <div class="divider">or</div>
-
-      <form id="loginForm" class="login-form">
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" required placeholder="Enter your email">
+  <main class="main-content">
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h1 class="auth-title">Sign In</h1>
+          <p class="auth-subtitle">Welcome back to 241 Runners Awareness</p>
         </div>
 
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" required placeholder="Enter your password">
+        <!-- Error/Success Messages -->
+        <div id="errorContainer"></div>
+        <div id="successContainer"></div>
+
+        <form id="loginForm" class="auth-form">
+          <div class="form-group">
+            <label for="email" class="form-label">Email Address</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              class="form-input" 
+              required 
+              placeholder="Enter your email"
+              autocomplete="email"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              class="form-input" 
+              required 
+              placeholder="Enter your password"
+              autocomplete="current-password"
+            >
+          </div>
+
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary w-full" id="loginButton">
+              Sign In
+            </button>
+          </div>
+        </form>
+
+        <div class="auth-divider">
+          <span>or</span>
         </div>
 
-        <div class="form-group">
-          <input type="submit" value="Sign In" class="submit-btn">
+        <!-- Demo Credentials -->
+        <div class="demo-section">
+          <h4 class="demo-title">Demo Credentials</h4>
+          <div class="demo-info">
+            <div class="demo-credential">
+              <strong>Admin:</strong> admin@example.com / ChangeMe123!
+            </div>
+            <div class="demo-description">
+              Full access to all features including user management
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary" onclick="fillDemoCredentials()">
+            Use Demo Admin
+          </button>
         </div>
-      </form>
 
-      <div id="message" class="message" style="display: none;"></div>
-
-      <!-- Demo Credentials -->
-      <div class="demo-credentials">
-        <h4>Demo Credentials</h4>
-        <div class="demo-info">
-          <div><strong>Admin:</strong> admin@example.com / ChangeMe123!</div>
-          <div class="demo-description">Full access to all features including user management</div>
+        <div class="auth-footer">
+          <p class="auth-link-text">
+            Don't have an account? 
+            <a href="signup.html" class="auth-link">Sign up here</a>
+          </p>
+          <p class="auth-link-text">
+            <a href="forgot-password.html" class="auth-link">Forgot your password?</a>
+          </p>
         </div>
-        <button type="button" class="demo-btn" onclick="fillDemoCredentials()">
-          Use Demo Admin
-        </button>
-      </div>
-
-      <div class="signup-link">
-        Don't have an account? <a href="signup.html">Sign up here</a>
-      </div>
-
-      <div class="forgot-password">
-        <a href="forgot-password.html">Forgot your password?</a>
       </div>
     </div>
   </main>
 
-  <footer role="contentinfo">
-    <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
-  </footer>
+  <!-- Include Footer -->
+  <div id="footer-placeholder"></div>
+
+  <style>
+  /* Auth-specific styles */
+  .main-content {
+    min-height: calc(100vh - 64px - 200px); /* Adjust for header/footer */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
+    background-color: var(--color-bg-secondary);
+  }
+
+  .auth-container {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .auth-card {
+    background-color: var(--color-bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-2xl);
+  }
+
+  .auth-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .auth-title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--spacing-sm) 0;
+  }
+
+  .auth-subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .auth-form {
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .auth-divider {
+    position: relative;
+    text-align: center;
+    margin: var(--spacing-lg) 0;
+  }
+
+  .auth-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--color-border-primary);
+  }
+
+  .auth-divider span {
+    background-color: var(--color-bg-primary);
+    padding: 0 var(--spacing-md);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  .demo-section {
+    background-color: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+  }
+
+  .demo-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--spacing-md) 0;
+  }
+
+  .demo-info {
+    margin-bottom: var(--spacing-md);
+  }
+
+  .demo-credential {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .demo-description {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .auth-footer {
+    text-align: center;
+  }
+
+  .auth-link-text {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: var(--spacing-xs) 0;
+  }
+
+  .auth-link {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+  }
+
+  .auth-link:hover {
+    text-decoration: underline;
+  }
+
+  /* Alert styles */
+  .alert {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--font-size-sm);
+  }
+
+  .alert-error {
+    background-color: rgb(239 68 68 / 0.1);
+    border: 1px solid rgb(239 68 68 / 0.2);
+    color: var(--color-error);
+  }
+
+  .alert-success {
+    background-color: rgb(16 185 129 / 0.1);
+    border: 1px solid rgb(16 185 129 / 0.2);
+    color: var(--color-success);
+  }
+
+  /* Loading spinner */
+  .loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: var(--spacing-xs);
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  </style>
 
   <script>
-    // Google OAuth handling
-    function handleCredentialResponse(response) {
-      // Decode the JWT token
-      const responsePayload = decodeJwtResponse(response.credential);
-      
-      console.log("ID: " + responsePayload.sub);
-      console.log('Full Name: ' + responsePayload.name);
-      console.log('Given Name: ' + responsePayload.given_name);
-      console.log('Family Name: ' + responsePayload.family_name);
-      console.log("Image URL: " + responsePayload.picture);
-      console.log("Email: " + responsePayload.email);
-      
-      // Send to backend for verification
-      loginWithGoogle(response.credential);
+  // Load header and footer
+  document.addEventListener('DOMContentLoaded', function() {
+    // Load header
+    fetch('partials/header.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('header-placeholder').innerHTML = html;
+      })
+      .catch(error => console.error('Error loading header:', error));
+
+    // Load footer
+    fetch('partials/footer.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('footer-placeholder').innerHTML = html;
+      })
+      .catch(error => console.error('Error loading footer:', error));
+
+    // Check if user is already authenticated
+    if (window.Auth && window.Auth.redirectIfAuthenticated()) {
+      return;
     }
+  });
 
-    function decodeJwtResponse(token) {
-      var base64Url = token.split('.')[1];
-      var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
-      return JSON.parse(jsonPayload);
-    }
+  // Handle form submission
+  document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('loginForm');
+    const loginButton = document.getElementById('loginButton');
 
-    async function loginWithGoogle(idToken) {
-      try {
-        const response = await fetch('http://localhost:5113/api/auth/google-login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ idToken })
-        });
+    if (loginForm) {
+      loginForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
 
-        const data = await response.json();
+        // Clear previous messages
+        window.Auth.clearMessages('errorContainer');
+        window.Auth.clearMessages('successContainer');
 
-        if (response.ok) {
-          localStorage.setItem('user', JSON.stringify(data));
-          showMessage('Login successful! Redirecting...', 'success');
-          setTimeout(() => {
-            window.location.href = 'index.html';
-          }, 1500);
-        } else {
-          showMessage(data.message || 'Login failed', 'error');
+        // Get form data
+        const formData = new FormData(loginForm);
+        const email = formData.get('email');
+        const password = formData.get('password');
+
+        // Validate form
+        const errors = window.Auth.validateForm({ email, password });
+        if (Object.keys(errors).length > 0) {
+          const errorMessage = Object.values(errors)[0];
+          window.Auth.showError(errorMessage);
+          return;
         }
-      } catch (error) {
-        console.error('Login error:', error);
-        showMessage('Network error. Please try again.', 'error');
-      }
-    }
 
-    // Traditional login form handling
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      
-      // Use universal authentication handler
-      await handleLogin(email, password);
-    });
+        try {
+          // Show loading state
+          window.Auth.showLoading(loginButton, 'Signing in...');
 
-    function showMessage(message, type) {
-      const messageDiv = document.getElementById('message');
-      messageDiv.textContent = message;
-      messageDiv.className = `message ${type}`;
-      messageDiv.style.display = 'block';
-      
-      setTimeout(() => {
-        messageDiv.style.display = 'none';
-      }, 5000);
-    }
+          // Attempt login
+          await window.Auth.login(email, password);
 
-    function forgotPassword() {
-      showMessage('Password reset functionality coming soon!', 'info');
-    }
+          // Show success message
+          window.Auth.showSuccess('Login successful! Redirecting...', 'successContainer');
 
-    function fillDemoCredentials() {
-      document.getElementById('email').value = 'admin@example.com';
-      document.getElementById('password').value = 'ChangeMe123!';
-      showMessage('Demo credentials filled! Click "Sign In" to continue.', 'success');
-    }
+          // Redirect to dashboard
+          window.Auth.redirectWithDelay('/dashboard.html', 1000);
 
-    // Sticky navbar scroll effect
-    window.addEventListener('scroll', function() {
-      const header = document.querySelector('header');
-      if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
-      }
-    });
+        } catch (error) {
+          // Hide loading state
+          window.Auth.hideLoading(loginButton);
 
-    // Hamburger menu functionality
-    const hamburger = document.querySelector('.hamburger');
-    const nav = document.querySelector('nav');
-    
-    hamburger.addEventListener('click', function() {
-      const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
-      hamburger.setAttribute('aria-expanded', !isExpanded);
-      hamburger.classList.toggle('active');
-      nav.classList.toggle('active');
-    });
-    
-    // Close menu when clicking on a link
-    document.querySelectorAll('nav a').forEach(link => {
-      link.addEventListener('click', () => {
-        hamburger.classList.remove('active');
-        nav.classList.remove('active');
+          // Show error message
+          window.Auth.showError(error.message || 'Login failed. Please try again.');
+        }
       });
-    });
-    
-    // Close menu when clicking outside
-    document.addEventListener('click', function(e) {
-      if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
-        hamburger.classList.remove('active');
-        nav.classList.remove('active');
-      }
-    });
-
-    // Dark mode toggle functionality
-    const themeToggle = document.getElementById('theme-toggle');
-    const body = document.body;
-    
-    // Check for saved theme preference or default to light mode
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    if (currentTheme === 'dark') {
-      body.classList.add('dark-mode');
-      themeToggle.textContent = '🌙';
-      themeToggle.setAttribute('aria-pressed', 'true');
     }
-    
-    // Theme toggle click handler
-    themeToggle.addEventListener('click', function() {
-      body.classList.toggle('dark-mode');
-      
-      if (body.classList.contains('dark-mode')) {
-        localStorage.setItem('theme', 'dark');
-        themeToggle.textContent = '🌙';
-        themeToggle.setAttribute('aria-pressed', 'true');
-      } else {
-        localStorage.setItem('theme', 'light');
-        themeToggle.textContent = '☀️';
-        themeToggle.setAttribute('aria-pressed', 'false');
-      }
-    });
+  });
+
+  // Fill demo credentials
+  function fillDemoCredentials() {
+    document.getElementById('email').value = 'admin@example.com';
+    document.getElementById('password').value = 'ChangeMe123!';
+  }
   </script>
 </body>
 </html> 

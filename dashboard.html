@@ -1,892 +1,516 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - 241 Runners Awareness</title>
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-  <link rel="stylesheet" href="styles.css?v=20250127a&t=20250127" />
-  <script src="auth-utils.js"></script>
-  <style>
-    /* Dashboard Container - matches React app layout */
-    .dashboard-container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 2rem 1rem;
-      min-height: 100vh;
-      background-color: #f9fafb;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* Welcome Header - matches React app styling */
-    .welcome-section {
-      margin-bottom: 2rem;
-      text-align: center;
-      width: 100%;
-    }
-
-    .welcome-section h1 {
-      font-size: 1.875rem;
-      font-weight: 700;
-      color: #111827;
-      margin: 0 0 0.5rem 0;
-    }
-
-    .welcome-section p {
-      color: #6b7280;
-      margin: 0;
-    }
-
-    /* Stats Cards - matches React app grid layout */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-      width: 100%;
-      max-width: 1000px;
-    }
-
-    .stat-card {
-      background: white;
-      border-radius: 0.5rem;
-      padding: 1.5rem;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-      border: 1px solid #e5e7eb;
-      transition: all 0.3s ease;
-    }
-
-    .stat-card:hover {
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-
-    .stat-content {
-      display: flex;
-      align-items: center;
-    }
-
-    .stat-icon {
-      flex-shrink: 0;
-      width: 2rem;
-      height: 2rem;
-      border-radius: 0.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.125rem;
-    }
-
-    .stat-icon.blue {
-      background-color: #dbeafe;
-    }
-
-    .stat-icon.yellow {
-      background-color: #fef3c7;
-    }
-
-    .stat-icon.green {
-      background-color: #d1fae5;
-    }
-
-    .stat-icon.blue .icon-text {
-      color: #2563eb;
-    }
-
-    .stat-icon.yellow .icon-text {
-      color: #d97706;
-    }
-
-    .stat-icon.green .icon-text {
-      color: #059669;
-    }
-
-    .stat-info {
-      margin-left: 1rem;
-    }
-
-    .stat-label {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #6b7280;
-      margin: 0;
-    }
-
-    .stat-number {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: #111827;
-      margin: 0;
-    }
-
-    /* Quick Actions - matches React app styling */
-    .quick-actions {
-      margin-bottom: 2rem;
-      width: 100%;
-      max-width: 1000px;
-    }
-
-    .quick-actions h2 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #111827;
-      margin: 0 0 1rem 0;
-      text-align: center;
-    }
-
-    .actions-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-    }
-
-    .action-card {
-      background: white;
-      border-radius: 0.5rem;
-      padding: 1.5rem;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-      border: 1px solid #e5e7eb;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      color: inherit;
-      display: block;
-    }
-
-    .action-card:hover {
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      transform: translateY(-1px);
-    }
-
-    .action-content {
-      display: flex;
-      align-items: center;
-    }
-
-    .action-icon {
-      flex-shrink: 0;
-      font-size: 1.5rem;
-      margin-right: 1rem;
-    }
-
-    .action-info h3 {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #111827;
-      margin: 0 0 0.25rem 0;
-    }
-
-    .action-info p {
-      font-size: 0.875rem;
-      color: #6b7280;
-      margin: 0;
-    }
-
-    /* Recent Cases - matches React app styling */
-    .recent-cases {
-      margin-bottom: 2rem;
-      width: 100%;
-      max-width: 1000px;
-    }
-
-    .cases-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    .cases-header h2 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #111827;
-      margin: 0;
-    }
-
-    .view-all-link {
-      color: #2563eb;
-      font-size: 0.875rem;
-      font-weight: 500;
-      text-decoration: none;
-    }
-
-    .view-all-link:hover {
-      color: #1d4ed8;
-    }
-
-    .cases-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1rem;
-    }
-
-    .case-card {
-      background: white;
-      border-radius: 0.5rem;
-      padding: 1.5rem;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-      border: 1px solid #e5e7eb;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      color: inherit;
-      display: block;
-    }
-
-    .case-card:hover {
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      transform: translateY(-1px);
-    }
-
-    .case-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 0.5rem;
-    }
-
-    .case-title {
-      font-size: 1.125rem;
-      font-weight: 500;
-      color: #111827;
-      margin: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .case-status {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      flex-shrink: 0;
-    }
-
-    .case-status.active {
-      background-color: #d1fae5;
-      color: #065f46;
-    }
-
-    .case-status.missing {
-      background-color: #fef3c7;
-      color: #92400e;
-    }
-
-    .case-status.resolved {
-      background-color: #dbeafe;
-      color: #1e40af;
-    }
-
-    .case-meta {
-      color: #6b7280;
-      font-size: 0.875rem;
-      margin: 0;
-    }
-
-    /* Empty State - matches React app styling */
-    .empty-state {
-      background: white;
-      border-radius: 0.5rem;
-      padding: 1.5rem;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-      text-align: center;
-    }
-
-    .empty-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      color: #6b7280;
-    }
-
-    .empty-title {
-      font-size: 1.125rem;
-      font-weight: 500;
-      color: #111827;
-      margin: 0 0 0.5rem 0;
-    }
-
-    .empty-description {
-      color: #6b7280;
-      margin: 0 0 1rem 0;
-    }
-
-    .empty-button {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.5rem 1rem;
-      border: 1px solid transparent;
-      border-radius: 0.375rem;
-      font-size: 0.875rem;
-      font-weight: 500;
-      text-decoration: none;
-      background-color: #2563eb;
-      color: white;
-      transition: all 0.3s ease;
-    }
-
-    .empty-button:hover {
-      background-color: #1d4ed8;
-    }
-
-    /* Loading State - matches React app styling */
-    .loading-state {
-      background: white;
-      border-radius: 0.5rem;
-      padding: 1.5rem;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    }
-
-    .loading-pulse {
-      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% {
-        opacity: 1;
-      }
-      50% {
-        opacity: .5;
-      }
-    }
-
-    .loading-bar {
-      height: 1rem;
-      background-color: #e5e7eb;
-      border-radius: 0.25rem;
-      margin-bottom: 1rem;
-    }
-
-    .loading-bar:last-child {
-      margin-bottom: 0;
-    }
-
-    .loading-bar.w-3\/4 {
-      width: 75%;
-    }
-
-    .loading-bar.w-1\/2 {
-      width: 50%;
-    }
-
-    .loading-bar.w-2\/3 {
-      width: 66.666667%;
-    }
-
-    /* Admin Section - matches React app styling */
-    .admin-section {
-      background: white;
-      border-radius: 0.5rem;
-      padding: 1.5rem;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-      border: 1px solid #e5e7eb;
-      margin-bottom: 2rem;
-      width: 100%;
-      max-width: 1000px;
-    }
-
-    .admin-section h2 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #111827;
-      margin: 0 0 1rem 0;
-      text-align: center;
-    }
-
-    .admin-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-    }
-
-    .admin-card {
-      background: #f9fafb;
-      border-radius: 0.5rem;
-      padding: 1rem;
-      text-align: center;
-      border: 1px solid #e5e7eb;
-      transition: all 0.3s ease;
-    }
-
-    .admin-card:hover {
-      background: #f3f4f6;
-    }
-
-    .admin-card h3 {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #374151;
-      margin: 0 0 0.5rem 0;
-    }
-
-    .admin-card p {
-      font-size: 0.75rem;
-      color: #6b7280;
-      margin: 0;
-    }
-
-    /* Help Section - matches React app styling */
-    .help-section {
-      background: white;
-      border-radius: 0.5rem;
-      padding: 1.5rem;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-      border: 1px solid #e5e7eb;
-      width: 100%;
-      max-width: 1000px;
-    }
-
-    .help-section h2 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #111827;
-      margin: 0 0 1rem 0;
-      text-align: center;
-    }
-
-    .help-content {
-      color: #6b7280;
-      line-height: 1.6;
-      text-align: center;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .dashboard-container {
-        padding: 1rem;
-      }
-
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .actions-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .cases-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .admin-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="assets/styles/shared.css">
+  <link rel="stylesheet" href="styles.css">
+  <script src="js/auth.js" defer></script>
+  <script src="js/runners.js" defer></script>
 </head>
 <body>
-  <header role="banner">
-    <div class="header-bar">
-      <img src="/241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
-      <h1>241 Runners Awareness</h1>
-    </div>
+  <!-- Include Header -->
+  <div id="header-placeholder"></div>
 
-    <nav role="navigation" aria-label="Main navigation">
-      <a href="index.html">Home</a>
-      <a href="aboutus.html">About Us</a>
-      <a href="cases.html">Cases</a>
-      <a href="map.html">🗺️ Map</a>
-      <a href="dna-tracking.html">🧬 DNA Tracking</a>
-      <a href="signup.html" id="signupLink">Sign Up</a>
-      <a href="login.html" id="loginLink">Login</a>
-      <a href="dashboard.html" id="dashboardLink" style="display: none;">📊 Dashboard</a>
-      <a href="runner-profile.html?id=1" id="runnerProfileLink" style="display: none;">🏃 Runner Profile</a>
-      <button id="logoutBtn" style="display: none;" class="logout-btn">Logout</button>
-      <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
-      <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
-    </nav>
-    
-    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
-      ☀️
-    </button>
-    
-    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-navigation">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </header>
-
-  <main role="main">
+  <main class="main-content">
     <div class="dashboard-container">
-      <!-- Welcome Header -->
-      <div class="welcome-section">
-        <h1>Welcome back, <span id="userFirstName">User</span>!</h1>
-        <p>Here's what's happening with your cases and how you can help.</p>
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">My Dashboard</h1>
+          <p class="page-subtitle">Manage your runner profiles and track cases</p>
+        </div>
+        <div class="page-header-actions">
+          <a href="new-runner.html" class="btn btn-primary">
+            <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Add New Runner
+          </a>
+        </div>
       </div>
 
-      <!-- Stats Cards -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-content">
-            <div class="stat-icon blue">
-              <span class="icon-text">📊</span>
+      <!-- Error/Success Messages -->
+      <div id="errorContainer"></div>
+      <div id="successContainer"></div>
+
+      <!-- Loading State -->
+      <div id="loadingState" class="loading-state">
+        <div class="loading-spinner-large"></div>
+        <p class="loading-text">Loading your runners...</p>
+      </div>
+
+      <!-- Dashboard Content -->
+      <div id="dashboardContent" class="dashboard-content hidden">
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">👤</div>
+            <div class="stat-content">
+              <h3 class="stat-number" id="totalRunners">0</h3>
+              <p class="stat-label">Total Runners</p>
             </div>
-            <div class="stat-info">
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📋</div>
+            <div class="stat-content">
+              <h3 class="stat-number" id="totalCases">0</h3>
               <p class="stat-label">Total Cases</p>
-              <p class="stat-number" id="totalCases">0</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-content">
+              <h3 class="stat-number" id="activeRunners">0</h3>
+              <p class="stat-label">Active Runners</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-content">
+              <h3 class="stat-number" id="missingRunners">0</h3>
+              <p class="stat-label">Missing Runners</p>
             </div>
           </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-content">
-            <div class="stat-icon yellow">
-              <span class="icon-text">⚠️</span>
-            </div>
-            <div class="stat-info">
-              <p class="stat-label">Active Cases</p>
-              <p class="stat-number" id="activeCases">0</p>
+
+        <!-- My Runners Section -->
+        <div class="section">
+          <div class="section-header">
+            <h2 class="section-title">My Runners</h2>
+            <div class="section-actions">
+              <div class="search-box">
+                <input 
+                  type="text" 
+                  id="runnerSearch" 
+                  class="search-input" 
+                  placeholder="Search runners..."
+                >
+                <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+              </div>
+              <select id="statusFilter" class="filter-select">
+                <option value="">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Missing">Missing</option>
+              </select>
             </div>
           </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-content">
-            <div class="stat-icon green">
-              <span class="icon-text">📝</span>
-            </div>
-            <div class="stat-info">
-              <p class="stat-label">Recent Updates</p>
-              <p class="stat-number" id="recentUpdates">0</p>
-            </div>
+
+          <!-- Runners Grid -->
+          <div id="runnersGrid" class="runners-grid">
+            <!-- Runners will be loaded here -->
+          </div>
+
+          <!-- Empty State -->
+          <div id="emptyState" class="empty-state hidden">
+            <div class="empty-icon">👤</div>
+            <h3 class="empty-title">No runners yet</h3>
+            <p class="empty-description">
+              Get started by adding your first runner profile to track their information and cases.
+            </p>
+            <a href="new-runner.html" class="btn btn-primary">
+              Add Your First Runner
+            </a>
           </div>
         </div>
-      </div>
 
-      <!-- Quick Actions -->
-      <div class="quick-actions">
-        <h2>Quick Actions</h2>
-        <div class="actions-grid">
-          <a href="report-case.html" class="action-card">
-            <div class="action-content">
-              <div class="action-icon">📝</div>
-              <div class="action-info">
-                <h3>Report New Case</h3>
-                <p>Create a new missing person case</p>
-              </div>
-            </div>
-          </a>
-          <a href="my-cases.html" class="action-card">
-            <div class="action-content">
-              <div class="action-icon">📋</div>
-              <div class="action-info">
-                <h3>My Cases</h3>
-                <p>View and manage your cases</p>
-              </div>
-            </div>
-          </a>
-          <a href="map.html" class="action-card">
-            <div class="action-content">
-              <div class="action-icon">🗺️</div>
-              <div class="action-info">
-                <h3>View Map</h3>
-                <p>See cases on interactive map</p>
-              </div>
-            </div>
-          </a>
-          <a href="profile.html" class="action-card">
-            <div class="action-content">
-              <div class="action-icon">👤</div>
-              <div class="action-info">
-                <h3>Update Profile</h3>
-                <p>Edit your profile information</p>
-              </div>
-            </div>
-          </a>
-          <a href="runner-profile.html?id=1" class="action-card">
-            <div class="action-content">
-              <div class="action-icon">🏃</div>
-              <div class="action-info">
-                <h3>Runner Profile</h3>
-                <p>View runner profiles and details</p>
-              </div>
-            </div>
-          </a>
-        </div>
-      </div>
-
-      <!-- Recent Cases -->
-      <div class="recent-cases">
-        <div class="cases-header">
-          <h2>Recent Cases</h2>
-          <a href="my-cases.html" class="view-all-link">View all cases →</a>
-        </div>
-        <div id="recentCasesList">
-          <!-- Cases will be loaded here -->
-        </div>
-      </div>
-
-      <!-- Admin Section (conditionally displayed) -->
-      <div id="adminSection" style="display: none;">
-        <div class="admin-section">
-          <h2>Admin Tools</h2>
-          <div class="admin-grid">
-            <div class="admin-card">
-              <h3>User Management</h3>
-              <p>Manage user accounts and permissions</p>
-            </div>
-            <div class="admin-card">
-              <h3>Case Review</h3>
-              <p>Review and approve case submissions</p>
-            </div>
-            <div class="admin-card">
-              <h3>System Settings</h3>
-              <p>Configure system preferences</p>
-            </div>
+        <!-- Recent Activity -->
+        <div class="section">
+          <div class="section-header">
+            <h2 class="section-title">Recent Activity</h2>
+          </div>
+          <div id="recentActivity" class="activity-list">
+            <!-- Activity items will be loaded here -->
           </div>
         </div>
       </div>
-
-      <!-- Help Section -->
-      <div class="help-section">
-        <h2>Need Help?</h2>
-        <div class="help-content">
-          <p>Get support, view tutorials, or contact our team for assistance with using the platform.</p>
-          <p>For urgent matters, please contact our support team directly.</p>
-        </div>
-      </div>
-    </div>
     </div>
   </main>
 
-  <footer role="contentinfo">
-    <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
-  </footer>
+  <!-- Include Footer -->
+  <div id="footer-placeholder"></div>
+
+  <style>
+  /* Dashboard-specific styles */
+  .main-content {
+    min-height: calc(100vh - 64px - 200px);
+    background-color: var(--color-bg-secondary);
+  }
+
+  .dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+  }
+
+  /* Page Header */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    background-color: var(--color-bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .page-title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--spacing-xs) 0;
+  }
+
+  .page-subtitle {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .page-header-actions {
+    display: flex;
+    gap: var(--spacing-md);
+  }
+
+  .btn-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: var(--spacing-xs);
+  }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .stat-card {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-lg);
+    background-color: var(--color-bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .stat-icon {
+    font-size: var(--font-size-2xl);
+    margin-right: var(--spacing-md);
+  }
+
+  .stat-number {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--spacing-xs) 0;
+  }
+
+  .stat-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  /* Sections */
+  .section {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .section-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  .section-actions {
+    display: flex;
+    gap: var(--spacing-md);
+  }
+
+  /* Search and Filter */
+  .search-box {
+    position: relative;
+  }
+
+  .search-input {
+    padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-sm) var(--spacing-xl);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    width: 200px;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: var(--spacing-sm);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: var(--color-text-muted);
+  }
+
+  .filter-select {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    background-color: var(--color-bg-primary);
+  }
+
+  /* Runners Grid */
+  .runners-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+  }
+
+  .runner-card {
+    background-color: var(--color-bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: box-shadow var(--transition-fast);
+    cursor: pointer;
+  }
+
+  .runner-card:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  .runner-header {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border-primary);
+  }
+
+  .runner-name {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--spacing-xs) 0;
+  }
+
+  .runner-id {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--spacing-sm) 0;
+  }
+
+  .runner-status {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+  }
+
+  .runner-status.active {
+    background-color: rgb(16 185 129 / 0.1);
+    color: var(--color-status-active);
+  }
+
+  .runner-status.inactive {
+    background-color: rgb(100 116 139 / 0.1);
+    color: var(--color-status-inactive);
+  }
+
+  .runner-status.missing {
+    background-color: rgb(239 68 68 / 0.1);
+    color: var(--color-status-missing);
+  }
+
+  .runner-body {
+    padding: var(--spacing-lg);
+  }
+
+  .runner-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .runner-info-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-size-sm);
+  }
+
+  .runner-info-label {
+    color: var(--color-text-secondary);
+  }
+
+  .runner-info-value {
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-medium);
+  }
+
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: var(--spacing-3xl);
+    background-color: var(--color-bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .empty-icon {
+    font-size: var(--font-size-4xl);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .empty-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--spacing-sm) 0;
+  }
+
+  .empty-description {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--spacing-xl) 0;
+  }
+
+  /* Loading State */
+  .loading-state {
+    text-align: center;
+    padding: var(--spacing-3xl);
+  }
+
+  .loading-spinner-large {
+    display: inline-block;
+    width: 48px;
+    height: 48px;
+    border: 4px solid var(--color-border-primary);
+    border-top: 4px solid var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .loading-text {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  /* Activity List */
+  .activity-list {
+    background-color: var(--color-bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .activity-item {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border-primary);
+  }
+
+  .activity-item:last-child {
+    border-bottom: none;
+  }
+
+  .activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: var(--spacing-md);
+    flex-shrink: 0;
+  }
+
+  .activity-content {
+    flex: 1;
+  }
+
+  .activity-title {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--spacing-xs) 0;
+  }
+
+  .activity-time {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-lg);
+    }
+
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-md);
+    }
+
+    .section-actions {
+      width: 100%;
+    }
+
+    .search-input {
+      width: 100%;
+    }
+
+    .runners-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  </style>
 
   <script>
-    // API Configuration
-    const API_BASE_URL = 'http://localhost:5113/api';
-    
-    // Check if user is logged in
-    function checkAuth() {
-      const user = localStorage.getItem('user');
-      if (!user) {
-        window.location.href = 'login.html';
-        return;
-      }
+  // Load header and footer
+  document.addEventListener('DOMContentLoaded', function() {
+    // Load header
+    fetch('partials/header.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('header-placeholder').innerHTML = html;
+      })
+      .catch(error => console.error('Error loading header:', error));
 
-      try {
-        const userData = JSON.parse(user);
-        const firstName = userData.user?.firstName || userData.user?.fullName?.split(' ')[0] || 'User';
-        const fullName = userData.user?.fullName || 'User';
-        const email = userData.user?.email || 'user@example.com';
-        const role = userData.user?.role || 'user';
-        
-        // Update user info display
-        document.getElementById('userFirstName').textContent = firstName;
-        
-        // Show admin section for admin users
-        if (role === 'admin') {
-          document.getElementById('adminSection').style.display = 'block';
-        }
-        
-        // Load user's cases
-        loadUserCases();
-        
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-        window.location.href = 'login.html';
-      }
+    // Load footer
+    fetch('partials/footer.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('footer-placeholder').innerHTML = html;
+      })
+      .catch(error => console.error('Error loading footer:', error));
+
+    // Check authentication
+    if (window.Auth && !window.Auth.requireAuth()) {
+      return;
     }
-
-    // Load user's cases from API
-    async function loadUserCases() {
-      try {
-        const user = JSON.parse(localStorage.getItem('user'));
-        const token = user?.token || user?.accessToken;
-        
-        if (!token) {
-          console.log('No auth token available');
-          return;
-        }
-
-        const response = await fetch(`${API_BASE_URL}/cases/mine`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (response.ok) {
-          const cases = await response.json();
-          updateDashboardStats(cases);
-          updateRecentCases(cases);
-        } else {
-          console.log('Failed to load cases:', response.status);
-          // Fallback to mock data for demo
-          loadMockData();
-        }
-      } catch (error) {
-        console.error('Error loading cases:', error);
-        // Fallback to mock data for demo
-        loadMockData();
-      }
-    }
-
-    // Update dashboard statistics
-    function updateDashboardStats(cases) {
-      const totalCases = cases.length;
-      const activeCases = cases.filter(c => c.status === 'active' || c.status === 'missing').length;
-      const recentUpdates = cases.reduce((total, c) => total + (c.updatesCount || 0), 0);
-
-      document.getElementById('totalCases').textContent = totalCases;
-      document.getElementById('activeCases').textContent = activeCases;
-      document.getElementById('recentUpdates').textContent = recentUpdates;
-    }
-
-    // Update recent cases display
-    function updateRecentCases(cases) {
-      const recentCasesList = document.getElementById('recentCasesList');
-      
-      if (cases.length === 0) {
-        recentCasesList.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">📋</div>
-            <h3 class="empty-title">No cases yet</h3>
-            <p class="empty-description">Get started by reporting your first missing person case.</p>
-            <a href="report-case.html" class="empty-button">Report New Case</a>
-          </div>
-        `;
-        return;
-      }
-
-      const recentCases = cases.slice(0, 3); // Show last 3 cases
-      recentCasesList.innerHTML = `
-        <div class="cases-grid">
-          ${recentCases.map(caseItem => `
-            <a href="case-detail.html?id=${caseItem.id}" class="case-card">
-              <div class="case-header">
-                <h3 class="case-title">${caseItem.title || 'Untitled Case'}</h3>
-                <span class="case-status ${caseItem.status}">${caseItem.status}</span>
-              </div>
-              <p class="case-meta">Created: ${new Date(caseItem.createdAt).toLocaleDateString()}</p>
-            </a>
-          `).join('')}
-        </div>
-      `;
-    }
-
-    // Load mock data for demo purposes
-    function loadMockData() {
-      const mockCases = [
-        {
-          id: 1,
-          title: "Missing Person - John Doe",
-          status: "active",
-          priority: "High",
-          createdAt: new Date().toISOString(),
-          updatesCount: 3
-        },
-        {
-          id: 2,
-          title: "Missing Person - Jane Smith",
-          status: "missing",
-          priority: "Medium",
-          createdAt: new Date(Date.now() - 86400000).toISOString(),
-          updatesCount: 1
-        }
-      ];
-      
-      updateDashboardStats(mockCases);
-      updateRecentCases(mockCases);
-    }
-
-    // View case details
-    function viewCase(caseId) {
-      window.location.href = `case-detail.html?id=${caseId}`;
-    }
-
-    // Update profile
-    function updateProfile() {
-      window.location.href = 'profile.html';
-    }
-
-    // Logout function
-    function logout() {
-      localStorage.removeItem('user');
-      localStorage.removeItem('google_access_token');
-      localStorage.removeItem('userToken');
-      
-      // Revoke Google session if available
-      if (window.google && window.google.accounts) {
-        try {
-          window.google.accounts.oauth2.revoke(localStorage.getItem('google_access_token'));
-        } catch (error) {
-          console.log('Google session revocation failed:', error);
-        }
-      }
-      
-      window.location.href = 'index.html';
-    }
-
-    // Initialize dashboard
-    checkAuth();
-
-    // Sticky navbar scroll effect
-    window.addEventListener('scroll', function() {
-      const header = document.querySelector('header');
-      if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
-      }
-    });
-
-    // Hamburger menu functionality
-    const hamburger = document.querySelector('.hamburger');
-    const nav = document.querySelector('nav');
-    
-    hamburger.addEventListener('click', function() {
-      const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
-      hamburger.setAttribute('aria-expanded', !isExpanded);
-      hamburger.classList.toggle('active');
-      nav.classList.toggle('active');
-    });
-    
-    // Close menu when clicking on a link
-    document.querySelectorAll('nav a').forEach(link => {
-      link.addEventListener('click', () => {
-        hamburger.classList.remove('active');
-        nav.classList.remove('active');
-      });
-    });
-    
-    // Close menu when clicking outside
-    document.addEventListener('click', function(e) {
-      if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
-        hamburger.classList.remove('active');
-        nav.classList.remove('active');
-      }
-    });
-
-    // Dark mode toggle functionality
-    const themeToggle = document.getElementById('theme-toggle');
-    const body = document.body;
-    
-    // Check for saved theme preference or default to light mode
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    if (currentTheme === 'dark') {
-      body.classList.add('dark-mode');
-      themeToggle.textContent = '🌙';
-      themeToggle.setAttribute('aria-pressed', 'true');
-    }
-    
-    // Theme toggle click handler
-    themeToggle.addEventListener('click', function() {
-      body.classList.toggle('dark-mode');
-      
-      if (body.classList.contains('dark-mode')) {
-        localStorage.setItem('theme', 'dark');
-        themeToggle.textContent = '🌙';
-        themeToggle.setAttribute('aria-pressed', 'true');
-      } else {
-        localStorage.setItem('theme', 'light');
-        themeToggle.textContent = '☀️';
-        themeToggle.setAttribute('aria-pressed', 'false');
-      }
-    });
+  });
   </script>
 </body>
 </html> 
