@@ -19,6 +19,8 @@
 
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './features/auth/authSlice';
+import casesReducer from './features/cases/casesSlice';
+import caseUpdatesReducer from './features/cases/caseUpdatesSlice';
 
 // Import other reducers as needed
 // import notificationsReducer from './features/notifications/notificationsSlice';
@@ -34,6 +36,10 @@ const store = configureStore({
   reducer: {
     // Core application state
     auth: authReducer,
+    
+    // Case management state
+    cases: casesReducer,
+    caseUpdates: caseUpdatesReducer,
     
     // Feature-specific state
     // notifications: notificationsReducer,

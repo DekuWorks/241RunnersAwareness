@@ -46,11 +46,12 @@ function updateNavigation() {
     if (profileLink) profileLink.style.display = 'inline-block';
     if (logoutBtn) logoutBtn.style.display = 'inline-block';
     
-    // Show dashboard and user management links for admin users
+    // Show dashboard link for all authenticated users
     const userData = JSON.parse(user);
-    if (dashboardLink && userData.role === 'admin') {
+    if (dashboardLink) {
       dashboardLink.style.display = 'inline-block';
     }
+    // Show user management links for admin users only
     if (userManagementLink && userData.role === 'admin') {
       userManagementLink.style.display = 'inline-block';
     }

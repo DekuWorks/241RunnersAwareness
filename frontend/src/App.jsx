@@ -45,8 +45,16 @@ import AdminDashboard from "./pages/AdminDashboard";
 import UsersPage from "./pages/UsersPage";
 import SettingsPage from "./pages/SettingsPage";
 
+// Dashboard page components - protected by authentication
+import DashboardHome from "./pages/DashboardHome";
+import ReportCaseForm from "./pages/ReportCaseForm";
+import MyCasesTable from "./pages/MyCasesTable";
+import CaseDetail from "./pages/CaseDetail";
+import PublicCaseView from "./pages/PublicCaseView";
+
 // Utility components
 import NotFound from "./pages/NotFound.jsx";
+import Toast from "./components/Toast";
 
 /**
  * Main App Component
@@ -57,6 +65,7 @@ import NotFound from "./pages/NotFound.jsx";
 function App() {
   return (
     <Router>
+      <Toast />
       <Routes>
         {/* 
           ============================================
@@ -107,6 +116,56 @@ function App() {
           <Route path="login" element={<LoginPage />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="reset-password" element={<ResetPassword />} />
+
+          {/* 
+            ============================================
+            PROTECTED DASHBOARD ROUTES
+            ============================================
+            
+            These routes require authentication.
+            ProtectedRoute component handles access control.
+          */}
+          <Route
+            path="dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardHome />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="dashboard/reports/new"
+            element={
+              <ProtectedRoute>
+                <ReportCaseForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="dashboard/cases"
+            element={
+              <ProtectedRoute>
+                <MyCasesTable />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="dashboard/cases/:id"
+            element={
+              <ProtectedRoute>
+                <CaseDetail />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* 
+            ============================================
+            PUBLIC CASE ROUTES
+            ============================================
+            
+            These routes are accessible to all users for viewing public cases.
+          */}
+          <Route path="cases/:slug" element={<PublicCaseView />} />
 
           {/* 
             ============================================

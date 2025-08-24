@@ -34,7 +34,7 @@ import './index.css'
 
 // Redux state management
 import { Provider } from 'react-redux'
-import { store } from './store'
+import store from './store'
 
 // Google OAuth authentication
 import { GoogleOAuthProvider } from '@react-oauth/google';

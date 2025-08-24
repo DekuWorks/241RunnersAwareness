@@ -60,6 +60,7 @@ const NavBar = () => {
 
           {user ? (
             <>
+              <Link to="/dashboard" onClick={closeMenu}>Dashboard</Link>
               {user.role === 'admin' && <Link to="/admin" onClick={closeMenu}>Admin</Link>}
               <button onClick={handleLogout}>
                 Logout
