@@ -9,8 +9,7 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/241-logo.jpg">
     
-    <!-- Shared Styles -->
-    <link rel="stylesheet" href="/assets/styles/shared.css">
+    <!-- Styles -->
     <link rel="stylesheet" href="/styles.css">
     
     <style>
@@ -82,15 +81,27 @@
             
             <form id="signupForm">
                 <div class="form-group">
-                    <label for="fullName">Full Name</label>
+                    <label for="firstName">First Name</label>
                     <input 
                         type="text" 
-                        id="fullName" 
-                        name="fullName" 
+                        id="firstName" 
+                        name="firstName" 
                         required
-                        placeholder="Enter your full name"
+                        placeholder="Enter your first name"
                     >
-                    <span class="error-text" id="fullNameError"></span>
+                    <span class="error-text" id="firstNameError"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input 
+                        type="text" 
+                        id="lastName" 
+                        name="lastName" 
+                        required
+                        placeholder="Enter your last name"
+                    >
+                    <span class="error-text" id="lastNameError"></span>
                 </div>
                 
                 <div class="form-group">
@@ -106,14 +117,25 @@
                 </div>
                 
                 <div class="form-group">
+                    <label for="phoneNumber">Phone Number</label>
+                    <input 
+                        type="tel" 
+                        id="phoneNumber" 
+                        name="phoneNumber" 
+                        required
+                        placeholder="Enter your phone number"
+                    >
+                    <span class="error-text" id="phoneNumberError"></span>
+                </div>
+                
+                <div class="form-group">
                     <label for="password">Password</label>
                     <input 
                         type="password" 
                         id="password" 
                         name="password" 
                         required
-                        minlength="8"
-                        placeholder="Enter your password (min 8 characters)"
+                        placeholder="Enter your password"
                     >
                     <span class="error-text" id="passwordError"></span>
                 </div>
@@ -121,146 +143,179 @@
                 <div class="form-group">
                     <label for="role">Role</label>
                     <select id="role" name="role" required>
+                        <option value="">Select your role</option>
                         <option value="User">User</option>
-                        <option value="Parent">Parent</option>
+                        <option value="Admin">Admin</option>
                         <option value="Caregiver">Caregiver</option>
-                        <option value="ABA_Therapist">ABA Therapist</option>
-                        <option value="Adoptive_Parent">Adoptive Parent</option>
+                        <option value="Parent">Parent</option>
+                        <option value="Therapist">Therapist</option>
                     </select>
                     <span class="error-text" id="roleError"></span>
                 </div>
                 
                 <div class="form-group">
-                    <button type="submit" id="submitBtn">
-                        <span id="submitText">Create Account</span>
-                        <div id="loadingSpinner" style="display: none;">
-                            <div class="spinner"></div>
-                        </div>
+                    <button type="submit" id="signupBtn">
+                        <span id="signupBtnText">Create Account</span>
+                        <span id="signupBtnSpinner" style="display: none;">Creating account...</span>
                     </button>
                 </div>
             </form>
             
             <div class="auth-links">
-                <a href="/login.html" id="loginLink">Already have an account? Sign in</a>
+                <p>Already have an account? <a href="login.html">Login here</a></p>
             </div>
         </div>
     </div>
 
     <script src="/js/auth.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('signupForm');
-            const alertContainer = document.getElementById('alertContainer');
-            const submitBtn = document.getElementById('submitBtn');
-            const submitText = document.getElementById('submitText');
-            const loadingSpinner = document.getElementById('loadingSpinner');
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const nextUrl = urlParams.get('next');
+        
+        // Form elements
+        const signupForm = document.getElementById('signupForm');
+        const signupBtn = document.getElementById('signupBtn');
+        const signupBtnText = document.getElementById('signupBtnText');
+        const signupBtnSpinner = document.getElementById('signupBtnSpinner');
+        const alertContainer = document.getElementById('alertContainer');
+        
+        // Clear all error messages
+        function clearErrors() {
+            const errorElements = document.querySelectorAll('.error-text');
+            errorElements.forEach(element => {
+                element.textContent = '';
+            });
+        }
+        
+        // Show error message
+        function showError(message) {
+            alertContainer.innerHTML = `<div class="error-message">${message}</div>`;
+        }
+        
+        // Show success message
+        function showSuccess(message) {
+            alertContainer.innerHTML = `<div class="error-message" style="background: #efe; border-color: #cec; color: #3c3;">${message}</div>`;
+        }
+        
+        // Validate form
+        function validateForm() {
+            clearErrors();
+            let isValid = true;
             
-            // Get next parameter from URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const next = urlParams.get('next');
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
             
-            // Update login link with next parameter
-            const loginLink = document.getElementById('loginLink');
-            if (next) {
-                loginLink.href = `/login.html?next=${encodeURIComponent(next)}`;
+            if (!firstName) {
+                document.getElementById('firstNameError').textContent = 'First name is required';
+                isValid = false;
             }
             
-            function showAlert(message, type = 'error') {
-                alertContainer.innerHTML = `<div class="error-message">${message}</div>`;
+            if (!lastName) {
+                document.getElementById('lastNameError').textContent = 'Last name is required';
+                isValid = false;
             }
             
-            function clearErrors() {
-                document.querySelectorAll('.error-text').forEach(el => el.textContent = '');
-                alertContainer.innerHTML = '';
+            if (!email) {
+                document.getElementById('emailError').textContent = 'Email is required';
+                isValid = false;
+            } else if (!authUtils.isValidEmail(email)) {
+                document.getElementById('emailError').textContent = 'Please enter a valid email address';
+                isValid = false;
             }
             
-            function setLoading(loading) {
-                if (loading) {
-                    submitBtn.disabled = true;
-                    submitText.style.display = 'none';
-                    loadingSpinner.style.display = 'inline-block';
-                } else {
-                    submitBtn.disabled = false;
-                    submitText.style.display = 'inline';
-                    loadingSpinner.style.display = 'none';
-                }
+            if (!phoneNumber) {
+                document.getElementById('phoneNumberError').textContent = 'Phone number is required';
+                isValid = false;
             }
             
-            function validateForm() {
-                clearErrors();
-                let isValid = true;
-                
-                const fullName = document.getElementById('fullName').value.trim();
-                const email = document.getElementById('email').value.trim();
-                const password = document.getElementById('password').value;
-                const role = document.getElementById('role').value;
-                
-                if (!fullName) {
-                    document.getElementById('fullNameError').textContent = 'Full name is required';
-                    isValid = false;
-                }
-                
-                if (!email) {
-                    document.getElementById('emailError').textContent = 'Email is required';
-                    isValid = false;
-                } else if (!authUtils.isValidEmail(email)) {
-                    document.getElementById('emailError').textContent = 'Please enter a valid email address';
-                    isValid = false;
-                }
-                
-                if (!password) {
-                    document.getElementById('passwordError').textContent = 'Password is required';
-                    isValid = false;
-                } else if (password.length < 8) {
-                    document.getElementById('passwordError').textContent = 'Password must be at least 8 characters long';
-                    isValid = false;
-                }
-                
-                if (!role) {
-                    document.getElementById('roleError').textContent = 'Please select a role';
-                    isValid = false;
-                }
-                
-                return isValid;
+            if (!password) {
+                document.getElementById('passwordError').textContent = 'Password is required';
+                isValid = false;
+            } else if (password.length < 6) {
+                document.getElementById('passwordError').textContent = 'Password must be at least 6 characters';
+                isValid = false;
             }
             
-            form.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                if (!validateForm()) {
-                    return;
-                }
-                
-                setLoading(true);
-                
+            if (!role) {
+                document.getElementById('roleError').textContent = 'Please select a role';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        // Handle form submission
+        signupForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                return;
+            }
+            
+            // Show loading state
+            signupBtn.disabled = true;
+            signupBtnText.style.display = 'none';
+            signupBtnSpinner.style.display = 'inline';
+            
+            try {
                 const formData = {
-                    fullName: document.getElementById('fullName').value.trim(),
+                    firstName: document.getElementById('firstName').value.trim(),
+                    lastName: document.getElementById('lastName').value.trim(),
+                    fullName: document.getElementById('firstName').value.trim() + ' ' + document.getElementById('lastName').value.trim(),
                     email: document.getElementById('email').value.trim(),
+                    phoneNumber: document.getElementById('phoneNumber').value.trim(),
                     password: document.getElementById('password').value,
                     role: document.getElementById('role').value
                 };
                 
-                try {
-                    const response = await authUtils.fetchJson('/auth/register', {
-                        method: 'POST',
-                        body: JSON.stringify(formData)
-                    });
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showSuccess('Account created successfully! Redirecting...');
                     
-                    if (response.success) {
-                        authUtils.setAuth(response);
-                        authUtils.showToast('Account created successfully!', 'success');
-                        const redirectUrl = next || '/dashboard.html';
-                        window.location.href = redirectUrl;
-                    } else {
-                        showAlert(response.message || 'Signup failed');
+                    // Store auth data
+                    if (data.token) {
+                        localStorage.setItem('ra_auth', JSON.stringify({
+                            token: data.token,
+                            user: data.user
+                        }));
                     }
-                } catch (error) {
-                    console.error('Signup error:', error);
-                    showAlert(error.message || 'Signup failed. Please try again.');
-                } finally {
-                    setLoading(false);
+                    
+                    // Redirect after a short delay
+                    setTimeout(() => {
+                        if (nextUrl) {
+                            window.location.href = nextUrl;
+                        } else {
+                            window.location.href = '/dashboard.html';
+                        }
+                    }, 1500);
+                    
+                } else {
+                    showError(data.message || 'An error occurred during registration.');
                 }
-            });
+                
+            } catch (error) {
+                console.error('Signup error:', error);
+                showError('An error occurred during registration. Please try again.');
+            } finally {
+                // Reset loading state
+                signupBtn.disabled = false;
+                signupBtnText.style.display = 'inline';
+                signupBtnSpinner.style.display = 'none';
+            }
         });
     </script>
 </body>
