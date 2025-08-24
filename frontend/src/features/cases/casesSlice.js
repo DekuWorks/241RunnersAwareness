@@ -106,7 +106,28 @@ export const getCase = createAsyncThunk('cases/getCase', async (caseId, thunkAPI
     });
     return response.data;
   } catch (error) {
-    const message = (error.response?.data?.message) || error.message || 'Failed to fetch case details';
+    const message = (error.response?.data?.message) || error.message || 'Failed to fetch case';
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
+/**
+ * List Cases by Individual
+ * 
+ * Retrieves all cases for a specific individual.
+ * 
+ * @param {number} individualId - Individual ID
+ * @param {Object} thunkAPI - Redux Toolkit thunk API
+ * @returns {Promise} Array of cases for the individual
+ */
+export const listCasesByIndividual = createAsyncThunk('cases/listCasesByIndividual', async (individualId, thunkAPI) => {
+  try {
+    const response = await axios.get(`${API_URL}?individualId=${individualId}`, {
+      headers: getAuthHeaders()
+    });
+    return response.data;
+  } catch (error) {
+    const message = (error.response?.data?.message) || error.message || 'Failed to fetch cases for individual';
     return thunkAPI.rejectWithValue(message);
   }
 });
@@ -418,3 +439,7 @@ export const selectUrgentCases = (state) =>
 // Select public cases
 export const selectPublicCases = (state) =>
   state.cases.cases.filter(c => c.isPublic);
+
+// Select cases for a specific individual
+export const selectCasesForIndividual = (state, individualId) =>
+  state.cases.cases.filter(c => c.individualId === individualId);

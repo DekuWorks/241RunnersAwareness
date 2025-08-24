@@ -30,6 +30,7 @@ using Microsoft.Extensions.Hosting;
 // Database and Entity Framework imports
 using _241RunnersAwareness.BackendAPI.DBContext.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer;
 
 // Authentication and security imports
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -140,12 +141,21 @@ namespace _241RunnersAwareness.BackendAPI
             // Add MVC controllers for API endpoints
             builder.Services.AddControllers();
             
-            // Configure Entity Framework with SQLite for development
+            // Configure Entity Framework with SQLite for development, SQL Server for production
             builder.Services.AddDbContext<RunnersDbContext>(options =>
             {
-                options.UseSqlite(
-                    builder.Configuration.GetConnectionString("DefaultConnection")
-                );
+                var environment = builder.Environment.EnvironmentName;
+                
+                if (environment == "Production")
+                {
+                    var connectionString = builder.Configuration.GetConnectionString("ProductionConnection");
+                    options.UseSqlServer(connectionString);
+                }
+                else
+                {
+                    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+                    options.UseSqlite(connectionString);
+                }
                 
                 // Enable query tracking only when needed for better performance
                 options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
@@ -338,6 +348,33 @@ namespace _241RunnersAwareness.BackendAPI
 
             // Enable CORS with the configured policy
             app.UseCors("AllowAll");
+
+            // Enable static file serving for HTML, CSS, JS files
+            app.UseStaticFiles();
+            
+            // Admin dashboard routing for Azure subdomain
+            app.Use(async (context, next) =>
+            {
+                var host = context.Request.Host.Host.ToLower();
+                
+                // If accessing the Azure subdomain, serve admin portal
+                if (host.Contains("241runnersawareness-api.azurewebsites.net"))
+                {
+                    // If accessing root path, serve admin index
+                    if (context.Request.Path.Value == "/" || string.IsNullOrEmpty(context.Request.Path.Value))
+                    {
+                        context.Request.Path = "/admin-index.html";
+                    }
+                }
+                
+                await next();
+            });
+            
+            // Configure default document
+            app.UseDefaultFiles(new DefaultFilesOptions
+            {
+                DefaultFileNames = new List<string> { "index.html" }
+            });
 
             // Enable authentication and authorization middleware
             app.UseAuthentication();     // Validate JWT tokens

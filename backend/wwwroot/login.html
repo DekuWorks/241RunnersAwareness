@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - 241 Runners Awareness</title>
+    <meta name="description" content="Sign in to your 241 Runners Awareness account">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/241-logo.jpg">
+    
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="/assets/styles/shared.css">
+    <link rel="stylesheet" href="/styles.css">
+    
+    <style>
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .auth-form {
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .auth-form h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #000;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .error-message {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.875rem;
+        }
+        
+        .auth-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .auth-links a {
+            color: #dc2626;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 10px;
+        }
+        
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .error-text {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 5px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-form">
+            <h2>Sign In</h2>
+            
+            <div id="alertContainer"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        required
+                        placeholder="Enter your email"
+                    >
+                    <span class="error-text" id="emailError"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        required
+                        placeholder="Enter your password"
+                    >
+                    <span class="error-text" id="passwordError"></span>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" id="submitBtn">
+                        <span id="submitText">Sign In</span>
+                        <div id="loadingSpinner" style="display: none;">
+                            <div class="spinner"></div>
+                        </div>
+                    </button>
+                </div>
+            </form>
+            
+            <div class="auth-links">
+                <a href="/forgot-password.html">Forgot your password?</a>
+                <a href="/signup.html" id="signupLink">Don't have an account? Sign up</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('loginForm');
+            const alertContainer = document.getElementById('alertContainer');
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            
+            // Get next parameter from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const next = urlParams.get('next') || '/dashboard.html';
+            
+            // Update signup link with next parameter
+            const signupLink = document.getElementById('signupLink');
+            if (next !== '/dashboard.html') {
+                signupLink.href = `/signup.html?next=${encodeURIComponent(next)}`;
+            }
+            
+            function showAlert(message, type = 'error') {
+                alertContainer.innerHTML = `<div class="error-message">${message}</div>`;
+            }
+            
+            function clearErrors() {
+                document.querySelectorAll('.error-text').forEach(el => el.textContent = '');
+                alertContainer.innerHTML = '';
+            }
+            
+            function setLoading(loading) {
+                if (loading) {
+                    submitBtn.disabled = true;
+                    submitText.style.display = 'none';
+                    loadingSpinner.style.display = 'inline-block';
+                } else {
+                    submitBtn.disabled = false;
+                    submitText.style.display = 'inline';
+                    loadingSpinner.style.display = 'none';
+                }
+            }
+            
+            function validateForm() {
+                clearErrors();
+                let isValid = true;
+                
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+                
+                if (!email) {
+                    document.getElementById('emailError').textContent = 'Email is required';
+                    isValid = false;
+                } else if (!authUtils.isValidEmail(email)) {
+                    document.getElementById('emailError').textContent = 'Please enter a valid email address';
+                    isValid = false;
+                }
+                
+                if (!password) {
+                    document.getElementById('passwordError').textContent = 'Password is required';
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+            
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                if (!validateForm()) {
+                    return;
+                }
+                
+                setLoading(true);
+                
+                const formData = {
+                    email: document.getElementById('email').value.trim(),
+                    password: document.getElementById('password').value
+                };
+                
+                try {
+                    const response = await authUtils.fetchJson('/auth/login', {
+                        method: 'POST',
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    if (response.success) {
+                        authUtils.setAuth(response);
+                        authUtils.showToast('Login successful!', 'success');
+                        window.location.href = next;
+                    } else {
+                        showAlert(response.message || 'Login failed');
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    showAlert(error.message || 'Login failed. Please try again.');
+                } finally {
+                    setLoading(false);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -14,6 +14,13 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Models
         [NotMapped]
         public int IndividualId => Id;
 
+        // Runner ID for easy identification
+        [StringLength(50)]
+        public string? RunnerId { get; set; }
+
+        // Owner relationship
+        public Guid? OwnerUserId { get; set; }
+
         [Required]
         [StringLength(100)]
         public string FirstName { get; set; }
@@ -268,6 +275,10 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Models
         [StringLength(50)]
         public string? CurrentStatus { get; set; } // "Missing", "Found", "Safe", "At Risk"
 
+        // Enhanced Status field for runner profiles
+        [StringLength(50)]
+        public string Status { get; set; } = "Active"; // "Active", "Missing", "Found", "Urgent", "Resolved"
+
         public DateTime? LastSeenDate { get; set; }
 
         [StringLength(200)]
@@ -345,6 +356,14 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Models
         public virtual ICollection<CaseDocument> Documents { get; set; } = new List<CaseDocument>();
 
         public virtual ICollection<AlertLog> AlertLogs { get; set; } = new List<AlertLog>();
+
+        public virtual ICollection<Case> Cases { get; set; } = new List<Case>();
+
+        public virtual ICollection<Photo> Photos { get; set; } = new List<Photo>();
+
+        public virtual ICollection<Activity> Activities { get; set; } = new List<Activity>();
+
+        public virtual User? OwnerUser { get; set; }
 
         // Computed Properties
         [NotMapped]

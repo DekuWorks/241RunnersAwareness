@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authentication Test - 241Runners Awareness</title>
+  <script src="auth-utils.js"></script>
+  <link rel="stylesheet" href="styles.css?v=20250127a&t=20250127" />
+  <style>
+    .test-container {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .test-section {
+      margin-bottom: 2rem;
+      padding: 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+    }
+    
+    .test-section h3 {
+      margin-top: 0;
+      color: #374151;
+    }
+    
+    .test-info {
+      background: #f3f4f6;
+      padding: 1rem;
+      border-radius: 6px;
+      margin: 1rem 0;
+      font-family: monospace;
+      font-size: 0.875rem;
+    }
+    
+    .test-button {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 0.25rem;
+    }
+    
+    .test-button:hover {
+      background: #2563eb;
+    }
+    
+    .status {
+      padding: 0.5rem;
+      border-radius: 4px;
+      margin: 0.5rem 0;
+      font-weight: 500;
+    }
+    
+    .status.success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .status.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .status.info {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+  </style>
+</head>
+<body>
+  <header role="banner">
+    <div class="header-bar">
+      <img src="/241-logo.jpg" alt="241 Runners Awareness Logo" class="logo" />
+      <h1>241 Runners Awareness</h1>
+    </div>
+
+    <nav role="navigation" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="login.html">Login</a>
+      <a href="signup.html">Sign Up</a>
+      <a href="dashboard.html" id="dashboardLink" style="display: none;">Dashboard</a>
+      <button id="logoutBtn" style="display: none;" class="logout-btn">Logout</button>
+    </nav>
+  </header>
+
+  <main role="main">
+    <div class="test-container">
+      <h2>Authentication System Test</h2>
+      
+      <div class="test-section">
+        <h3>Current Authentication Status</h3>
+        <div id="authStatus" class="test-info">
+          Checking authentication status...
+        </div>
+        <button class="test-button" onclick="checkAuthStatus()">Refresh Status</button>
+      </div>
+      
+      <div class="test-section">
+        <h3>Quick Login Test</h3>
+        <p>Test with these credentials:</p>
+        <div class="test-info">
+          Email: test@example.com<br>
+          Password: password123<br><br>
+          Admin: admin@241runners.org<br>
+          Password: admin123
+        </div>
+        <button class="test-button" onclick="testLogin()">Test Login</button>
+        <button class="test-button" onclick="testLogout()">Test Logout</button>
+      </div>
+      
+      <div class="test-section">
+        <h3>Mock User Database</h3>
+        <div id="mockUsers" class="test-info">
+          Loading mock users...
+        </div>
+        <button class="test-button" onclick="showMockUsers()">Show Mock Users</button>
+      </div>
+      
+      <div class="test-section">
+        <h3>Navigation Test</h3>
+        <p>Test the navigation state changes:</p>
+        <button class="test-button" onclick="testNavigation()">Test Navigation Update</button>
+        <div id="navStatus" class="status info">
+          Navigation status will appear here...
+        </div>
+      </div>
+      
+      <div class="test-section">
+        <h3>Notification Test</h3>
+        <button class="test-button" onclick="testNotification('success')">Success Notification</button>
+        <button class="test-button" onclick="testNotification('error')">Error Notification</button>
+        <button class="test-button" onclick="testNotification('warning')">Warning Notification</button>
+        <button class="test-button" onclick="testNotification('info')">Info Notification</button>
+      </div>
+      
+      <div class="test-section">
+        <h3>Quick Actions</h3>
+        <a href="login.html" class="test-button">Go to Login Page</a>
+        <a href="signup.html" class="test-button">Go to Signup Page</a>
+        <a href="dashboard.html" class="test-button">Go to Dashboard</a>
+        <a href="index.html" class="test-button">Go to Home</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Test functions
+    function checkAuthStatus() {
+      const user = getCurrentUser();
+      const isLoggedIn = isUserLoggedIn();
+      const isAdminUser = isAdmin();
+      
+      const statusDiv = document.getElementById('authStatus');
+      statusDiv.innerHTML = `
+        <strong>Logged In:</strong> ${isLoggedIn ? 'Yes' : 'No'}<br>
+        <strong>User:</strong> ${user ? JSON.stringify(user, null, 2) : 'None'}<br>
+        <strong>Is Admin:</strong> ${isAdminUser ? 'Yes' : 'No'}<br>
+        <strong>Local Storage:</strong> ${localStorage.getItem('user') || 'Empty'}
+      `;
+    }
+    
+    async function testLogin() {
+      try {
+        await handleLogin('test@example.com', 'password123');
+      } catch (error) {
+        showNotification('Test login failed: ' + error.message, 'error');
+      }
+    }
+    
+    function testLogout() {
+      handleLogout();
+    }
+    
+    function showMockUsers() {
+      // Access the mock users from auth-utils.js
+      const mockUsersDiv = document.getElementById('mockUsers');
+      mockUsersDiv.innerHTML = `
+        <strong>Mock Users in Database:</strong><br>
+        ${mockUsers.map(user => 
+          `• ${user.email} (${user.fullName}) - Role: ${user.role}`
+        ).join('<br>')}
+      `;
+    }
+    
+    function testNavigation() {
+      updateNavigation();
+      const navStatus = document.getElementById('navStatus');
+      const user = getCurrentUser();
+      
+      if (user) {
+        navStatus.className = 'status success';
+        navStatus.textContent = `User logged in: ${user.fullName} (${user.email}) - Dashboard and Logout should be visible`;
+      } else {
+        navStatus.className = 'status error';
+        navStatus.textContent = 'No user logged in - Login and Signup should be visible';
+      }
+    }
+    
+    function testNotification(type) {
+      const messages = {
+        success: 'This is a success notification!',
+        error: 'This is an error notification!',
+        warning: 'This is a warning notification!',
+        info: 'This is an info notification!'
+      };
+      
+      showNotification(messages[type], type);
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuthStatus();
+      showMockUsers();
+      testNavigation();
+    });
+  </script>
+</body>
+</html>

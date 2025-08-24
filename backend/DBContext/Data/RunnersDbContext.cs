@@ -32,6 +32,10 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Data
         public DbSet<CaseUpdate> CaseUpdates { get; set; }
         public DbSet<CaseUpdateMedia> CaseUpdateMedia { get; set; }
 
+        // New Runner Profile Models
+        public DbSet<Photo> Photos { get; set; }
+        public DbSet<Activity> Activities { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -506,6 +510,65 @@ namespace _241RunnersAwareness.BackendAPI.DBContext.Data
                     .WithMany()
                     .HasForeignKey(e => e.IndividualId)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Photo Configuration
+            modelBuilder.Entity<Photo>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ImageUrl).IsRequired().HasMaxLength(500);
+                entity.Property(e => e.Caption).HasMaxLength(200);
+                entity.Property(e => e.ImageType).HasMaxLength(100);
+                entity.Property(e => e.UploadedBy).HasMaxLength(100);
+                entity.Property(e => e.UpdatedBy).HasMaxLength(100);
+                entity.Property(e => e.FileName).HasMaxLength(100);
+                entity.Property(e => e.ContentType).HasMaxLength(50);
+
+                // Performance: Add indexes for frequently queried fields
+                entity.HasIndex(e => e.IndividualId).HasDatabaseName("IX_Photos_IndividualId");
+                entity.HasIndex(e => e.IsPrimary).HasDatabaseName("IX_Photos_IsPrimary");
+                entity.HasIndex(e => e.UploadedAt).HasDatabaseName("IX_Photos_UploadedAt");
+
+                // Relationships
+                entity.HasOne(e => e.Individual)
+                    .WithMany(e => e.Photos)
+                    .HasForeignKey(e => e.IndividualId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // Activity Configuration
+            modelBuilder.Entity<Activity>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ActivityType).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Description).HasMaxLength(1000);
+                entity.Property(e => e.Location).HasMaxLength(200);
+                entity.Property(e => e.CreatedBy).HasMaxLength(100);
+                entity.Property(e => e.Metadata).HasMaxLength(500);
+
+                // Performance: Add indexes for frequently queried fields
+                entity.HasIndex(e => e.IndividualId).HasDatabaseName("IX_Activities_IndividualId");
+                entity.HasIndex(e => e.ActivityType).HasDatabaseName("IX_Activities_ActivityType");
+                entity.HasIndex(e => e.CreatedAt).HasDatabaseName("IX_Activities_CreatedAt");
+                entity.HasIndex(e => e.RelatedCaseId).HasDatabaseName("IX_Activities_RelatedCaseId");
+                entity.HasIndex(e => e.RelatedPhotoId).HasDatabaseName("IX_Activities_RelatedPhotoId");
+
+                // Relationships
+                entity.HasOne(e => e.Individual)
+                    .WithMany(e => e.Activities)
+                    .HasForeignKey(e => e.IndividualId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.RelatedCase)
+                    .WithMany()
+                    .HasForeignKey(e => e.RelatedCaseId)
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasOne(e => e.RelatedPhoto)
+                    .WithMany()
+                    .HasForeignKey(e => e.RelatedPhotoId)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
         }
     }

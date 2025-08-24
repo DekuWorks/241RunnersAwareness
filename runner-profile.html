@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Runner Profile - 241 Runners Awareness</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Custom styles for runner profile */
+        .status-badge {
+            @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border;
+        }
+        
+        .status-active {
+            @apply bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-200 dark:border-green-700;
+        }
+        
+        .status-missing {
+            @apply bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 border-red-200 dark:border-red-700;
+        }
+        
+        .status-found {
+            @apply bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 border-blue-200 dark:border-blue-700;
+        }
+        
+        .status-urgent {
+            @apply bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200 border-orange-200 dark:border-orange-700;
+        }
+        
+        .status-resolved {
+            @apply bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200 border-gray-200 dark:border-gray-700;
+        }
+        
+        .tab-button {
+            @apply flex items-center justify-center space-x-2 px-4 py-2 text-sm font-medium transition-colors hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+        }
+        
+        .tab-button.active {
+            @apply bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border-b-2 border-blue-500;
+        }
+        
+        .tab-button.inactive {
+            @apply text-gray-600 dark:text-gray-400;
+        }
+        
+        .action-button {
+            @apply flex items-center justify-center w-8 h-8 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+        }
+        
+        .skeleton {
+            @apply animate-pulse bg-gray-200 dark:bg-gray-700 rounded;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-xl font-bold text-gray-900 dark:text-white">
+                        241 Runners Awareness
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="dashboard.html" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Dashboard</a>
+                    <a href="report-case.html" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Report Case</a>
+                    <a href="my-cases.html" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">My Cases</a>
+                    <button id="logoutBtn" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="min-h-screen">
+        <div class="animate-pulse">
+            <div class="bg-white dark:bg-neutral-900 border-b">
+                <div class="px-6 py-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-16 h-16 skeleton rounded-full"></div>
+                        <div class="space-y-2">
+                            <div class="h-6 skeleton rounded w-32"></div>
+                            <div class="h-4 skeleton rounded w-24"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="min-h-screen hidden">
+        <!-- Sticky Header -->
+        <header class="sticky top-0 bg-white dark:bg-neutral-900 z-40 border-b" role="banner">
+            <!-- Row 1: Main header content -->
+            <div class="px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <!-- Left: Photo and Name -->
+                    <div class="flex items-center space-x-4">
+                        <!-- Primary Photo -->
+                        <div class="relative">
+                            <img id="runnerAvatar" src="" alt="" class="w-16 h-16 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700 hidden">
+                            <div id="runnerInitials" class="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center border-2 border-gray-200 dark:border-gray-700">
+                                <span class="text-lg font-semibold text-gray-600 dark:text-gray-300"></span>
+                            </div>
+                            
+                            <!-- Upload photo button (owner/admin only) -->
+                            <button id="uploadPhotoBtn" class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors hidden" title="Upload Photo (U)">
+                                <i data-lucide="camera" class="w-3 h-3 text-gray-600 dark:text-gray-300"></i>
+                            </button>
+                        </div>
+
+                        <!-- Name and RunnerID -->
+                        <div class="flex flex-col">
+                            <h1 id="runnerName" class="text-2xl font-bold text-gray-900 dark:text-white"></h1>
+                            <div class="flex items-center space-x-2 mt-1">
+                                <span id="runnerIdBadge" class="status-badge status-resolved"></span>
+                                <span id="statusBadge" class="status-badge"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Action buttons -->
+                    <div class="flex items-center space-x-2">
+                        <button id="editProfileBtn" class="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors hidden" title="Edit Profile (E)">
+                            <i data-lucide="edit" class="w-4 h-4"></i>
+                            <span>Edit Profile</span>
+                        </button>
+                        <button id="newCaseBtn" class="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors hidden" title="New Case (C)">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <span>New Case</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 2: Compact Action Bar -->
+            <div id="actionBar" class="px-6 py-2 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 hidden">
+                <div class="flex items-center justify-center space-x-4">
+                    <button id="editProfileAction" class="action-button" title="Edit Profile (E)" aria-label="Edit Profile">
+                        <i data-lucide="edit" class="w-4 h-4"></i>
+                    </button>
+                    <button id="uploadPhotoAction" class="action-button" title="Upload Photo (U)" aria-label="Upload Photo">
+                        <i data-lucide="camera" class="w-4 h-4"></i>
+                    </button>
+                    <button id="newCaseAction" class="action-button" title="New Case (C)" aria-label="New Case">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Tabs -->
+        <div class="border-b bg-white dark:bg-neutral-900" role="tablist">
+            <div class="px-6">
+                <div class="grid w-full grid-cols-4 h-12">
+                    <button id="tab-timeline" class="tab-button active" role="tab" aria-selected="true" aria-controls="tabpanel-timeline">
+                        <i data-lucide="clock" class="w-4 h-4"></i>
+                        <span>Timeline</span>
+                    </button>
+                    <button id="tab-cases" class="tab-button inactive" role="tab" aria-selected="false" aria-controls="tabpanel-cases">
+                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                        <span>Cases</span>
+                    </button>
+                    <button id="tab-photos" class="tab-button inactive" role="tab" aria-selected="false" aria-controls="tabpanel-photos">
+                        <i data-lucide="image" class="w-4 h-4"></i>
+                        <span>Photos</span>
+                    </button>
+                    <button id="tab-details" class="tab-button inactive" role="tab" aria-selected="false" aria-controls="tabpanel-details">
+                        <i data-lucide="user" class="w-4 h-4"></i>
+                        <span>Details</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab Content -->
+        <div class="px-6 py-8">
+            <div class="max-w-4xl mx-auto">
+                <!-- Timeline Tab -->
+                <div id="tabpanel-timeline" class="space-y-4" role="tabpanel" aria-labelledby="tab-timeline">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Timeline</h2>
+                    <p class="text-gray-600 dark:text-gray-300">Activity feed will be displayed here.</p>
+                </div>
+                
+                <!-- Cases Tab -->
+                <div id="tabpanel-cases" class="space-y-4 hidden" role="tabpanel" aria-labelledby="tab-cases">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Cases</h2>
+                    <p class="text-gray-600 dark:text-gray-300">Missing person cases will be displayed here.</p>
+                </div>
+                
+                <!-- Photos Tab -->
+                <div id="tabpanel-photos" class="space-y-4 hidden" role="tabpanel" aria-labelledby="tab-photos">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Photos</h2>
+                    <p class="text-gray-600 dark:text-gray-300">Photo gallery will be displayed here.</p>
+                </div>
+                
+                <!-- Details Tab -->
+                <div id="tabpanel-details" class="space-y-4 hidden" role="tabpanel" aria-labelledby="tab-details">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Details</h2>
+                    <p class="text-gray-600 dark:text-gray-300">Personal information will be displayed here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <script src="auth-utils.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Global variables
+        let currentUser = null;
+        let currentRunner = null;
+        let canEdit = false;
+
+        // Get runner ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const runnerId = urlParams.get('id') || '1'; // Default for demo
+
+        // API base URL
+        const API_BASE = 'http://localhost:5000/api';
+
+        // Utility functions
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `px-4 py-2 rounded-md text-white ${type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'}`;
+            toast.textContent = message;
+            
+            const container = document.getElementById('toastContainer');
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+
+        function getStatusClass(status) {
+            switch (status?.toLowerCase()) {
+                case 'active': return 'status-active';
+                case 'missing': return 'status-missing';
+                case 'found': return 'status-found';
+                case 'urgent': return 'status-urgent';
+                case 'resolved': return 'status-resolved';
+                default: return 'status-resolved';
+            }
+        }
+
+        function updateTabContent(activeTab) {
+            // Hide all tab panels
+            document.querySelectorAll('[role="tabpanel"]').forEach(panel => {
+                panel.classList.add('hidden');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('[role="tab"]').forEach(tab => {
+                tab.classList.remove('active');
+                tab.classList.add('inactive');
+                tab.setAttribute('aria-selected', 'false');
+            });
+            
+            // Show active tab panel
+            const activePanel = document.getElementById(`tabpanel-${activeTab}`);
+            if (activePanel) {
+                activePanel.classList.remove('hidden');
+            }
+            
+            // Add active class to clicked tab
+            const activeTabButton = document.getElementById(`tab-${activeTab}`);
+            if (activeTabButton) {
+                activeTabButton.classList.remove('inactive');
+                activeTabButton.classList.add('active');
+                activeTabButton.setAttribute('aria-selected', 'true');
+            }
+        }
+
+        function updateRunnerDisplay(runner) {
+            // Update name
+            document.getElementById('runnerName').textContent = `${runner.firstName} ${runner.lastName}`;
+            
+            // Update Runner ID badge
+            const runnerIdBadge = document.getElementById('runnerIdBadge');
+            runnerIdBadge.textContent = runner.runnerId || 'No ID';
+            runnerIdBadge.className = 'status-badge status-resolved';
+            
+            // Update status badge
+            const statusBadge = document.getElementById('statusBadge');
+            statusBadge.textContent = runner.status || 'Unknown';
+            statusBadge.className = `status-badge ${getStatusClass(runner.status)}`;
+            
+            // Update avatar
+            const avatar = document.getElementById('runnerAvatar');
+            const initials = document.getElementById('runnerInitials');
+            const initialsSpan = initials.querySelector('span');
+            
+            if (runner.photos && runner.photos.length > 0) {
+                const primaryPhoto = runner.photos.find(photo => photo.isPrimary);
+                if (primaryPhoto) {
+                    avatar.src = primaryPhoto.imageUrl;
+                    avatar.alt = `${runner.firstName} ${runner.lastName}`;
+                    avatar.classList.remove('hidden');
+                    initials.classList.add('hidden');
+                } else {
+                    avatar.classList.add('hidden');
+                    initials.classList.remove('hidden');
+                    initialsSpan.textContent = `${runner.firstName?.charAt(0) || ''}${runner.lastName?.charAt(0) || ''}`.toUpperCase();
+                }
+            } else {
+                avatar.classList.add('hidden');
+                initials.classList.remove('hidden');
+                initialsSpan.textContent = `${runner.firstName?.charAt(0) || ''}${runner.lastName?.charAt(0) || ''}`.toUpperCase();
+            }
+            
+            // Show/hide edit buttons based on permissions
+            const editButtons = [
+                'editProfileBtn', 'newCaseBtn', 'uploadPhotoBtn',
+                'editProfileAction', 'uploadPhotoAction', 'newCaseAction',
+                'actionBar'
+            ];
+            
+            editButtons.forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    if (canEdit) {
+                        btn.classList.remove('hidden');
+                    } else {
+                        btn.classList.add('hidden');
+                    }
+                }
+            });
+        }
+
+        // Load runner data
+        async function loadRunnerData() {
+            try {
+                // Try to fetch from real API first, fallback to mock data
+                let runnerData;
+                
+                try {
+                    const token = localStorage.getItem('userToken');
+                    const response = await fetch(`${API_BASE}/individuals/${runnerId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        runnerData = await response.json();
+                        console.log('Loaded runner data from API:', runnerData);
+                    } else {
+                        throw new Error('API call failed');
+                    }
+                } catch (apiError) {
+                    console.log('API call failed, using mock data:', apiError);
+                    
+                    // Fallback to mock data
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    runnerData = {
+                        id: runnerId,
+                        firstName: 'John',
+                        lastName: 'Doe',
+                        runnerId: 'RUN-2024-001',
+                        status: 'Active',
+                        ownerUserId: currentUser?.id,
+                        photos: [
+                            {
+                                id: 1,
+                                imageUrl: 'https://via.placeholder.com/150',
+                                isPrimary: true,
+                                caption: 'Primary photo'
+                            }
+                        ],
+                        activities: [],
+                        cases: []
+                    };
+                }
+                
+                currentRunner = runnerData;
+                canEdit = currentUser && (currentUser.role === 'admin' || runnerData.ownerUserId === currentUser.id);
+                
+                updateRunnerDisplay(runnerData);
+                
+                // Hide loading, show content
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('mainContent').classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('Error loading runner data:', error);
+                showToast('Error loading runner profile', 'error');
+            }
+        }
+
+        // Event handlers
+        function handleEditProfile() {
+            console.log('Edit profile clicked');
+            showToast('Edit profile functionality coming soon', 'info');
+            // TODO: Open edit profile dialog
+        }
+
+        function handleUploadPhoto() {
+            console.log('Upload photo clicked');
+            showToast('Upload photo functionality coming soon', 'info');
+            // TODO: Open upload photo dialog
+        }
+
+        function handleNewCase() {
+            console.log('New case clicked');
+            window.location.href = 'report-case.html';
+        }
+
+        function handleTabClick(tabId) {
+            updateTabContent(tabId);
+        }
+
+        // Keyboard shortcuts
+        function handleKeyDown(event) {
+            if (!canEdit) return;
+            
+            switch (event.key.toLowerCase()) {
+                case 'e':
+                    event.preventDefault();
+                    handleEditProfile();
+                    break;
+                case 'u':
+                    event.preventDefault();
+                    handleUploadPhoto();
+                    break;
+                case 'c':
+                    event.preventDefault();
+                    handleNewCase();
+                    break;
+            }
+        }
+
+        // Initialize page
+        async function initializePage() {
+            // Check authentication
+            currentUser = getCurrentUser();
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Load runner data
+            await loadRunnerData();
+            
+            // Add event listeners
+            document.getElementById('editProfileBtn').addEventListener('click', handleEditProfile);
+            document.getElementById('newCaseBtn').addEventListener('click', handleNewCase);
+            document.getElementById('uploadPhotoBtn').addEventListener('click', handleUploadPhoto);
+            
+            document.getElementById('editProfileAction').addEventListener('click', handleEditProfile);
+            document.getElementById('newCaseAction').addEventListener('click', handleNewCase);
+            document.getElementById('uploadPhotoAction').addEventListener('click', handleUploadPhoto);
+            
+            // Tab event listeners
+            document.getElementById('tab-timeline').addEventListener('click', () => handleTabClick('timeline'));
+            document.getElementById('tab-cases').addEventListener('click', () => handleTabClick('cases'));
+            document.getElementById('tab-photos').addEventListener('click', () => handleTabClick('photos'));
+            document.getElementById('tab-details').addEventListener('click', () => handleTabClick('details'));
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', handleKeyDown);
+            
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                logout();
+                window.location.href = 'index.html';
+            });
+        }
+
+        // Start initialization when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+</html>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - 241Runners Awareness</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="auth-utils.js"></script>
+  <link rel="stylesheet" href="styles.css?v=20250127a&t=20250127" />
+</head>
+<body>
+  <header role="banner">
+    <div class="header-bar">
+      <img src="/241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
+      <h1>241 Runners Awareness</h1>
+    </div>
+
+    <nav role="navigation" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="map.html">🗺️ Map</a>
+      <a href="dna-tracking.html">🧬 DNA Tracking</a>
+      <a href="aboutus.html">ℹ️ About</a>
+      <a href="signup.html" id="signupLink">Sign Up</a>
+      <a href="login.html" id="loginLink">Login</a>
+      <a href="admin-dashboard.html" id="dashboardLink" aria-current="page">Dashboard</a>
+      <a href="user-management.html" id="userManagementLink">User Management</a>
+      <button id="logoutBtn" style="display: none;" class="logout-btn">Logout</button>
+      <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
+      <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
+    </nav>
+    
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
+      ☀️
+    </button>
+    
+    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="back-button">
+      <a href="index.html" class="back-btn">&larr; Back to Home</a>
+    </div>
+  </header>
+
+  <main role="main">
+    <div class="container">
+      <div class="dashboard-header">
+        <h1>Admin Dashboard</h1>
+        <p>Welcome to the 241 Runners Awareness administration panel</p>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <span class="feature-icon">👥</span>
+          <h3>User Management</h3>
+          <p>Manage user accounts, roles, permissions, and access control for the platform</p>
+          <button class="btn" onclick="showUserManagement()">Manage Users</button>
+        </div>
+
+        <div class="dashboard-card">
+          <span class="feature-icon">📊</span>
+          <h3>Analytics Dashboard</h3>
+          <p>View comprehensive site statistics, user activity, and performance metrics</p>
+          <button class="btn" onclick="showAnalytics()">View Analytics</button>
+        </div>
+
+        <div class="dashboard-card">
+          <span class="feature-icon">📝</span>
+          <h3>Content Management</h3>
+          <p>Manage cases, DNA tracking data, and site content</p>
+          <button class="btn" onclick="showContentManagement()">Manage Content</button>
+        </div>
+
+        <div class="dashboard-card">
+          <span class="feature-icon">⚙️</span>
+          <h3>System Settings</h3>
+          <p>Configure system preferences, security settings, and platform options</p>
+          <button class="btn" onclick="showSettings()">System Settings</button>
+        </div>
+      </div>
+
+      <div class="user-info-card">
+        <h3>Current User Information</h3>
+        <div id="userInfo">
+          <p>
+            <strong>Name:</strong> 
+            <span id="userName">Loading...</span>
+            <span class="status-indicator status-online"></span>
+          </p>
+          <p><strong>Email:</strong> <span id="userEmail">Loading...</span></p>
+          <p>
+            <strong>Role:</strong> 
+            <span id="userRole">Loading...</span>
+            <span class="status-indicator status-admin"></span>
+          </p>
+          <p><strong>Login Time:</strong> <span id="loginTime">Loading...</span></p>
+          <p><strong>Session ID:</strong> <span id="sessionId">Loading...</span></p>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <h3>Quick Actions</h3>
+        <div class="action-buttons">
+          <button class="btn" onclick="exportUserData()">
+            📤 Export User Data
+          </button>
+          <button class="btn" onclick="refreshDashboard()">
+            🔄 Refresh Dashboard
+          </button>
+          <button class="btn" onclick="clearAllData()">
+            🗑️ Clear All Data
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer role="contentinfo">
+    <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Check if user is logged in and is admin
+    function checkAdminAccess() {
+      const user = localStorage.getItem('user');
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const userData = JSON.parse(user);
+      if (userData.role !== 'admin') {
+        showNotification('Access denied. Admin privileges required.', 'error');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Display user information
+      document.getElementById('userName').textContent = userData.fullName || 'N/A';
+      document.getElementById('userEmail').textContent = userData.email || 'N/A';
+      document.getElementById('userRole').textContent = userData.role || 'N/A';
+      document.getElementById('loginTime').textContent = new Date().toLocaleString();
+      document.getElementById('sessionId').textContent = userData.token ? userData.token.substring(0, 20) + '...' : 'N/A';
+    }
+
+    // Dashboard functions
+    function showUserManagement() {
+      showNotification('🚀 Opening User Management...', 'info');
+      setTimeout(() => {
+        window.location.href = 'user-management.html';
+      }, 1000);
+    }
+
+    function showAnalytics() {
+      showNotification('📊 Analytics dashboard coming soon!', 'info');
+      setTimeout(() => {
+        showNotification('💡 Tip: Use the React Admin for advanced analytics', 'info');
+      }, 3000);
+    }
+
+    function showContentManagement() {
+      showNotification('📝 Content management feature coming soon!', 'info');
+      setTimeout(() => {
+        showNotification('🔧 For now, content can be managed through the main site', 'info');
+      }, 3000);
+    }
+
+    function showSettings() {
+      showNotification('⚙️ System settings coming soon!', 'info');
+      setTimeout(() => {
+        showNotification('🔐 Security settings will be available in the React Admin', 'info');
+      }, 3000);
+    }
+
+    function exportUserData() {
+      const user = localStorage.getItem('user');
+      if (user) {
+        const userData = JSON.parse(user);
+        const dataStr = JSON.stringify(userData, null, 2);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'user-data.json';
+        link.click();
+        URL.revokeObjectURL(url);
+        showNotification('User data exported successfully!', 'success');
+      }
+    }
+
+    function refreshDashboard() {
+      showNotification('Refreshing dashboard...', 'info');
+      setTimeout(() => {
+        checkAdminAccess();
+        showNotification('Dashboard refreshed successfully!', 'success');
+      }, 1000);
+    }
+
+    function clearAllData() {
+      if (confirm('Are you sure you want to clear all data? This will log you out.')) {
+        localStorage.clear();
+        showNotification('All data cleared. Redirecting to login...', 'success');
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 1500);
+      }
+    }
+
+    // Initialize dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAdminAccess();
+      
+      // Dark mode toggle functionality
+      const themeToggle = document.getElementById('theme-toggle');
+      const body = document.body;
+      
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'dark') {
+        body.classList.add('dark-mode');
+        themeToggle.textContent = '🌙';
+        themeToggle.setAttribute('aria-pressed', 'true');
+      }
+      
+      themeToggle.addEventListener('click', function() {
+        body.classList.toggle('dark-mode');
+        
+        if (body.classList.contains('dark-mode')) {
+          localStorage.setItem('theme', 'dark');
+          themeToggle.textContent = '🌙';
+          themeToggle.setAttribute('aria-pressed', 'true');
+        } else {
+          localStorage.setItem('theme', 'light');
+          themeToggle.textContent = '☀️';
+          themeToggle.setAttribute('aria-pressed', 'false');
+        }
+      });
+
+      // Hamburger menu functionality
+      const hamburger = document.querySelector('.hamburger');
+      const nav = document.querySelector('nav');
+      
+      hamburger.addEventListener('click', function() {
+        const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+        hamburger.setAttribute('aria-expanded', !isExpanded);
+        hamburger.classList.toggle('active');
+        nav.classList.toggle('active');
+      });
+    });
+  </script>
+
+  <style>
+    /* Admin Dashboard Specific Styles */
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      background: #fff;
+            padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    body.dark-mode .dashboard-header {
+      background: #374151;
+      color: #f9fafb;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .dashboard-header h1 {
+      color: #ff0000;
+      margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+    }
+
+    body.dark-mode .dashboard-header h1 {
+      color: #ff6b6b;
+    }
+
+    .dashboard-header p {
+      color: #666;
+      font-size: 1.1rem;
+    }
+
+    body.dark-mode .dashboard-header p {
+      color: #d1d5db;
+    }
+
+    .dashboard-grid {
+            display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .dashboard-card {
+      background: #fff;
+            border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+            transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    body.dark-mode .dashboard-card {
+      background: #374151;
+      color: #f9fafb;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      border-color: #ff0000;
+    }
+
+    body.dark-mode .dashboard-card:hover {
+      border-color: #ff6b6b;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .dashboard-card h3 {
+      color: #ff0000;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    body.dark-mode .dashboard-card h3 {
+      color: #ff6b6b;
+    }
+
+    .dashboard-card p {
+      color: #666;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    body.dark-mode .dashboard-card p {
+      color: #d1d5db;
+    }
+
+    .user-info-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-left: 4px solid #ff0000;
+    }
+
+    body.dark-mode .user-info-card {
+      background: #374151;
+      color: #f9fafb;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      border-left-color: #ff6b6b;
+    }
+
+    .user-info-card h3 {
+      color: #ff0000;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    body.dark-mode .user-info-card h3 {
+      color: #ff6b6b;
+    }
+
+    .user-info-card p {
+      margin-bottom: 0.75rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    body.dark-mode .user-info-card p {
+      border-bottom-color: #4b5563;
+    }
+
+    .user-info-card p:last-child {
+      border-bottom: none;
+    }
+
+    .user-info-card strong {
+            color: #333;
+      font-weight: 600;
+    }
+
+    body.dark-mode .user-info-card strong {
+      color: #e5e7eb;
+    }
+
+    .quick-actions {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    body.dark-mode .quick-actions {
+      background: #374151;
+      color: #f9fafb;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .quick-actions h3 {
+      color: #ff0000;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    body.dark-mode .quick-actions h3 {
+      color: #ff6b6b;
+    }
+
+    .action-buttons {
+            display: flex;
+      flex-wrap: wrap;
+            gap: 1rem;
+    }
+
+    .btn {
+      background: #ff0000;
+      color: white;
+            border: none;
+      padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+      cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 0.9rem;
+    }
+
+    .btn:hover {
+      background: #cc0000;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+            color: white;
+        }
+
+    body.dark-mode .btn {
+      background: #ff6b6b;
+    }
+
+    body.dark-mode .btn:hover {
+      background: #ff5252;
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+    }
+
+    /* Status indicators */
+    .status-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .status-online {
+      background: #4CAF50;
+    }
+
+    .status-admin {
+      background: #ff0000;
+    }
+
+    body.dark-mode .status-admin {
+      background: #ff6b6b;
+    }
+
+    /* Feature icons */
+    .feature-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    /* Responsive design */
+        @media (max-width: 768px) {
+      .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+      }
+
+      .dashboard-header h1 {
+        font-size: 2rem;
+      }
+
+      .dashboard-card,
+      .user-info-card,
+      .quick-actions {
+        padding: 1.5rem;
+      }
+    }
+
+    /* Animation for cards */
+    .dashboard-card {
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    .dashboard-card:nth-child(1) { animation-delay: 0.1s; }
+    .dashboard-card:nth-child(2) { animation-delay: 0.2s; }
+    .dashboard-card:nth-child(3) { animation-delay: 0.3s; }
+    .dashboard-card:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</body>
+</html>
