@@ -4,9 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DNA Tracking - 241Runners Awareness</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=20250127a&t=20250127" />
   <script src="auth-utils.js"></script>
-  <style>
     * {
       margin: 0;
       padding: 0;
@@ -375,132 +374,147 @@
         grid-template-columns: 1fr;
       }
       
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-  </style>
+
 </head>
 <body>
-  <div class="header">🧬 DNA Tracking & Identification</div>
-  
-  <div class="nav-buttons">
-    <a href="/" class="nav-btn">🏠 Home</a>
-    <a href="aboutus.html" class="nav-btn">About Us</a>
-    <a href="cases.html" class="nav-btn">📋 Cases</a>
-    <a href="dna-tracking.html" class="nav-btn" aria-current="page">🧬 DNA Tracking</a>
-                  <a href="signup.html" id="signupLink" class="nav-btn">Sign Up</a>
-        <a href="login.html" id="loginLink" class="nav-btn">🔐 Login</a>
-        <button id="logoutBtn" class="logout-btn nav-btn" style="display: none;">Logout</button>
-  </div>
-
-  <div class="dna-container">
-    <!-- Hero Section -->
-    <div class="hero-section">
-      <h1>Advanced DNA Technology</h1>
-      <p>State-of-the-art DNA tracking and identification system for missing persons cases. Every sample helps bring families closure.</p>
-      <div class="nav-buttons">
-        <button class="nav-btn" onclick="scrollToSection('stats')">📊 Statistics</button>
-        <button class="nav-btn" onclick="scrollToSection('features')">🔬 Features</button>
-        <button class="nav-btn" onclick="scrollToSection('databases')">🗄️ Databases</button>
-      </div>
+  <header role="banner">
+    <div class="header-bar">
+      <img src="241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
+      <h1>241 Runners Awareness</h1>
     </div>
 
-    <!-- Statistics Section -->
-    <div class="stats-section" id="stats">
-      <h2>DNA Collection Statistics</h2>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <span class="stat-number">1,250</span>
-          <span class="stat-label">Total Samples Collected</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-number">45</span>
-          <span class="stat-label">Samples This Month</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-number">98.5%</span>
-          <span class="stat-label">Success Rate</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-number">3.2 days</span>
-          <span class="stat-label">Average Processing Time</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-number">156</span>
-          <span class="stat-label">Active Cases</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-number">89</span>
-          <span class="stat-label">Resolved Cases</span>
+    <nav role="navigation" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="aboutus.html">About Us</a>
+      <a href="cases.html">Cases</a>
+      <a href="map.html">🗺️ Map</a>
+      <a href="dna-tracking.html">🧬 DNA Tracking</a>
+      <a href="signup.html" id="signupLink">Sign Up</a>
+      <a href="login.html" id="loginLink">Login</a>
+      <button id="logoutBtn" style="display: none;" class="logout-btn">Logout</button>
+      <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
+      <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
+    </nav>
+    
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
+      ☀️
+    </button>
+    
+    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <main role="main">
+    <div class="dna-container">
+      <!-- Hero Section -->
+      <div class="dna-hero-section">
+        <h1>🧬 Advanced DNA Technology</h1>
+        <p>State-of-the-art DNA tracking and identification system for missing persons cases. Every sample helps bring families closure.</p>
+        <div class="dna-nav-buttons">
+          <button class="dna-nav-btn" onclick="scrollToSection('stats')">📊 Statistics</button>
+          <button class="dna-nav-btn" onclick="scrollToSection('features')">🔬 Features</button>
+          <button class="dna-nav-btn" onclick="scrollToSection('databases')">🗄️ Databases</button>
         </div>
       </div>
-    </div>
 
-    <!-- DNA Features -->
-    <div class="dna-features" id="features">
-      <h2>DNA Technology Features</h2>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">🧬</div>
-          <div class="feature-title">DNA Sample Collection</div>
-          <div class="feature-description">
-            Secure collection of DNA samples using buccal swabs, blood samples, and hair follicles. 
-            All samples are encrypted and stored with military-grade security protocols.
+      <!-- Statistics Section -->
+      <div class="dna-stats-section" id="stats">
+        <h2>DNA Collection Statistics</h2>
+        <div class="dna-stats-grid">
+          <div class="dna-stat-card">
+            <span class="dna-stat-number">1,250</span>
+            <span class="dna-stat-label">Total Samples Collected</span>
           </div>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🔍</div>
-          <div class="feature-title">Advanced Analysis</div>
-          <div class="feature-description">
-            Sophisticated DNA analysis including STR markers, SNP analysis, and haplotype determination. 
-            Results are compared against national databases for matches.
+          <div class="dna-stat-card">
+            <span class="dna-stat-number">45</span>
+            <span class="dna-stat-label">Samples This Month</span>
           </div>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🗄️</div>
-          <div class="feature-title">Database Integration</div>
-          <div class="feature-description">
-            Automatic integration with NAMUS, CODIS, and local law enforcement databases. 
-            Real-time matching and notification systems.
+          <div class="dna-stat-card">
+            <span class="dna-stat-number">98.5%</span>
+            <span class="dna-stat-label">Success Rate</span>
           </div>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">📊</div>
-          <div class="feature-title">Comprehensive Reports</div>
-          <div class="feature-description">
-            Detailed DNA analysis reports including genetic markers, quality assessment, 
-            and comparison results with recommendations for further testing.
+          <div class="dna-stat-card">
+            <span class="dna-stat-number">3.2 days</span>
+            <span class="dna-stat-label">Average Processing Time</span>
           </div>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🔐</div>
-          <div class="feature-title">Secure Storage</div>
-          <div class="feature-description">
-            Encrypted DNA sequence storage with HIPAA compliance and law enforcement 
-            security standards. Access controlled by role-based permissions.
+          <div class="dna-stat-card">
+            <span class="dna-stat-number">156</span>
+            <span class="dna-stat-label">Active Cases</span>
           </div>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🚨</div>
-          <div class="feature-title">Real-Time Alerts</div>
-          <div class="feature-description">
-            Instant notifications when DNA matches are found in national databases. 
-            Automatic alerts to law enforcement and family members.
+          <div class="dna-stat-card">
+            <span class="dna-stat-number">89</span>
+            <span class="dna-stat-label">Resolved Cases</span>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- DNA Sample Form -->
-    <div class="dna-form-section">
-      <h2>Submit DNA Sample</h2>
-      <div class="form-grid">
+      <!-- DNA Features -->
+      <div class="dna-content-section" id="features">
+        <h2>DNA Technology Features</h2>
+        <div class="dna-features-grid">
+          <div class="dna-feature-card">
+            <div class="dna-feature-icon">🧬</div>
+            <div class="dna-feature-title">DNA Sample Collection</div>
+            <div class="dna-feature-description">
+              Secure collection of DNA samples using buccal swabs, blood samples, and hair follicles. 
+              All samples are encrypted and stored with military-grade security protocols.
+            </div>
+          </div>
+
+          <div class="dna-feature-card">
+            <div class="dna-feature-icon">🔍</div>
+            <div class="dna-feature-title">Advanced Analysis</div>
+            <div class="dna-feature-description">
+              Sophisticated DNA analysis including STR markers, SNP analysis, and haplotype determination. 
+              Results are compared against national databases for matches.
+            </div>
+          </div>
+
+          <div class="dna-feature-card">
+            <div class="dna-feature-icon">🗄️</div>
+            <div class="dna-feature-title">Database Integration</div>
+            <div class="dna-feature-description">
+              Automatic integration with NAMUS, CODIS, and local law enforcement databases. 
+              Real-time matching and notification systems.
+            </div>
+          </div>
+
+          <div class="dna-feature-card">
+            <div class="dna-feature-icon">📊</div>
+            <div class="dna-feature-title">Comprehensive Reports</div>
+            <div class="dna-feature-description">
+              Detailed DNA analysis reports including genetic markers, quality assessment, 
+              and comparison results with recommendations for further testing.
+            </div>
+          </div>
+
+          <div class="dna-feature-card">
+            <div class="dna-feature-icon">🔐</div>
+            <div class="dna-feature-title">Secure Storage</div>
+            <div class="dna-feature-description">
+              Encrypted DNA sequence storage with HIPAA compliance and law enforcement 
+              security standards. Access controlled by role-based permissions.
+            </div>
+          </div>
+
+          <div class="dna-feature-card">
+            <div class="dna-feature-icon">🚨</div>
+            <div class="dna-feature-title">Real-Time Alerts</div>
+            <div class="dna-feature-description">
+              Instant notifications when DNA matches are found in national databases. 
+              Automatic alerts to law enforcement and family members.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DNA Sample Form -->
+      <div class="dna-form-section">
+        <h2>Submit DNA Sample</h2>
+        <div class="form-grid">
         <div>
           <div class="form-group">
             <label class="form-label">Individual ID</label>
@@ -793,5 +807,10 @@ This report is generated for law enforcement and missing persons investigation p
       requestAnimationFrame(animate);
     }
   </script>
+  </main>
+
+  <footer role="contentinfo">
+    <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
+  </footer>
 </body>
 </html> 
