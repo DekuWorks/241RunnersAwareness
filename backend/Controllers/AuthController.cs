@@ -307,6 +307,77 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
             }
         }
 
+        [HttpPost("admin-login")]
+        public async Task<ActionResult<AuthResponse>> AdminLogin(LoginRequest request)
+        {
+            try
+            {
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == request.Email);
+
+                if (user == null)
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Invalid admin credentials."
+                    });
+                }
+
+                // Check if user is an admin
+                if (user.Role != "admin" && user.Role != "superadmin")
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Access denied. Admin privileges required."
+                    });
+                }
+
+                // Verify password
+                if (!_authService.VerifyPassword(request.Password, user.PasswordHash))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Invalid admin credentials."
+                    });
+                }
+
+                // Check if user is active
+                if (!user.IsActive)
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Account is deactivated. Please contact support."
+                    });
+                }
+
+                // Update last login
+                user.LastLoginAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+
+                var token = _authService.GenerateJwtToken(user);
+
+                return Ok(new AuthResponse
+                {
+                    Success = true,
+                    Message = "Admin login successful.",
+                    Token = token,
+                    User = _authService.MapToUserDto(user)
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new AuthResponse
+                {
+                    Success = false,
+                    Message = "An error occurred during admin login."
+                });
+            }
+        }
+
         [HttpPost("verify-email")]
         public async Task<ActionResult<AuthResponse>> VerifyEmail(VerifyEmailRequest request)
         {

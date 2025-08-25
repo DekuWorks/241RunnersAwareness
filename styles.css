@@ -1287,3 +1287,164 @@ body.dark-mode .demo-btn:hover {
     padding: 0.4rem 0.8rem;
   }
 }
+
+/* 
+ * ============================================
+ * CASE CARDS & LISTINGS
+ * ============================================
+ * 
+ * Styling for case listings and individual case cards.
+ * Provides clear information hierarchy and easy scanning.
+ */
+
+.case-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #dc2626;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.case-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.case-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.case-header h3 {
+  margin: 0;
+  color: #1f2937;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.case-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.case-details div {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.case-details strong {
+  color: #374151;
+  font-weight: 600;
+}
+
+.case-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-missing {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-urgent {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.status-found {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-safe {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.tag {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.dark-mode .case-card {
+  background: #2d3748;
+  border-left-color: #f56565;
+}
+
+.dark-mode .case-header h3 {
+  color: #e2e8f0;
+}
+
+.dark-mode .case-details strong {
+  color: #cbd5e0;
+}
+
+.dark-mode .tag {
+  background: #4a5568;
+  color: #e2e8f0;
+}
+
+/* 
+ * ============================================
+ * ADMIN BUTTON STYLES
+ * ============================================
+ * 
+ * Styling for the admin login button on the main login page.
+ */
+
+.admin-link {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.admin-btn {
+  display: inline-block;
+  background: #dc2626;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.admin-btn:hover {
+  background: #b91c1c;
+  text-decoration: none;
+  color: white;
+}
+
+/* Dark mode admin button */
+body.dark-mode .admin-btn {
+  background: #dc2626;
+}
+
+body.dark-mode .admin-btn:hover {
+  background: #b91c1c;
+}

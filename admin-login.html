@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login - 241Runners Awareness</title>
+  <link rel="stylesheet" href="styles.css?v=20250127a&t=20250127" />
+  <style>
+    .admin-login-container {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      max-width: 480px;
+      width: 95%;
+      margin: 2rem auto 2rem auto;
+      padding: 2.5rem 2rem 2rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .admin-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .admin-header h2 {
+      color: #dc2626;
+      margin-bottom: 10px;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    .admin-header p {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .admin-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #374151;
+      font-size: 0.875rem;
+    }
+
+    .form-group input {
+      padding: 0.75rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+      background: #fff;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    }
+
+    .admin-submit-btn {
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.875rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+    }
+
+    .admin-submit-btn:hover {
+      background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+    }
+
+    .admin-submit-btn:disabled {
+      background: #6b7280;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .back-to-login {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .back-to-login a {
+      color: #dc2626;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .back-to-login a:hover {
+      text-decoration: underline;
+    }
+
+    .admin-message {
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .admin-message.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .admin-message.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .admin-message.info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+
+    /* Dark mode support */
+    body.dark-mode .admin-login-container {
+      background: #374151;
+      border-color: rgba(255,255,255,0.1);
+    }
+
+    body.dark-mode .admin-header h2 {
+      color: #f56565;
+    }
+
+    body.dark-mode .admin-header p {
+      color: #9ca3af;
+    }
+
+    body.dark-mode .form-group label {
+      color: #e2e8f0;
+    }
+
+    body.dark-mode .form-group input {
+      background: #4a5568;
+      border-color: #4a5568;
+      color: #e2e8f0;
+    }
+
+    body.dark-mode .form-group input:focus {
+      border-color: #f56565;
+    }
+
+    body.dark-mode .back-to-login a {
+      color: #f56565;
+    }
+  </style>
+</head>
+<body>
+  <header role="banner">
+    <div class="header-bar">
+      <img src="241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
+      <h1>241 Runners Awareness</h1>
+    </div>
+
+    <nav role="navigation" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="aboutus.html">About Us</a>
+      <a href="cases.html">Cases</a>
+      <a href="map.html">🗺️ Map</a>
+      <a href="dna-tracking.html">🧬 DNA Tracking</a>
+      <a href="signup.html" id="signupLink">Sign Up</a>
+      <a href="login.html" id="loginLink">Login</a>
+      <button id="logoutBtn" style="display: none;" class="logout-btn">Logout</button>
+      <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
+      <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
+    </nav>
+    
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
+      ☀️
+    </button>
+    
+    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="back-button">
+      <a href="login.html" class="back-btn">&larr; Back to Login</a>
+    </div>
+  </header>
+
+  <main role="main">
+    <div class="admin-login-container">
+      <div class="admin-header">
+        <h2>🔐 Admin Access</h2>
+        <p>Enter admin credentials to access the dashboard</p>
+      </div>
+
+      <div id="adminMessage" class="admin-message" style="display: none;"></div>
+
+             <form id="adminLoginForm" class="admin-form">
+         <div class="form-group">
+           <label for="adminEmail">Admin Email</label>
+           <input type="email" id="adminEmail" name="adminEmail" required placeholder="Enter admin email">
+         </div>
+
+         <div class="form-group">
+           <label for="adminPassword">Admin Password</label>
+           <input type="password" id="adminPassword" name="adminPassword" required placeholder="Enter admin password">
+         </div>
+
+         <button type="submit" class="admin-submit-btn" id="adminSubmitBtn">
+           Access Admin Dashboard
+         </button>
+       </form>
+
+      <div class="back-to-login">
+        <a href="login.html">← Back to regular login</a>
+      </div>
+    </div>
+  </main>
+
+  <footer role="contentinfo">
+    <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
+  </footer>
+
+     <script>
+     // Admin authentication with backend API
+     const API_BASE_URL = 'https://241runnersawareness-api.azurewebsites.net';
+     
+     document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
+       e.preventDefault();
+       
+       const email = document.getElementById('adminEmail').value;
+       const password = document.getElementById('adminPassword').value;
+       const submitBtn = document.getElementById('adminSubmitBtn');
+       
+       // Disable button during processing
+       submitBtn.disabled = true;
+       submitBtn.textContent = 'Verifying...';
+       
+       try {
+         // Call backend API for admin authentication
+         const response = await fetch(`${API_BASE_URL}/api/auth/admin-login`, {
+           method: 'POST',
+           headers: {
+             'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({
+             email: email,
+             password: password
+           })
+         });
+
+         const data = await response.json();
+
+         if (response.ok && data.success) {
+           showAdminMessage('Access granted! Redirecting to admin dashboard...', 'success');
+           
+           // Store admin session with token
+           localStorage.setItem('adminAuthenticated', 'true');
+           localStorage.setItem('adminLoginTime', Date.now().toString());
+           localStorage.setItem('adminToken', data.token);
+           localStorage.setItem('adminEmail', email);
+           
+           // Redirect to admin dashboard
+           setTimeout(() => {
+             window.location.href = 'admin-dashboard.html';
+           }, 1500);
+         } else {
+           showAdminMessage(data.message || 'Invalid admin credentials. Please try again.', 'error');
+           submitBtn.disabled = false;
+           submitBtn.textContent = 'Access Admin Dashboard';
+           document.getElementById('adminPassword').value = '';
+           document.getElementById('adminPassword').focus();
+         }
+       } catch (error) {
+         console.error('Admin login error:', error);
+         showAdminMessage('Network error. Please check your connection and try again.', 'error');
+         submitBtn.disabled = false;
+         submitBtn.textContent = 'Access Admin Dashboard';
+       }
+     });
+
+    function showAdminMessage(message, type) {
+      const messageDiv = document.getElementById('adminMessage');
+      messageDiv.textContent = message;
+      messageDiv.className = `admin-message ${type}`;
+      messageDiv.style.display = 'block';
+      
+      if (type !== 'success') {
+        setTimeout(() => {
+          messageDiv.style.display = 'none';
+        }, 5000);
+      }
+    }
+
+    // Check if already authenticated
+    window.addEventListener('load', function() {
+      const isAuthenticated = localStorage.getItem('adminAuthenticated');
+      const loginTime = localStorage.getItem('adminLoginTime');
+      
+      // Check if login is still valid (24 hours)
+      if (isAuthenticated && loginTime) {
+        const now = Date.now();
+        const loginTimestamp = parseInt(loginTime);
+        const hoursSinceLogin = (now - loginTimestamp) / (1000 * 60 * 60);
+        
+        if (hoursSinceLogin < 24) {
+          // Still valid, redirect to dashboard
+          window.location.href = 'admin-dashboard.html';
+        } else {
+          // Expired, clear storage
+          localStorage.removeItem('adminAuthenticated');
+          localStorage.removeItem('adminLoginTime');
+        }
+      }
+    });
+
+    // Sticky navbar scroll effect
+    window.addEventListener('scroll', function() {
+      const header = document.querySelector('header');
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+
+    // Hamburger menu functionality
+    const hamburger = document.querySelector('.hamburger');
+    const nav = document.querySelector('nav');
+    
+    hamburger.addEventListener('click', function() {
+      const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+      hamburger.setAttribute('aria-expanded', !isExpanded);
+      hamburger.classList.toggle('active');
+      nav.classList.toggle('active');
+    });
+    
+    // Close menu when clicking on a link
+    document.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        nav.classList.remove('active');
+      });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
+        hamburger.classList.remove('active');
+        nav.classList.remove('active');
+      }
+    });
+
+    // Dark mode toggle functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+    
+    // Check for saved theme preference or default to light mode
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+      body.classList.add('dark-mode');
+      themeToggle.textContent = '🌙';
+      themeToggle.setAttribute('aria-pressed', 'true');
+    }
+    
+    // Theme toggle click handler
+    themeToggle.addEventListener('click', function() {
+      body.classList.toggle('dark-mode');
+      
+      if (body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+        themeToggle.textContent = '🌙';
+        themeToggle.setAttribute('aria-pressed', 'true');
+      } else {
+        localStorage.setItem('theme', 'light');
+        themeToggle.textContent = '☀️';
+        themeToggle.setAttribute('aria-pressed', 'false');
+      }
+    });
+  </script>
+</body>
+</html>
