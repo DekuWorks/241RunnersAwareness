@@ -1,0 +1,224 @@
+name: Branch Protection Checks
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  # Security and Code Quality Checks
+  security-checks:
+    name: Security & Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: |
+          if [ -f "package.json" ]; then
+            npm ci
+          fi
+          
+      - name: Run security audit
+        run: |
+          if [ -f "package.json" ]; then
+            npm audit --audit-level=moderate
+          fi
+          
+      - name: Check for secrets in code
+        uses: trufflesecurity/trufflehog@main
+        with:
+          extra_args: --only-verified --fail
+          
+      - name: Validate HTML
+        run: |
+          find . -name "*.html" -type f | while read file; do
+            echo "Validating $file"
+            if command -v tidy >/dev/null 2>&1; then
+              tidy -q -e "$file" || echo "HTML validation issues found in $file"
+            fi
+          done
+          
+      - name: Check file permissions
+        run: |
+          find . -type f -name "*.sh" -exec chmod +x {} \;
+          find . -type f -name "*.ps1" -exec chmod +x {} \;
+
+  # Build and Test Checks
+  build-tests:
+    name: Build & Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup .NET (for backend)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+          
+      - name: Setup Node.js (for frontend)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Build backend
+        run: |
+          if [ -d "backend" ]; then
+            cd backend
+            dotnet build --no-restore
+          fi
+          
+      - name: Build frontend
+        run: |
+          if [ -d "frontend" ]; then
+            cd frontend
+            npm ci
+            npm run build
+          fi
+          
+      - name: Run backend tests
+        run: |
+          if [ -d "backend" ]; then
+            cd backend
+            dotnet test --no-build --verbosity normal
+          fi
+          
+      - name: Run frontend tests
+        run: |
+          if [ -d "frontend" ]; then
+            cd frontend
+            npm test --if-present
+          fi
+
+  # Linting and Code Style
+  linting:
+    name: Linting & Code Style
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: |
+          if [ -f "package.json" ]; then
+            npm ci
+          fi
+          if [ -d "frontend" ] && [ -f "frontend/package.json" ]; then
+            cd frontend
+            npm ci
+          fi
+          
+      - name: Lint JavaScript/TypeScript
+        run: |
+          if [ -f "package.json" ] && npm run lint --if-present; then
+            npm run lint
+          fi
+          if [ -d "frontend" ] && [ -f "frontend/package.json" ]; then
+            cd frontend
+            if npm run lint --if-present; then
+              npm run lint
+            fi
+          fi
+          
+      - name: Check code formatting
+        run: |
+          if [ -f "package.json" ] && npm run format:check --if-present; then
+            npm run format:check
+          fi
+          if [ -d "frontend" ] && [ -f "frontend/package.json" ]; then
+            cd frontend
+            if npm run format:check --if-present; then
+              npm run format:check
+            fi
+          fi
+
+  # Documentation and README checks
+  documentation:
+    name: Documentation Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Check README exists
+        run: |
+          if [ ! -f "README.md" ]; then
+            echo "❌ README.md is missing"
+            exit 1
+          fi
+          echo "✅ README.md found"
+          
+      - name: Check for broken links in README
+        run: |
+          if command -v markdown-link-check >/dev/null 2>&1; then
+            markdown-link-check README.md
+          fi
+          
+      - name: Validate changelog
+        run: |
+          if [ -f "CHANGELOG.md" ]; then
+            echo "✅ CHANGELOG.md found"
+          else
+            echo "⚠️  CHANGELOG.md not found (recommended)"
+          fi
+
+  # Deployment readiness check
+  deployment-check:
+    name: Deployment Readiness
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Check for deployment scripts
+        run: |
+          deployment_scripts=0
+          if [ -f "deploy-to-production.ps1" ]; then
+            echo "✅ Production deployment script found"
+            deployment_scripts=$((deployment_scripts + 1))
+          fi
+          if [ -f "deploy-frontend.ps1" ]; then
+            echo "✅ Frontend deployment script found"
+            deployment_scripts=$((deployment_scripts + 1))
+          fi
+          if [ -f "deploy-admin-subdomain.ps1" ]; then
+            echo "✅ Admin deployment script found"
+            deployment_scripts=$((deployment_scripts + 1))
+          fi
+          
+          if [ $deployment_scripts -eq 0 ]; then
+            echo "⚠️  No deployment scripts found"
+          fi
+          
+      - name: Check environment files
+        run: |
+          if [ -f ".env.example" ] || [ -f "env.example" ]; then
+            echo "✅ Environment example file found"
+          else
+            echo "⚠️  Environment example file not found"
+          fi
+          
+      - name: Check for sensitive data
+        run: |
+          # Check for potential secrets in code
+          if grep -r "password\|secret\|key\|token" . --exclude-dir=.git --exclude-dir=node_modules | grep -v "example\|test\|mock"; then
+            echo "⚠️  Potential sensitive data found in code"
+          else
+            echo "✅ No obvious sensitive data found"
+          fi
