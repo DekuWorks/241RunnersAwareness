@@ -2338,3 +2338,354 @@ body.dark-mode .report-preview {
   border-color: #4b5563;
   color: #e2e8f0;
 }
+
+/* MAP DASHBOARD STYLES */
+/* ============================================
+ * Styling for the interactive map dashboard
+ */
+
+.dashboard-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.welcome-section {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 32px rgba(220, 38, 38, 0.3);
+}
+
+.welcome-section h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  color: white;
+}
+
+.welcome-section p {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  opacity: 0.9;
+  color: white;
+}
+
+.realtime-indicator {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: white;
+  backdrop-filter: blur(10px);
+}
+
+.map-container {
+  position: relative;
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.map-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 30px;
+  align-items: center;
+  justify-content: center;
+  padding: 25px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.control-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.map-controls button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 500;
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.map-controls button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+}
+
+.secondary-btn {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%) !important;
+  box-shadow: 0 4px 15px rgba(55, 65, 81, 0.3) !important;
+}
+
+.secondary-btn:hover {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%) !important;
+  box-shadow: 0 6px 20px rgba(55, 65, 81, 0.4) !important;
+}
+
+.map-controls select, .map-controls input {
+  padding: 12px 20px;
+  border: 2px solid #e1e5e9;
+  border-radius: 25px;
+  background: white;
+  color: #333;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.3s;
+  min-width: 150px;
+}
+
+.map-controls select:focus, .map-controls input:focus {
+  outline: none;
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-box input {
+  padding-right: 40px;
+  min-width: 250px;
+}
+
+.search-icon {
+  position: absolute;
+  right: 15px;
+  color: #6b7280;
+  font-size: 1.1rem;
+}
+
+.map-info {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  margin-top: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.map-info h3 {
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid #e2e8f0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #dc2626;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.stat-label {
+  color: #64748b;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+/* Map Dashboard Responsive Design */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 1rem;
+  }
+  
+  .welcome-section {
+    padding: 1.5rem;
+  }
+  
+  .welcome-section h2 {
+    font-size: 2rem;
+  }
+  
+  .map-controls {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .control-group {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .search-box input {
+    min-width: 200px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+}
+
+/* Map Dashboard Dark Mode Support */
+body.dark-mode .map-container {
+  background: #374151;
+  border-color: #4b5563;
+}
+
+body.dark-mode .map-info {
+  background: #374151;
+  border-color: #4b5563;
+  color: #e2e8f0;
+}
+
+body.dark-mode .map-info h3 {
+  color: #f1f5f9;
+}
+
+body.dark-mode .stat-card {
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+  border-color: #6b7280;
+}
+
+body.dark-mode .stat-number {
+  color: #f87171;
+}
+
+body.dark-mode .stat-label {
+  color: #9ca3af;
+}
+
+body.dark-mode .map-controls select,
+body.dark-mode .map-controls input {
+  background: #4b5563;
+  border-color: #6b7280;
+  color: #e2e8f0;
+}
+
+body.dark-mode .search-icon {
+  color: #9ca3af;
+}
+
+/* FORM STYLES */
+/* ============================================
+ * Styling for forms across the site
+ */
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  color: #374151;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.form-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+}
+
+.submit-btn:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+/* Form Dark Mode Support */
+body.dark-mode .form-label {
+  color: #e2e8f0;
+}
+
+body.dark-mode .form-input,
+body.dark-mode .form-textarea {
+  background: #4b5563;
+  border-color: #6b7280;
+  color: #e2e8f0;
+}
+
+body.dark-mode .form-input:focus,
+body.dark-mode .form-textarea:focus {
+  border-color: #a78bfa;
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
+}
+
+body.dark-mode .form-input::placeholder,
+body.dark-mode .form-textarea::placeholder {
+  color: #9ca3af;
+}
