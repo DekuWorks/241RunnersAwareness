@@ -1,357 +1,271 @@
-# 241 Runners Awareness - Complete Platform
+# 🏃 241 Runners Awareness
 
-A comprehensive development platform for 241 Runners Awareness, featuring a modern ASP.NET Core backend API, React frontend applications, and a complete database schema for missing persons tracking and management.
+**Advanced missing persons tracking and community safety platform for the Houston area**
 
-## 🏗️ Project Structure
+[![Netlify Status](https://api.netlify.com/api/v1/badges/your-site-id/deploy-status)](https://app.netlify.com/sites/241runnersawareness/deploys)
+[![GitHub Actions](https://github.com/DekuWorks/241RunnersAwareness/workflows/Branch%20Protection%20Checks/badge.svg)](https://github.com/DekuWorks/241RunnersAwareness/actions)
 
-```
-241RunnersAwareness/
-├── backend/                    # ASP.NET Core 8.0 Backend API
-│   ├── Controllers/           # API endpoints
-│   ├── DBContext/            # Entity Framework models
-│   ├── Services/             # Business logic services
-│   ├── Migrations/           # Database migrations
-│   └── Program.cs            # Application entry point
-├── frontend/                  # React frontend application
-│   ├── src/
-│   │   ├── components/       # React components
-│   │   ├── pages/           # Page components
-│   │   ├── features/        # Redux slices
-│   │   └── utils/           # Utility functions
-│   └── package.json
-├── apps/
-│   ├── admin/               # React admin dashboard
-│   ├── api/                 # Additional API services
-│   └── static/              # Static site generator
-├── packages/ui/             # Shared design tokens
-├── docs/                    # Documentation and assets
-└── *.html                   # Static HTML pages
-```
+## 🌟 Overview
+
+241 Runners Awareness is a comprehensive platform designed to help locate missing persons and improve community safety in the Houston metropolitan area. The platform combines advanced DNA tracking technology, interactive mapping, and community engagement tools to support law enforcement and families in their search efforts.
+
+**Live Site**: https://241runnersawareness.org
+
+## ✨ Key Features
+
+### 🧬 **DNA Tracking System**
+- Advanced DNA sample collection and analysis
+- Integration with national databases (NAMUS, CODIS)
+- Real-time DNA matching and alerts
+- Comprehensive reporting system
+- Partner laboratory network
+
+### 🗺️ **Interactive Map Dashboard**
+- Real-time tracking of missing persons cases
+- Houston area coverage with 50-mile radius
+- Advanced filtering and search capabilities
+- Statistics and analytics dashboard
+- Heat map visualization
+
+### 👥 **Community Engagement**
+- User registration and case reporting
+- Community alerts and notifications
+- Volunteer coordination tools
+- Educational resources and safety tips
+
+### 🔐 **Admin Dashboard**
+- Case management system
+- User administration
+- Analytics and reporting
+- Content management
+
+## 🏗️ Architecture
+
+### Frontend
+- **Static Site**: HTML, CSS, JavaScript (Vanilla)
+- **React App**: Modern admin interface
+- **Responsive Design**: Mobile-first approach
+- **Progressive Web App**: Offline capabilities
+
+### Backend
+- **.NET 9.0 API**: RESTful services
+- **Entity Framework**: Database management
+- **JWT Authentication**: Secure user sessions
+- **SignalR**: Real-time notifications
+
+### Database
+- **SQLite**: Development and testing
+- **Azure SQL**: Production deployment
+- **Migrations**: Automated schema updates
 
 ## 🚀 Quick Start
 
-### Backend API Setup
-
 ### Prerequisites
-- Node.js 18+ and npm
-- .NET 8 SDK
+- Node.js 18+ 
+- .NET 9.0 SDK
 - Git
-- SQLite (for development on Mac/Windows) or SQL Server (for production)
 
-### 🍎 Mac Setup (Recommended)
+### Installation
 
-#### 1. Install Prerequisites
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/DekuWorks/241RunnersAwareness.git
+   cd 241RunnersAwareness
+   ```
+
+2. **Run the setup script**
+   ```bash
+   .\manage-project.ps1 setup
+   ```
+
+3. **Start development environment**
+   ```bash
+   .\manage-project.ps1 dev
+   ```
+
+4. **Open in browser**
+   - Main site: `index.html`
+   - Admin: `admin-dashboard.html`
+   - Map: `map.html`
+   - DNA tracking: `dna-tracking.html`
+
+## 📋 Project Management
+
+The project includes a comprehensive management script that handles all common tasks:
+
 ```bash
-# Install Homebrew (if not already installed)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# Development
+.\manage-project.ps1 dev      # Start development environment
 
-# Install Node.js
-brew install node
+# Testing
+.\manage-project.ps1 test     # Run all tests and validation
 
-# Install .NET SDK
-brew install --cask dotnet
+# Deployment
+.\manage-project.ps1 deploy   # Deploy to production
 
-# Install Git (if not already installed)
-brew install git
+# Maintenance
+.\manage-project.ps1 clean    # Clean up temporary files
+.\manage-project.ps1 setup    # Initial project setup
+.\manage-project.ps1 help     # Show help
 ```
 
-#### 2. Clone and Setup
-```bash
-# Clone the repository
-git clone https://github.com/DekuWorks/241RunnersAwareness.git
-cd 241RunnersAwareness-2
+## 🗂️ Project Structure
 
-# Install Entity Framework tools
-dotnet tool install --global dotnet-ef
-
-# Add tools to PATH (add to ~/.zshrc for permanent)
-export PATH="$PATH:/Users/$USER/.dotnet/tools"
+```
+241RunnersAwareness/
+├── 📁 frontend/              # React admin application
+├── 📁 backend/               # .NET API backend
+├── 📁 admin/                 # Admin subdomain files
+├── 📁 docs/                  # Documentation and assets
+├── 📁 .github/               # GitHub Actions and configs
+├── 🧬 dna-tracking.html      # DNA tracking page
+├── 🗺️ map.html              # Interactive map dashboard
+├── 👤 admin-dashboard.html   # Admin dashboard
+├── 🏠 index.html             # Main homepage
+├── 📄 cases.html             # Cases listing
+├── 📝 report-case.html       # Case reporting form
+├── 🎨 styles.css             # Main stylesheet
+├── ⚙️ manage-project.ps1     # Project management script
+└── 📖 README.md              # This file
 ```
 
-#### 3. Frontend Setup (React)
-```bash
-cd frontend
-npm install
-npm run dev          # Start development server on http://localhost:5173
-```
+## 🔧 Configuration
 
-#### 4. Backend Setup (.NET Core)
-```bash
-cd backend
-dotnet restore       # Restore packages
-dotnet build         # Build project
-dotnet ef database update    # Create and apply SQLite migrations
-dotnet run           # Start development server on http://localhost:5113
-```
+### Environment Variables
+Copy `env.example` to `.env` and configure:
 
-#### 5. Start Both Servers
-**Terminal 1 - Backend:**
-```bash
-cd backend
-dotnet run
-```
+```env
+# Database
+DATABASE_CONNECTION_STRING=your_connection_string
 
-**Terminal 2 - Frontend:**
-```bash
-cd frontend
-npm run dev
-```
+# Authentication
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRY_HOURS=24
 
-#### 6. Access the Application
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:5113
-- **Swagger Docs**: http://localhost:5113/swagger
+# Email/SMS
+SMTP_HOST=your_smtp_host
+SMTP_PORT=587
+SMTP_USERNAME=your_email
+SMTP_PASSWORD=your_password
 
-#### 7. Test Accounts (Pre-seeded)
-- **Admin**: `admin@241runners.org` / `admin123`
-- **Test User**: `test@example.com` / `password123`
-- **Lisa Thomas**: `lisa@241runners.org` / `lisa2025`
-
-### 🪟 Windows Setup
-
-#### 1. Install Prerequisites
-- Install [Node.js](https://nodejs.org/) (18+)
-- Install [.NET 8 SDK](https://dotnet.microsoft.com/download)
-- Install [Git](https://git-scm.com/)
-
-#### 2. Frontend Setup (React)
-```bash
-cd frontend
-npm install
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run test         # Run tests
-```
-
-#### 3. Backend Setup (.NET Core)
-```bash
-cd backend
-dotnet restore       # Restore packages
-dotnet build         # Build project
-dotnet run           # Start development server
-dotnet test          # Run tests
+# External APIs
+GOOGLE_MAPS_API_KEY=your_google_maps_key
 ```
 
 ### Database Setup
 ```bash
+# Run migrations
 cd backend
-dotnet ef database update    # Apply migrations
-dotnet ef migrations add     # Create new migration
+dotnet ef database update
 ```
-
-### Testing Authentication
-
-Use the provided test scripts:
-```powershell
-# Test API connectivity and authentication
-.\test-auth.ps1
-
-# Simple login test
-.\test-login.ps1
-```
-
-## 📊 Database Schema
-
-### Users Table
-Complete user management with authentication and role-based access:
-
-```sql
-Users (
-    UserId (Guid, PK),
-    Username (string),
-    Email (string, unique),
-    FullName (string),
-    PhoneNumber (string),
-    PasswordHash (string),
-    Role (string), -- admin, user, therapist, caregiver, parent, adoptive_parent
-    EmailVerified (bool),
-    PhoneVerified (bool),
-    Organization (string),
-    Credentials (string),
-    Specialization (string),
-    YearsOfExperience (string),
-    CreatedAt (DateTime),
-    IsActive (bool),
-    
-    -- Password Reset Fields
-    PasswordResetCount (int),
-    LastPasswordResetAt (DateTime),
-    PasswordResetToken (string),
-    PasswordResetTokenExpiry (DateTime),
-    PasswordResetYear (int),
-    
-    -- Two-Factor Authentication
-    TwoFactorEnabled (bool),
-    TwoFactorSecret (string),
-    TwoFactorBackupCodes (string),
-    TwoFactorSetupDate (DateTime),
-    
-    -- Refresh Tokens
-    RefreshToken (string),
-    RefreshTokenExpiry (DateTime),
-    
-    -- Email/Phone Verification
-    EmailVerificationToken (string),
-    EmailVerificationExpiry (DateTime),
-    PhoneVerificationCode (string),
-    PhoneVerificationExpiry (DateTime),
-    
-    -- Additional Fields
-    Address, City, State, ZipCode,
-    EmergencyContactName, EmergencyContactPhone, EmergencyContactRelationship,
-    RelationshipToRunner, LicenseNumber, IndividualId,
-    LastLoginAt
-)
-```
-
-### Other Tables
-- **Individuals**: Missing persons data
-- **DNAReports**: DNA analysis results
-- **Products**: E-commerce items
-- **EmergencyContacts**: Emergency contact information
-
-## 🔐 Authentication System
-
-### JWT-Based Authentication
-- **Access Tokens**: 60-minute expiry
-- **Refresh Tokens**: 30-day expiry
-- **Role-Based Authorization**: Multiple user roles supported
-
-### Available Endpoints
-
-#### Authentication
-- `POST /api/auth/login` - User login
-- `POST /api/auth/register-simple` - Simple user registration
-- `POST /api/auth/register` - Full user registration with role-specific fields
-- `POST /api/auth/google-login` - Google OAuth integration
-- `GET /api/auth/test` - API connectivity test
-
-#### User Management
-- `GET /api/usermanagement/users` - List all users
-- `GET /api/usermanagement/users/{id}` - Get specific user
-- `POST /api/usermanagement/users` - Create new user
-- `PUT /api/usermanagement/users/{id}` - Update user
-
-#### Other Services
-- `GET /api/map` - Map data endpoints
-- `GET /api/dna` - DNA tracking endpoints
-- `GET /api/notifications` - Real-time notifications
-
-## 🛠️ Development Status
-
-### ✅ Completed Features
-- **Backend API**: Fully functional ASP.NET Core 8.0 API
-- **Database Schema**: Complete with all required tables and relationships
-- **Authentication**: JWT-based auth with role management
-- **Swagger Documentation**: Interactive API documentation
-- **Database Migrations**: Entity Framework migrations
-- **Error Handling**: Comprehensive error handling and logging
-- **CORS Configuration**: Cross-origin resource sharing setup
-- **SignalR Integration**: Real-time notifications
-- **Email/SMS Services**: Integration with SendGrid and Twilio
-
-### 🔧 Current Issues
-- **Database Schema Sync**: Some password reset columns need final synchronization
-- **Authentication Testing**: Login/registration endpoints returning 500 errors (schema-related)
-
-### 🚧 In Progress
-- **Frontend Integration**: React app connecting to backend
-- **Admin Dashboard**: User management interface
-- **Testing Suite**: Comprehensive API testing
 
 ## 🧪 Testing
 
-### API Testing Scripts
-- `test-auth.ps1`: Comprehensive authentication testing
-- `test-login.ps1`: Simple login verification
-- `fix-database.ps1`: Database schema repair
+```bash
+# Run all tests
+.\manage-project.ps1 test
 
-### Manual Testing
-1. **Swagger UI**: Visit `http://localhost:5113/swagger`
-2. **API Endpoints**: Test all endpoints through Swagger
-3. **Database**: Use SQL Server Management Studio or sqlcmd
+# Backend tests only
+cd backend
+dotnet test
 
-## 🔧 Configuration
-
-### Backend Configuration (`backend/appsettings.json`)
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=RunnersDb;Trusted_Connection=true;TrustServerCertificate=True;MultipleActiveResultSets=true;"
-  },
-  "Jwt": {
-    "SecretKey": "${JWT_SECRET_KEY}",
-    "Issuer": "241RunnersAwareness",
-    "Audience": "241RunnersAwareness",
-    "ExpiryInMinutes": 60,
-    "RefreshTokenExpiryInDays": 30
-  },
-  "Cors": {
-    "AllowedOrigins": [
-      "http://localhost:3000",
-      "http://localhost:5173",
-      "http://localhost:5113"
-    ]
-  }
-}
+# Frontend tests only
+cd frontend
+npm test
 ```
-
-### Environment Variables
-- `JWT_SECRET_KEY`: Strong secret for JWT signing
-- `SENDGRID_API_KEY`: Email service API key
-- `TWILIO_ACCOUNT_SID`: SMS service credentials
-- `GOOGLE_CLIENT_ID`: Google OAuth credentials
 
 ## 🚀 Deployment
 
-### Backend Deployment
-1. **Azure**: Use provided Azure deployment scripts
-2. **Docker**: Dockerfile included for containerization
-3. **Local**: Direct deployment with `dotnet publish`
+### Automatic Deployment
+The project is automatically deployed to Netlify when changes are pushed to the main branch.
 
-### Frontend Deployment
-1. **Build**: `npm run build`
-2. **Deploy**: Static hosting (Netlify, Vercel, etc.)
+### Manual Deployment
+```bash
+# Deploy to production
+.\manage-project.ps1 deploy
+```
 
-### Database Deployment
-1. **Local**: SQL Server LocalDB
-2. **Production**: Azure SQL Database or SQL Server instance
-3. **Migrations**: Use Entity Framework migrations
+### Deployment Targets
+- **Static Site**: Netlify (https://241runnersawareness.org)
+- **Backend API**: Azure App Service
+- **Database**: Azure SQL Database
 
-## 📚 Documentation
+## 🔒 Security
 
-### API Documentation
-- **Swagger UI**: `http://localhost:5113/swagger`
-- **OpenAPI Spec**: Available through Swagger
+### Branch Protection
+- Pull request reviews required
+- Automated testing and validation
+- Code quality checks
+- Security scanning
 
-### Code Documentation
-- **Controllers**: Well-documented API endpoints
-- **Services**: Business logic with XML comments
-- **Models**: Entity Framework models with annotations
+### Data Protection
+- JWT token authentication
+- Encrypted data transmission
+- HIPAA-compliant DNA data handling
+- Regular security audits
+
+## 📊 Features in Detail
+
+### DNA Tracking
+- **Sample Collection**: Buccal swabs, blood samples, hair follicles
+- **Analysis**: STR markers, SNP analysis, haplotype determination
+- **Databases**: NAMUS, CODIS, local law enforcement integration
+- **Reporting**: Comprehensive analysis reports with recommendations
+
+### Interactive Map
+- **Real-time Data**: Live updates from multiple sources
+- **Advanced Filtering**: Status, time range, location-based
+- **Statistics**: Case counts, resolution rates, trends
+- **Visualization**: Marker clustering, heat maps, custom icons
+
+### Community Features
+- **Case Reporting**: Anonymous and authenticated reporting
+- **Alerts**: Email and SMS notifications
+- **Volunteer Coordination**: Task assignment and tracking
+- **Educational Resources**: Safety tips and prevention guides
 
 ## 🤝 Contributing
 
-1. **Fork** the repository
-2. **Create** a feature branch
-3. **Make** your changes
-4. **Test** thoroughly
-5. **Submit** a pull request
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development Guidelines
+- Follow the existing code style
+- Add tests for new features
+- Update documentation as needed
+- Ensure all tests pass before submitting
 
 ## 📞 Support
 
-For technical support or questions:
-- **Email**: Contact the development team
-- **Issues**: Use GitHub issues for bug reports
-- **Documentation**: Check the docs folder for detailed guides
+### Documentation
+- [Branch Protection Setup](BRANCH_PROTECTION_SETUP.md)
+- [API Documentation](docs/api.md)
+- [Deployment Guide](docs/deployment.md)
+
+### Contact
+- **Email**: support@241runnersawareness.org
+- **Website**: https://241runnersawareness.org
+- **GitHub Issues**: [Create an issue](https://github.com/DekuWorks/241RunnersAwareness/issues)
 
 ## 📄 License
 
-This project is proprietary software for 241 Runners Awareness.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Houston law enforcement agencies
+- NAMUS and CODIS database teams
+- Partner laboratories and forensic experts
+- Community volunteers and supporters
+- Open source contributors
 
 ---
 
-**Last Updated**: August 17, 2025  
-**Version**: 1.0.0  
-**Status**: Development Phase
+**Made with ❤️ for the Houston community**
+
+*Supporting missing persons and their families since 2025*
 
 

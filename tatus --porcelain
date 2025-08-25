@@ -1,5 +1,0 @@
-[33m6ea6c1e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeat/unify-web-and-app[m[33m, [m[1;31morigin/feat/unify-web-and-app[m[33m)[m chore: remove shop references from React app service workers
-[33md3eaf48[m chore: add SPA redirects for Netlify to prevent 404s
-[33m41f82db[m took out varlow shop
-[33md21aec4[m Merge database migrations and update backend configuration
-[33m2ca3781[m feat: Remove shop functionality and dev button, enhance special needs support

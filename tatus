@@ -1,7 +1,0 @@
-* [32mfeat/unify-web-and-app[m
-  main[m
-[33md21aec4[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeat/unify-web-and-app[m[33m, [m[1;31morigin/feat/unify-web-and-app[m[33m)[m Merge database migrations and update backend configuration
-[33m2ca3781[m feat: Remove shop functionality and dev button, enhance special needs support
-[33meac115c[m merge: Integrate Mac setup support from main branch
-[33ma301878[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m feat: Add Mac setup support with SQLite database
-[33m39b5836[m Add comprehensive changelog for v1.0.0 release
