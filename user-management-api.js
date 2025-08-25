@@ -9,7 +9,9 @@
 
 class UserManagementAPI {
   constructor() {
-    this.baseURL = 'http://localhost:5113/api';
+    this.baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+      ? 'http://localhost:5113/api' 
+      : 'https://241runnersawareness-api.azurewebsites.net/api';
     this.isBackendAvailable = false;
     this.checkBackendAvailability();
   }
