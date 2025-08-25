@@ -1,0 +1,9 @@
+<step title="Incoming Request" date="2025-08-24T21:07:17.865" instance="7788a4" url="/logstream" method="GET" type="request" pid="1696,2,24" Accept-Encoding="identity" Authorization="Bea..." Host="241runnersawareness-api.scm.azurewebsites.net" User-Agent="AZURECLI/2.76.0 (MSI)" x-ms-client-request-id="4b78efac-812e-11f0-bfd6-f057a69bc617" X-ARR-LOG-ID="4b78efac-812e-11f0-bfd6-f057a69bc617" CLIENT-IP="97.75.150.66:38403" X-SITE-DEPLOYMENT-ID="241runnersawareness-api" WAS-DEFAULT-HOSTNAME="241runnersawareness-api.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/logstream" >
+  <step title="Cleanup Xml Logs" date="2025-08-24T21:07:17.880" /><!-- duration: 0ms -->
+  <step title="LogStreamHandler.BeginProcessRequest" date="2025-08-24T21:07:17.991" >
+    <step title="LockFile &apos;C:\home\site\locks\hooks.lock&apos; acquired" date="2025-08-24T21:07:18.148" /><!-- duration: 15ms -->
+    <step title="LockFile &apos;C:\home\site\locks\hooks.lock&apos; released" date="2025-08-24T21:07:18.460" /><!-- duration: 18ms -->
+  </step><!-- duration: 486ms -->
+  <step title="LogStreamHandler.EndProcessRequest" date="2025-08-24T21:08:18.136" /><!-- duration: 16ms -->
+  <step title="Outgoing response" date="2025-08-24T21:08:18.152" type="response" statusCode="200" statusText="OK" Server="Microsoft-IIS/10.0" Cache-Control="private" X-AspNet-Version="4.0.30319" Content-Type="text/plain; charset=utf-8" /><!-- duration: 0ms -->
+</step><!-- duration: 60287ms -->

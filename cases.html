@@ -79,7 +79,7 @@
   <header role="banner">
     <div class="header-bar">
 
-      <img src="/241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
+              <img src="241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
       <h1>241 Runners Awareness</h1>
     </div>
     <nav role="navigation" aria-label="Main navigation">
@@ -125,10 +125,11 @@
   <footer role="contentinfo">
     <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
   </footer>
+  <script src="mock-cases-data.js"></script>
   <script>
-    const API_BASE_URL = '/api/cases';
     const caseList = document.getElementById('caseList');
     const filterForm = document.getElementById('filterForm');
+    let currentCases = [...mockCasesData];
 
     function buildQuery() {
       const params = [];
@@ -147,69 +148,112 @@
       return params.length ? '?' + params.join('&') : '';
     }
 
-    async function fetchCases() {
-      caseList.innerHTML = '<div style="text-align:center; color:#888;">Loading cases...</div>';
-      try {
-        const res = await fetch(API_BASE_URL + buildQuery());
-        const data = await res.json();
-        if (!Array.isArray(data) || data.length === 0) {
-          caseList.innerHTML = '<div style="text-align:center; color:#888;">No cases found.</div>';
-          return;
-        }
-        caseList.innerHTML = data.map(c => `
-          <div class="case-card">
-            <div><strong>Runner ID:</strong> ${c.id || ''}</div>
-            <div><strong>Name:</strong> ${c.name || ''}</div>
-            <div><strong>Age:</strong> ${c.age || ''}</div>
-            <div><strong>Status:</strong> <span class="status">${c.status || ''}</span></div>
-            <div><strong>State:</strong> ${c.state || ''}</div>
-            <div class="tags">
-              ${(c.tags || []).map(tag => `<span class="tag">${tag}</span>`).join(' ')}
-            </div>
-          </div>
-        `).join('');
-      } catch (e) {
-        caseList.innerHTML = '<div style="text-align:center; color:#d32f2f;">Error loading cases.</div>';
+    function filterCases() {
+      const id = document.getElementById('runnerId').value.trim().toLowerCase();
+      const name = document.getElementById('name').value.trim().toLowerCase();
+      const age = document.getElementById('age').value.trim();
+      const status = document.getElementById('status').value;
+      const state = document.getElementById('state').value.trim().toLowerCase();
+      const tags = document.getElementById('tags').value.trim().toLowerCase();
+
+      currentCases = mockCasesData.filter(caseItem => {
+        const matchesId = !id || caseItem.id.toLowerCase().includes(id);
+        const matchesName = !name || caseItem.name.toLowerCase().includes(name);
+        const matchesAge = !age || caseItem.age.toString() === age;
+        const matchesStatus = !status || caseItem.status === status;
+        const matchesState = !state || caseItem.state.toLowerCase().includes(state);
+        const matchesTags = !tags || caseItem.tags.some(tag => tag.toLowerCase().includes(tags));
+        
+        return matchesId && matchesName && matchesAge && matchesStatus && matchesState && matchesTags;
+      });
+
+      displayCases();
+    }
+
+    function displayCases() {
+      if (currentCases.length === 0) {
+        caseList.innerHTML = '<div style="text-align:center; color:#888;">No cases found matching your criteria.</div>';
+        return;
       }
+
+      caseList.innerHTML = currentCases.map(c => `
+        <div class="case-card">
+          <div class="case-header">
+            <h3>${c.name}</h3>
+            <span class="status-badge status-${c.status.toLowerCase()}">${c.status}</span>
+          </div>
+          <div class="case-details">
+            <div><strong>Case ID:</strong> ${c.id}</div>
+            <div><strong>Age:</strong> ${c.age} years old</div>
+            <div><strong>Location:</strong> ${c.city}, ${c.state}</div>
+            <div><strong>Date Reported:</strong> ${new Date(c.dateReported).toLocaleDateString()}</div>
+            <div><strong>Description:</strong> ${c.description}</div>
+            <div><strong>Contact:</strong> ${c.contactInfo}</div>
+          </div>
+          <div class="case-tags">
+            ${c.tags.map(tag => `<span class="tag">${tag}</span>`).join(' ')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function fetchCases() {
+      caseList.innerHTML = '<div style="text-align:center; color:#888;">Loading cases...</div>';
+      // Simulate loading delay
+      setTimeout(() => {
+        currentCases = [...mockCasesData];
+        displayCases();
+      }, 500);
     }
 
     filterForm.addEventListener('submit', e => {
       e.preventDefault();
-      fetchCases();
+      filterCases();
     });
 
     // CSV Export functionality
     document.getElementById('exportAllBtn').addEventListener('click', () => {
-      exportCsv('/api/individuals/export');
+      exportCsv(mockCasesData);
     });
 
     document.getElementById('exportFilteredBtn').addEventListener('click', () => {
-      const params = buildQuery();
-      exportCsv('/api/individuals/export/filtered' + params);
+      exportCsv(currentCases);
     });
 
-    function exportCsv(url) {
-      fetch(url)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Export failed');
-          }
-          return response.blob();
-        })
-        .then(blob => {
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `runners_export_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.csv`;
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-          document.body.removeChild(a);
-        })
-        .catch(error => {
-          console.error('Export error:', error);
-          alert('Export failed. Please try again.');
-        });
+    function exportCsv(data) {
+      try {
+        // Create CSV content
+        const headers = ['Case ID', 'Name', 'Age', 'Status', 'State', 'City', 'Date Reported', 'Description', 'Contact', 'Tags'];
+        const csvContent = [
+          headers.join(','),
+          ...data.map(caseItem => [
+            caseItem.id,
+            `"${caseItem.name}"`,
+            caseItem.age,
+            caseItem.status,
+            caseItem.state,
+            `"${caseItem.city}"`,
+            caseItem.dateReported,
+            `"${caseItem.description}"`,
+            caseItem.contactInfo,
+            `"${caseItem.tags.join('; ')}"`
+          ].join(','))
+        ].join('\n');
+
+        // Create and download file
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `runners_export_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } catch (error) {
+        console.error('Export error:', error);
+        alert('Export failed. Please try again.');
+      }
     }
 
     // Initial load

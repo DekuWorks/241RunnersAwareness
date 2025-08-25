@@ -1,0 +1,480 @@
+<Events><Event><System><Provider Name=".NET Runtime"/><EventID>1000</EventID><Level>1</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-15T17:52:36Z"/><EventRecordID>22681093</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Category: Microsoft.EntityFrameworkCore.Database.Command
+EventId: 20102
+
+Failed executing DbCommand (142ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [Users] AS [u]) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+</Data></EventData></Event><Event><System><Provider Name=".NET Runtime"/><EventID>1000</EventID><Level>1</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-15T17:52:37Z"/><EventRecordID>22681375</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Category: Microsoft.EntityFrameworkCore.Query
+EventId: 10100
+
+An exception occurred while iterating over the results of a query for context type '_241RunnersAwareness.BackendAPI.DBContext.Data.RunnersDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'Users'.
+   at Microsoft.Data.SqlClient.SqlCommand.&lt;&gt;c.&lt;ExecuteDbDataReaderAsync&gt;b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.Tasks.Task.&lt;&gt;c.&lt;.cctor&gt;b__281_0(Object obj)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:12a5450b-1d7d-4b10-b781-9cf59ec201e5
+Error Number:208,State:1,Class:16
+ClientConnectionId before routing:5ae3e2c6-aa21-4ecd-84bd-20dcb81f9fb7
+Routing Destination:bd57f0e2545a.tr19002.centralus1-a.worker.database.windows.net,11047
+
+Exception: 
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'Users'.
+   at Microsoft.Data.SqlClient.SqlCommand.&lt;&gt;c.&lt;ExecuteDbDataReaderAsync&gt;b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.Tasks.Task.&lt;&gt;c.&lt;.cctor&gt;b__281_0(Object obj)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:12a5450b-1d7d-4b10-b781-9cf59ec201e5
+Error Number:208,State:1,Class:16
+ClientConnectionId before routing:5ae3e2c6-aa21-4ecd-84bd-20dcb81f9fb7
+Routing Destination:bd57f0e2545a.tr19002.centralus1-a.worker.database.windows.net,11047
+</Data></EventData></Event><Event><System><Provider Name=".NET Runtime"/><EventID>1000</EventID><Level>2</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-15T17:52:37Z"/><EventRecordID>22681546</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Category: Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager
+EventId: 35
+
+No XML encryptor configured. Key {e49ef4bc-fd10-4fc5-87e4-82f2b5a210c8} may be persisted to storage in unencrypted form.
+</Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1032</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-15T17:52:37Z"/><EventRecordID>22681937</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'C:\home\site\wwwroot\' started successfully.</Data><Data>Process Id: 3284.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name=".NET Runtime"/><EventID>1000</EventID><Level>1</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-15T18:24:09Z"/><EventRecordID>24573921</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Category: Microsoft.EntityFrameworkCore.Database.Command
+EventId: 20102
+SpanId: 52b54ac88170e7b5
+TraceId: c93c7514933535dc52bc73575c7eacfc
+ParentId: 0000000000000000
+RequestId: 4000013b-0000-f400-b63f-84710c7967bb
+RequestPath: /api/auth/login
+ActionId: 924ff952-a3a0-4653-8e56-79983e514184
+ActionName: _241RunnersAwareness.BackendAPI.Controllers.AuthController.Login (241RunnersAwareness.BackendAPI)
+
+Failed executing DbCommand (139ms) [Parameters=[@__request_Email_0='?' (Size = 255)], CommandType='Text', CommandTimeout='30']
+SELECT TOP(1) [u].[UserId], [u].[Address], [u].[City], [u].[CreatedAt], [u].[Credentials], [u].[Email], [u].[EmailVerificationExpiry], [u].[EmailVerificationToken], [u].[EmailVerified], [u].[EmergencyContactName], [u].[EmergencyContactPhone], [u].[EmergencyContactRelationship], [u].[FullName], [u].[IndividualId], [u].[IsActive], [u].[LastLoginAt], [u].[LicenseNumber], [u].[Organization], [u].[PasswordHash], [u].[PhoneNumber], [u].[PhoneVerificationCode], [u].[PhoneVerificationExpiry], [u].[PhoneVerified], [u].[RefreshToken], [u].[RefreshTokenExpiry], [u].[RelationshipToRunner], [u].[Role], [u].[Specialization], [u].[State], [u].[TwoFactorBackupCodes], [u].[TwoFactorEnabled], [u].[TwoFactorSecret], [u].[TwoFactorSetupDate], [u].[Username], [u].[YearsOfExperience], [u].[ZipCode]
+FROM [Users] AS [u]
+WHERE [u].[Email] = @__request_Email_0 AND [u].[IsActive] = CAST(1 AS bit)
+</Data></EventData></Event><Event><System><Provider Name=".NET Runtime"/><EventID>1000</EventID><Level>1</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-15T18:24:09Z"/><EventRecordID>24574000</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Category: Microsoft.EntityFrameworkCore.Query
+EventId: 10100
+SpanId: 52b54ac88170e7b5
+TraceId: c93c7514933535dc52bc73575c7eacfc
+ParentId: 0000000000000000
+RequestId: 4000013b-0000-f400-b63f-84710c7967bb
+RequestPath: /api/auth/login
+ActionId: 924ff952-a3a0-4653-8e56-79983e514184
+ActionName: _241RunnersAwareness.BackendAPI.Controllers.AuthController.Login (241RunnersAwareness.BackendAPI)
+
+An exception occurred while iterating over the results of a query for context type '_241RunnersAwareness.BackendAPI.DBContext.Data.RunnersDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'Users'.
+   at Microsoft.Data.SqlClient.SqlCommand.&lt;&gt;c.&lt;ExecuteDbDataReaderAsync&gt;b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.Tasks.Task.&lt;&gt;c.&lt;.cctor&gt;b__281_0(Object obj)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:d0165e1b-5503-4b8f-94e6-1e34866de849
+Error Number:208,State:1,Class:16
+ClientConnectionId before routing:00d53291-ba39-4576-a995-0a8286d405b9
+Routing Destination:bd57f0e2545a.tr19002.centralus1-a.worker.database.windows.net,11047
+
+Exception: 
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'Users'.
+   at Microsoft.Data.SqlClient.SqlCommand.&lt;&gt;c.&lt;ExecuteDbDataReaderAsync&gt;b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.Tasks.Task.&lt;&gt;c.&lt;.cctor&gt;b__281_0(Object obj)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:d0165e1b-5503-4b8f-94e6-1e34866de849
+Error Number:208,State:1,Class:16
+ClientConnectionId before routing:00d53291-ba39-4576-a995-0a8286d405b9
+Routing Destination:bd57f0e2545a.tr19002.centralus1-a.worker.database.windows.net,11047
+</Data></EventData></Event><Event><System><Provider Name=".NET Runtime"/><EventID>1000</EventID><Level>1</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-15T18:28:32Z"/><EventRecordID>24837234</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Category: Microsoft.EntityFrameworkCore.Database.Command
+EventId: 20102
+SpanId: 2e40f24830d7da53
+TraceId: 9567760688a782c12d2b11f8aae610d1
+ParentId: 0000000000000000
+RequestId: 4000001d-0000-f200-b63f-84710c7967bb
+RequestPath: /api/auth/login
+ActionId: 924ff952-a3a0-4653-8e56-79983e514184
+ActionName: _241RunnersAwareness.BackendAPI.Controllers.AuthController.Login (241RunnersAwareness.BackendAPI)
+
+Failed executing DbCommand (8ms) [Parameters=[@__request_Email_0='?' (Size = 255)], CommandType='Text', CommandTimeout='30']
+SELECT TOP(1) [u].[UserId], [u].[Address], [u].[City], [u].[CreatedAt], [u].[Credentials], [u].[Email], [u].[EmailVerificationExpiry], [u].[EmailVerificationToken], [u].[EmailVerified], [u].[EmergencyContactName], [u].[EmergencyContactPhone], [u].[EmergencyContactRelationship], [u].[FullName], [u].[IndividualId], [u].[IsActive], [u].[LastLoginAt], [u].[LicenseNumber], [u].[Organization], [u].[PasswordHash], [u].[PhoneNumber], [u].[PhoneVerificationCode], [u].[PhoneVerificationExpiry], [u].[PhoneVerified], [u].[RefreshToken], [u].[RefreshTokenExpiry], [u].[RelationshipToRunner], [u].[Role], [u].[Specialization], [u].[State], [u].[TwoFactorBackupCodes], [u].[TwoFactorEnabled], [u].[TwoFactorSecret], [u].[TwoFactorSetupDate], [u].[Username], [u].[YearsOfExperience], [u].[ZipCode]
+FROM [Users] AS [u]
+WHERE [u].[Email] = @__request_Email_0 AND [u].[IsActive] = CAST(1 AS bit)
+</Data></EventData></Event><Event><System><Provider Name=".NET Runtime"/><EventID>1000</EventID><Level>1</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-15T18:28:33Z"/><EventRecordID>24837265</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Category: Microsoft.EntityFrameworkCore.Query
+EventId: 10100
+SpanId: 2e40f24830d7da53
+TraceId: 9567760688a782c12d2b11f8aae610d1
+ParentId: 0000000000000000
+RequestId: 4000001d-0000-f200-b63f-84710c7967bb
+RequestPath: /api/auth/login
+ActionId: 924ff952-a3a0-4653-8e56-79983e514184
+ActionName: _241RunnersAwareness.BackendAPI.Controllers.AuthController.Login (241RunnersAwareness.BackendAPI)
+
+An exception occurred while iterating over the results of a query for context type '_241RunnersAwareness.BackendAPI.DBContext.Data.RunnersDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'Users'.
+   at Microsoft.Data.SqlClient.SqlCommand.&lt;&gt;c.&lt;ExecuteDbDataReaderAsync&gt;b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.Tasks.Task.&lt;&gt;c.&lt;.cctor&gt;b__281_0(Object obj)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:d0165e1b-5503-4b8f-94e6-1e34866de849
+Error Number:208,State:1,Class:16
+ClientConnectionId before routing:00d53291-ba39-4576-a995-0a8286d405b9
+Routing Destination:bd57f0e2545a.tr19002.centralus1-a.worker.database.windows.net,11047
+
+Exception: 
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'Users'.
+   at Microsoft.Data.SqlClient.SqlCommand.&lt;&gt;c.&lt;ExecuteDbDataReaderAsync&gt;b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.Tasks.Task.&lt;&gt;c.&lt;.cctor&gt;b__281_0(Object obj)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:d0165e1b-5503-4b8f-94e6-1e34866de849
+Error Number:208,State:1,Class:16
+ClientConnectionId before routing:00d53291-ba39-4576-a995-0a8286d405b9
+Routing Destination:bd57f0e2545a.tr19002.centralus1-a.worker.database.windows.net,11047
+</Data></EventData></Event><Event><System><Provider Name=".NET Runtime"/><EventID>1000</EventID><Level>1</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-15T18:48:05Z"/><EventRecordID>26009453</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Category: Microsoft.EntityFrameworkCore.Database.Command
+EventId: 20102
+SpanId: 1dc2ceb474e2b37c
+TraceId: bd30ada9bec983d2eac3677e90764574
+ParentId: 0000000000000000
+RequestId: 4000016d-0000-e700-b63f-84710c7967bb
+RequestPath: /api/auth/login
+ActionId: 924ff952-a3a0-4653-8e56-79983e514184
+ActionName: _241RunnersAwareness.BackendAPI.Controllers.AuthController.Login (241RunnersAwareness.BackendAPI)
+
+Failed executing DbCommand (2ms) [Parameters=[@__request_Email_0='?' (Size = 255)], CommandType='Text', CommandTimeout='30']
+SELECT TOP(1) [u].[UserId], [u].[Address], [u].[City], [u].[CreatedAt], [u].[Credentials], [u].[Email], [u].[EmailVerificationExpiry], [u].[EmailVerificationToken], [u].[EmailVerified], [u].[EmergencyContactName], [u].[EmergencyContactPhone], [u].[EmergencyContactRelationship], [u].[FullName], [u].[IndividualId], [u].[IsActive], [u].[LastLoginAt], [u].[LicenseNumber], [u].[Organization], [u].[PasswordHash], [u].[PhoneNumber], [u].[PhoneVerificationCode], [u].[PhoneVerificationExpiry], [u].[PhoneVerified], [u].[RefreshToken], [u].[RefreshTokenExpiry], [u].[RelationshipToRunner], [u].[Role], [u].[Specialization], [u].[State], [u].[TwoFactorBackupCodes], [u].[TwoFactorEnabled], [u].[TwoFactorSecret], [u].[TwoFactorSetupDate], [u].[Username], [u].[YearsOfExperience], [u].[ZipCode]
+FROM [Users] AS [u]
+WHERE [u].[Email] = @__request_Email_0 AND [u].[IsActive] = CAST(1 AS bit)
+</Data></EventData></Event><Event><System><Provider Name=".NET Runtime"/><EventID>1000</EventID><Level>1</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-15T18:48:05Z"/><EventRecordID>26009468</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Category: Microsoft.EntityFrameworkCore.Query
+EventId: 10100
+SpanId: 1dc2ceb474e2b37c
+TraceId: bd30ada9bec983d2eac3677e90764574
+ParentId: 0000000000000000
+RequestId: 4000016d-0000-e700-b63f-84710c7967bb
+RequestPath: /api/auth/login
+ActionId: 924ff952-a3a0-4653-8e56-79983e514184
+ActionName: _241RunnersAwareness.BackendAPI.Controllers.AuthController.Login (241RunnersAwareness.BackendAPI)
+
+An exception occurred while iterating over the results of a query for context type '_241RunnersAwareness.BackendAPI.DBContext.Data.RunnersDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'Users'.
+   at Microsoft.Data.SqlClient.SqlCommand.&lt;&gt;c.&lt;ExecuteDbDataReaderAsync&gt;b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.Tasks.Task.&lt;&gt;c.&lt;.cctor&gt;b__281_0(Object obj)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:c39ccec5-b52a-411c-bf9c-ed79e4b14cc9
+Error Number:208,State:1,Class:16
+ClientConnectionId before routing:dcf6ac42-63cc-42a7-8bed-23ae35b8fdf4
+Routing Destination:bd57f0e2545a.tr19002.centralus1-a.worker.database.windows.net,11047
+
+Exception: 
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'Users'.
+   at Microsoft.Data.SqlClient.SqlCommand.&lt;&gt;c.&lt;ExecuteDbDataReaderAsync&gt;b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.Tasks.Task.&lt;&gt;c.&lt;.cctor&gt;b__281_0(Object obj)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:c39ccec5-b52a-411c-bf9c-ed79e4b14cc9
+Error Number:208,State:1,Class:16
+ClientConnectionId before routing:dcf6ac42-63cc-42a7-8bed-23ae35b8fdf4
+Routing Destination:bd57f0e2545a.tr19002.centralus1-a.worker.database.windows.net,11047
+</Data></EventData></Event><Event><System><Provider Name=".NET Runtime"/><EventID>1000</EventID><Level>1</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-15T18:50:57Z"/><EventRecordID>26181609</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Category: Microsoft.EntityFrameworkCore.Database.Command
+EventId: 20102
+SpanId: b937235e3346704d
+TraceId: 35458bc9be5dbbde5ca680ce7970fe21
+ParentId: 0000000000000000
+RequestId: 40000048-0000-fd00-b63f-84710c7967bb
+RequestPath: /api/auth/login
+ActionId: 924ff952-a3a0-4653-8e56-79983e514184
+ActionName: _241RunnersAwareness.BackendAPI.Controllers.AuthController.Login (241RunnersAwareness.BackendAPI)
+
+Failed executing DbCommand (20ms) [Parameters=[@__request_Email_0='?' (Size = 255)], CommandType='Text', CommandTimeout='30']
+SELECT TOP(1) [u].[UserId], [u].[Address], [u].[City], [u].[CreatedAt], [u].[Credentials], [u].[Email], [u].[EmailVerificationExpiry], [u].[EmailVerificationToken], [u].[EmailVerified], [u].[EmergencyContactName], [u].[EmergencyContactPhone], [u].[EmergencyContactRelationship], [u].[FullName], [u].[IndividualId], [u].[IsActive], [u].[LastLoginAt], [u].[LicenseNumber], [u].[Organization], [u].[PasswordHash], [u].[PhoneNumber], [u].[PhoneVerificationCode], [u].[PhoneVerificationExpiry], [u].[PhoneVerified], [u].[RefreshToken], [u].[RefreshTokenExpiry], [u].[RelationshipToRunner], [u].[Role], [u].[Specialization], [u].[State], [u].[TwoFactorBackupCodes], [u].[TwoFactorEnabled], [u].[TwoFactorSecret], [u].[TwoFactorSetupDate], [u].[Username], [u].[YearsOfExperience], [u].[ZipCode]
+FROM [Users] AS [u]
+WHERE [u].[Email] = @__request_Email_0 AND [u].[IsActive] = CAST(1 AS bit)
+</Data></EventData></Event><Event><System><Provider Name=".NET Runtime"/><EventID>1000</EventID><Level>1</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-15T18:50:57Z"/><EventRecordID>26181656</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Category: Microsoft.EntityFrameworkCore.Query
+EventId: 10100
+SpanId: b937235e3346704d
+TraceId: 35458bc9be5dbbde5ca680ce7970fe21
+ParentId: 0000000000000000
+RequestId: 40000048-0000-fd00-b63f-84710c7967bb
+RequestPath: /api/auth/login
+ActionId: 924ff952-a3a0-4653-8e56-79983e514184
+ActionName: _241RunnersAwareness.BackendAPI.Controllers.AuthController.Login (241RunnersAwareness.BackendAPI)
+
+An exception occurred while iterating over the results of a query for context type '_241RunnersAwareness.BackendAPI.DBContext.Data.RunnersDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'Users'.
+   at Microsoft.Data.SqlClient.SqlCommand.&lt;&gt;c.&lt;ExecuteDbDataReaderAsync&gt;b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.Tasks.Task.&lt;&gt;c.&lt;.cctor&gt;b__281_0(Object obj)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:c39ccec5-b52a-411c-bf9c-ed79e4b14cc9
+Error Number:208,State:1,Class:16
+ClientConnectionId before routing:dcf6ac42-63cc-42a7-8bed-23ae35b8fdf4
+Routing Destination:bd57f0e2545a.tr19002.centralus1-a.worker.database.windows.net,11047
+
+Exception: 
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'Users'.
+   at Microsoft.Data.SqlClient.SqlCommand.&lt;&gt;c.&lt;ExecuteDbDataReaderAsync&gt;b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.Tasks.Task.&lt;&gt;c.&lt;.cctor&gt;b__281_0(Object obj)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:c39ccec5-b52a-411c-bf9c-ed79e4b14cc9
+Error Number:208,State:1,Class:16
+ClientConnectionId before routing:dcf6ac42-63cc-42a7-8bed-23ae35b8fdf4
+Routing Destination:bd57f0e2545a.tr19002.centralus1-a.worker.database.windows.net,11047
+</Data></EventData></Event><Event><System><Provider Name=".NET Runtime"/><EventID>1000</EventID><Level>1</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-15T18:51:19Z"/><EventRecordID>26203796</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Category: Microsoft.EntityFrameworkCore.Database.Command
+EventId: 20102
+SpanId: 3078bee1a0a5a34a
+TraceId: 5cf92dd441f11051dbd9a93de9c40774
+ParentId: 0000000000000000
+RequestId: 4000004b-0000-fd00-b63f-84710c7967bb
+RequestPath: /api/auth/register
+ActionId: 96b497e3-fc0d-4465-b6b9-b097085ff41d
+ActionName: _241RunnersAwareness.BackendAPI.Controllers.AuthController.Register (241RunnersAwareness.BackendAPI)
+
+Failed executing DbCommand (9ms) [Parameters=[@__request_Email_0='?' (Size = 255)], CommandType='Text', CommandTimeout='30']
+SELECT TOP(1) [u].[UserId], [u].[Address], [u].[City], [u].[CreatedAt], [u].[Credentials], [u].[Email], [u].[EmailVerificationExpiry], [u].[EmailVerificationToken], [u].[EmailVerified], [u].[EmergencyContactName], [u].[EmergencyContactPhone], [u].[EmergencyContactRelationship], [u].[FullName], [u].[IndividualId], [u].[IsActive], [u].[LastLoginAt], [u].[LicenseNumber], [u].[Organization], [u].[PasswordHash], [u].[PhoneNumber], [u].[PhoneVerificationCode], [u].[PhoneVerificationExpiry], [u].[PhoneVerified], [u].[RefreshToken], [u].[RefreshTokenExpiry], [u].[RelationshipToRunner], [u].[Role], [u].[Specialization], [u].[State], [u].[TwoFactorBackupCodes], [u].[TwoFactorEnabled], [u].[TwoFactorSecret], [u].[TwoFactorSetupDate], [u].[Username], [u].[YearsOfExperience], [u].[ZipCode]
+FROM [Users] AS [u]
+WHERE [u].[Email] = @__request_Email_0
+</Data></EventData></Event><Event><System><Provider Name=".NET Runtime"/><EventID>1000</EventID><Level>1</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-15T18:51:19Z"/><EventRecordID>26203812</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Category: Microsoft.EntityFrameworkCore.Query
+EventId: 10100
+SpanId: 3078bee1a0a5a34a
+TraceId: 5cf92dd441f11051dbd9a93de9c40774
+ParentId: 0000000000000000
+RequestId: 4000004b-0000-fd00-b63f-84710c7967bb
+RequestPath: /api/auth/register
+ActionId: 96b497e3-fc0d-4465-b6b9-b097085ff41d
+ActionName: _241RunnersAwareness.BackendAPI.Controllers.AuthController.Register (241RunnersAwareness.BackendAPI)
+
+An exception occurred while iterating over the results of a query for context type '_241RunnersAwareness.BackendAPI.DBContext.Data.RunnersDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'Users'.
+   at Microsoft.Data.SqlClient.SqlCommand.&lt;&gt;c.&lt;ExecuteDbDataReaderAsync&gt;b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.Tasks.Task.&lt;&gt;c.&lt;.cctor&gt;b__281_0(Object obj)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:c39ccec5-b52a-411c-bf9c-ed79e4b14cc9
+Error Number:208,State:1,Class:16
+ClientConnectionId before routing:dcf6ac42-63cc-42a7-8bed-23ae35b8fdf4
+Routing Destination:bd57f0e2545a.tr19002.centralus1-a.worker.database.windows.net,11047
+
+Exception: 
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'Users'.
+   at Microsoft.Data.SqlClient.SqlCommand.&lt;&gt;c.&lt;ExecuteDbDataReaderAsync&gt;b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.Tasks.Task.&lt;&gt;c.&lt;.cctor&gt;b__281_0(Object obj)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:c39ccec5-b52a-411c-bf9c-ed79e4b14cc9
+Error Number:208,State:1,Class:16
+ClientConnectionId before routing:dcf6ac42-63cc-42a7-8bed-23ae35b8fdf4
+Routing Destination:bd57f0e2545a.tr19002.centralus1-a.worker.database.windows.net,11047
+</Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1033</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-20T11:53:38Z"/><EventRecordID>433138078</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'MACHINE/WEBROOT/APPHOST/241RUNNERSAWARENESS-API' has shutdown.</Data><Data>Process Id: 3284.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name=".NET Runtime"/><EventID>1000</EventID><Level>1</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-22T20:34:26Z"/><EventRecordID>637184453</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Category: Microsoft.EntityFrameworkCore.Database.Command
+EventId: 20102
+
+Failed executing DbCommand (120ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [Users] AS [u]) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+</Data></EventData></Event><Event><System><Provider Name=".NET Runtime"/><EventID>1000</EventID><Level>1</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-22T20:34:27Z"/><EventRecordID>637184671</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Category: Microsoft.EntityFrameworkCore.Query
+EventId: 10100
+
+An exception occurred while iterating over the results of a query for context type '_241RunnersAwareness.BackendAPI.DBContext.Data.RunnersDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'Users'.
+   at Microsoft.Data.SqlClient.SqlCommand.&lt;&gt;c.&lt;ExecuteDbDataReaderAsync&gt;b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.Tasks.Task.&lt;&gt;c.&lt;.cctor&gt;b__281_0(Object obj)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:dc7aa4e6-2050-494e-a59f-9c0836d58254
+Error Number:208,State:1,Class:16
+ClientConnectionId before routing:8289dd8b-10a7-4ce6-8ca2-53d68464a28e
+Routing Destination:bd57f0e2545a.tr19002.centralus1-a.worker.database.windows.net,11050
+
+Exception: 
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'Users'.
+   at Microsoft.Data.SqlClient.SqlCommand.&lt;&gt;c.&lt;ExecuteDbDataReaderAsync&gt;b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.Tasks.Task.&lt;&gt;c.&lt;.cctor&gt;b__281_0(Object obj)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:dc7aa4e6-2050-494e-a59f-9c0836d58254
+Error Number:208,State:1,Class:16
+ClientConnectionId before routing:8289dd8b-10a7-4ce6-8ca2-53d68464a28e
+Routing Destination:bd57f0e2545a.tr19002.centralus1-a.worker.database.windows.net,11050
+</Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1032</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-22T20:34:27Z"/><EventRecordID>637185078</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'C:\home\site\wwwroot\' started successfully.</Data><Data>Process Id: 108.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1033</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-23T04:07:31Z"/><EventRecordID>664368171</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'MACHINE/WEBROOT/APPHOST/241RUNNERSAWARENESS-API' has shutdown.</Data><Data>Process Id: 108.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1032</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-24T20:49:16Z"/><EventRecordID>810872859</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'C:\home\site\wwwroot\' started successfully.</Data><Data>Process Id: 1200.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1012</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-24T20:52:29Z"/><EventRecordID>811065390</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'C:\home\site\wwwroot\' was recycled after detecting app_offline.htm.</Data><Data>Process Id: 1200.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1033</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-24T20:52:30Z"/><EventRecordID>811066406</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'MACHINE/WEBROOT/APPHOST/241RUNNERSAWARENESS-API' has shutdown.</Data><Data>Process Id: 1200.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1032</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-24T20:56:43Z"/><EventRecordID>811318921</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'C:\home\site\wwwroot\' started successfully.</Data><Data>Process Id: 2748.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1012</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-24T20:57:44Z"/><EventRecordID>811380296</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'C:\home\site\wwwroot\' was recycled after detecting app_offline.htm.</Data><Data>Process Id: 2748.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1033</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-24T20:57:45Z"/><EventRecordID>811380984</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'MACHINE/WEBROOT/APPHOST/241RUNNERSAWARENESS-API' has shutdown.</Data><Data>Process Id: 2748.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1032</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-24T21:01:19Z"/><EventRecordID>811595843</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'C:\home\site\wwwroot\' started successfully.</Data><Data>Process Id: 2036.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1033</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-24T21:20:34Z"/><EventRecordID>812749984</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'MACHINE/WEBROOT/APPHOST/241RUNNERSAWARENESS-API' has shutdown.</Data><Data>Process Id: 2036.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1032</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-24T21:22:37Z"/><EventRecordID>812873218</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'C:\home\site\wwwroot\' started successfully.</Data><Data>Process Id: 2604.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1012</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-24T21:23:54Z"/><EventRecordID>812950015</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'C:\home\site\wwwroot\' was recycled after detecting app_offline.htm.</Data><Data>Process Id: 2604.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1033</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-24T21:23:55Z"/><EventRecordID>812951343</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'MACHINE/WEBROOT/APPHOST/241RUNNERSAWARENESS-API' has shutdown.</Data><Data>Process Id: 2604.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1032</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-24T21:25:55Z"/><EventRecordID>813071671</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'C:\home\site\wwwroot\' started successfully.</Data><Data>Process Id: 5004.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1012</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-24T21:35:53Z"/><EventRecordID>813669453</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'C:\home\site\wwwroot\' was recycled after detecting app_offline.htm.</Data><Data>Process Id: 5004.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1033</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-24T21:35:55Z"/><EventRecordID>813670937</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'MACHINE/WEBROOT/APPHOST/241RUNNERSAWARENESS-API' has shutdown.</Data><Data>Process Id: 5004.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1032</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-24T21:37:33Z"/><EventRecordID>813769375</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'C:\home\site\wwwroot\' started successfully.</Data><Data>Process Id: 4572.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1012</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-24T21:48:32Z"/><EventRecordID>814427921</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'C:\home\site\wwwroot\' was recycled after detecting app_offline.htm.</Data><Data>Process Id: 4572.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1033</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-24T21:48:33Z"/><EventRecordID>814429250</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'MACHINE/WEBROOT/APPHOST/241RUNNERSAWARENESS-API' has shutdown.</Data><Data>Process Id: 4572.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1032</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-24T21:53:07Z"/><EventRecordID>814703531</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'C:\home\site\wwwroot\' started successfully.</Data><Data>Process Id: 5300.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1033</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-25T04:07:20Z"/><EventRecordID>837155687</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'MACHINE/WEBROOT/APPHOST/241RUNNERSAWARENESS-API' has shutdown.</Data><Data>Process Id: 5300.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1032</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-25T17:03:17Z"/><EventRecordID>883713109</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'C:\home\site\wwwroot\' started successfully.</Data><Data>Process Id: 4496.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1012</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-25T17:10:57Z"/><EventRecordID>884173078</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'C:\home\site\wwwroot\' was recycled after detecting app_offline.htm.</Data><Data>Process Id: 4496.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1033</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-25T17:10:59Z"/><EventRecordID>884174859</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'MACHINE/WEBROOT/APPHOST/241RUNNERSAWARENESS-API' has shutdown.</Data><Data>Process Id: 4496.</Data><Data>File Version: 18.0.25107.16. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event><Event><System><Provider Name="IIS AspNetCore Module V2"/><EventID>1032</EventID><Level>4</Level><Task>0</Task><Keywords>Keywords</Keywords><TimeCreated SystemTime="2025-08-25T17:11:30Z"/><EventRecordID>884205656</EventRecordID><Channel>Application</Channel><Computer>dw0sdwk000H91</Computer><Security/></System><EventData><Data>Application 'C:\home\site\wwwroot\' started successfully.</Data><Data>Process Id: 4732.</Data><Data>File Version: 19.0.25119.5. Description: IIS ASP.NET Core Module V2 Request Handler. Commit: </Data></EventData></Event></Events>

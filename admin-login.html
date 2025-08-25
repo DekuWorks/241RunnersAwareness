@@ -292,7 +292,14 @@
          }
        } catch (error) {
          console.error('Admin login error:', error);
-         showAdminMessage('Network error. Please check your connection and try again.', 'error');
+         
+         // Check if it's a network error or backend not available
+         if (error.name === 'TypeError' || error.message.includes('fetch')) {
+           showAdminMessage('Backend service temporarily unavailable. Please try again later or contact support.', 'error');
+         } else {
+           showAdminMessage('Network error. Please check your connection and try again.', 'error');
+         }
+         
          submitBtn.disabled = false;
          submitBtn.textContent = 'Access Admin Dashboard';
        }

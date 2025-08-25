@@ -31,11 +31,17 @@
         }
         
         .map-controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
             margin-bottom: 30px;
             align-items: center;
+            justify-content: center;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .control-group {
@@ -358,15 +364,16 @@
 <body>
     <header role="banner">
         <div class="header-bar">
-            <img src="241-logo.jpg" alt="241 Runners Awareness Logo" class="logo" />
+            <img src="241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
             <h1>241 Runners Awareness</h1>
         </div>
 
         <nav role="navigation" aria-label="Main navigation">
             <a href="index.html">Home</a>
+            <a href="aboutus.html">About Us</a>
+            <a href="cases.html">Cases</a>
             <a href="map.html" aria-current="page">🗺️ Map</a>
-            <a href="dna-tracking.html">🧬 DNA Tracking</a>
-            <a href="aboutus.html">ℹ️ About</a>
+            <a href="dna-tracking.html">🧬 DNA</a>
             <a href="signup.html">Sign Up</a>
             <a href="login.html">Login</a>
             <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener">Donate</a>
@@ -528,7 +535,7 @@
         // Enhanced Map Configuration
         const HOUSTON_LAT = 29.7604;
         const HOUSTON_LNG = -95.3698;
-        const HOUSTON_RADIUS_MILES = 50;
+        const HOUSTON_RADIUS_MILES = 64.4;
 
         let map, markerClusterGroup, markers = [], currentData = [];
         let heatmapLayer = null;
@@ -536,7 +543,11 @@
 
         // Initialize map with enhanced features
         function initMap() {
+            console.log('Initializing map...');
+            console.log('Map container:', document.getElementById('map'));
+            
             map = L.map('map').setView([HOUSTON_LAT, HOUSTON_LNG], 10);
+            console.log('Map created:', map);
             
             // Enhanced tile layer with better styling
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -565,7 +576,7 @@
 
             // Add area label
             L.marker([HOUSTON_LAT, HOUSTON_LNG]).addTo(map)
-                .bindPopup('<strong>Houston Metropolitan Area</strong><br>50-mile radius coverage')
+                .bindPopup('<strong>Houston Metropolitan Area</strong><br>64.4-mile radius coverage')
                 .openPopup();
         }
 
@@ -590,9 +601,14 @@
                 fillOpacity: 0.8
             });
 
-            // Add pulse animation for urgent cases
+            // Add pulse animation for urgent cases - safely
             if (status === 'Urgent') {
-                marker.getElement().style.animation = 'pulse 2s infinite';
+                setTimeout(() => {
+                    const element = marker.getElement();
+                    if (element) {
+                        element.style.animation = 'pulse 2s infinite';
+                    }
+                }, 100);
             }
 
             return marker;
@@ -676,8 +692,20 @@
             try {
                 // Simulate API call with mock data
                 await new Promise(resolve => setTimeout(resolve, 800));
-                const data = mockHoustonData;
+                
+                // Check if mock data is available
+                console.log('Checking for mockHoustonData...');
+                console.log('window.mockHoustonData:', window.mockHoustonData);
+                console.log('typeof mockHoustonData:', typeof mockHoustonData);
+                
+                if (typeof window.mockHoustonData === 'undefined') {
+                    throw new Error('Mock data not loaded - window.mockHoustonData is undefined');
+                }
+                
+                const data = window.mockHoustonData;
                 currentData = data.individuals || [];
+
+                console.log('Loaded data:', currentData.length, 'individuals');
 
                 if (currentData.length === 0) {
                     loadingEl.style.display = 'none';
@@ -780,12 +808,24 @@
                 }).length
             };
 
-            document.getElementById('totalCases').textContent = stats.total;
-            document.getElementById('missingCases').textContent = stats.missing;
-            document.getElementById('foundCases').textContent = stats.found;
-            document.getElementById('safeCases').textContent = stats.safe;
-            document.getElementById('recentCases').textContent = stats.recent;
-            document.getElementById('urgentCases').textContent = stats.urgent;
+            console.log('Updating statistics:', stats);
+
+            // Safely update statistics with error handling
+            const elements = {
+                totalCases: document.getElementById('totalCases'),
+                missingCases: document.getElementById('missingCases'),
+                foundCases: document.getElementById('foundCases'),
+                safeCases: document.getElementById('safeCases'),
+                recentCases: document.getElementById('recentCases'),
+                urgentCases: document.getElementById('urgentCases')
+            };
+
+            if (elements.totalCases) elements.totalCases.textContent = stats.total;
+            if (elements.missingCases) elements.missingCases.textContent = stats.missing;
+            if (elements.foundCases) elements.foundCases.textContent = stats.found;
+            if (elements.safeCases) elements.safeCases.textContent = stats.safe;
+            if (elements.recentCases) elements.recentCases.textContent = stats.recent;
+            if (elements.urgentCases) elements.urgentCases.textContent = stats.urgent;
         }
 
         // Enhanced map controls
@@ -860,22 +900,9 @@
             }
         }
 
-        // Authentication check
-        function checkMapAuth() {
-            const user = localStorage.getItem('user');
-            if (!user) {
-                window.location.href = 'login.html';
-                return false;
-            }
-            return true;
-        }
-
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
-            // Check authentication first
-            if (!checkMapAuth()) {
-                return;
-            }
+            console.log('DOM Content Loaded - Starting map initialization...');
             
             initMap();
             loadRunnersData();

@@ -26,14 +26,15 @@ namespace _241RunnersAwareness.BackendAPI.Services
                 // Seed Products
                 await SeedProductsAsync();
                 
-                // Seed Sample Cases
-                await SeedSampleCasesAsync();
+                // Seed Houston Area Individuals and Cases
+                await SeedHoustonCasesAsync();
 
                 Console.WriteLine("Database seeded successfully!");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error seeding database: {ex.Message}");
+                throw;
             }
         }
 
@@ -171,29 +172,211 @@ namespace _241RunnersAwareness.BackendAPI.Services
             await _context.SaveChangesAsync();
         }
 
-        private async Task SeedSampleCasesAsync()
+        private async Task SeedHoustonCasesAsync()
         {
             if (await _context.Individuals.AnyAsync())
                 return;
+
+            var adminUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == "admin");
+            if (adminUser == null)
+            {
+                throw new InvalidOperationException("Admin user not found for seeding cases");
+            }
 
             var individuals = new List<Individual>
             {
                 new Individual
                 {
-                    FirstName = "Sample",
-                    LastName = "Case",
-                    DateOfBirth = new DateTime(1990, 1, 1),
-                    Gender = "Unknown",
-                    Height = "5'8\"",
-                    Weight = "150 lbs",
+                    FirstName = "Sarah",
+                    LastName = "Johnson",
+                    DateOfBirth = new DateTime(2005, 3, 15),
+                    Gender = "Female",
+                    Height = "5'4\"",
+                    Weight = "120 lbs",
                     HairColor = "Brown",
                     EyeColor = "Blue",
-                    DistinguishingFeatures = "Tattoo on left wrist",
-                    SpecialNeeds = "None known"
+                    DistinguishingFeatures = "Small birthmark on left cheek",
+                    SpecialNeeds = "Autism spectrum disorder, may be disoriented",
+                    CurrentStatus = "Missing",
+                    LastSeenDate = DateTime.UtcNow.AddDays(-10),
+                    Latitude = 29.7604,
+                    Longitude = -95.3698,
+                    Address = "1234 Main St",
+                    City = "Houston",
+                    State = "TX",
+                    ZipCode = "77002",
+                    Circumstances = "Last seen wearing blue jeans and white shirt near downtown Houston. Has special needs and may be disoriented.",
+                    PhoneNumber = "713-555-0101",
+                    CaregiverName = "Mary Johnson",
+                    CaregiverPhone = "(713) 555-0101",
+                    CaregiverEmail = "mary.johnson@email.com",
+                    RiskLevel = "Medium",
+                    IsAtImmediateRisk = false,
+                    MayWanderOrElope = true,
+                    PrimaryDisability = "Autism",
+                    CommunicationMethod = "Verbal",
+                    EnableRealTimeAlerts = true
+                },
+                new Individual
+                {
+                    FirstName = "Michael",
+                    LastName = "Rodriguez",
+                    DateOfBirth = new DateTime(1998, 7, 22),
+                    Gender = "Male",
+                    Height = "5'10\"",
+                    Weight = "170 lbs",
+                    HairColor = "Black",
+                    EyeColor = "Brown",
+                    DistinguishingFeatures = "Tattoo of cross on right forearm",
+                    SpecialNeeds = "Diabetes, requires medication",
+                    CurrentStatus = "Urgent",
+                    LastSeenDate = DateTime.UtcNow.AddDays(-5),
+                    Latitude = 29.7604,
+                    Longitude = -95.3698,
+                    Address = "5678 Oak Ave",
+                    City = "Houston",
+                    State = "TX",
+                    ZipCode = "77006",
+                    Circumstances = "Medical condition requires immediate attention. Last seen near Memorial Park.",
+                    PhoneNumber = "713-555-0202",
+                    CaregiverName = "Carlos Rodriguez",
+                    CaregiverPhone = "(713) 555-0202",
+                    CaregiverEmail = "carlos.rodriguez@email.com",
+                    RiskLevel = "High",
+                    IsAtImmediateRisk = true,
+                    HasDiabetes = true,
+                    RequiresMedication = true,
+                    EnableRealTimeAlerts = true
+                },
+                new Individual
+                {
+                    FirstName = "Emily",
+                    LastName = "Davis",
+                    DateOfBirth = new DateTime(2002, 11, 8),
+                    Gender = "Female",
+                    Height = "5'6\"",
+                    Weight = "130 lbs",
+                    HairColor = "Blonde",
+                    EyeColor = "Green",
+                    DistinguishingFeatures = "Scar on right knee",
+                    SpecialNeeds = "None known",
+                    CurrentStatus = "Missing",
+                    LastSeenDate = DateTime.UtcNow.AddDays(-15),
+                    Latitude = 29.7604,
+                    Longitude = -95.3698,
+                    Address = "9012 Pine St",
+                    City = "Houston",
+                    State = "TX",
+                    ZipCode = "77008",
+                    Circumstances = "Last seen leaving work at Medical Center. Car found abandoned.",
+                    PhoneNumber = "713-555-0303",
+                    CaregiverName = "Robert Davis",
+                    CaregiverPhone = "(713) 555-0303",
+                    CaregiverEmail = "robert.davis@email.com",
+                    RiskLevel = "Medium",
+                    IsAtImmediateRisk = false,
+                    EnableRealTimeAlerts = true
+                },
+                new Individual
+                {
+                    FirstName = "David",
+                    LastName = "Wilson",
+                    DateOfBirth = new DateTime(1985, 4, 12),
+                    Gender = "Male",
+                    Height = "6'0\"",
+                    Weight = "180 lbs",
+                    HairColor = "Brown",
+                    EyeColor = "Hazel",
+                    DistinguishingFeatures = "Glasses, beard",
+                    SpecialNeeds = "Depression, may be in crisis",
+                    CurrentStatus = "Missing",
+                    LastSeenDate = DateTime.UtcNow.AddDays(-20),
+                    Latitude = 29.7604,
+                    Longitude = -95.3698,
+                    Address = "3456 Elm Dr",
+                    City = "Houston",
+                    State = "TX",
+                    ZipCode = "77005",
+                    Circumstances = "Veteran with PTSD. Last seen near Veterans Affairs hospital.",
+                    PhoneNumber = "713-555-0404",
+                    CaregiverName = "Jennifer Wilson",
+                    CaregiverPhone = "(713) 555-0404",
+                    CaregiverEmail = "jennifer.wilson@email.com",
+                    RiskLevel = "High",
+                    IsAtImmediateRisk = true,
+                    EnableRealTimeAlerts = true
+                },
+                new Individual
+                {
+                    FirstName = "Lisa",
+                    LastName = "Thomas",
+                    DateOfBirth = new DateTime(1992, 9, 3),
+                    Gender = "Female",
+                    Height = "5'5\"",
+                    Weight = "140 lbs",
+                    HairColor = "Red",
+                    EyeColor = "Blue",
+                    DistinguishingFeatures = "Freckles across nose",
+                    SpecialNeeds = "None known",
+                    CurrentStatus = "Missing",
+                    LastSeenDate = DateTime.UtcNow.AddDays(-8),
+                    Latitude = 29.7604,
+                    Longitude = -95.3698,
+                    Address = "7890 Maple Ln",
+                    City = "Houston",
+                    State = "TX",
+                    ZipCode = "77007",
+                    Circumstances = "Last seen at local coffee shop. Phone and wallet found in car.",
+                    PhoneNumber = "713-555-0505",
+                    CaregiverName = "James Thomas",
+                    CaregiverPhone = "(713) 555-0505",
+                    CaregiverEmail = "james.thomas@email.com",
+                    RiskLevel = "Medium",
+                    IsAtImmediateRisk = false,
+                    EnableRealTimeAlerts = true
                 }
             };
 
             await _context.Individuals.AddRangeAsync(individuals);
+            await _context.SaveChangesAsync();
+
+            // Create cases for each individual
+            var cases = new List<Case>();
+            foreach (var individual in individuals)
+            {
+                var caseNumber = $"CASE-{individual.Id:D6}";
+                var publicSlug = $"{individual.FirstName.ToLower()}-{individual.LastName.ToLower()}-{DateTime.UtcNow:yyyyMMdd}";
+                
+                cases.Add(new Case
+                {
+                    CaseNumber = caseNumber,
+                    PublicSlug = publicSlug,
+                    Title = $"Missing: {individual.FirstName} {individual.LastName}",
+                    Description = individual.Circumstances,
+                    Status = individual.CurrentStatus,
+                    Priority = individual.CurrentStatus == "Urgent" ? "High" : "Medium",
+                    RiskLevel = individual.CurrentStatus == "Urgent" ? "High" : "Medium",
+                    LastSeenLocation = individual.Address,
+                    LastSeenDate = individual.LastSeenDate,
+                    Circumstances = $"Last seen on {individual.LastSeenDate:MMM dd, yyyy} at {individual.Address}",
+                    ResolutionNotes = "",
+                    LawEnforcementCaseNumber = $"LE-{individual.Id:D6}",
+                    InvestigatingAgency = "Houston Police Department",
+                    InvestigatorName = "Detective Smith",
+                    InvestigatorContact = "713-555-0000",
+                    Tags = "Houston,Missing Person,Community Alert",
+                    SocialMediaHandles = "",
+                    MediaContacts = "",
+                    CreatedBy = adminUser.UserId.ToString(),
+                    UpdatedBy = adminUser.UserId.ToString(),
+                    CreatedAt = individual.LastSeenDate ?? DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    IndividualId = individual.Id,
+                    OwnerUserId = adminUser.UserId
+                });
+            }
+
+            await _context.Cases.AddRangeAsync(cases);
             await _context.SaveChangesAsync();
         }
     }

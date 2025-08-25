@@ -84,18 +84,6 @@
 
       <div id="message" class="message" style="display: none;"></div>
 
-      <!-- Demo Credentials -->
-      <div class="demo-credentials">
-        <h4>Demo Credentials</h4>
-        <div class="demo-info">
-          <div><strong>Admin:</strong> admin@example.com / ChangeMe123!</div>
-          <div class="demo-description">Full access to all features including user management</div>
-        </div>
-        <button type="button" class="demo-btn" onclick="fillDemoCredentials()">
-          Use Demo Admin
-        </button>
-      </div>
-
       <div class="signup-link">
         Don't have an account? <a href="signup.html">Sign up here</a>
       </div>
@@ -189,15 +177,9 @@
       }, 5000);
     }
 
-    function forgotPassword() {
-      showMessage('Password reset functionality coming soon!', 'info');
-    }
-
-    function fillDemoCredentials() {
-      document.getElementById('email').value = 'admin@example.com';
-      document.getElementById('password').value = 'ChangeMe123!';
-      showMessage('Demo credentials filled! Click "Sign In" to continue.', 'success');
-    }
+         function forgotPassword() {
+       showMessage('Password reset functionality coming soon!', 'info');
+     }
 
     // Sticky navbar scroll effect
     window.addEventListener('scroll', function() {
