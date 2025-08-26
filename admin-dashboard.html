@@ -392,6 +392,95 @@
       border: 1px solid #bee5eb;
     }
 
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 0;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px 15px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .close {
+      font-size: 2rem;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .close:hover {
+      color: #fecaca;
+    }
+
+    .modal-body {
+      padding: 30px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .error-message {
+      color: #dc2626;
+      font-size: 0.9rem;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .form-group input.error,
+    .form-group select.error {
+      border-color: #dc2626;
+    }
+
+    .form-group input.error:focus,
+    .form-group select.error:focus {
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    }
+
     @media (max-width: 768px) {
       .admin-sections {
         grid-template-columns: 1fr;
@@ -601,6 +690,64 @@
     </div>
   </main>
 
+  <!-- User Modal -->
+  <div id="userModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Add New User</h2>
+        <span class="close" onclick="closeUserModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <form id="userForm" onsubmit="saveUser(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="username">Username *</label>
+              <input type="text" id="username" name="username" required>
+              <div class="error-message" id="usernameError"></div>
+            </div>
+            <div class="form-group">
+              <label for="email">Email *</label>
+              <input type="email" id="email" name="email" required>
+              <div class="error-message" id="emailError"></div>
+            </div>
+            <div class="form-group">
+              <label for="fullName">Full Name *</label>
+              <input type="text" id="fullName" name="fullName" required>
+              <div class="error-message" id="fullNameError"></div>
+            </div>
+            <div class="form-group">
+              <label for="phoneNumber">Phone Number</label>
+              <input type="tel" id="phoneNumber" name="phoneNumber">
+              <div class="error-message" id="phoneNumberError"></div>
+            </div>
+            <div class="form-group">
+              <label for="password">Password *</label>
+              <input type="password" id="password" name="password" required>
+              <div class="error-message" id="passwordError"></div>
+            </div>
+            <div class="form-group">
+              <label for="role">Role *</label>
+              <select id="role" name="role" required>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+                <option value="therapist">Therapist</option>
+                <option value="caregiver">Caregiver</option>
+                <option value="parent">Parent</option>
+                <option value="adoptive_parent">Adoptive Parent</option>
+              </select>
+              <div class="error-message" id="roleError"></div>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="admin-btn btn-secondary" onclick="closeUserModal()">Cancel</button>
+            <button type="submit" class="admin-btn btn-primary" id="saveButton">Save User</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <footer role="contentinfo">
     <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
   </footer>
@@ -722,11 +869,11 @@
     }
 
     function addNewUser() {
-      showAdminMessage('Add New User functionality would open a form in production.', 'info');
+      openUserModal();
     }
 
     function editUser(id) {
-      showAdminMessage(`Edit User ${id} functionality would open an edit form in production.`, 'info');
+      openUserModal(id);
     }
 
     function deleteUser(id) {
@@ -734,6 +881,224 @@
         showAdminMessage(`User ${id} deleted successfully!`, 'success');
       }
     }
+
+    // User Management Variables
+    let currentUserId = null;
+    let isEditMode = false;
+
+    // Validation patterns
+    const VALIDATION_PATTERNS = {
+      EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      PHONE: /^\+?[\d\s\-\(\)]{10,15}$/,
+      PASSWORD: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+      NAME: /^[a-zA-Z\s\-'\.]+$/
+    };
+
+    // Modal functions
+    function openUserModal(userId = null) {
+      isEditMode = userId !== null;
+      currentUserId = userId;
+      
+      document.getElementById('modalTitle').textContent = isEditMode ? 'Edit User' : 'Add New User';
+      document.getElementById('userForm').reset();
+      clearAllErrors();
+      
+      if (isEditMode) {
+        // In a real implementation, you would fetch user data from the backend
+        // For now, we'll populate with sample data
+        populateUserForm({
+          username: 'john_doe',
+          email: 'john@example.com',
+          fullName: 'John Doe',
+          phoneNumber: '555-123-4567',
+          role: 'user'
+        });
+        document.getElementById('password').required = false;
+        document.getElementById('password').parentElement.style.display = 'none';
+      } else {
+        document.getElementById('password').required = true;
+        document.getElementById('password').parentElement.style.display = 'block';
+      }
+      
+      document.getElementById('userModal').style.display = 'block';
+    }
+
+    function closeUserModal() {
+      document.getElementById('userModal').style.display = 'none';
+      document.getElementById('userForm').reset();
+      clearAllErrors();
+      currentUserId = null;
+      isEditMode = false;
+    }
+
+    function populateUserForm(userData) {
+      document.getElementById('username').value = userData.username || '';
+      document.getElementById('email').value = userData.email || '';
+      document.getElementById('fullName').value = userData.fullName || '';
+      document.getElementById('phoneNumber').value = userData.phoneNumber || '';
+      document.getElementById('role').value = userData.role || 'user';
+    }
+
+    // Validation functions
+    function validateField(field) {
+      const value = field.value.trim();
+      const fieldName = field.name;
+      let isValid = true;
+      let errorMessage = '';
+
+      // Required field validation
+      if (field.hasAttribute('required') && !value) {
+        isValid = false;
+        errorMessage = `${getFieldDisplayName(fieldName)} is required`;
+      } else if (value) {
+        // Pattern validation
+        switch (fieldName) {
+          case 'email':
+            if (!VALIDATION_PATTERNS.EMAIL.test(value)) {
+              isValid = false;
+              errorMessage = 'Please enter a valid email address';
+            }
+            break;
+          case 'phoneNumber':
+            if (!VALIDATION_PATTERNS.PHONE.test(value)) {
+              isValid = false;
+              errorMessage = 'Please enter a valid phone number';
+            }
+            break;
+          case 'password':
+            if (!isEditMode && !VALIDATION_PATTERNS.PASSWORD.test(value)) {
+              isValid = false;
+              errorMessage = 'Password must be at least 8 characters with uppercase, lowercase, number, and special character';
+            }
+            break;
+          case 'fullName':
+            if (!VALIDATION_PATTERNS.NAME.test(value)) {
+              isValid = false;
+              errorMessage = 'Name can only contain letters, spaces, hyphens, apostrophes, and periods';
+            }
+            break;
+        }
+      }
+
+      // Display error
+      const errorElement = document.getElementById(`${fieldName}Error`);
+      if (errorElement) {
+        errorElement.textContent = errorMessage;
+        errorElement.style.display = errorMessage ? 'block' : 'none';
+        field.classList.toggle('error', !isValid);
+      }
+
+      return isValid;
+    }
+
+    function validateForm() {
+      const form = document.getElementById('userForm');
+      const fields = form.querySelectorAll('input[required], select[required]');
+      let isValid = true;
+
+      fields.forEach(field => {
+        if (!validateField(field)) {
+          isValid = false;
+        }
+      });
+
+      return isValid;
+    }
+
+    function clearFieldError(field) {
+      const errorElement = document.getElementById(`${field.name}Error`);
+      if (errorElement) {
+        errorElement.textContent = '';
+        errorElement.style.display = 'none';
+        field.classList.remove('error');
+      }
+    }
+
+    function clearAllErrors() {
+      const errorElements = document.querySelectorAll('.error-message');
+      const errorFields = document.querySelectorAll('.form-group input.error, .form-group select.error');
+      
+      errorElements.forEach(element => {
+        element.textContent = '';
+        element.style.display = 'none';
+      });
+      errorFields.forEach(field => field.classList.remove('error'));
+    }
+
+    function getFieldDisplayName(fieldName) {
+      return fieldName
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/^./, str => str.toUpperCase())
+        .trim();
+    }
+
+    // Save user function
+    async function saveUser(event) {
+      event.preventDefault();
+      
+      // Validate form
+      if (!validateForm()) {
+        showAdminMessage('Please fix the validation errors', 'error');
+        return;
+      }
+
+      const saveButton = document.getElementById('saveButton');
+      const originalText = saveButton.innerHTML;
+      saveButton.innerHTML = 'Saving...';
+      saveButton.disabled = true;
+
+      try {
+        const formData = new FormData(event.target);
+        const userData = Object.fromEntries(formData.entries());
+
+        // In a real implementation, you would send this to your backend API
+        // For now, we'll simulate the API call
+        await simulateApiCall(userData);
+
+        showAdminMessage(
+          isEditMode ? 'User updated successfully!' : 'User created successfully!', 
+          'success'
+        );
+        closeUserModal();
+        
+        // Refresh the users table (in a real implementation)
+        // loadUsers();
+        
+      } catch (error) {
+        console.error('Error saving user:', error);
+        showAdminMessage('Error saving user', 'error');
+      } finally {
+        saveButton.innerHTML = originalText;
+        saveButton.disabled = false;
+      }
+    }
+
+    // Simulate API call
+    function simulateApiCall(userData) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          console.log('User data to save:', userData);
+          resolve({ success: true });
+        }, 1000);
+      });
+    }
+
+    // Setup form validation event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      const formInputs = document.querySelectorAll('#userForm input, #userForm select');
+      formInputs.forEach(input => {
+        input.addEventListener('blur', () => validateField(input));
+        input.addEventListener('input', () => clearFieldError(input));
+      });
+
+      // Close modal when clicking outside
+      window.onclick = function(event) {
+        const modal = document.getElementById('userModal');
+        if (event.target === modal) {
+          closeUserModal();
+        }
+      }
+    });
 
     function exportUsers() {
       showAdminMessage('Export Users functionality would download a CSV file in production.', 'info');
