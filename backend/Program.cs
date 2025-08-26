@@ -77,6 +77,49 @@ namespace _241RunnersAwareness.BackendAPI
         {
             // 
             // ============================================
+            // ENVIRONMENT VARIABLES LOADING
+            // ============================================
+            
+            // Load environment variables from .env file for development
+            var envPath = Path.Combine(Directory.GetCurrentDirectory(), ".env");
+            if (File.Exists(envPath))
+            {
+                foreach (var line in File.ReadAllLines(envPath))
+                {
+                    if (!string.IsNullOrWhiteSpace(line) && !line.StartsWith("#"))
+                    {
+                        var parts = line.Split('=', 2);
+                        if (parts.Length == 2)
+                        {
+                            Environment.SetEnvironmentVariable(parts[0].Trim(), parts[1].Trim());
+                        }
+                    }
+                }
+            }
+            
+            // Also load from env.local if it exists (fallback)
+            var envLocalPath = Path.Combine(Directory.GetCurrentDirectory(), "env.local");
+            if (File.Exists(envLocalPath))
+            {
+                foreach (var line in File.ReadAllLines(envLocalPath))
+                {
+                    if (!string.IsNullOrWhiteSpace(line) && !line.StartsWith("#"))
+                    {
+                        var parts = line.Split('=', 2);
+                        if (parts.Length == 2)
+                        {
+                            // Only set if not already set by .env file
+                            if (Environment.GetEnvironmentVariable(parts[0].Trim()) == null)
+                            {
+                                Environment.SetEnvironmentVariable(parts[0].Trim(), parts[1].Trim());
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // 
+            // ============================================
             // LOGGING CONFIGURATION
             // ============================================
             
@@ -127,15 +170,19 @@ namespace _241RunnersAwareness.BackendAPI
             // Add Serilog to the application
             builder.Host.UseSerilog();
             
-            // Add Sentry to the application
-            builder.WebHost.UseSentry(options =>
+            // Add Sentry to the application (only if DSN is configured)
+            var sentryDsn = builder.Configuration["Sentry:Dsn"];
+            if (!string.IsNullOrEmpty(sentryDsn) && sentryDsn != "https://your-sentry-dsn@your-sentry-instance.ingest.sentry.io/your-project-id")
             {
-                options.Dsn = "https://your-sentry-dsn@your-sentry-instance.ingest.sentry.io/your-project-id"; // Replace with actual Sentry DSN
-                options.Environment = "development";
-                options.Release = "241runners-awareness@1.0.0";
-                options.TracesSampleRate = 1.0;
-                options.SendDefaultPii = false;
-            });
+                builder.WebHost.UseSentry(options =>
+                {
+                    options.Dsn = sentryDsn;
+                    options.Environment = "development";
+                    options.Release = "241runners-awareness@1.0.0";
+                    options.TracesSampleRate = 1.0;
+                    options.SendDefaultPii = false;
+                });
+            }
             
             // Add MVC controllers for API endpoints
             builder.Services.AddControllers();
@@ -173,8 +220,8 @@ namespace _241RunnersAwareness.BackendAPI
                         factory: partition => new FixedWindowRateLimiterOptions
                         {
                             AutoReplenishment = true,
-                            PermitLimit = int.Parse(builder.Configuration["RateLimiting:PermitLimit"] ?? "100"),
-                            Window = TimeSpan.Parse(builder.Configuration["RateLimiting:Window"] ?? "00:01:00")
+                            PermitLimit = 100, // Default value
+                            Window = TimeSpan.FromMinutes(1) // Default value
                         }));
             });
 
@@ -183,7 +230,7 @@ namespace _241RunnersAwareness.BackendAPI
                 .AddDbContextCheck<RunnersDbContext>("database")
                 .AddCheck("memory", () =>
                 {
-                    var memoryThreshold = long.Parse(builder.Configuration["HealthChecks:MemoryThreshold"] ?? "1024");
+                    var memoryThreshold = 1024L; // Default value in MB
                     var memoryUsage = GC.GetTotalMemory(false) / 1024 / 1024; // MB
                     return memoryUsage < memoryThreshold ? HealthCheckResult.Healthy() : HealthCheckResult.Degraded();
                 });
@@ -333,8 +380,11 @@ namespace _241RunnersAwareness.BackendAPI
                 app.UseSwaggerUI();      // Serve Swagger UI interface
             }
 
-            // Redirect HTTP requests to HTTPS for security
-            app.UseHttpsRedirection();
+            // Redirect HTTP requests to HTTPS for security (disabled in development)
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
 
             // Enable CORS with the configured policy
             app.UseCors("AllowAll");
@@ -396,13 +446,23 @@ namespace _241RunnersAwareness.BackendAPI
             // DATABASE SEEDING
             // ============================================
             
-            // Seed the database with initial data
-            using (var scope = app.Services.CreateScope())
+            // Seed the database with initial data (non-blocking)
+            // TODO: Fix seeding issue - temporarily disabled
+            /*
+            try
             {
-                var seedService = scope.ServiceProvider.GetRequiredService<SeedDataService>();
-                await seedService.SeedDataAsync();
+                using (var scope = app.Services.CreateScope())
+                {
+                    var seedService = scope.ServiceProvider.GetRequiredService<SeedDataService>();
+                    await seedService.SeedDataAsync();
+                }
             }
-
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error seeding database - continuing startup");
+            }
+            */
+            
             // 
             // ============================================
             // APPLICATION STARTUP
