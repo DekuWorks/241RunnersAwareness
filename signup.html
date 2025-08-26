@@ -279,7 +279,9 @@
 
     async function registerWithGoogle(idToken) {
       try {
-        const response = await fetch('http://localhost:5113/api/auth/google-register', {
+        const response = await fetch(`${window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                    ? 'http://localhost:5113/api' 
+                    : 'https://241runnersawareness-api.azurewebsites.net/api'}/auth/google-register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
