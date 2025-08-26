@@ -347,11 +347,19 @@
       const formData = new FormData(this);
       const userData = Object.fromEntries(formData.entries());
       
+      // Get password values directly from the input fields
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
       // Validate passwords match
-      if (userData.password !== userData.confirmPassword) {
+      if (password !== confirmPassword) {
         showMessage('Passwords do not match', 'error');
         return;
       }
+      
+      // Update userData with the correct password values
+      userData.password = password;
+      userData.confirmPassword = confirmPassword;
       
       // Map form fields to backend schema
       const registrationData = {

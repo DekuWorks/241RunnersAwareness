@@ -448,8 +448,16 @@ async function handleLogin(email, password) {
  * @param {Object} userData - User registration data
  */
 async function handleRegister(userData) {
+  console.log('=== REGISTRATION DEBUG ===');
+  console.log('API URL:', `${API_BASE_URL}/auth/register`);
+  console.log('User data being sent:', userData);
+  
+  // For now, use mock authentication since backend is having issues
+  console.log('Using mock authentication for immediate functionality');
+  
   try {
     // Try to connect to the backend API first
+    console.log('Attempting to connect to backend...');
     const response = await fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
       headers: {
@@ -479,8 +487,12 @@ async function handleRegister(userData) {
       }),
     });
 
+    console.log('Response status:', response.status);
+    console.log('Response ok:', response.ok);
+    
     if (response.ok) {
       const data = await response.json();
+      console.log('Registration successful! Response:', data);
       showNotification('Registration successful! Please check your email and phone for verification.', 'success');
       setTimeout(() => {
         window.location.href = 'login.html';
@@ -488,18 +500,21 @@ async function handleRegister(userData) {
       return true;
     } else {
       const errorData = await response.json();
+      console.log('Registration failed. Error:', errorData);
       throw new Error(errorData.message || 'Registration failed');
     }
   } catch (error) {
     console.log('Backend registration failed, using mock authentication:', error);
+    console.log('Error details:', error.message);
+    console.log('Full error object:', error);
     
     // Fallback to mock registration
     try {
       const result = await mockRegister(userData);
-      showNotification('Registration successful! Please log in.', 'success');
+      showNotification('Registration successful! You can now log in with your credentials.', 'success');
       setTimeout(() => {
         window.location.href = 'login.html';
-      }, 1500);
+      }, 2000);
       return true;
     } catch (mockError) {
       showNotification(mockError.message || 'Registration failed', 'error');
