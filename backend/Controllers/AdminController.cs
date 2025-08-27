@@ -201,11 +201,167 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                 return StatusCode(500, new { message = "Error deleting case", error = ex.Message });
             }
         }
+
+        // Create new admin user
+        [HttpPost("create-admin")]
+        public async Task<ActionResult<object>> CreateAdmin([FromBody] CreateAdminRequest request)
+        {
+            try
+            {
+                // Validate required fields
+                if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password) || 
+                    string.IsNullOrEmpty(request.FirstName) || string.IsNullOrEmpty(request.LastName))
+                {
+                    return BadRequest(new { message = "Email, password, first name, and last name are required" });
+                }
+
+                // Check if user already exists
+                var existingUser = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == request.Email);
+
+                if (existingUser != null)
+                {
+                    return BadRequest(new { message = "User with this email already exists" });
+                }
+
+                // Create new admin user
+                var newAdmin = new User
+                {
+                    UserId = Guid.NewGuid(),
+                    Username = request.Username ?? request.Email.Split('@')[0],
+                    Email = request.Email,
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
+                    FullName = $"{request.FirstName} {request.LastName}",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                    Role = request.Role ?? "admin",
+                    Organization = request.Organization,
+                    Credentials = request.Credentials,
+                    Specialization = request.Specialization,
+                    YearsOfExperience = request.YearsOfExperience,
+                    CreatedAt = DateTime.UtcNow,
+                    IsActive = true,
+                    EmailVerified = true
+                };
+
+                _context.Users.Add(newAdmin);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { 
+                    message = "Admin user created successfully",
+                    userId = newAdmin.UserId,
+                    email = newAdmin.Email
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error creating admin user", error = ex.Message });
+            }
+        }
+
+        // Reset admin password
+        [HttpPost("reset-admin-password")]
+        public async Task<ActionResult<object>> ResetAdminPassword([FromBody] AdminPasswordResetRequest request)
+        {
+            try
+            {
+                // Find the admin user
+                var adminUser = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == request.Email && 
+                                            (u.Role == "admin" || u.Role == "superadmin"));
+
+                if (adminUser == null)
+                {
+                    return NotFound(new { message = "Admin user not found" });
+                }
+
+                // Verify current password
+                if (!BCrypt.Net.BCrypt.Verify(request.CurrentPassword, adminUser.PasswordHash))
+                {
+                    return BadRequest(new { message = "Current password is incorrect" });
+                }
+
+                // Validate new password strength
+                if (string.IsNullOrEmpty(request.NewPassword) || request.NewPassword.Length < 8)
+                {
+                    return BadRequest(new { message = "New password must be at least 8 characters long" });
+                }
+
+                // Update password
+                adminUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+                adminUser.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Admin password reset successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error resetting admin password", error = ex.Message });
+            }
+        }
+
+        // Get all admin users
+        [HttpGet("admins")]
+        public async Task<ActionResult<object>> GetAdminUsers()
+        {
+            try
+            {
+                var adminUsers = await _context.Users
+                    .Where(u => u.Role == "admin" || u.Role == "superadmin")
+                    .Select(u => new
+                    {
+                        u.UserId,
+                        u.Username,
+                        u.Email,
+                        u.FirstName,
+                        u.LastName,
+                        u.FullName,
+                        u.Role,
+                        u.Organization,
+                        u.Credentials,
+                        u.Specialization,
+                        u.YearsOfExperience,
+                        u.IsActive,
+                        u.EmailVerified,
+                        u.CreatedAt,
+                        u.LastLoginAt
+                    })
+                    .OrderByDescending(u => u.CreatedAt)
+                    .ToListAsync();
+
+                return Ok(adminUsers);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error fetching admin users", error = ex.Message });
+            }
+        }
     }
 
     public class UpdateCaseStatusRequest
     {
         public string Status { get; set; }
         public DateTime? LastSeenDate { get; set; }
+    }
+
+    public class CreateAdminRequest
+    {
+        public string Username { get; set; }
+        public string Email { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Password { get; set; }
+        public string Role { get; set; } = "admin";
+        public string Organization { get; set; }
+        public string Credentials { get; set; }
+        public string Specialization { get; set; }
+        public string YearsOfExperience { get; set; }
+    }
+
+    public class AdminPasswordResetRequest
+    {
+        public string Email { get; set; }
+        public string CurrentPassword { get; set; }
+        public string NewPassword { get; set; }
     }
 }

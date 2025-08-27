@@ -37,6 +37,30 @@
       font-size: 1.1rem;
     }
 
+    .admin-navigation {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+
+    .nav-link {
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+    }
+
+    .nav-link:hover {
+      background: linear-gradient(135deg, #b91c1b 0%, #991b1b 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+    }
+
     .admin-stats {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -531,6 +555,10 @@
       <div class="admin-header">
         <h1>🔐 Admin Dashboard</h1>
         <p>Manage cases, monitor users, and control system settings</p>
+        <div class="admin-navigation">
+          <a href="admin-management.html" class="nav-link">🔐 Admin Management</a>
+          <a href="user-management.html" class="nav-link">👥 User Management</a>
+        </div>
         <div id="adminMessage" class="admin-message" style="display: none;"></div>
       </div>
 

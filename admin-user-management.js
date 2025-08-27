@@ -261,13 +261,14 @@ class AdminUserManager {
       }
 
       // Try backend password change first
-      const response = await fetch(`${API_BASE_URL}/auth/change-password`, {
+      const response = await fetch(`${API_BASE_URL}/admin/reset-admin-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         },
         body: JSON.stringify({
+          email: this.currentAdmin.email,
           currentPassword,
           newPassword
         })
@@ -281,8 +282,8 @@ class AdminUserManager {
         
         return { success: true, message: 'Password changed successfully' };
       } else {
-        // Fallback to local password change
-        return this.changeAdminPasswordLocal(currentPassword, newPassword);
+        const errorData = await response.json();
+        return { success: false, message: errorData.message || 'Password change failed' };
       }
     } catch (error) {
       console.log('Backend password change failed, using local:', error);
@@ -418,6 +419,60 @@ class AdminUserManager {
    */
   isAdmin() {
     return this.currentAdmin !== null;
+  }
+
+  /**
+   * Create new admin user
+   */
+  async createAdmin(adminData) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/admin/create-admin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+        },
+        body: JSON.stringify(adminData)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        // Refresh admin users list
+        await this.loadAdminUsers();
+        return { success: true, message: result.message, userId: result.userId };
+      } else {
+        const errorData = await response.json();
+        return { success: false, message: errorData.message || 'Failed to create admin user' };
+      }
+    } catch (error) {
+      console.error('Error creating admin user:', error);
+      return { success: false, message: 'Error creating admin user' };
+    }
+  }
+
+  /**
+   * Get all admin users from backend
+   */
+  async getAllAdminUsers() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/admin/admins`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+        }
+      });
+
+      if (response.ok) {
+        const adminUsers = await response.json();
+        return { success: true, users: adminUsers };
+      } else {
+        return { success: false, message: 'Failed to fetch admin users' };
+      }
+    } catch (error) {
+      console.error('Error fetching admin users:', error);
+      return { success: false, message: 'Error fetching admin users' };
+    }
   }
 
   /**
