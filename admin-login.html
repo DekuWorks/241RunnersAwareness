@@ -237,8 +237,10 @@
   </footer>
 
      <script>
-     // Admin authentication with backend API
-     const API_BASE_URL = 'https://241runnersawareness-api.azurewebsites.net';
+     // Admin authentication using the same system as regular login
+     const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+       ? 'http://localhost:5113/api' 
+       : 'https://241runnersawareness-api.azurewebsites.net/api';
      
      document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
        e.preventDefault();
@@ -252,8 +254,8 @@
        submitBtn.textContent = 'Verifying...';
        
        try {
-         // Call backend API for admin authentication
-         const response = await fetch(`${API_BASE_URL}/api/auth/admin-login`, {
+         // Try backend API first
+         const response = await fetch(`${API_BASE_URL}/auth/login`, {
            method: 'POST',
            headers: {
              'Content-Type': 'application/json',
@@ -264,56 +266,73 @@
            })
          });
 
-         const data = await response.json();
-
-         if (response.ok && data.success) {
-           showAdminMessage('Access granted! Redirecting to admin dashboard...', 'success');
+         if (response.ok) {
+           const data = await response.json();
            
-           // Store admin session with token
-           localStorage.setItem('adminAuthenticated', 'true');
-           localStorage.setItem('adminLoginTime', Date.now().toString());
-           localStorage.setItem('adminToken', data.token);
-           localStorage.setItem('adminEmail', email);
-           
-           // Redirect to admin dashboard
-           setTimeout(() => {
-             window.location.href = 'admin-dashboard.html';
-           }, 1500);
-         } else {
-           showAdminMessage(data.message || 'Invalid admin credentials. Please try again.', 'error');
-           submitBtn.disabled = false;
-           submitBtn.textContent = 'Access Admin Dashboard';
-           document.getElementById('adminPassword').value = '';
-           document.getElementById('adminPassword').focus();
-         }
-                } catch (error) {
-           console.error('Admin login error:', error);
-           
-           // Fallback authentication for when backend is not available
-           if (email === 'admin@241runnersawareness.com' && password === 'Admin123!') {
+           // Check if user is admin
+           if (data.user && data.user.role === 'admin') {
              showAdminMessage('Access granted! Redirecting to admin dashboard...', 'success');
              
-             // Store admin session
+             // Store user data
+             localStorage.setItem('user', JSON.stringify(data.user));
+             localStorage.setItem('userToken', data.token);
              localStorage.setItem('adminAuthenticated', 'true');
              localStorage.setItem('adminLoginTime', Date.now().toString());
-             localStorage.setItem('adminEmail', email);
              
              // Redirect to admin dashboard
              setTimeout(() => {
                window.location.href = 'admin-dashboard.html';
              }, 1500);
            } else {
-             // Check if it's a network error or backend not available
-             if (error.name === 'TypeError' || error.message.includes('fetch')) {
-               showAdminMessage('Backend service temporarily unavailable. Please try again later or contact support.', 'error');
-             } else {
-               showAdminMessage('Network error. Please check your connection and try again.', 'error');
-             }
-             
+             showAdminMessage('Access denied. Admin privileges required.', 'error');
              submitBtn.disabled = false;
              submitBtn.textContent = 'Access Admin Dashboard';
+             document.getElementById('adminPassword').value = '';
+             document.getElementById('adminPassword').focus();
            }
+         } else {
+           const errorData = await response.json();
+           throw new Error(errorData.message || 'Login failed');
          }
+       } catch (error) {
+         console.error('Admin login error:', error);
+         
+         // Fallback to mock authentication for admin accounts
+         const adminCredentials = {
+           'dekuworks1@gmail.com': { password: 'marcus2025', role: 'admin', name: 'Marcus Brown' },
+           'danielcarey9770@gmail.com': { password: 'daniel2025', role: 'admin', name: 'Daniel Carey' },
+           'admin@example.com': { password: 'ChangeMe123!', role: 'admin', name: 'System Admin' }
+         };
+         
+         const userCreds = adminCredentials[email];
+         
+         if (userCreds && userCreds.password === password && userCreds.role === 'admin') {
+           showAdminMessage('Access granted! Redirecting to admin dashboard...', 'success');
+           
+           // Store admin session
+           const userData = {
+             email: email,
+             role: 'admin',
+             fullName: userCreds.name,
+             userId: Date.now().toString()
+           };
+           
+           localStorage.setItem('user', JSON.stringify(userData));
+           localStorage.setItem('adminAuthenticated', 'true');
+           localStorage.setItem('adminLoginTime', Date.now().toString());
+           
+           // Redirect to admin dashboard
+           setTimeout(() => {
+             window.location.href = 'admin-dashboard.html';
+           }, 1500);
+         } else {
+           showAdminMessage('Invalid admin credentials. Please try again.', 'error');
+           submitBtn.disabled = false;
+           submitBtn.textContent = 'Access Admin Dashboard';
+           document.getElementById('adminPassword').value = '';
+           document.getElementById('adminPassword').focus();
+         }
+       }
      });
 
     function showAdminMessage(message, type) {

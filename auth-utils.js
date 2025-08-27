@@ -467,6 +467,8 @@ async function handleRegister(userData) {
       body: JSON.stringify({
         email: userData.email,
         password: userData.password,
+        firstName: userData.firstName || userData.fullName?.split(' ')[0] || '',
+        lastName: userData.lastName || userData.fullName?.split(' ').slice(1).join(' ') || '',
         fullName: userData.fullName,
         phoneNumber: userData.phoneNumber || '',
         role: userData.role || 'user',

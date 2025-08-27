@@ -367,6 +367,8 @@
       const registrationData = {
         email: userData.email,
         password: userData.password,
+        firstName: userData.firstName || userData.fullName?.split(' ')[0] || '',
+        lastName: userData.lastName || userData.fullName?.split(' ').slice(1).join(' ') || '',
         fullName: userData.fullName,
         phoneNumber: userData.phone,
         role: userData.role,

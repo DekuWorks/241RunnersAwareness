@@ -12,7 +12,14 @@ namespace _241RunnersAwareness.BackendAPI.Models
         public string? PhoneNumber { get; set; }
         
         [Required]
-        public string FullName { get; set; }
+        [StringLength(50)]
+        public string FirstName { get; set; }
+        
+        [Required]
+        [StringLength(50)]
+        public string LastName { get; set; }
+        
+        public string? FullName { get; set; } // Optional, will be auto-generated if not provided
         
         [Required]
         [MinLength(8)]
@@ -93,7 +100,9 @@ namespace _241RunnersAwareness.BackendAPI.Models
         public Guid UserId { get; set; }
         public string Email { get; set; }
         public string? PhoneNumber { get; set; }
-        public string FullName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string FullName { get; set; } // Computed field
         public string Role { get; set; }
         public string? RelationshipToRunner { get; set; }
         public string? LicenseNumber { get; set; }

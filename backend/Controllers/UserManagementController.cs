@@ -350,7 +350,9 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
     {
         public string Username { get; set; }
         public string Email { get; set; }
-        public string FullName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string FullName { get; set; } // Optional, will be auto-generated
         public string PhoneNumber { get; set; }
         public string Password { get; set; }
         public string Role { get; set; }
@@ -371,7 +373,9 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
     {
         public string Username { get; set; }
         public string Email { get; set; }
-        public string FullName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string FullName { get; set; } // Optional, will be auto-generated
         public string PhoneNumber { get; set; }
         public string Password { get; set; }
         public string Role { get; set; }
