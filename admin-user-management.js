@@ -61,7 +61,7 @@ class AdminUserManager {
   async loadAdminUsers() {
     try {
       // Try to load from backend first
-      const response = await fetch(`${API_BASE_URL}/admin/users`, {
+      const response = await fetch(`${API_BASE_URL}/admin/admins`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -70,9 +70,9 @@ class AdminUserManager {
 
       if (response.ok) {
         const users = await response.json();
-        this.adminUsers = users.filter(user => user.role === 'admin' || user.role === 'superadmin');
+        this.adminUsers = users;
       } else {
-        // Fallback to local storage
+        console.log('Backend admin users not available, using local storage');
         const storedAdmins = localStorage.getItem('adminUsers');
         if (storedAdmins) {
           this.adminUsers = JSON.parse(storedAdmins);
@@ -95,65 +95,12 @@ class AdminUserManager {
   }
 
   /**
-   * Get default admin users
+   * Get default admin users (fallback only)
    */
   getDefaultAdminUsers() {
-    return [
-      {
-        userId: '1',
-        username: 'marcus_brown',
-        email: 'dekuworks1@gmail.com',
-        firstName: 'Marcus',
-        lastName: 'Brown',
-        passwordHash: this.hashPassword('marcus2025'),
-        role: 'admin',
-        isActive: true,
-        emailVerified: true,
-        phoneVerified: true,
-        createdAt: '2025-01-01T00:00:00Z',
-        lastLoginAt: null,
-        organization: '241 Runners Awareness',
-        credentials: 'Co-Founder',
-        specialization: 'Operations',
-        yearsOfExperience: '3+'
-      },
-      {
-        userId: '2',
-        username: 'daniel_carey',
-        email: 'danielcarey9770@gmail.com',
-        firstName: 'Daniel',
-        lastName: 'Carey',
-        passwordHash: this.hashPassword('daniel2025'),
-        role: 'admin',
-        isActive: true,
-        emailVerified: true,
-        phoneVerified: true,
-        createdAt: '2025-01-02T00:00:00Z',
-        lastLoginAt: null,
-        organization: '241 Runners Awareness',
-        credentials: 'Co-Founder',
-        specialization: 'Technology',
-        yearsOfExperience: '4+'
-      },
-      {
-        userId: '3',
-        username: 'daniel_carey_yahoo',
-        email: 'danielcarey9770@yahoo.com',
-        firstName: 'Daniel',
-        lastName: 'Carey',
-        passwordHash: this.hashPassword('daniel2025'),
-        role: 'admin',
-        isActive: true,
-        emailVerified: true,
-        phoneVerified: true,
-        createdAt: '2025-01-03T00:00:00Z',
-        lastLoginAt: null,
-        organization: '241 Runners Awareness',
-        credentials: 'Co-Founder',
-        specialization: 'Technology',
-        yearsOfExperience: '4+'
-      }
-    ];
+    // This should only be used as a fallback when backend is not available
+    console.log('Using default admin users as fallback');
+    return [];
   }
 
   /**
@@ -217,9 +164,12 @@ class AdminUserManager {
   }
 
   /**
-   * Local admin authentication
+   * Local admin authentication (fallback only)
    */
   authenticateAdminLocal(email, password) {
+    // This should only be used as a fallback when backend is not available
+    console.log('Using local authentication fallback');
+    
     const user = this.adminUsers.find(u => 
       u.email.toLowerCase() === email.toLowerCase() && 
       u.isActive
@@ -313,9 +263,10 @@ class AdminUserManager {
    */
   async getUserByEmail(email) {
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/users?email=${encodeURIComponent(email)}`, {
+      // Try to get from backend first
+      const response = await fetch(`${API_BASE_URL}/admin/admins`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+          'Content-Type': 'application/json'
         }
       });
 
@@ -327,6 +278,7 @@ class AdminUserManager {
       console.log('Backend user lookup failed:', error);
     }
 
+    // Fallback to local admin users
     return this.adminUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
   }
 

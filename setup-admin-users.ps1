@@ -1,9 +1,8 @@
 # 241 Runners Awareness - Admin User Setup Script
-# This script creates admin users in the backend database
+# This script creates admin users in the backend database using the new API endpoints
 
 param(
-    [string]$BackendUrl = "https://241runnersawareness-api.azurewebsites.net",
-    [string]$AdminToken = ""
+    [string]$BackendUrl = "https://241runnersawareness-api.azurewebsites.net"
 )
 
 Write-Host "🔐 Setting up Admin Users for 241 Runners Awareness" -ForegroundColor Green
@@ -76,11 +75,7 @@ function Create-AdminUser {
             "Content-Type" = "application/json"
         }
 
-        if ($AdminToken) {
-            $headers["Authorization"] = "Bearer $AdminToken"
-        }
-
-        $response = Invoke-RestMethod -Uri "$BackendUrl/api/auth/register-admin" -Method POST -Body $body -Headers $headers
+        $response = Invoke-RestMethod -Uri "$BackendUrl/api/admin/create-admin" -Method POST -Body $body -Headers $headers
 
         Write-Host "✅ Successfully created admin user: $($UserData.email)" -ForegroundColor Green
         return $true
@@ -113,7 +108,7 @@ function Test-AdminLogin {
 
         $response = Invoke-RestMethod -Uri "$BackendUrl/api/auth/login" -Method POST -Body $body -Headers $headers
 
-        if ($response.user.role -eq "admin") {
+        if ($response.user.role -eq "admin" -or $response.user.role -eq "superadmin") {
             Write-Host "✅ Login successful for: $Email" -ForegroundColor Green
             return $true
         } else {
@@ -128,15 +123,45 @@ function Test-AdminLogin {
     }
 }
 
+# Function to get existing admin users
+function Get-ExistingAdminUsers {
+    try {
+        Write-Host "Checking existing admin users..." -ForegroundColor Yellow
+        
+        $headers = @{
+            "Content-Type" = "application/json"
+        }
+
+        $response = Invoke-RestMethod -Uri "$BackendUrl/api/admin/admins" -Method GET -Headers $headers
+
+        $count = $response.Count
+        Write-Host "Found $count existing admin users" -ForegroundColor Green
+        return $response
+    }
+    catch {
+        Write-Host "❌ Failed to get existing admin users: $($_.Exception.Message)" -ForegroundColor Red
+        return @()
+    }
+}
+
 # Main execution
 Write-Host "🚀 Starting admin user setup..." -ForegroundColor Cyan
+
+# Check existing admin users
+$existingUsers = Get-ExistingAdminUsers
+$existingEmails = $existingUsers | ForEach-Object { $_.email }
 
 $successCount = 0
 $totalUsers = $adminUsers.Count
 
 foreach ($user in $adminUsers) {
-    if (Create-AdminUser -UserData $user) {
+    if ($existingEmails -contains $user.email) {
+        Write-Host "⚠️  Admin user already exists: $($user.email)" -ForegroundColor Yellow
         $successCount++
+    } else {
+        if (Create-AdminUser -UserData $user) {
+            $successCount++
+        }
     }
     Write-Host ""
 }
@@ -144,7 +169,7 @@ foreach ($user in $adminUsers) {
 Write-Host "==================================================" -ForegroundColor Green
 Write-Host "📊 Setup Summary:" -ForegroundColor Green
 Write-Host "Total users: $totalUsers" -ForegroundColor White
-Write-Host "Successfully created: $successCount" -ForegroundColor Green
+Write-Host "Successfully created/verified: $successCount" -ForegroundColor Green
 $failedCount = $totalUsers - $successCount
 Write-Host "Failed: $failedCount" -ForegroundColor Red
 Write-Host ""

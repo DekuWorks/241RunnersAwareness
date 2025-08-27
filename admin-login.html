@@ -279,43 +279,11 @@
          }
        } catch (error) {
          console.error('Admin login error:', error);
-         
-         // Fallback to mock authentication for admin accounts
-         const adminCredentials = {
-           'dekuworks1@gmail.com': { password: 'marcus2025', role: 'admin', name: 'Marcus Brown' },
-           'danielcarey9770@gmail.com': { password: 'daniel2025', role: 'admin', name: 'Daniel Carey' },
-           'danielcarey9770@yahoo.com': { password: 'daniel2025', role: 'admin', name: 'Daniel Carey' },
-           'admin@example.com': { password: 'ChangeMe123!', role: 'admin', name: 'System Admin' }
-         };
-         
-         const userCreds = adminCredentials[email];
-         
-         if (userCreds && userCreds.password === password && userCreds.role === 'admin') {
-           showAdminMessage('Access granted! Redirecting to admin dashboard...', 'success');
-           
-           // Store admin session
-           const userData = {
-             email: email,
-             role: 'admin',
-             fullName: userCreds.name,
-             userId: Date.now().toString()
-           };
-           
-           localStorage.setItem('user', JSON.stringify(userData));
-           localStorage.setItem('adminAuthenticated', 'true');
-           localStorage.setItem('adminLoginTime', Date.now().toString());
-           
-           // Redirect to admin dashboard
-           setTimeout(() => {
-             window.location.href = 'admin-dashboard.html';
-           }, 1500);
-         } else {
-           showAdminMessage('Invalid admin credentials. Please try again.', 'error');
-           submitBtn.disabled = false;
-           submitBtn.textContent = 'Access Admin Dashboard';
-           document.getElementById('adminPassword').value = '';
-           document.getElementById('adminPassword').focus();
-         }
+         showAdminMessage('Login failed. Please check your credentials and try again.', 'error');
+         submitBtn.disabled = false;
+         submitBtn.textContent = 'Access Admin Dashboard';
+         document.getElementById('adminPassword').value = '';
+         document.getElementById('adminPassword').focus();
        }
      });
 
@@ -332,25 +300,13 @@
       }
     }
 
-    // Check if already authenticated
-    window.addEventListener('load', function() {
-      const isAuthenticated = localStorage.getItem('adminAuthenticated');
-      const loginTime = localStorage.getItem('adminLoginTime');
+    // Check if already authenticated using admin user manager
+    window.addEventListener('load', async function() {
+      await adminUserManager.initialize();
       
-      // Check if login is still valid (24 hours)
-      if (isAuthenticated && loginTime) {
-        const now = Date.now();
-        const loginTimestamp = parseInt(loginTime);
-        const hoursSinceLogin = (now - loginTimestamp) / (1000 * 60 * 60);
-        
-        if (hoursSinceLogin < 24) {
-          // Still valid, redirect to dashboard
-          window.location.href = 'admin-dashboard.html';
-        } else {
-          // Expired, clear storage
-          localStorage.removeItem('adminAuthenticated');
-          localStorage.removeItem('adminLoginTime');
-        }
+      if (adminUserManager.isAdmin()) {
+        // Already authenticated, redirect to dashboard
+        window.location.href = 'admin-dashboard.html';
       }
     });
 
