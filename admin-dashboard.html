@@ -758,31 +758,24 @@
   </footer>
 
   <script>
-    // Check admin authentication on page load
-    window.addEventListener('load', function() {
-      const isAuthenticated = localStorage.getItem('adminAuthenticated');
-      const loginTime = localStorage.getItem('adminLoginTime');
+    // Initialize admin user manager and check authentication
+    window.addEventListener('load', async function() {
+      await adminUserManager.initialize();
       
-      if (!isAuthenticated || !loginTime) {
-        window.location.href = 'admin-login.html';
-        return;
-      }
-
-      // Check if login is still valid (24 hours)
-      const now = Date.now();
-      const loginTimestamp = parseInt(loginTime);
-      const hoursSinceLogin = (now - loginTimestamp) / (1000 * 60 * 60);
-      
-      if (hoursSinceLogin >= 24) {
-        // Expired, clear storage and redirect
-        localStorage.removeItem('adminAuthenticated');
-        localStorage.removeItem('adminLoginTime');
+      if (!adminUserManager.isAdmin()) {
         window.location.href = 'admin-login.html';
         return;
       }
 
       // Load dashboard data
       loadDashboardData();
+      
+      // Display current admin info
+      const currentAdmin = adminUserManager.getCurrentAdmin();
+      if (currentAdmin) {
+        document.getElementById('adminName').textContent = `${currentAdmin.firstName} ${currentAdmin.lastName}`;
+        document.getElementById('adminEmail').textContent = currentAdmin.email;
+      }
     });
 
     async function loadDashboardData() {
@@ -821,18 +814,12 @@
     }
 
     // Password change functionality
-    document.getElementById('passwordChangeForm').addEventListener('submit', function(e) {
+    document.getElementById('passwordChangeForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const currentPassword = document.getElementById('currentPassword').value;
       const newPassword = document.getElementById('newPassword').value;
       const confirmPassword = document.getElementById('confirmPassword').value;
-      
-      // Check current password
-      if (currentPassword !== 'asbc123') {
-        showAdminMessage('Current password is incorrect.', 'error');
-        return;
-      }
       
       // Check if new passwords match
       if (newPassword !== confirmPassword) {
@@ -840,18 +827,20 @@
         return;
       }
       
-      // Check password strength
-      if (newPassword.length < 6) {
-        showAdminMessage('New password must be at least 6 characters long.', 'error');
-        return;
+      try {
+        // Use the admin user manager to change password
+        const result = await adminUserManager.changeAdminPassword(currentPassword, newPassword);
+        
+        if (result.success) {
+          showAdminMessage(result.message, 'success');
+          document.getElementById('passwordChangeForm').reset();
+        } else {
+          showAdminMessage(result.message, 'error');
+        }
+      } catch (error) {
+        console.error('Password change error:', error);
+        showAdminMessage('Error changing password. Please try again.', 'error');
       }
-      
-      // In a real implementation, this would update the password on the backend
-      // For now, we'll just show a success message
-      showAdminMessage('Password updated successfully! Note: This is a demo. In production, this would update the backend.', 'success');
-      
-      // Clear form
-      document.getElementById('passwordChangeForm').reset();
     });
 
     // Admin functions
@@ -1113,15 +1102,9 @@
     }
 
     function adminLogout() {
-      // Clear admin session
-      localStorage.removeItem('adminAuthenticated');
-      localStorage.removeItem('adminLoginTime');
-      
+      // Use admin user manager to logout
+      adminUserManager.logout();
       showAdminMessage('Logged out successfully. Redirecting...', 'success');
-      
-      setTimeout(() => {
-        window.location.href = 'admin-login.html';
-      }, 1500);
     }
 
     function showAdminMessage(message, type) {
@@ -1199,5 +1182,6 @@
         }
     });
   </script>
+  <script src="admin-user-management.js"></script>
 </body>
 </html>

@@ -1,5 +1,0 @@
-[33m8ad5ba3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/feature/firstname-lastname-admin-fix[m[33m)[m feat: Add firstName/lastName fields and fix admin login - Update User model to support separate firstName and lastName fields - Update registration DTOs and controllers to handle new fields - Create database migration for firstName/lastName fields - Fix admin login to use existing authentication system - Update frontend forms to send firstName/lastName - Improve admin dashboard access with proper credential validation
-[33m1c723cb[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Update production configuration for Azure deployment
-[33m6ae28b3[m Update all frontend apps to use Azure API URL
-[33m8adb61b[m Clean up nested publish directories and log files
-[33mb31a527[m Fix backend environment variables and configuration issues

@@ -236,12 +236,18 @@
     <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
   </footer>
 
+     <script src="admin-user-management.js"></script>
      <script>
-     // Admin authentication using the same system as regular login
+     // Admin authentication using the new admin user management system
      const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
        ? 'http://localhost:5113/api' 
        : 'https://241runnersawareness-api.azurewebsites.net/api';
      
+     // Initialize admin user manager
+     adminUserManager.initialize().then(() => {
+       console.log('Admin user manager initialized');
+     });
+
      document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
        e.preventDefault();
        
@@ -254,45 +260,22 @@
        submitBtn.textContent = 'Verifying...';
        
        try {
-         // Try backend API first
-         const response = await fetch(`${API_BASE_URL}/auth/login`, {
-           method: 'POST',
-           headers: {
-             'Content-Type': 'application/json',
-           },
-           body: JSON.stringify({
-             email: email,
-             password: password
-           })
-         });
-
-         if (response.ok) {
-           const data = await response.json();
+         // Use the new admin user management system
+         const result = await adminUserManager.authenticateAdmin(email, password);
+         
+         if (result.success) {
+           showAdminMessage('Access granted! Redirecting to admin dashboard...', 'success');
            
-           // Check if user is admin
-           if (data.user && data.user.role === 'admin') {
-             showAdminMessage('Access granted! Redirecting to admin dashboard...', 'success');
-             
-             // Store user data
-             localStorage.setItem('user', JSON.stringify(data.user));
-             localStorage.setItem('userToken', data.token);
-             localStorage.setItem('adminAuthenticated', 'true');
-             localStorage.setItem('adminLoginTime', Date.now().toString());
-             
-             // Redirect to admin dashboard
-             setTimeout(() => {
-               window.location.href = 'admin-dashboard.html';
-             }, 1500);
-           } else {
-             showAdminMessage('Access denied. Admin privileges required.', 'error');
-             submitBtn.disabled = false;
-             submitBtn.textContent = 'Access Admin Dashboard';
-             document.getElementById('adminPassword').value = '';
-             document.getElementById('adminPassword').focus();
-           }
+           // Redirect to admin dashboard
+           setTimeout(() => {
+             window.location.href = 'admin-dashboard.html';
+           }, 1500);
          } else {
-           const errorData = await response.json();
-           throw new Error(errorData.message || 'Login failed');
+           showAdminMessage(result.message || 'Access denied. Admin privileges required.', 'error');
+           submitBtn.disabled = false;
+           submitBtn.textContent = 'Access Admin Dashboard';
+           document.getElementById('adminPassword').value = '';
+           document.getElementById('adminPassword').focus();
          }
        } catch (error) {
          console.error('Admin login error:', error);
