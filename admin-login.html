@@ -244,24 +244,41 @@
        : 'https://241runnersawareness-api.azurewebsites.net/api';
      
      // Initialize admin user manager
+     console.log('Starting admin user manager initialization...');
      adminUserManager.initialize().then(() => {
-       console.log('Admin user manager initialized');
+       console.log('Admin user manager initialized successfully');
+     }).catch(error => {
+       console.error('Failed to initialize admin user manager:', error);
      });
 
      document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
        e.preventDefault();
        
+       console.log('Admin login form submitted');
+       
        const email = document.getElementById('adminEmail').value;
        const password = document.getElementById('adminPassword').value;
        const submitBtn = document.getElementById('adminSubmitBtn');
+       
+       console.log('Email:', email);
+       console.log('Password length:', password.length);
+       
+       // Validate inputs
+       if (!email || !password) {
+         showAdminMessage('Please fill in both email and password fields.', 'error');
+         return;
+       }
        
        // Disable button during processing
        submitBtn.disabled = true;
        submitBtn.textContent = 'Verifying...';
        
        try {
+         console.log('Attempting admin authentication...');
          // Use the new admin user management system
          const result = await adminUserManager.authenticateAdmin(email, password);
+         
+         console.log('Authentication result:', result);
          
          if (result.success) {
            showAdminMessage('Access granted! Redirecting to admin dashboard...', 'success');
