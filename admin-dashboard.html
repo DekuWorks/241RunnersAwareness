@@ -711,9 +711,14 @@
               <div class="error-message" id="emailError"></div>
             </div>
             <div class="form-group">
-              <label for="fullName">Full Name *</label>
-              <input type="text" id="fullName" name="fullName" required>
-              <div class="error-message" id="fullNameError"></div>
+              <label for="firstName">First Name *</label>
+              <input type="text" id="firstName" name="firstName" required>
+              <div class="error-message" id="firstNameError"></div>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name *</label>
+              <input type="text" id="lastName" name="lastName" required>
+              <div class="error-message" id="lastNameError"></div>
             </div>
             <div class="form-group">
               <label for="phoneNumber">Phone Number</label>
@@ -909,7 +914,8 @@
         populateUserForm({
           username: 'john_doe',
           email: 'john@example.com',
-          fullName: 'John Doe',
+          firstName: 'John',
+          lastName: 'Doe',
           phoneNumber: '555-123-4567',
           role: 'user'
         });
@@ -934,7 +940,8 @@
     function populateUserForm(userData) {
       document.getElementById('username').value = userData.username || '';
       document.getElementById('email').value = userData.email || '';
-      document.getElementById('fullName').value = userData.fullName || '';
+      document.getElementById('firstName').value = userData.firstName || '';
+      document.getElementById('lastName').value = userData.lastName || '';
       document.getElementById('phoneNumber').value = userData.phoneNumber || '';
       document.getElementById('role').value = userData.role || 'user';
     }
@@ -971,7 +978,8 @@
               errorMessage = 'Password must be at least 8 characters with uppercase, lowercase, number, and special character';
             }
             break;
-          case 'fullName':
+          case 'firstName':
+          case 'lastName':
             if (!VALIDATION_PATTERNS.NAME.test(value)) {
               isValid = false;
               errorMessage = 'Name can only contain letters, spaces, hyphens, apostrophes, and periods';
