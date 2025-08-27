@@ -159,6 +159,19 @@ class AdminUserManager {
       }
     } catch (error) {
       console.log('Backend authentication failed, using local:', error);
+      // Temporary fallback for deployment period
+      if (email === 'dekuworks1@gmail.com' && password === 'marcus2025') {
+        const tempUser = {
+          email: 'dekuworks1@gmail.com',
+          firstName: 'Marcus',
+          lastName: 'Brown',
+          role: 'admin',
+          userId: 'temp-admin-1'
+        };
+        this.currentAdmin = tempUser;
+        this.createAdminSession(tempUser, 'temp-token');
+        return { success: true, user: tempUser, token: 'temp-token', message: 'Temporary admin access granted (backend deploying)' };
+      }
       return this.authenticateAdminLocal(email, password);
     }
   }
