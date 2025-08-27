@@ -340,28 +340,28 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
 
     public class UpdateCaseStatusRequest
     {
-        public string Status { get; set; }
+        public string Status { get; set; } = string.Empty;
         public DateTime? LastSeenDate { get; set; }
     }
 
     public class CreateAdminRequest
     {
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Password { get; set; }
+        public string? Username { get; set; }
+        public string Email { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
         public string Role { get; set; } = "admin";
-        public string Organization { get; set; }
-        public string Credentials { get; set; }
-        public string Specialization { get; set; }
-        public string YearsOfExperience { get; set; }
+        public string? Organization { get; set; }
+        public string? Credentials { get; set; }
+        public string? Specialization { get; set; }
+        public string? YearsOfExperience { get; set; }
     }
 
     public class AdminPasswordResetRequest
     {
-        public string Email { get; set; }
-        public string CurrentPassword { get; set; }
-        public string NewPassword { get; set; }
+        public string Email { get; set; } = string.Empty;
+        public string CurrentPassword { get; set; } = string.Empty;
+        public string NewPassword { get; set; } = string.Empty;
     }
 }

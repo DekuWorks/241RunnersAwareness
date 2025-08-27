@@ -53,57 +53,57 @@ namespace _241RunnersAwareness.BackendAPI.Models
     public class LoginRequest
     {
         [Required]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
         
         [Required]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
     }
     
     public class GoogleLoginRequest
     {
         [Required]
-        public string IdToken { get; set; }
+        public string IdToken { get; set; } = string.Empty;
     }
     
     public class VerifyEmailRequest
     {
         [Required]
-        public string Token { get; set; }
+        public string Token { get; set; } = string.Empty;
     }
     
     public class VerifyPhoneRequest
     {
         [Required]
-        public string Code { get; set; }
+        public string Code { get; set; } = string.Empty;
     }
     
     public class ResendVerificationRequest
     {
         [Required]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
         
         [Required]
-        public string Type { get; set; } // "email" or "phone"
+        public string Type { get; set; } = string.Empty; // "email" or "phone"
     }
     
     public class AuthResponse
     {
         public bool Success { get; set; }
-        public string Message { get; set; }
-        public string Token { get; set; }
-        public UserDto User { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public string Token { get; set; } = string.Empty;
+        public UserDto User { get; set; } = new();
         public bool RequiresVerification { get; set; }
     }
     
     public class UserDto
     {
         public Guid UserId { get; set; }
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
         public string? PhoneNumber { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string FullName { get; set; } // Computed field
-        public string Role { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string FullName { get; set; } = string.Empty; // Computed field
+        public string Role { get; set; } = string.Empty;
         public string? RelationshipToRunner { get; set; }
         public string? LicenseNumber { get; set; }
         public string? Organization { get; set; }
