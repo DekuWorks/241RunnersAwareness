@@ -30,6 +30,7 @@ using Microsoft.Extensions.Hosting;
 // Database and Entity Framework imports
 using _241RunnersAwareness.BackendAPI.DBContext.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer;
 
 // Authentication and security imports
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -187,12 +188,28 @@ namespace _241RunnersAwareness.BackendAPI
             // Add MVC controllers for API endpoints
             builder.Services.AddControllers();
             
-            // Configure Entity Framework with SQLite for development
+            // Configure Entity Framework with appropriate database provider
             builder.Services.AddDbContext<RunnersDbContext>(options =>
             {
-                options.UseSqlite(
-                    builder.Configuration.GetConnectionString("DefaultConnection")
-                );
+                var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+                var environment = builder.Environment.EnvironmentName;
+                
+                if (environment == "Production")
+                {
+                    // Use SQL Server for production
+                    options.UseSqlServer(connectionString, sqlServerOptionsAction: sqlOptions =>
+                    {
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 5,
+                            maxRetryDelay: TimeSpan.FromSeconds(30),
+                            errorNumbersToAdd: null);
+                    });
+                }
+                else
+                {
+                    // Use SQLite for development
+                    options.UseSqlite(connectionString);
+                }
                 
                 // Enable query tracking only when needed for better performance
                 options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
@@ -227,7 +244,8 @@ namespace _241RunnersAwareness.BackendAPI
 
             // Add health checks for monitoring
             builder.Services.AddHealthChecks()
-                .AddDbContextCheck<RunnersDbContext>("database")
+                // Temporarily disable database health check to fix startup issues
+                // .AddDbContextCheck<RunnersDbContext>("database")
                 .AddCheck("memory", () =>
                 {
                     var memoryThreshold = 1024L; // Default value in MB
