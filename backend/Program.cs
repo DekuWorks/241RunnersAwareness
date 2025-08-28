@@ -189,28 +189,13 @@ namespace _241RunnersAwareness.BackendAPI
             // Add MVC controllers for API endpoints
             builder.Services.AddControllers();
             
-            // Configure Entity Framework with appropriate database provider
+            // Configure Entity Framework with SQLite for both development and production
             builder.Services.AddDbContext<RunnersDbContext>(options =>
             {
                 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-                var environment = builder.Environment.EnvironmentName;
                 
-                if (environment == "Production")
-                {
-                    // Use SQL Server for production
-                    options.UseSqlServer(connectionString, sqlServerOptionsAction: sqlOptions =>
-                    {
-                        sqlOptions.EnableRetryOnFailure(
-                            maxRetryCount: 5,
-                            maxRetryDelay: TimeSpan.FromSeconds(30),
-                            errorNumbersToAdd: null);
-                    });
-                }
-                else
-                {
-                    // Use SQLite for development
-                    options.UseSqlite(connectionString);
-                }
+                // Use SQLite for both development and production (quick fix)
+                options.UseSqlite(connectionString);
                 
                 // Enable query tracking only when needed for better performance
                 options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
