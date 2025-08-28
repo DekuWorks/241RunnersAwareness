@@ -884,8 +884,8 @@
           document.getElementById('adminEmail').textContent = currentAdmin.email;
         } else {
           // Fallback for when admin data is not available
-          document.getElementById('adminName').textContent = 'Admin User';
-          document.getElementById('adminEmail').textContent = 'admin@241runnersawareness.org';
+          document.getElementById('adminName').textContent = 'Main Admin';
+          document.getElementById('adminEmail').textContent = 'contact@241runnersawareness.org';
         }
         
         // Load admin users list
@@ -896,8 +896,8 @@
         console.error('Error initializing admin management page:', error);
         
         // Show fallback admin info
-        document.getElementById('adminName').textContent = 'Admin User';
-        document.getElementById('adminEmail').textContent = 'admin@241runnersawareness.org';
+        document.getElementById('adminName').textContent = 'Main Admin';
+        document.getElementById('adminEmail').textContent = 'contact@241runnersawareness.org';
         
         // Show fallback admin users
         document.getElementById('adminList').innerHTML = `
@@ -940,8 +940,8 @@
           document.getElementById('adminList').innerHTML = `
             <div class="admin-item">
               <div class="admin-info">
-                <h3>Marcus Brown</h3>
-                <p><strong>Email:</strong> dekuworks1@gmail.com • <strong>Role:</strong> admin</p>
+                <h3>Main Admin</h3>
+                <p><strong>Email:</strong> contact@241runnersawareness.org • <strong>Role:</strong> superadmin</p>
                 <p><strong>Organization:</strong> 241 Runners Awareness • <strong>Created:</strong> ${new Date().toLocaleDateString()}</p>
                 <p><strong>Status:</strong> <span class="status active">Active</span></p>
               </div>
@@ -952,26 +952,7 @@
                 <button class="action-btn reset" onclick="showMessage('Backend not available - Password reset requires backend deployment', 'info')" title="Reset Password">
                   <span>🔑</span> Reset
                 </button>
-                <button class="action-btn delete" onclick="showMessage('Backend not available - Delete functionality requires backend deployment', 'info')" title="Delete Admin">
-                  <span>🗑️</span> Delete
-                </button>
-              </div>
-            </div>
-            <div class="admin-item">
-              <div class="admin-info">
-                <h3>Daniel Carey</h3>
-                <p><strong>Email:</strong> danielcarey9770@yahoo.com • <strong>Role:</strong> admin</p>
-                <p><strong>Organization:</strong> 241 Runners Awareness • <strong>Created:</strong> ${new Date().toLocaleDateString()}</p>
-                <p><strong>Status:</strong> <span class="status active">Active</span></p>
-              </div>
-              <div class="admin-actions">
-                <button class="action-btn edit" onclick="showMessage('Backend not available - Edit functionality requires backend deployment', 'info')" title="Edit Admin">
-                  <span>✏️</span> Edit
-                </button>
-                <button class="action-btn reset" onclick="showMessage('Backend not available - Password reset requires backend deployment', 'info')" title="Reset Password">
-                  <span>🔑</span> Reset
-                </button>
-                <button class="action-btn delete" onclick="showMessage('Backend not available - Delete functionality requires backend deployment', 'info')" title="Delete Admin">
+                <button class="action-btn delete" onclick="showMessage('Cannot delete main admin user', 'error')" title="Delete Admin">
                   <span>🗑️</span> Delete
                 </button>
               </div>
@@ -984,8 +965,8 @@
         document.getElementById('adminList').innerHTML = `
           <div class="admin-item">
             <div class="admin-info">
-              <h3>Marcus Brown</h3>
-              <p><strong>Email:</strong> dekuworks1@gmail.com • <strong>Role:</strong> admin</p>
+              <h3>Main Admin</h3>
+              <p><strong>Email:</strong> contact@241runnersawareness.org • <strong>Role:</strong> superadmin</p>
               <p><strong>Organization:</strong> 241 Runners Awareness • <strong>Created:</strong> ${new Date().toLocaleDateString()}</p>
               <p><strong>Status:</strong> <span class="status active">Active</span></p>
             </div>
@@ -996,7 +977,7 @@
               <button class="action-btn reset" onclick="showMessage('Backend not available - Password reset requires backend deployment', 'info')" title="Reset Password">
                 <span>🔑</span> Reset
               </button>
-              <button class="action-btn delete" onclick="showMessage('Backend not available - Delete functionality requires backend deployment', 'info')" title="Delete Admin">
+              <button class="action-btn delete" onclick="showMessage('Cannot delete main admin user', 'error')" title="Delete Admin">
                 <span>🗑️</span> Delete
               </button>
             </div>
