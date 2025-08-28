@@ -29,6 +29,7 @@ using Microsoft.Extensions.Hosting;
 
 // Database and Entity Framework imports
 using _241RunnersAwareness.BackendAPI.DBContext.Data;
+using _241RunnersAwareness.BackendAPI.DBContext.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
 
@@ -244,8 +245,7 @@ namespace _241RunnersAwareness.BackendAPI
 
             // Add health checks for monitoring
             builder.Services.AddHealthChecks()
-                // Temporarily disable database health check to fix startup issues
-                // .AddDbContextCheck<RunnersDbContext>("database")
+                .AddDbContextCheck<RunnersDbContext>("database")
                 .AddCheck("memory", () =>
                 {
                     var memoryThreshold = 1024L; // Default value in MB
@@ -465,21 +465,50 @@ namespace _241RunnersAwareness.BackendAPI
             // ============================================
             
             // Seed the database with initial data (non-blocking)
-            // TODO: Fix seeding issue - temporarily disabled
-            /*
             try
             {
                 using (var scope = app.Services.CreateScope())
                 {
-                    var seedService = scope.ServiceProvider.GetRequiredService<SeedDataService>();
-                    await seedService.SeedDataAsync();
+                    var context = scope.ServiceProvider.GetRequiredService<RunnersDbContext>();
+                    await context.Database.EnsureCreatedAsync();
+                    
+                    // Create main admin user if it doesn't exist
+                    if (!context.Users.Any(u => u.Email == "contact@241runnersawareness.org"))
+                    {
+                        var mainAdmin = new User
+                        {
+                            UserId = Guid.NewGuid(),
+                            Email = "contact@241runnersawareness.org",
+                            FirstName = "Main",
+                            LastName = "Admin",
+                            FullName = "Main Admin",
+                            Username = "main_admin",
+                            Role = "superadmin",
+                            Organization = "241 Runners Awareness",
+                            Credentials = "System Administrator",
+                            Specialization = "System Management",
+                            YearsOfExperience = "5+",
+                            EmailVerified = true,
+                            PhoneVerified = true,
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow,
+                            LastLoginAt = DateTime.UtcNow
+                        };
+                        
+                        // Hash the password
+                        mainAdmin.PasswordHash = BCrypt.Net.BCrypt.HashPassword("runners241@");
+                        
+                        context.Users.Add(mainAdmin);
+                        await context.SaveChangesAsync();
+                        
+                        Log.Information("Main admin user created successfully");
+                    }
                 }
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "Error seeding database - continuing startup");
             }
-            */
             
             // 
             // ============================================
