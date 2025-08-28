@@ -159,19 +159,6 @@ class AdminUserManager {
       }
         } catch (error) {
       console.log('Backend authentication failed:', error);
-      // Temporary fallback while backend is being fixed
-      if (email === 'contact@241runnersawareness.org' && password === 'runners241@') {
-        const tempUser = {
-          email: 'contact@241runnersawareness.org',
-          firstName: 'Main',
-          lastName: 'Admin',
-          role: 'superadmin',
-          userId: 'main-admin-1'
-        };
-        this.currentAdmin = tempUser;
-        this.createAdminSession(tempUser, 'temp-token');
-        return { success: true, user: tempUser, token: 'temp-token', message: 'Main admin access granted (backend fixing)' };
-      }
       return { success: false, message: 'Authentication failed. Please check your credentials and try again.' };
     }
   }

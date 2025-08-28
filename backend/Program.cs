@@ -455,6 +455,8 @@ namespace _241RunnersAwareness.BackendAPI
                 using (var scope = app.Services.CreateScope())
                 {
                     var context = scope.ServiceProvider.GetRequiredService<RunnersDbContext>();
+                    
+                    // Ensure database is created
                     await context.Database.EnsureCreatedAsync();
                     
                     // Create main admin user if it doesn't exist
@@ -480,14 +482,22 @@ namespace _241RunnersAwareness.BackendAPI
                             LastLoginAt = DateTime.UtcNow
                         };
                         
-                        // Hash the password
+                        // Hash the password with BCrypt
                         mainAdmin.PasswordHash = BCrypt.Net.BCrypt.HashPassword("runners241@");
                         
                         context.Users.Add(mainAdmin);
                         await context.SaveChangesAsync();
                         
-                        Log.Information("Main admin user created successfully");
+                        Log.Information("Main admin user created successfully: {Email}", mainAdmin.Email);
                     }
+                    else
+                    {
+                        Log.Information("Main admin user already exists");
+                    }
+                    
+                    // Log database status
+                    var userCount = await context.Users.CountAsync();
+                    Log.Information("Database initialized with {UserCount} users", userCount);
                 }
             }
             catch (Exception ex)

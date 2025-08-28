@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using System.ComponentModel.DataAnnotations;
 using _241RunnersAwareness.BackendAPI.DBContext.Data;
 using _241RunnersAwareness.BackendAPI.DBContext.Models;
 
@@ -535,34 +536,95 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
     public class CreateAdminRequest
     {
         public string? Username { get; set; }
+        
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email format")]
+        [StringLength(100, ErrorMessage = "Email cannot exceed 100 characters")]
         public string Email { get; set; } = string.Empty;
+        
+        [Required(ErrorMessage = "First name is required")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "First name must be between 2 and 50 characters")]
+        [RegularExpression(@"^[a-zA-Z\s\-']+$", ErrorMessage = "First name can only contain letters, spaces, hyphens, and apostrophes")]
         public string FirstName { get; set; } = string.Empty;
+        
+        [Required(ErrorMessage = "Last name is required")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "Last name must be between 2 and 50 characters")]
+        [RegularExpression(@"^[a-zA-Z\s\-']+$", ErrorMessage = "Last name can only contain letters, spaces, hyphens, and apostrophes")]
         public string LastName { get; set; } = string.Empty;
+        
+        [Required(ErrorMessage = "Password is required")]
+        [MinLength(8, ErrorMessage = "Password must be at least 8 characters long")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", 
+            ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character")]
         public string Password { get; set; } = string.Empty;
+        
+        [Required(ErrorMessage = "Role is required")]
+        [RegularExpression(@"^(admin|superadmin)$", ErrorMessage = "Role must be either 'admin' or 'superadmin'")]
         public string Role { get; set; } = "admin";
+        
+        [StringLength(100, ErrorMessage = "Organization cannot exceed 100 characters")]
         public string? Organization { get; set; }
+        
+        [StringLength(100, ErrorMessage = "Credentials cannot exceed 100 characters")]
         public string? Credentials { get; set; }
+        
+        [StringLength(100, ErrorMessage = "Specialization cannot exceed 100 characters")]
         public string? Specialization { get; set; }
+        
+        [StringLength(20, ErrorMessage = "Years of experience cannot exceed 20 characters")]
         public string? YearsOfExperience { get; set; }
     }
 
     public class AdminPasswordResetRequest
     {
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email format")]
         public string Email { get; set; } = string.Empty;
+        
+        [Required(ErrorMessage = "Current password is required")]
         public string CurrentPassword { get; set; } = string.Empty;
+        
+        [Required(ErrorMessage = "New password is required")]
+        [MinLength(8, ErrorMessage = "Password must be at least 8 characters long")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", 
+            ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character")]
         public string NewPassword { get; set; } = string.Empty;
     }
 
     public class UpdateAdminRequest
     {
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email format")]
+        [StringLength(100, ErrorMessage = "Email cannot exceed 100 characters")]
         public string Email { get; set; } = string.Empty;
+        
+        [Required(ErrorMessage = "First name is required")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "First name must be between 2 and 50 characters")]
+        [RegularExpression(@"^[a-zA-Z\s\-']+$", ErrorMessage = "First name can only contain letters, spaces, hyphens, and apostrophes")]
         public string FirstName { get; set; } = string.Empty;
+        
+        [Required(ErrorMessage = "Last name is required")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "Last name must be between 2 and 50 characters")]
+        [RegularExpression(@"^[a-zA-Z\s\-']+$", ErrorMessage = "Last name can only contain letters, spaces, hyphens, and apostrophes")]
         public string LastName { get; set; } = string.Empty;
+        
+        [StringLength(50, ErrorMessage = "Username cannot exceed 50 characters")]
         public string? Username { get; set; }
+        
+        [Required(ErrorMessage = "Role is required")]
+        [RegularExpression(@"^(admin|superadmin)$", ErrorMessage = "Role must be either 'admin' or 'superadmin'")]
         public string Role { get; set; } = "admin";
+        
+        [StringLength(100, ErrorMessage = "Organization cannot exceed 100 characters")]
         public string? Organization { get; set; }
+        
+        [StringLength(100, ErrorMessage = "Credentials cannot exceed 100 characters")]
         public string? Credentials { get; set; }
+        
+        [StringLength(100, ErrorMessage = "Specialization cannot exceed 100 characters")]
         public string? Specialization { get; set; }
+        
+        [StringLength(20, ErrorMessage = "Years of experience cannot exceed 20 characters")]
         public string? YearsOfExperience { get; set; }
     }
 
