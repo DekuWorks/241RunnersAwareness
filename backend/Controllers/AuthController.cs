@@ -47,12 +47,82 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
         {
             try
             {
+                // Test database connection
+                var canConnect = await _context.Database.CanConnectAsync();
+                if (!canConnect)
+                {
+                    return StatusCode(500, new { message = "Cannot connect to database", error = "Database connection failed" });
+                }
+                
+                // Test if Users table exists
                 var userCount = await _context.Users.CountAsync();
-                return Ok(new { message = "Database connection working", userCount = userCount });
+                
+                // Check if main admin exists
+                var mainAdmin = await _context.Users.FirstOrDefaultAsync(u => u.Email == "contact@241runnersawareness.org");
+                
+                return Ok(new { 
+                    message = "Database connection working", 
+                    userCount = userCount,
+                    mainAdminExists = mainAdmin != null,
+                    mainAdminEmail = mainAdmin?.Email,
+                    mainAdminRole = mainAdmin?.Role
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Database error", error = ex.Message });
+                return StatusCode(500, new { message = "Database error", error = ex.Message, stackTrace = ex.StackTrace });
+            }
+        }
+
+        [HttpPost("create-main-admin")]
+        public async Task<ActionResult<object>> CreateMainAdmin()
+        {
+            try
+            {
+                // Check if main admin already exists
+                var existingAdmin = await _context.Users.FirstOrDefaultAsync(u => u.Email == "contact@241runnersawareness.org");
+                if (existingAdmin != null)
+                {
+                    return Ok(new { message = "Main admin already exists", email = existingAdmin.Email, role = existingAdmin.Role });
+                }
+
+                // Create main admin user
+                var mainAdmin = new User
+                {
+                    UserId = Guid.NewGuid(),
+                    Email = "contact@241runnersawareness.org",
+                    FirstName = "Main",
+                    LastName = "Admin",
+                    FullName = "Main Admin",
+                    Username = "main_admin",
+                    Role = "superadmin",
+                    Organization = "241 Runners Awareness",
+                    Credentials = "System Administrator",
+                    Specialization = "System Management",
+                    YearsOfExperience = "5+",
+                    EmailVerified = true,
+                    PhoneVerified = true,
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    LastLoginAt = DateTime.UtcNow
+                };
+
+                // Hash the password
+                mainAdmin.PasswordHash = BCrypt.Net.BCrypt.HashPassword("runners241@");
+
+                _context.Users.Add(mainAdmin);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { 
+                    message = "Main admin user created successfully",
+                    email = mainAdmin.Email,
+                    role = mainAdmin.Role,
+                    userId = mainAdmin.UserId
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error creating main admin", error = ex.Message, stackTrace = ex.StackTrace });
             }
         }
 

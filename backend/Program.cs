@@ -456,12 +456,39 @@ namespace _241RunnersAwareness.BackendAPI
                 {
                     var context = scope.ServiceProvider.GetRequiredService<RunnersDbContext>();
                     
-                    // Ensure database is created
-                    await context.Database.EnsureCreatedAsync();
+                    // Ensure database is created with retry logic
+                    var retryCount = 0;
+                    var maxRetries = 3;
+                    
+                    while (retryCount < maxRetries)
+                    {
+                        try
+                        {
+                            Log.Information("Attempting to create database (attempt {RetryCount})", retryCount + 1);
+                            await context.Database.EnsureCreatedAsync();
+                            Log.Information("Database created successfully");
+                            break;
+                        }
+                        catch (Exception dbEx)
+                        {
+                            retryCount++;
+                            Log.Warning("Database creation attempt {RetryCount} failed: {Error}", retryCount, dbEx.Message);
+                            
+                            if (retryCount >= maxRetries)
+                            {
+                                Log.Error("Failed to create database after {MaxRetries} attempts", maxRetries);
+                                throw;
+                            }
+                            
+                            await Task.Delay(2000); // Wait 2 seconds before retry
+                        }
+                    }
                     
                     // Create main admin user if it doesn't exist
                     if (!context.Users.Any(u => u.Email == "contact@241runnersawareness.org"))
                     {
+                        Log.Information("Creating main admin user...");
+                        
                         var mainAdmin = new User
                         {
                             UserId = Guid.NewGuid(),
