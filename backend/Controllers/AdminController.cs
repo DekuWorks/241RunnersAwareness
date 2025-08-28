@@ -336,6 +336,194 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                 return StatusCode(500, new { message = "Error fetching admin users", error = ex.Message });
             }
         }
+
+        // Get admin user by ID
+        [HttpGet("admins/{userId}")]
+        public async Task<ActionResult<object>> GetAdminById(Guid userId)
+        {
+            try
+            {
+                var adminUser = await _context.Users
+                    .Where(u => (u.Role == "admin" || u.Role == "superadmin") && u.UserId == userId)
+                    .Select(u => new
+                    {
+                        u.UserId,
+                        u.Username,
+                        u.Email,
+                        u.FirstName,
+                        u.LastName,
+                        u.FullName,
+                        u.Role,
+                        u.Organization,
+                        u.Credentials,
+                        u.Specialization,
+                        u.YearsOfExperience,
+                        u.IsActive,
+                        u.EmailVerified,
+                        u.CreatedAt,
+                        u.LastLoginAt
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (adminUser == null)
+                {
+                    return NotFound(new { message = "Admin user not found" });
+                }
+
+                return Ok(adminUser);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error fetching admin user", error = ex.Message });
+            }
+        }
+
+        // Update admin user
+        [HttpPut("update-admin/{userId}")]
+        public async Task<ActionResult<object>> UpdateAdmin(Guid userId, [FromBody] UpdateAdminRequest request)
+        {
+            try
+            {
+                // Validate required fields
+                if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.FirstName) || 
+                    string.IsNullOrEmpty(request.LastName))
+                {
+                    return BadRequest(new { message = "Email, first name, and last name are required" });
+                }
+
+                // Validate email format
+                if (!System.Text.RegularExpressions.Regex.IsMatch(request.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+                {
+                    return BadRequest(new { message = "Invalid email format" });
+                }
+
+                var adminUser = await _context.Users
+                    .FirstOrDefaultAsync(u => u.UserId == userId && 
+                                            (u.Role == "admin" || u.Role == "superadmin"));
+
+                if (adminUser == null)
+                {
+                    return NotFound(new { message = "Admin user not found" });
+                }
+
+                // Check if email is already taken by another user
+                var existingUser = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == request.Email && u.UserId != userId);
+
+                if (existingUser != null)
+                {
+                    return BadRequest(new { message = "Email is already taken by another user" });
+                }
+
+                // Update admin user
+                adminUser.Email = request.Email;
+                adminUser.FirstName = request.FirstName;
+                adminUser.LastName = request.LastName;
+                adminUser.FullName = $"{request.FirstName} {request.LastName}";
+                adminUser.Username = request.Username ?? request.Email.Split('@')[0];
+                adminUser.Role = request.Role ?? "admin";
+                adminUser.Organization = request.Organization;
+                adminUser.Credentials = request.Credentials;
+                adminUser.Specialization = request.Specialization;
+                adminUser.YearsOfExperience = request.YearsOfExperience;
+                adminUser.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Admin user updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error updating admin user", error = ex.Message });
+            }
+        }
+
+        // Delete admin user
+        [HttpDelete("delete-admin/{userId}")]
+        public async Task<ActionResult<object>> DeleteAdmin(Guid userId)
+        {
+            try
+            {
+                var adminUser = await _context.Users
+                    .FirstOrDefaultAsync(u => u.UserId == userId && 
+                                            (u.Role == "admin" || u.Role == "superadmin"));
+
+                if (adminUser == null)
+                {
+                    return NotFound(new { message = "Admin user not found" });
+                }
+
+                // Don't allow deletion of the last admin
+                var adminCount = await _context.Users
+                    .Where(u => u.Role == "admin" || u.Role == "superadmin")
+                    .CountAsync();
+
+                if (adminCount <= 1)
+                {
+                    return BadRequest(new { message = "Cannot delete the last admin user" });
+                }
+
+                // Don't allow deletion of superadmin users
+                if (adminUser.Role == "superadmin")
+                {
+                    return BadRequest(new { message = "Cannot delete superadmin users" });
+                }
+
+                _context.Users.Remove(adminUser);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Admin user deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error deleting admin user", error = ex.Message });
+            }
+        }
+
+        // Reset admin password (by another admin)
+        [HttpPost("reset-admin-password")]
+        public async Task<ActionResult<object>> ResetAdminPasswordByAdmin([FromBody] AdminPasswordResetByAdminRequest request)
+        {
+            try
+            {
+                // Validate required fields
+                if (string.IsNullOrEmpty(request.UserId) || string.IsNullOrEmpty(request.NewPassword))
+                {
+                    return BadRequest(new { message = "User ID and new password are required" });
+                }
+
+                // Validate password strength
+                if (request.NewPassword.Length < 8)
+                {
+                    return BadRequest(new { message = "Password must be at least 8 characters long" });
+                }
+
+                if (!System.Text.RegularExpressions.Regex.IsMatch(request.NewPassword, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]"))
+                {
+                    return BadRequest(new { message = "Password must contain uppercase, lowercase, number, and special character" });
+                }
+
+                var adminUser = await _context.Users
+                    .FirstOrDefaultAsync(u => u.UserId == Guid.Parse(request.UserId) && 
+                                            (u.Role == "admin" || u.Role == "superadmin"));
+
+                if (adminUser == null)
+                {
+                    return NotFound(new { message = "Admin user not found" });
+                }
+
+                // Update password
+                adminUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+                adminUser.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Admin password reset successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error resetting admin password", error = ex.Message });
+            }
+        }
     }
 
     public class UpdateCaseStatusRequest
@@ -362,6 +550,25 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
     {
         public string Email { get; set; } = string.Empty;
         public string CurrentPassword { get; set; } = string.Empty;
+        public string NewPassword { get; set; } = string.Empty;
+    }
+
+    public class UpdateAdminRequest
+    {
+        public string Email { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string? Username { get; set; }
+        public string Role { get; set; } = "admin";
+        public string? Organization { get; set; }
+        public string? Credentials { get; set; }
+        public string? Specialization { get; set; }
+        public string? YearsOfExperience { get; set; }
+    }
+
+    public class AdminPasswordResetByAdminRequest
+    {
+        public string UserId { get; set; } = string.Empty;
         public string NewPassword { get; set; } = string.Empty;
     }
 }

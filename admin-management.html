@@ -588,8 +588,27 @@
       e.preventDefault();
       
       const formData = new FormData(e.target);
+      const firstName = formData.get('firstName').trim();
+      const lastName = formData.get('lastName').trim();
+      const email = formData.get('email').trim();
       const password = formData.get('password');
       const confirmPassword = formData.get('confirmPassword');
+      
+      // Enhanced validation
+      if (!firstName || firstName.length < 2) {
+        showMessage('First name must be at least 2 characters long', 'error');
+        return;
+      }
+      
+      if (!lastName || lastName.length < 2) {
+        showMessage('Last name must be at least 2 characters long', 'error');
+        return;
+      }
+      
+      if (!email || !isValidEmail(email)) {
+        showMessage('Please enter a valid email address', 'error');
+        return;
+      }
       
       // Validate passwords match
       if (password !== confirmPassword) {
@@ -604,10 +623,10 @@
       }
       
       const adminData = {
-        firstName: formData.get('firstName'),
-        lastName: formData.get('lastName'),
-        email: formData.get('email'),
-        username: formData.get('username') || formData.get('email').split('@')[0],
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        username: formData.get('username') || email.split('@')[0],
         password: password,
         role: formData.get('role'),
         organization: formData.get('organization'),
@@ -626,17 +645,25 @@
         if (result.success) {
           showMessage(result.message, 'success');
           e.target.reset();
+          document.getElementById('passwordStrength').textContent = '';
           loadAdminUsers(); // Refresh the list
         } else {
           showMessage(result.message, 'error');
         }
       } catch (error) {
-        showMessage('Error creating admin user', 'error');
+        console.error('Error creating admin user:', error);
+        showMessage('Error creating admin user. Please try again.', 'error');
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Create Admin User';
       }
     });
+
+    // Email validation
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
 
     // Password strength validation
     function validatePasswordStrength(password) {
@@ -772,12 +799,31 @@
       
       const formData = new FormData(e.target);
       const userId = formData.get('userId');
+      const firstName = formData.get('firstName').trim();
+      const lastName = formData.get('lastName').trim();
+      const email = formData.get('email').trim();
+      
+      // Enhanced validation
+      if (!firstName || firstName.length < 2) {
+        showMessage('First name must be at least 2 characters long', 'error');
+        return;
+      }
+      
+      if (!lastName || lastName.length < 2) {
+        showMessage('Last name must be at least 2 characters long', 'error');
+        return;
+      }
+      
+      if (!email || !isValidEmail(email)) {
+        showMessage('Please enter a valid email address', 'error');
+        return;
+      }
       
       const adminData = {
-        firstName: formData.get('firstName'),
-        lastName: formData.get('lastName'),
-        email: formData.get('email'),
-        username: formData.get('username') || formData.get('email').split('@')[0],
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        username: formData.get('username') || email.split('@')[0],
         role: formData.get('role'),
         organization: formData.get('organization'),
         credentials: formData.get('credentials'),
@@ -800,7 +846,8 @@
           showMessage(result.message, 'error');
         }
       } catch (error) {
-        showMessage('Error updating admin user', 'error');
+        console.error('Error updating admin user:', error);
+        showMessage('Error updating admin user. Please try again.', 'error');
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Update Admin User';

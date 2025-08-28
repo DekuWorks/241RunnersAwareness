@@ -496,7 +496,7 @@ class AdminUserManager {
   }
 
   /**
-   * Reset admin password
+   * Reset admin password (by another admin)
    */
   async resetAdminPassword(userId, newPassword) {
     try {
