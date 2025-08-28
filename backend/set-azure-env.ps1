@@ -10,7 +10,7 @@ Write-Host "================================================================"
 # Set environment variables
 $settings = @{
     "ASPNETCORE_ENVIRONMENT" = "Production"
-    "DB_CONNECTION_STRING" = "Server=241runners-sql-server-2025.database.windows.net;Database=RunnersDb;User Id=sqladmin;Password=YourStrongPassword123!;TrustServerCertificate=True;MultipleActiveResultSets=true;Connection Timeout=30;Command Timeout=30;"
+    "DB_CONNECTION_STRING" = "Server=241runners-sql-server-2025.database.windows.net;Database=RunnersDb;User Id=sqladmin;Password=Runners241@2025!;TrustServerCertificate=True;MultipleActiveResultSets=true;Connection Timeout=30;Command Timeout=30;"
     "JWT_SECRET_KEY" = "241RunnersAwareness-Production-Secret-Key-2025-Change-In-Production-64-Chars-Minimum"
     "JWT_ISSUER" = "241RunnersAwareness"
     "JWT_AUDIENCE" = "241RunnersAwareness"
