@@ -3,30 +3,8 @@ name: Deploy Static Site to GitHub Pages
 on:
   push:
     branches: [ main ]
-    paths:
-      - '*.html'
-      - '*.css'
-      - '*.js'
-      - '*.jpg'
-      - '*.jpeg'
-      - '*.png'
-      - '*.pdf'
-      - 'public/**'
-      - '!frontend/**'
-      - '!backend/**'
   pull_request:
     branches: [ main ]
-    paths:
-      - '*.html'
-      - '*.css'
-      - '*.js'
-      - '*.jpg'
-      - '*.jpeg'
-      - '*.png'
-      - '*.pdf'
-      - 'public/**'
-      - '!frontend/**'
-      - '!backend/**'
 
 permissions:
   contents: read
