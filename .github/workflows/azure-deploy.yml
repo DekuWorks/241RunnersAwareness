@@ -13,6 +13,7 @@ on:
 env:
   AZURE_WEBAPP_NAME: 241runnersawareness-api
   AZURE_WEBAPP_PACKAGE_PATH: './backend'
+  DOTNET_VERSION: '8.0.x'
 
 jobs:
   build-and-deploy:
@@ -25,27 +26,52 @@ jobs:
     - name: Set up .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Restore dependencies
+      run: |
+        cd backend
+        dotnet restore
         
     - name: Build with dotnet
       run: |
         cd backend
         dotnet build --configuration Release --no-restore
-        dotnet test --no-build --verbosity normal
+        
+    - name: Run tests
+      run: |
+        cd backend
+        dotnet test --no-build --verbosity normal --configuration Release
         
     - name: Publish with dotnet
       run: |
         cd backend
-        dotnet publish -c Release -o ${{env.AZURE_WEBAPP_PACKAGE_PATH}}/myapp
+        dotnet publish -c Release -o ./publish
         
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v3
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ${{env.AZURE_WEBAPP_PACKAGE_PATH}}/myapp
+        package: ./backend/publish
+        
+    - name: Run database migrations
+      run: |
+        cd backend
+        dotnet ef database update --connection "${{ secrets.AZURE_SQL_CONNECTION_STRING }}"
         
     - name: Test deployment
       run: |
         sleep 30
         curl -f https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/health || exit 1
+        
+    - name: Test API endpoints
+      run: |
+        sleep 10
+        # Test auth endpoint
+        curl -f https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/api/auth/test || exit 1
+        echo "✅ Auth endpoint working"
+        
+        # Test health endpoint
+        curl -f https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/health || exit 1
+        echo "✅ Health endpoint working"

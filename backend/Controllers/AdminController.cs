@@ -499,7 +499,7 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
         }
 
         // Reset admin password (by another admin)
-        [HttpPost("reset-admin-password")]
+        [HttpPost("reset-admin-password-by-admin")]
         public async Task<ActionResult<object>> ResetAdminPasswordByAdmin([FromBody] AdminPasswordResetByAdminRequest request)
         {
             try

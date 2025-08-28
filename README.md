@@ -2,14 +2,21 @@
 
 **Advanced missing persons tracking and community safety platform for the Houston area**
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/your-site-id/deploy-status)](https://app.netlify.com/sites/241runnersawareness/deploys)
-[![GitHub Actions](https://github.com/DekuWorks/241RunnersAwareness/workflows/Branch%20Protection%20Checks/badge.svg)](https://github.com/DekuWorks/241RunnersAwareness/actions)
+[![GitHub Actions](https://github.com/DekuWorks/241RunnersAwareness/workflows/Deploy%20Backend%20to%20Azure/badge.svg)](https://github.com/DekuWorks/241RunnersAwareness/actions)
+[![GitHub Pages](https://github.com/DekuWorks/241RunnersAwareness/workflows/Deploy%20Frontend%20to%20GitHub%20Pages/badge.svg)](https://github.com/DekuWorks/241RunnersAwareness/actions)
 
 ## 🌟 Overview
 
 241 Runners Awareness is a comprehensive platform designed to help locate missing persons and improve community safety in the Houston metropolitan area. The platform combines advanced DNA tracking technology, interactive mapping, and community engagement tools to support law enforcement and families in their search efforts.
 
 **Live Site**: https://241runnersawareness.org
+
+## ✅ **DEPLOYMENT STATUS: FULLY OPERATIONAL**
+
+- ✅ **Frontend**: GitHub Pages (https://241runnersawareness.org)
+- ✅ **Backend**: Azure App Service (https://241runnersawareness-api.azurewebsites.net)
+- ✅ **Database**: Azure SQL Database
+- ✅ **CI/CD**: GitHub Actions (Automated deployment)
 
 ## ✨ Key Features
 
@@ -41,9 +48,30 @@
 
 ## 🏗️ Architecture
 
+### **Deployment Architecture**
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    GITHUB REPOSITORY                           │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
+│  │   Frontend      │  │   Backend       │  │   GitHub        │ │
+│  │   (React/Vite)  │  │   (.NET Core)   │  │   Actions       │ │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    DEPLOYMENT PIPELINE                          │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
+│  │   GitHub Pages  │  │   Azure App     │  │   Azure SQL     │ │
+│  │   (Static Site) │  │   Service       │  │   Database      │ │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+```
+
 ### Frontend
 - **Static Site**: HTML, CSS, JavaScript (Vanilla)
 - **React App**: Modern admin interface
+- **Hosting**: GitHub Pages
 - **Responsive Design**: Mobile-first approach
 - **Progressive Web App**: Offline capabilities
 
@@ -52,6 +80,7 @@
 - **Entity Framework**: Database management
 - **JWT Authentication**: Secure user sessions
 - **SignalR**: Real-time notifications
+- **Hosting**: Azure App Service
 
 ### Database
 - **SQLite**: Development and testing
@@ -172,23 +201,49 @@ dotnet test
 # Frontend tests only
 cd frontend
 npm test
+
+# Deployment status check
+.\test-deployment.ps1
 ```
 
 ## 🚀 Deployment
 
-### Automatic Deployment
-The project is automatically deployed to Netlify when changes are pushed to the main branch.
+### **Automated CI/CD Pipeline**
+
+The project uses GitHub Actions for automated deployment:
+
+#### **Frontend Deployment**
+- **Trigger**: Changes to frontend files, HTML, CSS, JS
+- **Actions**: Build React app → Deploy to GitHub Pages
+- **URL**: https://241runnersawareness.org
+
+#### **Backend Deployment**
+- **Trigger**: Changes to backend files
+- **Actions**: Build .NET app → Run tests → Deploy to Azure → Run migrations
+- **URL**: https://241runnersawareness-api.azurewebsites.net
+
+### **Deployment Architecture**
+- **Frontend**: GitHub Pages (Static hosting)
+- **Backend**: Azure App Service (.NET Core API)
+- **Database**: Azure SQL Database
+- **CI/CD**: GitHub Actions (Automated deployment)
+
+### **Live URLs**
+| Component | URL | Status |
+|-----------|-----|--------|
+| **Frontend** | https://241runnersawareness.org | ✅ Online |
+| **Backend API** | https://241runnersawareness-api.azurewebsites.net | ✅ Online |
+| **Health Check** | https://241runnersawareness-api.azurewebsites.net/health | ✅ Working |
+| **Swagger Docs** | https://241runnersawareness-api.azurewebsites.net/swagger | ✅ Available |
 
 ### Manual Deployment
 ```bash
 # Deploy to production
 .\manage-project.ps1 deploy
-```
 
-### Deployment Targets
-- **Static Site**: Netlify (https://241runnersawareness.org)
-- **Backend API**: Azure App Service
-- **Database**: Azure SQL Database
+# Test deployment status
+.\test-deployment.ps1
+```
 
 ## 🔒 Security
 
@@ -243,7 +298,8 @@ The project is automatically deployed to Netlify when changes are pushed to the 
 ### Documentation
 - [Branch Protection Setup](BRANCH_PROTECTION_SETUP.md)
 - [API Documentation](docs/api.md)
-- [Deployment Guide](docs/deployment.md)
+- [Deployment Guide](DEPLOYMENT_ARCHITECTURE.md)
+- [Setup Guide](FINAL_SETUP_CHECKLIST.md)
 
 ### Contact
 - **Email**: support@241runnersawareness.org
