@@ -130,6 +130,8 @@ namespace _241RunnersAwareness.BackendAPI
                 .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+                .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Connection", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
                 .WriteTo.File("logs/app-.txt", 
@@ -195,6 +197,11 @@ namespace _241RunnersAwareness.BackendAPI
                 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
                 var environment = builder.Environment.EnvironmentName;
                 
+                // Log connection string and environment for debugging
+                Log.Information("Environment: {Environment}", environment);
+                Log.Information("Connection String: {ConnectionString}", 
+                    connectionString?.Replace("Password=", "Password=***") ?? "NULL");
+                
                 if (environment == "Production")
                 {
                     // Use SQL Server for production
@@ -205,11 +212,13 @@ namespace _241RunnersAwareness.BackendAPI
                             maxRetryDelay: TimeSpan.FromSeconds(30),
                             errorNumbersToAdd: null);
                     });
+                    Log.Information("Using SQL Server for production");
                 }
                 else
                 {
                     // Use SQLite for development
                     options.UseSqlite(connectionString);
+                    Log.Information("Using SQLite for development");
                 }
                 
                 // Enable query tracking only when needed for better performance

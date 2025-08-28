@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using _241RunnersAwareness.BackendAPI.DBContext.Data;
 using _241RunnersAwareness.BackendAPI.DBContext.Models;
 using _241RunnersAwareness.BackendAPI.Services;
@@ -47,11 +48,50 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
         {
             try
             {
+                Log.Information("Testing database connection...");
+                
+                // Test basic connection
                 var userCount = await _context.Users.CountAsync();
-                return Ok(new { message = "Database connection working", userCount = userCount });
+                Log.Information("Database connection successful. User count: {UserCount}", userCount);
+                
+                // Test creating a test user (will be deleted)
+                var testUser = new User
+                {
+                    UserId = Guid.NewGuid(),
+                    Username = "test_user",
+                    Email = "test@example.com",
+                    FirstName = "Test",
+                    LastName = "User",
+                    FullName = "Test User",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("test123"),
+                    Role = "user",
+                    CreatedAt = DateTime.UtcNow,
+                    IsActive = true
+                };
+                
+                Log.Information("Creating test user: {Email}, {FirstName}, {LastName}", 
+                    testUser.Email, testUser.FirstName, testUser.LastName);
+                
+                _context.Users.Add(testUser);
+                await _context.SaveChangesAsync();
+                
+                Log.Information("Test user created successfully. UserId: {UserId}", testUser.UserId);
+                
+                // Delete the test user
+                _context.Users.Remove(testUser);
+                await _context.SaveChangesAsync();
+                
+                Log.Information("Test user deleted successfully");
+                
+                return Ok(new { 
+                    message = "Database connection and write operations working", 
+                    userCount = userCount,
+                    testWrite = "successful"
+                });
             }
             catch (Exception ex)
             {
+                Log.Error(ex, "Database test failed");
                 return StatusCode(500, new { message = "Database error", error = ex.Message });
             }
         }

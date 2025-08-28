@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
+using Serilog;
 using _241RunnersAwareness.BackendAPI.DBContext.Data;
 using _241RunnersAwareness.BackendAPI.DBContext.Models;
 
@@ -209,12 +210,23 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
         {
             try
             {
-                // Validate required fields
-                if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password) || 
-                    string.IsNullOrEmpty(request.FirstName) || string.IsNullOrEmpty(request.LastName))
+                // Validate ModelState
+                if (!ModelState.IsValid)
                 {
-                    return BadRequest(new { message = "Email, password, first name, and last name are required" });
+                    var errors = ModelState
+                        .Where(x => x.Value.Errors.Count > 0)
+                        .Select(x => new { Field = x.Key, Errors = x.Value.Errors.Select(e => e.ErrorMessage) })
+                        .ToList();
+                    
+                    return BadRequest(new { 
+                        message = "Validation failed", 
+                        errors = errors 
+                    });
                 }
+
+                // Log the incoming request for debugging
+                Log.Information("Creating admin user: {Email}, {FirstName}, {LastName}", 
+                    request.Email, request.FirstName, request.LastName);
 
                 // Check if user already exists
                 var existingUser = await _context.Users
@@ -245,8 +257,13 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                     EmailVerified = true
                 };
 
+                Log.Information("Adding admin user to context: {UserId}, {Email}, {FirstName}, {LastName}", 
+                    newAdmin.UserId, newAdmin.Email, newAdmin.FirstName, newAdmin.LastName);
+
                 _context.Users.Add(newAdmin);
                 await _context.SaveChangesAsync();
+
+                Log.Information("Admin user created successfully: {UserId}", newAdmin.UserId);
 
                 return Ok(new { 
                     message = "Admin user created successfully",
