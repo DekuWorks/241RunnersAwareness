@@ -157,22 +157,22 @@ class AdminUserManager {
         // Fallback to local authentication
         return this.authenticateAdminLocal(email, password);
       }
-    } catch (error) {
+        } catch (error) {
       console.log('Backend authentication failed, using local:', error);
-              // Temporary fallback for deployment period
-        if (email === 'contact@241runnersawareness.org' && password === 'runners241@') {
-          const tempUser = {
-            email: 'contact@241runnersawareness.org',
-            firstName: 'Main',
-            lastName: 'Admin',
-            role: 'superadmin',
-            userId: 'main-admin-1'
-          };
-          this.currentAdmin = tempUser;
-          this.createAdminSession(tempUser, 'temp-token');
-          return { success: true, user: tempUser, token: 'temp-token', message: 'Main admin access granted (backend deploying)' };
-        }
-      return this.authenticateAdminLocal(email, password);
+      // Temporary fallback for deployment period
+      if (email === 'contact@241runnersawareness.org' && password === 'runners241@') {
+        const tempUser = {
+          email: 'contact@241runnersawareness.org',
+          firstName: 'Main',
+          lastName: 'Admin',
+          role: 'superadmin',
+          userId: 'main-admin-1'
+        };
+        this.currentAdmin = tempUser;
+        this.createAdminSession(tempUser, 'temp-token');
+        return { success: true, user: tempUser, token: 'temp-token', message: 'Main admin access granted (backend deploying)' };
+      }
+      return { success: false, message: 'Admin user not found or invalid credentials' };
     }
   }
 
