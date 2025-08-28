@@ -1,0 +1,13 @@
+{
+  "name": "241runnersawareness",
+  "version": "1.0.0",
+  "description": "241 Runners Awareness - Main Repository",
+  "private": true,
+  "scripts": {
+    "lint": "echo 'No linting configured in root'",
+    "format:check": "echo 'No formatting check configured in root'",
+    "test": "echo 'No tests configured in root'"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}
