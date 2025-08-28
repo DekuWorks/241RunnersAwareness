@@ -549,16 +549,7 @@
       loadAdminUsers();
     });
 
-    // Load admin users
-    async function loadAdminUsers() {
-      const result = await adminUserManager.getAllAdminUsers();
-      
-      if (result.success) {
-        displayAdminUsers(result.users);
-      } else {
-        showMessage('Error loading admin users: ' + result.message, 'error');
-      }
-    }
+
 
     // Display admin users
     function displayAdminUsers(users) {
@@ -824,10 +815,64 @@
       }
     }
 
+    // Initialize page
+    async function initializePage() {
+      try {
+        console.log('Initializing admin management page...');
+        
+        // Initialize admin user manager
+        await adminUserManager.initialize();
+        
+        // Check if user is admin
+        if (!adminUserManager.isAdmin()) {
+          window.location.href = 'admin-login.html';
+          return;
+        }
+        
+        // Load current admin info
+        const currentAdmin = adminUserManager.getCurrentAdmin();
+        if (currentAdmin) {
+          document.getElementById('adminName').textContent = `${currentAdmin.firstName} ${currentAdmin.lastName}`;
+          document.getElementById('adminEmail').textContent = currentAdmin.email;
+        }
+        
+        // Load admin users list
+        await loadAdminUsers();
+        
+        console.log('Admin management page initialized successfully');
+      } catch (error) {
+        console.error('Error initializing admin management page:', error);
+        showMessage('Error loading page data', 'error');
+      }
+    }
+
+    // Load admin users
+    async function loadAdminUsers() {
+      try {
+        console.log('Loading admin users...');
+        const result = await adminUserManager.getAllAdminUsers();
+        
+        if (result.success) {
+          displayAdminUsers(result.users);
+        } else {
+          showMessage('Error loading admin users: ' + result.message, 'error');
+          // Show empty state
+          document.getElementById('adminList').innerHTML = '<p>No admin users found or error loading data.</p>';
+        }
+      } catch (error) {
+        console.error('Error loading admin users:', error);
+        showMessage('Error loading admin users', 'error');
+        document.getElementById('adminList').innerHTML = '<p>Error loading admin users.</p>';
+      }
+    }
+
     // Admin logout
     function adminLogout() {
       adminUserManager.logout();
     }
+
+    // Initialize page when DOM is loaded
+    document.addEventListener('DOMContentLoaded', initializePage);
   </script>
 </body>
 </html>
