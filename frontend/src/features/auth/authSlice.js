@@ -221,6 +221,16 @@ const authSlice = createSlice({
       state.isSuccess = false;
       state.twoFARequired = false;
       state.twoFAEmail = '';
+    },
+    
+    /**
+     * Clear Error
+     * 
+     * Clears the current error state.
+     * Used to clear error messages when user starts new actions.
+     */
+    clearError: (state) => {
+      state.error = null;
     }
   },
   
@@ -308,6 +318,14 @@ const authSlice = createSlice({
 });
 
 // Export actions and reducer
-export const { reset } = authSlice.actions;
+export const { reset, clearError } = authSlice.actions;
 export default authSlice.reducer;
+
+// Selectors
+export const selectUser = (state) => state.auth.user;
+export const selectIsAuthenticated = (state) => !!state.auth.user;
+export const selectAuthStatus = (state) => state.auth.loading ? 'loading' : state.auth.isSuccess ? 'succeeded' : 'idle';
+export const selectAuthError = (state) => state.auth.error;
+export const selectTwoFARequired = (state) => state.auth.twoFARequired;
+export const selectTwoFAEmail = (state) => state.auth.twoFAEmail;
 

@@ -1,143 +1,122 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { GoogleLogin } from '@react-oauth/google';
-import { Link, useNavigate } from 'react-router-dom';
-import { login, loginWithGoogle, reset, loginWith2FA } from '../features/auth/authSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { login, selectAuthStatus, selectAuthError, clearError } from '../features/auth/authSlice';
 
 const LoginPage = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { user, loading, error, isSuccess, twoFARequired, twoFAEmail } = useSelector((state) => state.auth);
-
   const [formData, setFormData] = useState({
     email: '',
-    password: '',
+    password: ''
   });
-  const [totp, setTotp] = useState('');
-  const [message, setMessage] = useState('');
+  const [errors, setErrors] = useState({});
 
-  const { email, password } = formData;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const authStatus = useSelector(selectAuthStatus);
+  const authError = useSelector(selectAuthError);
+
+  // Get the 'next' parameter from URL for redirection after login
+  const searchParams = new URLSearchParams(location.search);
+  const next = searchParams.get('next') || '/dashboard';
 
   useEffect(() => {
-    if (error) {
-      setMessage(error);
+    // Clear any existing errors when component mounts
+    dispatch(clearError());
+  }, [dispatch]);
+
+  useEffect(() => {
+    // Redirect to dashboard on successful login
+    if (authStatus === 'succeeded') {
+      navigate(next, { replace: true });
     }
-    if (isSuccess || user) {
-      navigate('/');
+  }, [authStatus, navigate, next]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    // Clear field error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
     }
-    dispatch(reset());
-  }, [user, isSuccess, error, navigate, dispatch]);
+  };
 
-  const onChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.email) newErrors.email = 'Email is required';
+    if (!formData.password) newErrors.password = 'Password is required';
+    return newErrors;
+  };
 
-  const handleTraditionalLogin = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage('');
-    dispatch(login({ email, password }));
-  };
+    
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
 
-  const handle2FASubmit = (e) => {
-    e.preventDefault();
-    setMessage('');
-    dispatch(loginWith2FA({ email: twoFAEmail, totp }));
-  };
-
-  const handleGoogleSuccess = (credentialResponse) => {
-    setMessage('');
-    dispatch(loginWithGoogle({ token: credentialResponse.credential }));
-  };
-
-  const handleGoogleError = () => {
-    setMessage('Google Login Failed. Please try again.');
+    dispatch(login(formData));
   };
 
   return (
     <div className="auth-container">
-      <h2>Log In</h2>
-      <div className="google-auth-container">
-        <GoogleLogin
-          onSuccess={handleGoogleSuccess}
-          onError={handleGoogleError}
-          text="signin_with"
-          shape="rectangular"
-          size="large"
-          logo_alignment="left"
-          theme="outline"
-        />
-      </div>
-      <div className="divider">
-        <span>or</span>
-      </div>
-      {message && (
-        <div className={message.includes('successful') ? 'success-message' : 'error-message'}>
-          {message}
+      <h2>Sign In</h2>
+      
+      {authError && (
+        <div className="error-message">
+          {authError}
         </div>
       )}
-      {!twoFARequired ? (
-        <form onSubmit={handleTraditionalLogin} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={email}
-              onChange={onChange}
-              required
-              placeholder="Enter your email"
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={password}
-              onChange={onChange}
-              required
-              placeholder="Enter your password"
-            />
-            <div className="forgot-password-link">
-              <Link to="/forgot-password">Forgot your password?</Link>
-            </div>
-          </div>
-          <button 
-            type="submit" 
-            className="auth-button"
-            disabled={loading}
-          >
-            {loading ? 'Logging in...' : 'Log In'}
-          </button>
-        </form>
-      ) : (
-        <form onSubmit={handle2FASubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="totp">Enter 2FA Code</label>
-            <input
-              type="text"
-              id="totp"
-              name="totp"
-              value={totp}
-              onChange={e => setTotp(e.target.value)}
-              required
-              maxLength={6}
-              pattern="\d{6}"
-              placeholder="6-digit code"
-              style={{ fontSize: 20, letterSpacing: 2, textAlign: 'center', width: 120 }}
-            />
-          </div>
-          <button
-            type="submit"
-            className="auth-button"
-            disabled={loading}
-          >
-            {loading ? 'Verifying...' : 'Verify 2FA'}
-          </button>
-        </form>
-      )}
+
+      <form onSubmit={handleSubmit} className="auth-form">
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            placeholder="Enter your email"
+            className={errors.email ? 'error' : ''}
+          />
+          {errors.email && <span className="error-text">{errors.email}</span>}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            placeholder="Enter your password"
+            className={errors.password ? 'error' : ''}
+          />
+          {errors.password && <span className="error-text">{errors.password}</span>}
+        </div>
+
+        <button type="submit" className="auth-button" disabled={authStatus === 'loading'}>
+          {authStatus === 'loading' ? 'Signing In...' : 'Sign In'}
+        </button>
+      </form>
+      
       <div className="auth-links">
-        <Link to="/register">Don't have an account? Sign up</Link>
+        <Link to="/forgot-password">Forgot your password?</Link>
+        <Link to={`/signup${next !== '/dashboard' ? `?next=${encodeURIComponent(next)}` : ''}`}>
+          Don't have an account? Sign up
+        </Link>
       </div>
     </div>
   );

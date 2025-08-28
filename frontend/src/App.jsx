@@ -37,6 +37,7 @@ import Terms from "./pages/Terms";
 import Offline from "./pages/Offline";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 
@@ -51,6 +52,9 @@ import ReportCaseForm from "./pages/ReportCaseForm";
 import MyCasesTable from "./pages/MyCasesTable";
 import CaseDetail from "./pages/CaseDetail";
 import PublicCaseView from "./pages/PublicCaseView";
+import RunnerProfilePage from "./pages/RunnerProfilePage";
+import RunnersListPage from "./pages/RunnersListPage";
+import CreateRunnerPage from "./pages/CreateRunnerPage";
 
 // Utility components
 import NotFound from "./pages/NotFound.jsx";
@@ -114,6 +118,7 @@ function App() {
           {/* Authentication pages - User registration and login */}
           <Route path="register" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
+          <Route path="signup" element={<SignupPage />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="reset-password" element={<ResetPassword />} />
 
@@ -154,6 +159,39 @@ function App() {
             element={
               <ProtectedRoute>
                 <CaseDetail />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* 
+            ============================================
+            RUNNERS ROUTES
+            ============================================
+            
+            These routes are for managing runner profiles.
+            Protected routes require authentication.
+          */}
+          <Route
+            path="runners"
+            element={
+              <ProtectedRoute>
+                <RunnersListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="runners/new"
+            element={
+              <ProtectedRoute>
+                <CreateRunnerPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="runners/:id"
+            element={
+              <ProtectedRoute>
+                <RunnerProfilePage />
               </ProtectedRoute>
             }
           />

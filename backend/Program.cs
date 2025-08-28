@@ -29,7 +29,6 @@ using Microsoft.Extensions.Hosting;
 
 // Database and Entity Framework imports
 using _241RunnersAwareness.BackendAPI.DBContext.Data;
-using _241RunnersAwareness.BackendAPI.DBContext.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
 
@@ -79,49 +78,6 @@ namespace _241RunnersAwareness.BackendAPI
         {
             // 
             // ============================================
-            // ENVIRONMENT VARIABLES LOADING
-            // ============================================
-            
-            // Load environment variables from .env file for development
-            var envPath = Path.Combine(Directory.GetCurrentDirectory(), ".env");
-            if (File.Exists(envPath))
-            {
-                foreach (var line in File.ReadAllLines(envPath))
-                {
-                    if (!string.IsNullOrWhiteSpace(line) && !line.StartsWith("#"))
-                    {
-                        var parts = line.Split('=', 2);
-                        if (parts.Length == 2)
-                        {
-                            Environment.SetEnvironmentVariable(parts[0].Trim(), parts[1].Trim());
-                        }
-                    }
-                }
-            }
-            
-            // Also load from env.local if it exists (fallback)
-            var envLocalPath = Path.Combine(Directory.GetCurrentDirectory(), "env.local");
-            if (File.Exists(envLocalPath))
-            {
-                foreach (var line in File.ReadAllLines(envLocalPath))
-                {
-                    if (!string.IsNullOrWhiteSpace(line) && !line.StartsWith("#"))
-                    {
-                        var parts = line.Split('=', 2);
-                        if (parts.Length == 2)
-                        {
-                            // Only set if not already set by .env file
-                            if (Environment.GetEnvironmentVariable(parts[0].Trim()) == null)
-                            {
-                                Environment.SetEnvironmentVariable(parts[0].Trim(), parts[1].Trim());
-                            }
-                        }
-                    }
-                }
-            }
-            
-            // 
-            // ============================================
             // LOGGING CONFIGURATION
             // ============================================
             
@@ -130,8 +86,6 @@ namespace _241RunnersAwareness.BackendAPI
                 .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Information)
-                .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Connection", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
                 .WriteTo.File("logs/app-.txt", 
@@ -174,51 +128,33 @@ namespace _241RunnersAwareness.BackendAPI
             // Add Serilog to the application
             builder.Host.UseSerilog();
             
-            // Add Sentry to the application (only if DSN is configured)
-            var sentryDsn = builder.Configuration["Sentry:Dsn"];
-            if (!string.IsNullOrEmpty(sentryDsn) && sentryDsn != "https://your-sentry-dsn@your-sentry-instance.ingest.sentry.io/your-project-id")
+            // Add Sentry to the application
+            builder.WebHost.UseSentry(options =>
             {
-                builder.WebHost.UseSentry(options =>
-                {
-                    options.Dsn = sentryDsn;
-                    options.Environment = "development";
-                    options.Release = "241runners-awareness@1.0.0";
-                    options.TracesSampleRate = 1.0;
-                    options.SendDefaultPii = false;
-                });
-            }
+                options.Dsn = "https://your-sentry-dsn@your-sentry-instance.ingest.sentry.io/your-project-id"; // Replace with actual Sentry DSN
+                options.Environment = "development";
+                options.Release = "241runners-awareness@1.0.0";
+                options.TracesSampleRate = 1.0;
+                options.SendDefaultPii = false;
+            });
             
             // Add MVC controllers for API endpoints
             builder.Services.AddControllers();
             
-            // Configure Entity Framework with appropriate database provider
+            // Configure Entity Framework with SQLite for development, SQL Server for production
             builder.Services.AddDbContext<RunnersDbContext>(options =>
             {
-                var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
                 var environment = builder.Environment.EnvironmentName;
-                
-                // Log connection string and environment for debugging
-                Log.Information("Environment: {Environment}", environment);
-                Log.Information("Connection String: {ConnectionString}", 
-                    connectionString?.Replace("Password=", "Password=***") ?? "NULL");
                 
                 if (environment == "Production")
                 {
-                    // Use SQL Server for production
-                    options.UseSqlServer(connectionString, sqlServerOptionsAction: sqlOptions =>
-                    {
-                        sqlOptions.EnableRetryOnFailure(
-                            maxRetryCount: 5,
-                            maxRetryDelay: TimeSpan.FromSeconds(30),
-                            errorNumbersToAdd: null);
-                    });
-                    Log.Information("Using SQL Server for production");
+                    var connectionString = builder.Configuration.GetConnectionString("ProductionConnection");
+                    options.UseSqlServer(connectionString);
                 }
                 else
                 {
-                    // Use SQLite for development
+                    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
                     options.UseSqlite(connectionString);
-                    Log.Information("Using SQLite for development");
                 }
                 
                 // Enable query tracking only when needed for better performance
@@ -247,8 +183,8 @@ namespace _241RunnersAwareness.BackendAPI
                         factory: partition => new FixedWindowRateLimiterOptions
                         {
                             AutoReplenishment = true,
-                            PermitLimit = 100, // Default value
-                            Window = TimeSpan.FromMinutes(1) // Default value
+                            PermitLimit = int.Parse(builder.Configuration["RateLimiting:PermitLimit"] ?? "100"),
+                            Window = TimeSpan.Parse(builder.Configuration["RateLimiting:Window"] ?? "00:01:00")
                         }));
             });
 
@@ -257,7 +193,7 @@ namespace _241RunnersAwareness.BackendAPI
                 .AddDbContextCheck<RunnersDbContext>("database")
                 .AddCheck("memory", () =>
                 {
-                    var memoryThreshold = 1024L; // Default value in MB
+                    var memoryThreshold = long.Parse(builder.Configuration["HealthChecks:MemoryThreshold"] ?? "1024");
                     var memoryUsage = GC.GetTotalMemory(false) / 1024 / 1024; // MB
                     return memoryUsage < memoryThreshold ? HealthCheckResult.Healthy() : HealthCheckResult.Degraded();
                 });
@@ -407,14 +343,38 @@ namespace _241RunnersAwareness.BackendAPI
                 app.UseSwaggerUI();      // Serve Swagger UI interface
             }
 
-            // Redirect HTTP requests to HTTPS for security (disabled in development)
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseHttpsRedirection();
-            }
+            // Redirect HTTP requests to HTTPS for security
+            app.UseHttpsRedirection();
 
             // Enable CORS with the configured policy
             app.UseCors("AllowAll");
+
+            // Enable static file serving for HTML, CSS, JS files
+            app.UseStaticFiles();
+            
+            // Admin dashboard routing for Azure subdomain
+            app.Use(async (context, next) =>
+            {
+                var host = context.Request.Host.Host.ToLower();
+                
+                // If accessing the Azure subdomain, serve admin portal
+                if (host.Contains("241runnersawareness-api.azurewebsites.net"))
+                {
+                    // If accessing root path, serve admin index
+                    if (context.Request.Path.Value == "/" || string.IsNullOrEmpty(context.Request.Path.Value))
+                    {
+                        context.Request.Path = "/admin-index.html";
+                    }
+                }
+                
+                await next();
+            });
+            
+            // Configure default document
+            app.UseDefaultFiles(new DefaultFilesOptions
+            {
+                DefaultFileNames = new List<string> { "index.html" }
+            });
 
             // Enable authentication and authorization middleware
             app.UseAuthentication();     // Validate JWT tokens
@@ -473,89 +433,13 @@ namespace _241RunnersAwareness.BackendAPI
             // DATABASE SEEDING
             // ============================================
             
-            // Seed the database with initial data (non-blocking)
-            try
+            // Seed the database with initial data
+            using (var scope = app.Services.CreateScope())
             {
-                Log.Information("Starting database seeding process...");
-                
-                using (var scope = app.Services.CreateScope())
-                {
-                    var context = scope.ServiceProvider.GetRequiredService<RunnersDbContext>();
-                    
-                    Log.Information("Testing database connection...");
-                    
-                    // Test database connection first
-                    try
-                    {
-                        var testCount = await context.Users.CountAsync();
-                        Log.Information("Database connection successful. Current user count: {UserCount}", testCount);
-                    }
-                    catch (Exception dbEx)
-                    {
-                        Log.Error(dbEx, "Database connection failed: {Message}", dbEx.Message);
-                        throw; // Re-throw to see the full error
-                    }
-                    
-                    // Ensure database is created
-                    Log.Information("Ensuring database schema is created...");
-                    await context.Database.EnsureCreatedAsync();
-                    Log.Information("Database schema created successfully");
-                    
-                    // Create main admin user if it doesn't exist
-                    Log.Information("Checking for main admin user...");
-                    if (!context.Users.Any(u => u.Email == "contact@241runnersawareness.org"))
-                    {
-                        Log.Information("Creating main admin user...");
-                        
-                        var mainAdmin = new User
-                        {
-                            UserId = Guid.NewGuid(),
-                            Email = "contact@241runnersawareness.org",
-                            FirstName = "Main",
-                            LastName = "Admin",
-                            FullName = "Main Admin",
-                            Username = "main_admin",
-                            Role = "superadmin",
-                            Organization = "241 Runners Awareness",
-                            Credentials = "System Administrator",
-                            Specialization = "System Management",
-                            YearsOfExperience = "5+",
-                            EmailVerified = true,
-                            PhoneVerified = true,
-                            IsActive = true,
-                            CreatedAt = DateTime.UtcNow,
-                            LastLoginAt = DateTime.UtcNow
-                        };
-                        
-                        // Hash the password with BCrypt
-                        mainAdmin.PasswordHash = BCrypt.Net.BCrypt.HashPassword("runners241@");
-                        
-                        Log.Information("Adding main admin user to context: {Email}, {FirstName}, {LastName}", 
-                            mainAdmin.Email, mainAdmin.FirstName, mainAdmin.LastName);
-                        
-                        context.Users.Add(mainAdmin);
-                        await context.SaveChangesAsync();
-                        
-                        Log.Information("Main admin user created successfully: {Email}, UserId: {UserId}", 
-                            mainAdmin.Email, mainAdmin.UserId);
-                    }
-                    else
-                    {
-                        Log.Information("Main admin user already exists");
-                    }
-                    
-                    // Log database status
-                    var userCount = await context.Users.CountAsync();
-                    Log.Information("Database seeding completed successfully. Total users: {UserCount}", userCount);
-                }
+                var seedService = scope.ServiceProvider.GetRequiredService<SeedDataService>();
+                await seedService.SeedDataAsync();
             }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Error seeding database: {Message}", ex.Message);
-                Log.Error("Stack trace: {StackTrace}", ex.StackTrace);
-                // Don't throw - continue startup to allow the app to run
-            }
-            
+
             // 
             // ============================================
             // APPLICATION STARTUP

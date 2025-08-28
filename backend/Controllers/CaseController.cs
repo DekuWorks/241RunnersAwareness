@@ -74,6 +74,75 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
             }
         }
 
+        // GET: api/cases?individualId={id} - Get cases for a specific individual
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CaseDto>>> GetCasesByIndividual([FromQuery] int? individualId = null)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                var isAdmin = IsAdmin();
+
+                if (userId == null)
+                {
+                    return Unauthorized(new { message = "User not authenticated" });
+                }
+
+                var query = _context.Cases
+                    .Include(c => c.Individual)
+                    .Include(c => c.Updates.OrderByDescending(u => u.CreatedAt).Take(1))
+                    .AsQueryable();
+
+                // If individualId is provided, filter by it
+                if (individualId.HasValue)
+                {
+                    query = query.Where(c => c.IndividualId == individualId.Value);
+                }
+
+                // Apply ownership filter - non-admins can only see their own cases
+                if (!isAdmin)
+                {
+                    query = query.Where(c => c.OwnerUserId == userId);
+                }
+
+                var cases = await query
+                    .OrderByDescending(c => c.LastUpdatedAt)
+                    .Select(c => new CaseDto
+                    {
+                        Id = c.Id,
+                        CaseNumber = c.CaseNumber,
+                        PublicSlug = c.PublicSlug,
+                        Title = c.Title,
+                        Description = c.Description,
+                        Status = c.Status,
+                        Priority = c.Priority,
+                        RiskLevel = c.RiskLevel,
+                        LastSeenLocation = c.LastSeenLocation,
+                        LastSeenDate = c.LastSeenDate,
+                        IsPublic = c.IsPublic,
+                        CreatedAt = c.CreatedAt,
+                        UpdatedAt = c.UpdatedAt,
+                        LastUpdatedAt = c.LastUpdatedAt,
+                        IndividualName = c.Individual != null ? c.Individual.FullName : null,
+                        UpdateCount = c.Updates.Count,
+                        LatestUpdate = c.Updates.FirstOrDefault() != null ? new CaseUpdateDto
+                        {
+                            Id = c.Updates.First().Id,
+                            Title = c.Updates.First().Title,
+                            UpdateType = c.Updates.First().UpdateType,
+                            CreatedAt = c.Updates.First().CreatedAt
+                        } : null
+                    })
+                    .ToListAsync();
+
+                return Ok(cases);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while retrieving cases", error = ex.Message });
+            }
+        }
+
         // POST: api/cases
         [HttpPost]
         public async Task<ActionResult<CaseDto>> CreateCase(CreateCaseRequest request)
@@ -92,6 +161,84 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                     return BadRequest(new { message = "Title and description are required" });
                 }
 
+                if (string.IsNullOrEmpty(request.FirstName) || string.IsNullOrEmpty(request.LastName))
+                {
+                    return BadRequest(new { message = "First name and last name are required" });
+                }
+
+                // Create the Individual first
+                var individual = new Individual
+                {
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
+                    MiddleName = request.MiddleName,
+                    DateOfBirth = request.DateOfBirth,
+                    Gender = request.Gender,
+                    LastKnownAddress = request.LastKnownAddress,
+                    Address = request.Address,
+                    City = request.City,
+                    State = request.State,
+                    ZipCode = request.ZipCode,
+                    PhoneNumber = request.PhoneNumber,
+                    Email = request.Email,
+                    Height = request.Height,
+                    Weight = request.Weight,
+                    HairColor = request.HairColor,
+                    EyeColor = request.EyeColor,
+                    DistinguishingFeatures = request.DistinguishingFeatures,
+                    PrimaryDisability = request.PrimaryDisability,
+                    DisabilityDescription = request.DisabilityDescription,
+                    CommunicationMethod = request.CommunicationMethod,
+                    CommunicationNeeds = request.CommunicationNeeds,
+                    IsNonVerbal = request.IsNonVerbal,
+                    UsesAACDevice = request.UsesAACDevice,
+                    AACDeviceType = request.AACDeviceType,
+                    MobilityStatus = request.MobilityStatus,
+                    UsesWheelchair = request.UsesWheelchair,
+                    UsesMobilityDevice = request.UsesMobilityDevice,
+                    MobilityDeviceType = request.MobilityDeviceType,
+                    HasVisualImpairment = request.HasVisualImpairment,
+                    HasHearingImpairment = request.HasHearingImpairment,
+                    HasSensoryProcessingDisorder = request.HasSensoryProcessingDisorder,
+                    SensoryTriggers = request.SensoryTriggers,
+                    SensoryComforts = request.SensoryComforts,
+                    BehavioralTriggers = request.BehavioralTriggers,
+                    CalmingTechniques = request.CalmingTechniques,
+                    MayWanderOrElope = request.MayWanderOrElope,
+                    IsAttractedToWater = request.IsAttractedToWater,
+                    IsAttractedToRoads = request.IsAttractedToRoads,
+                    IsAttractedToBrightLights = request.IsAttractedToBrightLights,
+                    WanderingPatterns = request.WanderingPatterns,
+                    PreferredLocations = request.PreferredLocations,
+                    MedicalConditions = request.MedicalConditions,
+                    Medications = request.Medications,
+                    Allergies = request.Allergies,
+                    RequiresMedication = request.RequiresMedication,
+                    MedicationSchedule = request.MedicationSchedule,
+                    HasSeizureDisorder = request.HasSeizureDisorder,
+                    SeizureTriggers = request.SeizureTriggers,
+                    HasDiabetes = request.HasDiabetes,
+                    HasAsthma = request.HasAsthma,
+                    HasHeartCondition = request.HasHeartCondition,
+                    EmergencyResponseInstructions = request.EmergencyResponseInstructions,
+                    PreferredEmergencyContact = request.PreferredEmergencyContact,
+                    ShouldCall911 = request.ShouldCall911,
+                    SpecialInstructionsForFirstResponders = request.SpecialInstructionsForFirstResponders,
+                    EnableRealTimeAlerts = request.EnableRealTimeAlerts,
+                    EnableSMSAlerts = request.EnableSMSAlerts,
+                    EnableEmailAlerts = request.EnableEmailAlerts,
+                    EnablePushNotifications = request.EnablePushNotifications,
+                    AlertRadius = request.AlertRadius,
+                    AlertRadiusMiles = request.AlertRadiusMiles,
+                    HasGPSDevice = request.HasGPSDevice,
+                    GPSDeviceType = request.GPSDeviceType,
+                    Latitude = request.Latitude,
+                    Longitude = request.Longitude
+                };
+
+                _context.Individuals.Add(individual);
+                await _context.SaveChangesAsync();
+
                 // Generate unique case number and slug
                 var caseNumber = await GenerateUniqueCaseNumber();
                 var publicSlug = await GenerateUniquePublicSlug(request.Title);
@@ -100,12 +247,13 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                 {
                     CaseNumber = caseNumber,
                     PublicSlug = publicSlug,
+                    IndividualId = individual.Id,
                     OwnerUserId = userId.Value,
                     Title = request.Title,
                     Description = request.Description,
-                    Status = request.Status ?? "Open",
+                    Status = request.Status ?? "Active",
                     Priority = request.Priority ?? "Medium",
-                    RiskLevel = request.RiskLevel ?? "Unknown",
+                    RiskLevel = request.RiskLevel ?? "Medium",
                     LastSeenLocation = request.LastSeenLocation,
                     LastSeenDate = request.LastSeenDate,
                     LawEnforcementCaseNumber = request.LawEnforcementCaseNumber,
@@ -115,7 +263,9 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                     IsPublic = request.IsPublic ?? false,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
-                    LastUpdatedAt = DateTime.UtcNow
+                    LastUpdatedAt = DateTime.UtcNow,
+                    CreatedBy = GetCurrentUserEmail(),
+                    UpdatedBy = GetCurrentUserEmail()
                 };
 
                 _context.Cases.Add(newCase);
@@ -138,6 +288,7 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                     CreatedAt = newCase.CreatedAt,
                     UpdatedAt = newCase.UpdatedAt,
                     LastUpdatedAt = newCase.LastUpdatedAt,
+                    IndividualName = individual.FullName,
                     UpdateCount = 0
                 };
 
@@ -537,6 +688,12 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
         {
             var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
             return roleClaim == "admin";
+        }
+
+        private string GetCurrentUserEmail()
+        {
+            var emailClaim = User.FindFirst(ClaimTypes.Email)?.Value;
+            return emailClaim ?? "unknown@example.com";
         }
 
         private async Task<string> GenerateUniqueCaseNumber()

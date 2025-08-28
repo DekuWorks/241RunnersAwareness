@@ -1,0 +1,76 @@
+2025-08-24 14:05:46.630 -04:00 [INF] Starting 241 Runners Awareness API
+2025-08-24 14:05:46.827 -04:00 [FTL] Application terminated unexpectedly
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at _241RunnersAwareness.BackendAPI.Program.Main(String[] args) in C:\Users\mibro\OneDrive\Desktop\Dev Folders\241RunnersAwareness\backend\Program.cs:line 313
+2025-08-24 14:05:56.383 -04:00 [INF] Starting 241 Runners Awareness API
+2025-08-24 14:05:56.476 -04:00 [FTL] Application terminated unexpectedly
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at _241RunnersAwareness.BackendAPI.Program.Main(String[] args) in C:\Users\mibro\OneDrive\Desktop\Dev Folders\241RunnersAwareness\backend\Program.cs:line 313
+2025-08-24 14:38:55.740 -04:00 [INF] Starting 241 Runners Awareness API
+2025-08-24 14:38:57.187 -04:00 [WRN] The foreign key property 'Case.IndividualId1' was created in shadow state because a conflicting property with the simple name 'IndividualId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2025-08-24 16:31:11.161 -04:00 [INF] Starting 241 Runners Awareness API
+2025-08-24 16:31:12.054 -04:00 [WRN] The foreign key property 'Case.IndividualId1' was created in shadow state because a conflicting property with the simple name 'IndividualId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2025-08-24 16:31:12.360 -04:00 [WRN] The WebRootPath was not found: C:\Users\mibro\OneDrive\Desktop\Dev Folders\241RunnersAwareness\backend\wwwroot. Static files may be unavailable.
+2025-08-24 16:34:42.068 -04:00 [INF] Starting 241 Runners Awareness API
+2025-08-24 16:34:42.664 -04:00 [WRN] The foreign key property 'Case.IndividualId1' was created in shadow state because a conflicting property with the simple name 'IndividualId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2025-08-24 16:36:29.152 -04:00 [INF] Starting 241 Runners Awareness API
+2025-08-24 16:36:29.733 -04:00 [WRN] The foreign key property 'Case.IndividualId1' was created in shadow state because a conflicting property with the simple name 'IndividualId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2025-08-24 16:36:49.718 -04:00 [WRN] Failed to determine the https port for redirect.
+2025-08-24 16:41:19.347 -04:00 [INF] Starting 241 Runners Awareness API
+2025-08-24 16:41:19.938 -04:00 [WRN] The foreign key property 'Case.IndividualId1' was created in shadow state because a conflicting property with the simple name 'IndividualId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2025-08-24 17:22:53.348 -04:00 [INF] Starting 241 Runners Awareness API
+2025-08-24 17:22:53.453 -04:00 [FTL] Application terminated unexpectedly
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at _241RunnersAwareness.BackendAPI.Program.Main(String[] args) in C:\Users\mibro\OneDrive\Desktop\Dev Folders\241RunnersAwareness\backend\Program.cs:line 313
+2025-08-24 17:28:54.725 -04:00 [INF] Starting 241 Runners Awareness API
+2025-08-24 17:28:54.903 -04:00 [FTL] Application terminated unexpectedly
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at _241RunnersAwareness.BackendAPI.Program.Main(String[] args) in C:\Users\mibro\OneDrive\Desktop\Dev Folders\241RunnersAwareness\backend\Program.cs:line 322
+2025-08-24 17:29:02.573 -04:00 [INF] Starting 241 Runners Awareness API
+2025-08-24 17:29:02.679 -04:00 [FTL] Application terminated unexpectedly
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at _241RunnersAwareness.BackendAPI.Program.Main(String[] args) in C:\Users\mibro\OneDrive\Desktop\Dev Folders\241RunnersAwareness\backend\Program.cs:line 322
+2025-08-24 17:31:17.505 -04:00 [INF] Starting 241 Runners Awareness API
+2025-08-24 17:31:17.689 -04:00 [FTL] Application terminated unexpectedly
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at _241RunnersAwareness.BackendAPI.Program.Main(String[] args) in C:\Users\mibro\OneDrive\Desktop\Dev Folders\241RunnersAwareness\backend\Program.cs:line 323
+2025-08-24 17:31:48.252 -04:00 [INF] Starting 241 Runners Awareness API
+2025-08-24 17:31:49.570 -04:00 [WRN] The foreign key property 'Case.IndividualId1' was created in shadow state because a conflicting property with the simple name 'IndividualId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2025-08-24 17:33:59.983 -04:00 [INF] Starting 241 Runners Awareness API
+2025-08-24 17:34:00.663 -04:00 [WRN] The foreign key property 'Case.IndividualId1' was created in shadow state because a conflicting property with the simple name 'IndividualId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.

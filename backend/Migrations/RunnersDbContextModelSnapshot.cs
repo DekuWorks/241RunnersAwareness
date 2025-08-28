@@ -17,6 +17,76 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
 
+            modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.Activity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ActivityType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("IndividualId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("Location")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("Metadata")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("RelatedCaseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("RelatedPhotoId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActivityType")
+                        .HasDatabaseName("IX_Activities_ActivityType");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_Activities_CreatedAt");
+
+                    b.HasIndex("IndividualId")
+                        .HasDatabaseName("IX_Activities_IndividualId");
+
+                    b.HasIndex("RelatedCaseId")
+                        .HasDatabaseName("IX_Activities_RelatedCaseId");
+
+                    b.HasIndex("RelatedPhotoId")
+                        .HasDatabaseName("IX_Activities_RelatedPhotoId");
+
+                    b.ToTable("Activities");
+                });
+
             modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.AlertLog", b =>
                 {
                     b.Property<int>("Id")
@@ -172,6 +242,9 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                     b.Property<int>("IndividualId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("IndividualId1")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("InvestigatingAgency")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -290,6 +363,8 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                         .HasDatabaseName("IX_Cases_CreatedAt");
 
                     b.HasIndex("IndividualId");
+
+                    b.HasIndex("IndividualId1");
 
                     b.HasIndex("IsActive")
                         .HasDatabaseName("IX_Cases_IsActive");
@@ -1007,6 +1082,12 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("OwnerUserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("OwnerUserUserId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("PassportNumber")
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
@@ -1039,6 +1120,10 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("RiskLevel")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RunnerId")
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
@@ -1078,6 +1163,11 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("State")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
@@ -1136,6 +1226,8 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
 
                     b.HasIndex("NAMUSCaseNumber")
                         .HasDatabaseName("IX_Individuals_NAMUSCaseNumber");
+
+                    b.HasIndex("OwnerUserUserId");
 
                     b.HasIndex("State")
                         .HasDatabaseName("IX_Individuals_State");
@@ -1320,6 +1412,70 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Partnerships");
+                });
+
+            modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.Photo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Caption")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ContentType")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FileName")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("FileSize")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ImageType")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("IndividualId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UploadedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IndividualId")
+                        .HasDatabaseName("IX_Photos_IndividualId");
+
+                    b.HasIndex("IsPrimary")
+                        .HasDatabaseName("IX_Photos_IsPrimary");
+
+                    b.HasIndex("UploadedAt")
+                        .HasDatabaseName("IX_Photos_UploadedAt");
+
+                    b.ToTable("Photos");
                 });
 
             modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.Product", b =>
@@ -1799,6 +1955,31 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.Activity", b =>
+                {
+                    b.HasOne("_241RunnersAwareness.BackendAPI.DBContext.Models.Individual", "Individual")
+                        .WithMany("Activities")
+                        .HasForeignKey("IndividualId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("_241RunnersAwareness.BackendAPI.DBContext.Models.Case", "RelatedCase")
+                        .WithMany()
+                        .HasForeignKey("RelatedCaseId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("_241RunnersAwareness.BackendAPI.DBContext.Models.Photo", "RelatedPhoto")
+                        .WithMany()
+                        .HasForeignKey("RelatedPhotoId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Individual");
+
+                    b.Navigation("RelatedCase");
+
+                    b.Navigation("RelatedPhoto");
+                });
+
             modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.AlertLog", b =>
                 {
                     b.HasOne("_241RunnersAwareness.BackendAPI.DBContext.Models.Individual", "Individual")
@@ -1817,6 +1998,10 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                         .HasForeignKey("IndividualId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("_241RunnersAwareness.BackendAPI.DBContext.Models.Individual", null)
+                        .WithMany("Cases")
+                        .HasForeignKey("IndividualId1");
 
                     b.HasOne("_241RunnersAwareness.BackendAPI.DBContext.Models.User", "OwnerUser")
                         .WithMany()
@@ -1911,6 +2096,15 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                     b.Navigation("Individual");
                 });
 
+            modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.Individual", b =>
+                {
+                    b.HasOne("_241RunnersAwareness.BackendAPI.DBContext.Models.User", "OwnerUser")
+                        .WithMany()
+                        .HasForeignKey("OwnerUserUserId");
+
+                    b.Navigation("OwnerUser");
+                });
+
             modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.OrderItem", b =>
                 {
                     b.HasOne("_241RunnersAwareness.BackendAPI.DBContext.Models.Order", "Order")
@@ -1935,6 +2129,17 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("Variant");
+                });
+
+            modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.Photo", b =>
+                {
+                    b.HasOne("_241RunnersAwareness.BackendAPI.DBContext.Models.Individual", "Individual")
+                        .WithMany("Photos")
+                        .HasForeignKey("IndividualId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Individual");
                 });
 
             modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.Product", b =>
@@ -2008,13 +2213,19 @@ namespace _241RunnersAwareness.BackendAPI.Migrations
 
             modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.Individual", b =>
                 {
+                    b.Navigation("Activities");
+
                     b.Navigation("AlertLogs");
+
+                    b.Navigation("Cases");
 
                     b.Navigation("Documents");
 
                     b.Navigation("EmergencyContacts");
 
                     b.Navigation("Images");
+
+                    b.Navigation("Photos");
                 });
 
             modelBuilder.Entity("_241RunnersAwareness.BackendAPI.DBContext.Models.Order", b =>
