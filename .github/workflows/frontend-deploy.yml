@@ -1,24 +1,25 @@
-name: Deploy Frontend to GitHub Pages
+# DISABLED: This workflow is disabled in favor of static site deployment
+# name: Deploy Frontend to GitHub Pages
 
-on:
-  push:
-    branches: [ main ]
-    paths:
-      - '*.html'
-      - '*.css'
-      - '*.js'
-      - 'frontend/**'
-      - 'public/**'
-      - '!backend/**'
-  pull_request:
-    branches: [ main ]
-    paths:
-      - '*.html'
-      - '*.css'
-      - '*.js'
-      - 'frontend/**'
-      - 'public/**'
-      - '!backend/**'
+# on:
+#   push:
+#     branches: [ main ]
+#     paths:
+#       - '*.html'
+#       - '*.css'
+#       - '*.js'
+#       - 'frontend/**'
+#       - 'public/**'
+#       - '!backend/**'
+#   pull_request:
+#     branches: [ main ]
+#     paths:
+#       - '*.html'
+#       - '*.css'
+#       - '*.js'
+#       - 'frontend/**'
+#       - 'public/**'
+#       - '!backend/**'
 
 permissions:
   contents: read
