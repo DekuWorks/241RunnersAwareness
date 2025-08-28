@@ -476,16 +476,37 @@ namespace _241RunnersAwareness.BackendAPI
             // Seed the database with initial data (non-blocking)
             try
             {
+                Log.Information("Starting database seeding process...");
+                
                 using (var scope = app.Services.CreateScope())
                 {
                     var context = scope.ServiceProvider.GetRequiredService<RunnersDbContext>();
                     
+                    Log.Information("Testing database connection...");
+                    
+                    // Test database connection first
+                    try
+                    {
+                        var testCount = await context.Users.CountAsync();
+                        Log.Information("Database connection successful. Current user count: {UserCount}", testCount);
+                    }
+                    catch (Exception dbEx)
+                    {
+                        Log.Error(dbEx, "Database connection failed: {Message}", dbEx.Message);
+                        throw; // Re-throw to see the full error
+                    }
+                    
                     // Ensure database is created
+                    Log.Information("Ensuring database schema is created...");
                     await context.Database.EnsureCreatedAsync();
+                    Log.Information("Database schema created successfully");
                     
                     // Create main admin user if it doesn't exist
+                    Log.Information("Checking for main admin user...");
                     if (!context.Users.Any(u => u.Email == "contact@241runnersawareness.org"))
                     {
+                        Log.Information("Creating main admin user...");
+                        
                         var mainAdmin = new User
                         {
                             UserId = Guid.NewGuid(),
@@ -509,10 +530,14 @@ namespace _241RunnersAwareness.BackendAPI
                         // Hash the password with BCrypt
                         mainAdmin.PasswordHash = BCrypt.Net.BCrypt.HashPassword("runners241@");
                         
+                        Log.Information("Adding main admin user to context: {Email}, {FirstName}, {LastName}", 
+                            mainAdmin.Email, mainAdmin.FirstName, mainAdmin.LastName);
+                        
                         context.Users.Add(mainAdmin);
                         await context.SaveChangesAsync();
                         
-                        Log.Information("Main admin user created successfully: {Email}", mainAdmin.Email);
+                        Log.Information("Main admin user created successfully: {Email}, UserId: {UserId}", 
+                            mainAdmin.Email, mainAdmin.UserId);
                     }
                     else
                     {
@@ -521,12 +546,14 @@ namespace _241RunnersAwareness.BackendAPI
                     
                     // Log database status
                     var userCount = await context.Users.CountAsync();
-                    Log.Information("Database initialized with {UserCount} users", userCount);
+                    Log.Information("Database seeding completed successfully. Total users: {UserCount}", userCount);
                 }
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Error seeding database - continuing startup");
+                Log.Error(ex, "Error seeding database: {Message}", ex.Message);
+                Log.Error("Stack trace: {StackTrace}", ex.StackTrace);
+                // Don't throw - continue startup to allow the app to run
             }
             
             // 
