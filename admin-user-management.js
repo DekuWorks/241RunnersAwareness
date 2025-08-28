@@ -158,8 +158,8 @@ class AdminUserManager {
         return this.authenticateAdminLocal(email, password);
       }
         } catch (error) {
-      console.log('Backend authentication failed, using local:', error);
-      // Temporary fallback for deployment period
+      console.log('Backend authentication failed:', error);
+      // Temporary fallback while backend is being fixed
       if (email === 'contact@241runnersawareness.org' && password === 'runners241@') {
         const tempUser = {
           email: 'contact@241runnersawareness.org',
@@ -170,9 +170,9 @@ class AdminUserManager {
         };
         this.currentAdmin = tempUser;
         this.createAdminSession(tempUser, 'temp-token');
-        return { success: true, user: tempUser, token: 'temp-token', message: 'Main admin access granted (backend deploying)' };
+        return { success: true, user: tempUser, token: 'temp-token', message: 'Main admin access granted (backend fixing)' };
       }
-      return { success: false, message: 'Admin user not found or invalid credentials' };
+      return { success: false, message: 'Authentication failed. Please check your credentials and try again.' };
     }
   }
 
