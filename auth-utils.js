@@ -149,7 +149,7 @@ async function handleLogin(email, password) {
       
       // Redirect based on role
       if (userData.role === 'admin') {
-        window.location.href = 'admin-dashboard.html';
+        window.location.href = 'admin/index.html';
       } else {
         window.location.href = 'index.html';
       }
@@ -226,7 +226,7 @@ function handleMockLogin(email, password) {
     
     // Redirect based on role
     if (userData.role === 'admin') {
-      window.location.href = 'admin-dashboard.html';
+      window.location.href = 'admin/index.html';
     } else {
       window.location.href = 'index.html';
     }
@@ -423,7 +423,7 @@ async function handleLogin(email, password) {
       
       // Redirect based on role
       if (userData.role === 'admin') {
-        window.location.href = 'admin-dashboard.html';
+        window.location.href = 'admin/index.html';
       } else {
         window.location.href = 'dashboard.html';
       }
@@ -444,7 +444,7 @@ async function handleLogin(email, password) {
       setTimeout(() => {
         // Redirect admin users to admin dashboard, others to user dashboard
         if (result.user.role === 'admin') {
-          window.location.href = 'admin-dashboard.html';
+          window.location.href = 'admin/index.html';
         } else {
           window.location.href = 'dashboard.html';
         }

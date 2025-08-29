@@ -283,7 +283,7 @@
            
            // Redirect to admin dashboard
            setTimeout(() => {
-             window.location.href = 'admin-dashboard.html';
+             window.location.href = 'admin/index.html';
            }, 1500);
          } else {
            showAdminMessage(result.message || 'Access denied. Admin privileges required.', 'error');
@@ -321,7 +321,7 @@
       
       if (adminUserManager.isAdmin()) {
         // Already authenticated, redirect to dashboard
-        window.location.href = 'admin-dashboard.html';
+        window.location.href = 'admin/index.html';
       }
     });
 

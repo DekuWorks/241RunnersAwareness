@@ -351,7 +351,7 @@
                         // Redirect based on user role
                         const user = authUtils.getCurrentUser();
                         if (user && user.role === 'admin') {
-                            window.location.href = 'admin-dashboard.html';
+                            window.location.href = 'admin/index.html';
                         } else {
                             window.location.href = 'dashboard.html';
                         }

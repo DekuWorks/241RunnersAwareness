@@ -91,7 +91,7 @@ The frontend is automatically deployed via Netlify when you push to the `main` b
 │   ├── Services/           # Business logic
 │   └── Program.cs          # Application entry point
 ├── .github/workflows/      # GitHub Actions
-├── admin-dashboard.html    # Admin interface
+├── admin/index.html        # Admin interface
 ├── admin-login.html        # Admin login page
 ├── admin-management.html   # Admin user management
 ├── index.html             # Main landing page

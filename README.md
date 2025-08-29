@@ -114,7 +114,7 @@
 
 4. **Open in browser**
    - Main site: `index.html`
-   - Admin: `admin-dashboard.html`
+   - Admin: `admin/index.html`
    - Map: `map.html`
    - DNA tracking: `dna-tracking.html`
 
@@ -149,7 +149,7 @@ The project includes a comprehensive management script that handles all common t
 ├── 📁 .github/               # GitHub Actions and configs
 ├── 🧬 dna-tracking.html      # DNA tracking page
 ├── 🗺️ map.html              # Interactive map dashboard
-├── 👤 admin-dashboard.html   # Admin dashboard
+├── 👤 admin/index.html       # Admin dashboard
 ├── 🏠 index.html             # Main homepage
 ├── 📄 cases.html             # Cases listing
 ├── 📝 report-case.html       # Case reporting form
