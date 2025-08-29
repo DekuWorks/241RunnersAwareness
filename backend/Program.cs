@@ -215,6 +215,10 @@ namespace _241RunnersAwareness.BackendAPI
                             "https://www.241runnersawareness.org",
                             "https://app.241runnersawareness.org",
                             
+                            // GitHub Pages domains
+                            "https://dekuworks.github.io",
+                            "https://dekuworks.github.io/241RunnersAwareness",
+                            
                             // Development and testing domains
                             "http://localhost:3000",      // React development server
                             "http://localhost:5173",      // Vite development server
