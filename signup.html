@@ -394,12 +394,9 @@
             
             try {
                 const formData = {
-                    firstName: document.getElementById('firstName').value.trim(),
-                    lastName: document.getElementById('lastName').value.trim(),
                     email: document.getElementById('email').value.trim(),
-                    phoneNumber: document.getElementById('phoneNumber').value.trim(),
                     password: document.getElementById('password').value,
-                    role: document.getElementById('role').value
+                    displayName: document.getElementById('firstName').value.trim() + ' ' + document.getElementById('lastName').value.trim()
                 };
                 
                 const response = await authUtils.fetchJson(`${API_BASE_URL}/auth/register`, {
@@ -407,25 +404,16 @@
                     body: JSON.stringify(formData)
                 });
                 
-                if (response.success) {
-                    showSuccess('Account created successfully! Redirecting...');
+                if (response) {
+                    showSuccess('Account created successfully! Please log in to continue.');
                     
-                    // Store auth data
-                    if (response.token) {
-                        authUtils.setAuth(response);
-                    }
-                    
-                    // Redirect after a short delay
+                    // Redirect to login after a short delay
                     setTimeout(() => {
-                        if (nextUrl) {
-                            window.location.href = nextUrl;
-                        } else {
-                            window.location.href = '/dashboard.html';
-                        }
-                    }, 1500);
+                        window.location.href = '/login.html';
+                    }, 2000);
                     
                 } else {
-                    showError(response.message || 'An error occurred during registration.');
+                    showError('An error occurred during registration.');
                 }
                 
             } catch (error) {

@@ -334,8 +334,23 @@
   </main>
 
   <script>
+    // Load API configuration
+    let API_BASE_URL = 'https://241runnersawareness-api.azurewebsites.net/api';
+    
+    async function loadConfig() {
+      try {
+        const response = await fetch('/config.json');
+        const config = await response.json();
+        API_BASE_URL = config.API_BASE_URL;
+        window.API_BASE_URL = API_BASE_URL;
+      } catch (error) {
+        console.warn('Failed to load config.json, using default API URL');
+      }
+    }
+    
     // Check authentication on page load
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
+      await loadConfig();
       checkAuth();
       loadDashboard();
     });
@@ -385,7 +400,7 @@
     async function loadDashboardData() {
       try {
         // Try to load data from API
-        const response = await authUtils.fetchJson('/dashboard/stats');
+        const response = await authUtils.fetchJson(`${API_BASE_URL}/dashboard/stats`);
         
         // Update stats
         document.getElementById('totalRunners').textContent = response.totalRunners || 0;
