@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - 241 Runners Awareness</title>
     <meta name="description" content="Admin login for 241 Runners Awareness">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/241-logo.jpg">
@@ -337,8 +340,41 @@
         
 
         
+        // Clear any existing authentication data on page load
+        function clearExistingAuth() {
+            // Clear any existing admin tokens to prevent conflicts
+            localStorage.removeItem(tokenKey);
+            localStorage.removeItem(roleKey);
+            localStorage.removeItem(userKey);
+            
+            // Also clear any regular user tokens that might conflict
+            localStorage.removeItem('ra_token');
+            localStorage.removeItem('ra_role');
+            localStorage.removeItem('ra_user');
+        }
+        
+        // Handle page visibility changes (back button, refresh, etc.)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                // Page became visible again (back button, refresh, etc.)
+                clearExistingAuth();
+            }
+        });
+        
+        // Handle page load events
+        window.addEventListener('pageshow', function(event) {
+            // This fires when page is loaded from cache (back button)
+            if (event.persisted) {
+                clearExistingAuth();
+                console.log('Page loaded from cache, cleared auth data');
+            }
+        });
+        
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            // Clear existing auth data to prevent conflicts
+            clearExistingAuth();
+            
             loadConfig();
             
             const form = document.getElementById('adminLoginForm');
@@ -366,9 +402,13 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-Client': '241RA-Admin/1.0'
+                            'X-Client': '241RA-Admin/1.0',
+                            'Cache-Control': 'no-cache, no-store, must-revalidate',
+                            'Pragma': 'no-cache',
+                            'Expires': '0'
                         },
-                        body: JSON.stringify(formData)
+                        body: JSON.stringify(formData),
+                        cache: 'no-store'
                     });
                     
                     console.log('Login response status:', response.status);
@@ -408,6 +448,9 @@
                     }
                     
                     showAlert(errorMessage);
+                    
+                    // Clear form on error to prevent stale data
+                    document.getElementById('adminLoginForm').reset();
                 } finally {
                     setLoading(false);
                 }
