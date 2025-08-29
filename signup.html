@@ -393,46 +393,40 @@
             signupBtnSpinner.style.display = 'inline';
             
             try {
-                // Mock registration for immediate functionality
-                const userData = {
+                const formData = {
                     email: document.getElementById('email').value.trim(),
                     password: document.getElementById('password').value,
                     firstName: document.getElementById('firstName').value.trim(),
                     lastName: document.getElementById('lastName').value.trim(),
-                    phoneNumber: document.getElementById('phoneNumber').value.trim(),
                     role: document.getElementById('role').value
                 };
                 
-                // Store user data in localStorage for mock authentication
-                const mockUsers = JSON.parse(localStorage.getItem('mockUsers') || '[]');
-                mockUsers.push({
-                    ...userData,
-                    id: Date.now(),
-                    createdAt: new Date().toISOString()
+                const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
                 });
-                localStorage.setItem('mockUsers', JSON.stringify(mockUsers));
                 
-                showSuccess('Account created successfully! Redirecting to dashboard...');
-                
-                // Auto-login the user
-                const authData = {
-                    token: 'mock-token-' + Date.now(),
-                    user: {
-                        id: userData.id,
-                        email: userData.email,
-                        firstName: userData.firstName,
-                        lastName: userData.lastName,
-                        fullName: userData.firstName + ' ' + userData.lastName,
-                        role: userData.role
+                if (response.ok) {
+                    const data = await response.json();
+                    showSuccess('Account created successfully! Redirecting to dashboard...');
+                    
+                    // Store auth data if token is provided
+                    if (data.token) {
+                        authUtils.setAuth(data);
                     }
-                };
-                
-                authUtils.setAuth(authData);
-                
-                // Redirect to dashboard
-                setTimeout(() => {
-                    window.location.href = '/dashboard.html';
-                }, 1500);
+                    
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html';
+                    }, 1500);
+                    
+                } else {
+                    const errorData = await response.json();
+                    showError(errorData.message || 'Registration failed. Please try again.');
+                }
                 
             } catch (error) {
                 console.error('Signup error:', error);

@@ -399,19 +399,28 @@
 
     async function loadDashboardData() {
       try {
-        // Use mock data for immediate functionality
-        const mockUsers = JSON.parse(localStorage.getItem('mockUsers') || '[]');
-        const mockCases = JSON.parse(localStorage.getItem('mockCases') || '[]');
+        // Try to load data from API
+        const response = await fetch(`${API_BASE_URL}/dashboard/stats`, {
+          headers: {
+            'Authorization': `Bearer ${authUtils.getAuth()?.token}`,
+            'Content-Type': 'application/json'
+          }
+        });
         
-        // Update stats with mock data
-        document.getElementById('totalRunners').textContent = mockUsers.length;
-        document.getElementById('totalCases').textContent = mockCases.length;
-        document.getElementById('activeRunners').textContent = mockUsers.filter(u => u.role === 'user').length;
-        document.getElementById('missingRunners').textContent = mockCases.filter(c => c.status === 'missing').length;
+        if (response.ok) {
+          const data = await response.json();
+          // Update stats
+          document.getElementById('totalRunners').textContent = data.totalRunners || 0;
+          document.getElementById('totalCases').textContent = data.totalCases || 0;
+          document.getElementById('activeRunners').textContent = data.activeRunners || 0;
+          document.getElementById('missingRunners').textContent = data.missingRunners || 0;
+        } else {
+          throw new Error('Failed to load dashboard data');
+        }
         
       } catch (error) {
-        console.warn('Could not load dashboard data, using defaults');
-        // Use default values if there's an error
+        console.warn('Could not load dashboard data from API, using defaults');
+        // Use default values if API is not available
         document.getElementById('totalRunners').textContent = '0';
         document.getElementById('totalCases').textContent = '0';
         document.getElementById('activeRunners').textContent = '0';
