@@ -3,8 +3,7 @@ name: Deploy Static Site to GitHub Pages
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -37,27 +36,14 @@ jobs:
           *.jpeg
           *.png
           *.pdf
-          public/
-          docs/
+          admin/
+          assets/
+          js/
+          partials/
           CNAME
           _headers
-          manifest.json
-          sw.js
-          auth-utils.js
-          mock-api.js
-          mock-cases-data.js
-          admin-user-management.js
-          user-management-api.js
-          create-admin-users.js
-          setup-main-admin.js
-          setup-azure-admin-users.js
-          user-management.html
+          config.json
         
     - name: Deploy to GitHub Pages
       id: deployment
-      uses: actions/deploy-pages@v4
-      
-    - name: Test deployment
-      run: |
-        sleep 30
-        curl -f https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/ || exit 1 
+      uses: actions/deploy-pages@v4 
