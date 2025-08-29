@@ -182,18 +182,7 @@
                     <span class="error-text" id="passwordError"></span>
                 </div>
                 
-                <div class="form-group">
-                    <label for="otp">Authenticator Code (if enabled)</label>
-                    <input 
-                        type="text" 
-                        id="otp" 
-                        name="otp" 
-                        inputmode="numeric" 
-                        pattern="[0-9]{6}"
-                        placeholder="Enter 6-digit code"
-                    >
-                    <span class="error-text" id="otpError"></span>
-                </div>
+
                 
                 <div class="form-group">
                     <button type="submit" id="submitBtn">
@@ -247,7 +236,6 @@
                 
                 const email = document.getElementById('email').value.trim();
                 const password = document.getElementById('password').value;
-                const otp = document.getElementById('otp').value.trim();
                 
                 if (!email) {
                     showError('emailError', 'Email is required');
@@ -265,11 +253,6 @@
                     isValid = false;
                 }
                 
-                if (otp && !/^[0-9]{6}$/.test(otp)) {
-                    showError('otpError', 'Authenticator code must be 6 digits');
-                    isValid = false;
-                }
-                
                 return isValid;
             }
             
@@ -284,8 +267,7 @@
                 
                 const formData = {
                     email: document.getElementById('email').value.trim(),
-                    password: document.getElementById('password').value,
-                    otp: document.getElementById('otp').value.trim() || null
+                    password: document.getElementById('password').value
                 };
                 
                 try {
