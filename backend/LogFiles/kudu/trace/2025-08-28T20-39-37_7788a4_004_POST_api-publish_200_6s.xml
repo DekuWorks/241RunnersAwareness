@@ -1,0 +1,59 @@
+<step title="Incoming Request" date="2025-08-28T20:39:37.829" instance="7788a4" url="/api/publish?type=zip" method="POST" type="request" pid="1476,2,19" Cache-Control="no-cache" Content-Length="58982620" Content-Type="application/octet-stream" Accept="*/*" Accept-Encoding="gzip, deflate" Authorization="Bea..." Host="241runnersawareness-api.scm.azurewebsites.net" User-Agent="AZURECLI/2.76.0 (HOMEBREW)" x-ms-client-request-id="1ab25cd4-844f-11f0-b4da-5aba6e9e812a" X-ARR-LOG-ID="1ab25cd4-844f-11f0-b4da-5aba6e9e812a" CLIENT-IP="97.75.150.66:38573" X-SITE-DEPLOYMENT-ID="241runnersawareness-api" WAS-DEFAULT-HOSTNAME="241runnersawareness-api.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/publish?type=zip" >
+  <step title="Cleanup Xml Logs" date="2025-08-28T20:39:37.842" /><!-- duration: 0ms -->
+  <step title="OneDeploy" date="2025-08-28T20:39:38.030" >
+    <step title="Starting PushDeployAsync" date="2025-08-28T20:39:38.080" /><!-- duration: 12ms -->
+    <step title="Updating shutdown sentinel last write time" date="2025-08-28T20:39:38.170" SemaphoreCount="7" /><!-- duration: 0ms -->
+    <step title="LockFile &apos;C:\home\site\locks\deployments.lock&apos; acquired" date="2025-08-28T20:39:38.185" /><!-- duration: 0ms -->
+    <step title="Deleting outdated zip file C:\home\data\SitePackages\20250827003529.zip" date="2025-08-28T20:39:38.201" /><!-- duration: 19ms -->
+    <step title="Saving request content to C:\home\data\SitePackages\20250828203938.zip" date="2025-08-28T20:39:38.232" >
+      <step title="Total 58,982,620 bytes written to C:\home\data\SitePackages\20250828203938.zip" date="2025-08-28T20:39:40.852" /><!-- duration: 0ms -->
+    </step><!-- duration: 3572ms -->
+    <step title="LockFile &apos;C:\home\site\locks\deployments.lock&apos; released" date="2025-08-28T20:39:41.805" /><!-- duration: 16ms -->
+    <step title="Deleting shutdown sentinel file" date="2025-08-28T20:39:41.852" SemaphoreCount="8" /><!-- duration: 0ms -->
+    <step title="Starting FetchDeploy" date="2025-08-28T20:39:41.867" /><!-- duration: 16ms -->
+    <step title="Attempting to fetch target branch HEAD" date="2025-08-28T20:39:41.883" /><!-- duration: 18ms -->
+    <step title="Updating shutdown sentinel last write time" date="2025-08-28T20:39:41.930" SemaphoreCount="7" /><!-- duration: 0ms -->
+    <step title="LockFile &apos;C:\home\site\locks\deployments.lock&apos; acquired" date="2025-08-28T20:39:41.930" /><!-- duration: 0ms -->
+    <step title="Performing fetch based deployment" date="2025-08-28T20:39:41.961" >
+      <step title="Creating temporary deployment" date="2025-08-28T20:39:41.961" /><!-- duration: 47ms -->
+      <step title="Fetching changes." date="2025-08-28T20:39:42.148" /><!-- duration: 16ms -->
+      <step title="Starting LocalZipHandler" date="2025-08-28T20:39:42.164" /><!-- duration: 0ms -->
+      <step title="Starting ExtractTriggers" date="2025-08-28T20:39:42.180" /><!-- duration: 16ms -->
+      <step title="None repository commit" date="2025-08-28T20:39:42.243" >
+        <step title="Commit id: 57cd81ff69404b40bea5d2cef13d6d1c" date="2025-08-28T20:39:42.243" Message="OneDeploy" AuthorName="N/A" AuthorEmail="N/A" /><!-- duration: 30ms -->
+      </step><!-- duration: 30ms -->
+      <step title="Before sending BuildRequestReceived status to /api/updatedeploystatus" date="2025-08-28T20:39:42.294" /><!-- duration: 11ms -->
+      <step title="DeploymentManager.Deploy(id:57cd81ff69404b40bea5d2cef13d6d1c)" date="2025-08-28T20:39:42.324" >
+        <step title="Collecting changeset information" date="2025-08-28T20:39:42.336" /><!-- duration: 78ms -->
+        <step title="Updating submodules" date="2025-08-28T20:39:42.433" >
+          <step title="Updating submodules." date="2025-08-28T20:39:42.493" /><!-- duration: 0ms -->
+        </step><!-- duration: 75ms -->
+        <step title="Preparing deployment for commit id &apos;57cd81ff69&apos;." date="2025-08-28T20:39:42.555" /><!-- duration: 0ms -->
+        <step title="Determining deployment builder" date="2025-08-28T20:39:42.586" >
+          <step title="Builder is RunFromZipSiteBuilder" date="2025-08-28T20:39:42.602" /><!-- duration: 16ms -->
+        </step><!-- duration: 31ms -->
+        <step title="Copying SSH keys" date="2025-08-28T20:39:42.633" /><!-- duration: 0ms -->
+        <step title="Building" date="2025-08-28T20:39:42.648" >
+          <step title="Skipping build. Project type: Run-From-Zip" date="2025-08-28T20:39:42.680" /><!-- duration: 0ms -->
+          <step title="Skipping post build. Project type: Run-From-Zip" date="2025-08-28T20:39:42.727" /><!-- duration: 0ms -->
+          <step title="Requesting site restart" date="2025-08-28T20:39:42.773" /><!-- duration: 0ms -->
+          <step title="Requesting site restart" date="2025-08-28T20:39:42.789" /><!-- duration: 0ms -->
+          <step title="Requesting site restart. Attempt #1" date="2025-08-28T20:39:42.836" /><!-- duration: 0ms -->
+          <step title="Requesting site restart. Attempt #1" date="2025-08-28T20:39:42.852" /><!-- duration: 0ms -->
+          <step title="Successfully requested a restart. Attempt #1" date="2025-08-28T20:39:43.383" /><!-- duration: 0ms -->
+          <step title="Successfully requested a restart. Attempt #1" date="2025-08-28T20:39:43.383" /><!-- duration: 0ms -->
+          <step title="Deployment successful. DEPLOYMENTINFO: deploymentPath = OneDeploy, deployer = OneDeploy, os = windows, sku = Basic, siteName = 241runnersawareness-api, siteHostName = 241runnersawareness-api.azurewebsites.net, deploymentStatus = Success" date="2025-08-28T20:39:43.430" /><!-- duration: 0ms -->
+          <step title="Purge deployment items" date="2025-08-28T20:39:43.664" >
+            <step title="Remove da543b126, Success, received at 8/27/2025 12:01:13 AM" date="2025-08-28T20:39:43.727" /><!-- duration: 0ms -->
+          </step><!-- duration: 63ms -->
+        </step><!-- duration: 1109ms -->
+      </step><!-- duration: 1434ms -->
+      <step title="Cleaning up temp files" date="2025-08-28T20:39:43.758" /><!-- duration: 0ms -->
+      <step title="Updating C:\home\data\SitePackages\packagename.txt with deployment 20250828203938.zip" date="2025-08-28T20:39:43.774" /><!-- duration: 62ms -->
+      <step title="Skip function trigger and logicapp sync because function is not enabled." date="2025-08-28T20:39:43.852" /><!-- duration: 0ms -->
+    </step><!-- duration: 1937ms -->
+    <step title="LockFile &apos;C:\home\site\locks\deployments.lock&apos; released" date="2025-08-28T20:39:43.899" /><!-- duration: 0ms -->
+    <step title="Deleting shutdown sentinel file" date="2025-08-28T20:39:43.914" SemaphoreCount="8" /><!-- duration: 0ms -->
+  </step><!-- duration: 5884ms -->
+  <step title="Outgoing response" date="2025-08-28T20:39:43.914" type="response" statusCode="200" statusText="OK" Server="Microsoft-IIS/10.0" x-ms-request-id="1ab25cd4-844f-11f0-b4da-5aba6e9e812a" Cache-Control="private" X-AspNet-Version="4.0.30319" /><!-- duration: 0ms -->
+</step><!-- duration: 6101ms -->

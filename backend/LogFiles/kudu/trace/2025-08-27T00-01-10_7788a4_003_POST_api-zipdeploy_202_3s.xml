@@ -1,0 +1,17 @@
+<step title="Incoming Request" date="2025-08-27T00:01:10.243" instance="7788a4" url="/api/zipdeploy?isAsync=true" method="POST" type="request" pid="4316,2,8" Cache-Control="no-cache" Content-Length="25568167" Content-Type="application/octet-stream" Accept="*/*" Accept-Encoding="gzip, deflate" Authorization="Bea..." Host="241runnersawareness-api.scm.azurewebsites.net" User-Agent="AZURECLI/2.76.0 (MSI)" x-ms-client-request-id="ed46b048-82d8-11f0-9ea8-f057a69bc617" X-ARR-LOG-ID="ed46b048-82d8-11f0-9ea8-f057a69bc617" CLIENT-IP="97.75.150.66:38536" X-SITE-DEPLOYMENT-ID="241runnersawareness-api" WAS-DEFAULT-HOSTNAME="241runnersawareness-api.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/zipdeploy?isAsync=true" >
+  <step title="Cleanup Xml Logs" date="2025-08-27T00:01:10.259" /><!-- duration: 31ms -->
+  <step title="ZipPushDeploy" date="2025-08-27T00:01:10.946" >
+    <step title="ZipDeploy. Run from package." date="2025-08-27T00:01:10.966" /><!-- duration: 11ms -->
+    <step title="Starting PushDeployAsync" date="2025-08-27T00:01:10.996" /><!-- duration: 12ms -->
+    <step title="Updating shutdown sentinel last write time" date="2025-08-27T00:01:11.040" SemaphoreCount="7" /><!-- duration: 16ms -->
+    <step title="LockFile &apos;C:\home\site\locks\deployments.lock&apos; acquired" date="2025-08-27T00:01:11.057" /><!-- duration: 0ms -->
+    <step title="Saving request content to C:\home\data\SitePackages\20250827000110.zip" date="2025-08-27T00:01:11.087" >
+      <step title="Total 25,568,167 bytes written to C:\home\data\SitePackages\20250827000110.zip" date="2025-08-27T00:01:12.281" /><!-- duration: 0ms -->
+    </step><!-- duration: 1806ms -->
+    <step title="LockFile &apos;C:\home\site\locks\deployments.lock&apos; released" date="2025-08-27T00:01:12.893" /><!-- duration: 0ms -->
+    <step title="Deleting shutdown sentinel file" date="2025-08-27T00:01:12.908" SemaphoreCount="8" /><!-- duration: 0ms -->
+    <step title="Starting FetchDeploy" date="2025-08-27T00:01:12.924" /><!-- duration: 0ms -->
+    <step title="Start deployment in the background" date="2025-08-27T00:01:12.924" /><!-- duration: 125ms -->
+  </step><!-- duration: 2118ms -->
+  <step title="Outgoing response" date="2025-08-27T00:01:13.127" type="response" statusCode="202" statusText="Accepted" Server="Microsoft-IIS/10.0" x-ms-request-id="ed46b048-82d8-11f0-9ea8-f057a69bc617" Retry-After="30" Cache-Control="private" X-AspNet-Version="4.0.30319" Location="https://241runnersawareness-api.scm.azurewebsites.net/api/deployments/latest?deployer=ZipDeploy&amp;time=2025-08-27_00-01-13Z" /><!-- duration: 49ms -->
+</step><!-- duration: 2963ms -->

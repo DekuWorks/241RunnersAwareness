@@ -1,9 +1,0 @@
-{
-  "API_BASE_URL": "https://241runnersawareness-api.azurewebsites.net/api",
-  "APP_NAME": "241 Runners Awareness - Admin",
-  "APP_VERSION": "1.0.0",
-  "ENVIRONMENT": "production",
-  "ADMIN_DASHBOARD": true,
-  "DEFAULT_PAGE": "admin-dashboard.html",
-  "REQUIRED_ROLE": "admin"
-}
