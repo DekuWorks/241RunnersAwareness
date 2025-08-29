@@ -167,7 +167,13 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
         [HttpGet("test")]
         public ActionResult<string> Test()
         {
-            return Ok("API is working!");
+            return Ok(new { message = "API is working!", timestamp = DateTime.UtcNow, status = "healthy" });
+        }
+
+        [HttpGet("health")]
+        public ActionResult<string> Health()
+        {
+            return Ok(new { status = "healthy", timestamp = DateTime.UtcNow });
         }
     }
 } 

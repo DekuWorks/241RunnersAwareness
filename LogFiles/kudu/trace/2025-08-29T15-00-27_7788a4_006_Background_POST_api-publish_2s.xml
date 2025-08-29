@@ -1,0 +1,41 @@
+<step title="BackgroundTrace" date="2025-08-29T15:00:27.434" instance="7788a4" url="/api/publish" method="POST" >
+  <step title="Updating shutdown sentinel last write time" date="2025-08-29T15:00:27.471" SemaphoreCount="7" /><!-- duration: 0ms -->
+  <step title="LockFile &apos;C:\home\site\locks\deployments.lock&apos; acquired" date="2025-08-29T15:00:27.481" /><!-- duration: 0ms -->
+  <step title="Creating temporary deployment" date="2025-08-29T15:00:27.481" /><!-- duration: 31ms -->
+  <step title="Performing fetch based deployment" date="2025-08-29T15:00:27.528" >
+    <step title="Fetching changes." date="2025-08-29T15:00:27.653" /><!-- duration: 19ms -->
+    <step title="Starting LocalZipHandler" date="2025-08-29T15:00:27.684" /><!-- duration: 17ms -->
+    <step title="Starting ExtractTriggers" date="2025-08-29T15:00:27.762" /><!-- duration: 0ms -->
+    <step title="Before sending BuildRequestReceived status to /api/updatedeploystatus" date="2025-08-29T15:00:27.812" /><!-- duration: 13ms -->
+    <step title="DeploymentManager.Deploy(id:67751d17300845cc8f5226c72c1da8a0)" date="2025-08-29T15:00:27.862" >
+      <step title="Collecting changeset information" date="2025-08-29T15:00:27.872" /><!-- duration: 46ms -->
+      <step title="Updating submodules" date="2025-08-29T15:00:27.918" >
+        <step title="Updating submodules." date="2025-08-29T15:00:28.012" /><!-- duration: 0ms -->
+      </step><!-- duration: 94ms -->
+      <step title="Preparing deployment for commit id &apos;67751d1730&apos;." date="2025-08-29T15:00:28.075" /><!-- duration: 0ms -->
+      <step title="Determining deployment builder" date="2025-08-29T15:00:28.122" >
+        <step title="Builder is RunFromZipSiteBuilder" date="2025-08-29T15:00:28.122" /><!-- duration: 16ms -->
+      </step><!-- duration: 16ms -->
+      <step title="Copying SSH keys" date="2025-08-29T15:00:28.153" /><!-- duration: 16ms -->
+      <step title="Building" date="2025-08-29T15:00:28.169" >
+        <step title="Skipping build. Project type: Run-From-Zip" date="2025-08-29T15:00:28.200" /><!-- duration: 0ms -->
+        <step title="Skipping post build. Project type: Run-From-Zip" date="2025-08-29T15:00:28.231" /><!-- duration: 0ms -->
+        <step title="Requesting site restart" date="2025-08-29T15:00:28.294" /><!-- duration: 0ms -->
+        <step title="Requesting site restart" date="2025-08-29T15:00:28.294" /><!-- duration: 0ms -->
+        <step title="Requesting site restart. Attempt #1" date="2025-08-29T15:00:28.340" /><!-- duration: 0ms -->
+        <step title="Requesting site restart. Attempt #1" date="2025-08-29T15:00:28.340" /><!-- duration: 32ms -->
+        <step title="Successfully requested a restart. Attempt #1" date="2025-08-29T15:00:28.778" /><!-- duration: 0ms -->
+        <step title="Successfully requested a restart. Attempt #1" date="2025-08-29T15:00:28.778" /><!-- duration: 16ms -->
+        <step title="Deployment successful. DEPLOYMENTINFO: deploymentPath = OneDeploy, deployer = OneDeploy, os = windows, sku = Basic, siteName = 241runnersawareness-api, siteHostName = 241runnersawareness-api.azurewebsites.net, deploymentStatus = Success" date="2025-08-29T15:00:28.825" /><!-- duration: 0ms -->
+        <step title="Purge deployment items" date="2025-08-29T15:00:28.950" >
+          <step title="Remove 57cd81ff6, Success, received at 8/28/2025 8:39:42 PM" date="2025-08-29T15:00:28.997" /><!-- duration: 0ms -->
+        </step><!-- duration: 47ms -->
+      </step><!-- duration: 859ms -->
+    </step><!-- duration: 1165ms -->
+    <step title="Cleaning up temp files" date="2025-08-29T15:00:29.028" /><!-- duration: 16ms -->
+    <step title="Updating C:\home\data\SitePackages\packagename.txt with deployment 20250829150025.zip" date="2025-08-29T15:00:29.044" /><!-- duration: 95ms -->
+    <step title="Skip function trigger and logicapp sync because function is not enabled." date="2025-08-29T15:00:29.139" /><!-- duration: 14ms -->
+  </step><!-- duration: 1656ms -->
+  <step title="LockFile &apos;C:\home\site\locks\deployments.lock&apos; released" date="2025-08-29T15:00:29.184" /><!-- duration: 0ms -->
+  <step title="Deleting shutdown sentinel file" date="2025-08-29T15:00:29.184" SemaphoreCount="8" /><!-- duration: 16ms -->
+</step><!-- duration: 1766ms -->
