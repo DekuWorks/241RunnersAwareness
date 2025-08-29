@@ -371,6 +371,111 @@
             margin-top: 0.5rem;
         }
 
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 3% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+            animation: slideIn 0.3s ease;
+            position: relative;
+        }
+
+        @keyframes slideIn {
+            from { 
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .modal-header::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .close {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #f3f4f6;
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {
             .profile-sections {
@@ -552,12 +657,64 @@
             <div class="section-content">
                 <div class="action-buttons">
                     <a href="users.html" class="action-btn">👥 Manage Users</a>
+                    <button class="action-btn" onclick="openCreateAdminModal()">➕ Create New Admin</button>
                     <button class="action-btn secondary" onclick="exportProfile()">📊 Export Data</button>
                     <button class="action-btn secondary" onclick="viewLogs()">📋 View Logs</button>
                     <button class="action-btn secondary" onclick="systemSettings()">⚙️ System Settings</button>
                     <button class="action-btn secondary" onclick="manageRunners()">🏃 Manage Runners</button>
                     <button class="action-btn secondary" onclick="viewCases()">📋 View Cases</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Admin Modal -->
+    <div id="createAdminModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>➕ Create New Admin</h2>
+                <span class="close" onclick="closeCreateAdminModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="createAdminForm" onsubmit="createAdminUser(event)">
+                    <div class="form-group">
+                        <label for="adminEmail">Email Address</label>
+                        <input type="email" id="adminEmail" required placeholder="Enter email address">
+                        <div class="error-message" id="adminEmailError" style="display: none;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminFirstName">First Name</label>
+                        <input type="text" id="adminFirstName" required placeholder="Enter first name">
+                        <div class="error-message" id="adminFirstNameError" style="display: none;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminLastName">Last Name</label>
+                        <input type="text" id="adminLastName" required placeholder="Enter last name">
+                        <div class="error-message" id="adminLastNameError" style="display: none;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminPassword">Password</label>
+                        <input type="password" id="adminPassword" required placeholder="Enter password (min 8 characters)">
+                        <div class="error-message" id="adminPasswordError" style="display: none;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminConfirmPassword">Confirm Password</label>
+                        <input type="password" id="adminConfirmPassword" required placeholder="Confirm password">
+                        <div class="error-message" id="adminConfirmError" style="display: none;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminOrganization">Organization</label>
+                        <input type="text" id="adminOrganization" placeholder="Enter organization (optional)">
+                    </div>
+                    <div class="form-group">
+                        <label for="adminTitle">Job Title</label>
+                        <input type="text" id="adminTitle" placeholder="Enter job title (optional)">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="action-btn secondary" onclick="closeCreateAdminModal()">Cancel</button>
+                        <button type="submit" class="action-btn">Create Admin</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -805,6 +962,138 @@
         // View cases function
         function viewCases() {
             showError('Case management feature coming soon');
+        }
+
+        // Modal functions
+        function openCreateAdminModal() {
+            document.getElementById('createAdminModal').style.display = 'block';
+            clearCreateAdminErrors();
+        }
+
+        function closeCreateAdminModal() {
+            document.getElementById('createAdminModal').style.display = 'none';
+            document.getElementById('createAdminForm').reset();
+            clearCreateAdminErrors();
+        }
+
+        function clearCreateAdminErrors() {
+            document.getElementById('adminEmailError').style.display = 'none';
+            document.getElementById('adminFirstNameError').style.display = 'none';
+            document.getElementById('adminLastNameError').style.display = 'none';
+            document.getElementById('adminPasswordError').style.display = 'none';
+            document.getElementById('adminConfirmError').style.display = 'none';
+        }
+
+        // Create admin user
+        async function createAdminUser(event) {
+            event.preventDefault();
+            clearCreateAdminErrors();
+
+            const email = document.getElementById('adminEmail').value;
+            const firstName = document.getElementById('adminFirstName').value;
+            const lastName = document.getElementById('adminLastName').value;
+            const password = document.getElementById('adminPassword').value;
+            const confirmPassword = document.getElementById('adminConfirmPassword').value;
+            const organization = document.getElementById('adminOrganization').value;
+            const title = document.getElementById('adminTitle').value;
+
+            // Client-side validation
+            if (password !== confirmPassword) {
+                document.getElementById('adminConfirmError').textContent = 'Passwords do not match';
+                document.getElementById('adminConfirmError').style.display = 'block';
+                return;
+            }
+
+            if (password.length < 8) {
+                document.getElementById('adminPasswordError').textContent = 'Password must be at least 8 characters long';
+                document.getElementById('adminPasswordError').style.display = 'block';
+                return;
+            }
+
+            // Show loading state
+            const submitButton = event.target.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Creating...';
+            submitButton.disabled = true;
+
+            try {
+                const token = localStorage.getItem(tokenKey);
+                if (!token) {
+                    showError('No authentication token found. Please log in again.');
+                    return;
+                }
+
+                // Create a timeout promise
+                const timeoutPromise = new Promise((_, reject) => {
+                    setTimeout(() => reject(new Error('Request timeout')), 10000); // 10 second timeout
+                });
+
+                const fetchPromise = fetch('https://241runners-api-2025.azurewebsites.net/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        firstName: firstName,
+                        lastName: lastName,
+                        password: password,
+                        role: 'admin',
+                        organization: organization || null,
+                        title: title || null
+                    })
+                });
+
+                const response = await Promise.race([fetchPromise, timeoutPromise]);
+
+                if (response.ok) {
+                    showSuccess('Admin user created successfully!');
+                    closeCreateAdminModal();
+                    
+                    // Add to recent activity
+                    addActivityItem(`Created new admin user: ${email}`);
+                } else {
+                    let errorMessage = 'Failed to create admin user';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorMessage;
+                    } catch (parseError) {
+                        console.error('Error parsing response:', parseError);
+                    }
+                    showError(errorMessage);
+                }
+            } catch (error) {
+                console.error('Error creating admin user:', error);
+                showError('Network error. Please check your connection and try again.');
+            } finally {
+                // Restore button state
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            }
+        }
+
+        // Add activity item to the activity list
+        function addActivityItem(description) {
+            const activityList = document.getElementById('activityList');
+            const newActivity = document.createElement('div');
+            newActivity.className = 'activity-item';
+            newActivity.innerHTML = `
+                <strong>Admin Created</strong>
+                <p>${description}</p>
+                <div class="activity-time">Just now</div>
+            `;
+            
+            // Insert at the top of the activity list
+            activityList.insertBefore(newActivity, activityList.firstChild);
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('createAdminModal');
+            if (event.target === modal) {
+                closeCreateAdminModal();
+            }
         }
     </script>
 </body>
