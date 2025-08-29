@@ -347,7 +347,14 @@
                     if (response.success) {
                         authUtils.setAuth(response);
                         authUtils.showToast('Login successful!', 'success');
-                        window.location.href = next;
+                        
+                        // Redirect based on user role
+                        const user = authUtils.getCurrentUser();
+                        if (user && user.role === 'admin') {
+                            window.location.href = 'admin-dashboard.html';
+                        } else {
+                            window.location.href = 'dashboard.html';
+                        }
                     } else {
                         showAlert(response.message || 'Login failed');
                     }

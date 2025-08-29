@@ -21,7 +21,7 @@
 // API Configuration
 const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
   ? 'http://localhost:5113/api' 
-  : 'https://241runnersawareness-api.azurewebsites.net/api';
+  : 'https://241runners-api-2025.azurewebsites.net/api';
 
 /**
  * ============================================
@@ -425,7 +425,7 @@ async function handleLogin(email, password) {
       if (userData.role === 'admin') {
         window.location.href = 'admin-dashboard.html';
       } else {
-        window.location.href = 'index.html';
+        window.location.href = 'dashboard.html';
       }
       
       return true;
@@ -442,11 +442,11 @@ async function handleLogin(email, password) {
       localStorage.setItem('user', JSON.stringify(result.user));
       showNotification('Login successful! Redirecting...', 'success');
       setTimeout(() => {
-        // Redirect admin users to dashboard, others to home page
+        // Redirect admin users to admin dashboard, others to user dashboard
         if (result.user.role === 'admin') {
           window.location.href = 'admin-dashboard.html';
         } else {
-          window.location.href = 'index.html';
+          window.location.href = 'dashboard.html';
         }
       }, 1500);
       return true;

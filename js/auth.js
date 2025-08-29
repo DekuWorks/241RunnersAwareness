@@ -8,7 +8,7 @@
  */
 
 // API Configuration
-let API_BASE_URL = 'http://localhost:5113/api';
+let API_BASE_URL = 'https://241runners-api-2025.azurewebsites.net/api';
 
 // Load API configuration from config.json
 async function loadConfig() {
