@@ -2,9 +2,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using _241RunnersAwareness.BackendAPI.Models;
+using _241RunnersAwarenessAPI.Models;
 
-namespace _241RunnersAwareness.BackendAPI.Services
+namespace _241RunnersAwarenessAPI.Services
 {
     public class JwtService
     {

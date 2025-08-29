@@ -1,26 +1,49 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace _241RunnersAwareness.BackendAPI.Models
+namespace _241RunnersAwarenessAPI.Models
 {
     public class RegisterRequest
     {
         [Required]
         [EmailAddress]
+        [MaxLength(255)]
         public string Email { get; set; } = string.Empty;
         
         [Required]
         [MinLength(8)]
+        [MaxLength(100)]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", 
+            ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character")]
         public string Password { get; set; } = string.Empty;
         
         [Required]
+        [MaxLength(100)]
         public string FirstName { get; set; } = string.Empty;
         
         [Required]
+        [MaxLength(100)]
         public string LastName { get; set; } = string.Empty;
         
         [Required]
-        [RegularExpression("^(user|parent|caregiver|therapist|adoptiveparent)$", ErrorMessage = "Role must be one of: user, parent, caregiver, therapist, adoptiveparent")]
+        [RegularExpression("^(user|parent|caregiver|therapist|adoptiveparent)$", 
+            ErrorMessage = "Role must be one of: user, parent, caregiver, therapist, adoptiveparent")]
         public string Role { get; set; } = "user";
+        
+        [Phone]
+        [MaxLength(20)]
+        public string? PhoneNumber { get; set; }
+        
+        [MaxLength(500)]
+        public string? Address { get; set; }
+        
+        [MaxLength(100)]
+        public string? City { get; set; }
+        
+        [MaxLength(50)]
+        public string? State { get; set; }
+        
+        [MaxLength(20)]
+        public string? ZipCode { get; set; }
     }
 
     public class LoginRequest
@@ -50,5 +73,10 @@ namespace _241RunnersAwareness.BackendAPI.Models
         public string FullName { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? Address { get; set; }
+        public string? City { get; set; }
+        public string? State { get; set; }
+        public string? ZipCode { get; set; }
     }
 } 

@@ -1,5 +1,5 @@
 {
-  "API_BASE_URL": "https://241runnersawareness-api.azurewebsites.net/api",
+  "API_BASE_URL": "https://241runners-api-2025.azurewebsites.net/api",
   "APP_NAME": "241 Runners Awareness",
   "APP_VERSION": "1.0.0",
   "ENVIRONMENT": "production"

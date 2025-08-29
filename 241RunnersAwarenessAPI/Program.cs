@@ -2,8 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using _241RunnersAwareness.BackendAPI.Data;
-using _241RunnersAwareness.BackendAPI.Services;
+using _241RunnersAwarenessAPI.Data;
+using _241RunnersAwarenessAPI.Services;
+using _241RunnersAwarenessAPI.Models;
+using BCrypt.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +22,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Add JWT Service
 builder.Services.AddScoped<JwtService>();
+
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 // Add JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -38,16 +51,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Add CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
+// Add Authorization
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -60,6 +65,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Use CORS
 app.UseCors("AllowAll");
 
 app.UseAuthentication();
@@ -67,19 +73,54 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Try to ensure database is created, but don't fail if it can't connect
+// Initialize database and seed admin users
 try
 {
     using (var scope = app.Services.CreateScope())
     {
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var jwtService = scope.ServiceProvider.GetRequiredService<JwtService>();
+        
+        // Ensure database is created
         context.Database.EnsureCreated();
+        
+        // Seed admin users if they don't exist
+        if (!context.Users.Any())
+        {
+            var adminUsers = new[]
+            {
+                new User
+                {
+                    Email = "dekuworks1@gmail.com",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("runners1997"),
+                    FirstName = "Marcus",
+                    LastName = "Brown",
+                    Role = "admin",
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new User
+                {
+                    Email = "danielcarey9770@yahoo.com",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("runners0428"),
+                    FirstName = "Daniel",
+                    LastName = "Carey",
+                    Role = "admin",
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                }
+            };
+            
+            context.Users.AddRange(adminUsers);
+            context.SaveChanges();
+            
+            Console.WriteLine("Admin users seeded successfully!");
+        }
     }
 }
 catch (Exception ex)
 {
-    // Log the error but don't fail startup
     Console.WriteLine($"Database initialization failed: {ex.Message}");
 }
 
-app.Run(); 
+app.Run();

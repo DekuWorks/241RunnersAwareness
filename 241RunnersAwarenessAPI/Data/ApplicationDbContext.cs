@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using _241RunnersAwareness.BackendAPI.Models;
+using _241RunnersAwarenessAPI.Models;
 
-namespace _241RunnersAwareness.BackendAPI.Data
+namespace _241RunnersAwarenessAPI.Data
 {
     public class ApplicationDbContext : DbContext
     {
@@ -27,6 +27,11 @@ namespace _241RunnersAwareness.BackendAPI.Data
                 entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Role).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+                entity.Property(e => e.PhoneNumber).HasMaxLength(20);
+                entity.Property(e => e.Address).HasMaxLength(500);
+                entity.Property(e => e.City).HasMaxLength(100);
+                entity.Property(e => e.State).HasMaxLength(50);
+                entity.Property(e => e.ZipCode).HasMaxLength(20);
             });
         }
     }

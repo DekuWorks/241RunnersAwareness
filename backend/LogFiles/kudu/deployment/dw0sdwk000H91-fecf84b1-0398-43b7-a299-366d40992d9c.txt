@@ -1,9 +1,0 @@
-2025-08-29T15:32:40  Fetching changes.
-2025-08-29T15:32:40  Updating submodules.
-2025-08-29T15:32:40  Preparing deployment for commit id '723b167155'.
-2025-08-29T15:32:40  Skipping build. Project type: Run-From-Zip
-2025-08-29T15:32:40  Skipping post build. Project type: Run-From-Zip
-2025-08-29T15:32:40  Requesting site restart
-2025-08-29T15:32:40  Requesting site restart. Attempt #1
-2025-08-29T15:32:41  Successfully requested a restart. Attempt #1
-2025-08-29T15:32:41  Deployment successful.

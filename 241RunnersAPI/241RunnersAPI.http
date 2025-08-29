@@ -1,0 +1,6 @@
+@_241RunnersAPI_HostAddress = http://localhost:5052
+
+GET {{_241RunnersAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

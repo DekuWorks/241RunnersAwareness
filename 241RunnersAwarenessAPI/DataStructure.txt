@@ -1,0 +1,291 @@
+241 RUNNERS AWARENESS API - DATA STRUCTURE DOCUMENTATION
+========================================================
+
+1. AUTHENTICATION ENDPOINTS
+==========================
+
+1.1 REGISTER USER
+-----------------
+POST /api/auth/register
+
+Input (JSON):
+{
+    "email": "user@example.com",                    // Required, valid email format
+    "password": "Password123!",                     // Required, min 8 chars, must contain uppercase, lowercase, number, special char
+    "firstName": "John",                           // Required, max 100 chars
+    "lastName": "Doe",                             // Required, max 100 chars
+    "role": "user",                                // Required, one of: user, parent, caregiver, therapist, adoptiveparent
+    "phoneNumber": "+1234567890",                  // Optional, valid phone format
+    "address": "123 Main St",                      // Optional, max 500 chars
+    "city": "New York",                            // Optional, max 100 chars
+    "state": "NY",                                 // Optional, max 50 chars
+    "zipCode": "10001"                             // Optional, max 20 chars
+}
+
+Output (JSON):
+{
+    "success": true,
+    "message": "User registered successfully.",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+        "id": 1,
+        "email": "user@example.com",
+        "firstName": "John",
+        "lastName": "Doe",
+        "fullName": "John Doe",
+        "role": "user",
+        "createdAt": "2025-08-29T18:00:00.000Z",
+        "phoneNumber": "+1234567890",
+        "address": "123 Main St",
+        "city": "New York",
+        "state": "NY",
+        "zipCode": "10001"
+    }
+}
+
+Error Response:
+{
+    "success": false,
+    "message": "Validation failed: Email is required, Password must contain at least one uppercase letter...",
+    "token": null,
+    "user": null
+}
+
+1.2 LOGIN USER
+--------------
+POST /api/auth/login
+
+Input (JSON):
+{
+    "email": "user@example.com",                    // Required, valid email format
+    "password": "Password123!"                      // Required
+}
+
+Output (JSON):
+{
+    "success": true,
+    "message": "Login successful.",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+        "id": 1,
+        "email": "user@example.com",
+        "firstName": "John",
+        "lastName": "Doe",
+        "fullName": "John Doe",
+        "role": "user",
+        "createdAt": "2025-08-29T18:00:00.000Z",
+        "phoneNumber": "+1234567890",
+        "address": "123 Main St",
+        "city": "New York",
+        "state": "NY",
+        "zipCode": "10001"
+    }
+}
+
+Error Response:
+{
+    "success": false,
+    "message": "Invalid email or password.",
+    "token": null,
+    "user": null
+}
+
+1.3 TEST API
+------------
+GET /api/auth/test
+
+Output (JSON):
+{
+    "message": "API is working!",
+    "timestamp": "2025-08-29T18:00:00.000Z",
+    "status": "healthy"
+}
+
+1.4 HEALTH CHECK
+----------------
+GET /api/auth/health
+
+Output (JSON):
+{
+    "status": "healthy",
+    "timestamp": "2025-08-29T18:00:00.000Z"
+}
+
+2. DATABASE SCHEMA
+==================
+
+2.1 USERS TABLE
+---------------
+- Id (int, Primary Key, Auto Increment)
+- Email (nvarchar(255), Required, Unique, Indexed)
+- PasswordHash (nvarchar(255), Required)
+- FirstName (nvarchar(100), Required)
+- LastName (nvarchar(100), Required)
+- Role (nvarchar(50), Required, Default: "user")
+- IsActive (bit, Required, Default: true)
+- CreatedAt (datetime2, Required, Default: GETUTCDATE())
+- LastLoginAt (datetime2, Nullable)
+- PhoneNumber (nvarchar(20), Nullable)
+- Address (nvarchar(500), Nullable)
+- City (nvarchar(100), Nullable)
+- State (nvarchar(50), Nullable)
+- ZipCode (nvarchar(20), Nullable)
+
+3. VALIDATION RULES
+===================
+
+3.1 EMAIL VALIDATION
+--------------------
+- Required
+- Must be valid email format
+- Maximum 255 characters
+- Case-insensitive unique constraint
+
+3.2 PASSWORD VALIDATION
+-----------------------
+- Required
+- Minimum 8 characters
+- Maximum 100 characters
+- Must contain at least:
+  * One uppercase letter (A-Z)
+  * One lowercase letter (a-z)
+  * One number (0-9)
+  * One special character (@$!%*?&)
+- Stored as BCrypt hash
+
+3.3 NAME VALIDATION
+-------------------
+- FirstName: Required, max 100 characters, trimmed
+- LastName: Required, max 100 characters, trimmed
+- FullName: Computed property (FirstName + " " + LastName)
+
+3.4 ROLE VALIDATION
+-------------------
+- Required
+- Must be one of: user, parent, caregiver, therapist, adoptiveparent, admin
+- Case-insensitive (stored as lowercase)
+- Default: "user"
+
+3.5 PHONE NUMBER VALIDATION
+---------------------------
+- Optional
+- Maximum 20 characters
+- Basic phone format validation
+
+3.6 ADDRESS VALIDATION
+----------------------
+- Address: Optional, max 500 characters
+- City: Optional, max 100 characters
+- State: Optional, max 50 characters
+- ZipCode: Optional, max 20 characters
+
+4. SECURITY FEATURES
+====================
+
+4.1 JWT TOKEN
+-------------
+- Issuer: "241RunnersAwareness"
+- Audience: "241RunnersAwareness"
+- Expiration: 24 hours
+- Claims: UserId, Email, FullName, Role
+- Algorithm: HMAC SHA256
+
+4.2 PASSWORD SECURITY
+---------------------
+- BCrypt hashing with salt
+- Cost factor: Default (10)
+- One-way encryption
+
+4.3 INPUT SANITIZATION
+----------------------
+- All string inputs are trimmed
+- Email addresses converted to lowercase
+- Role values converted to lowercase
+- SQL injection prevention via Entity Framework
+
+5. ERROR HANDLING
+=================
+
+5.1 VALIDATION ERRORS
+---------------------
+- HTTP 400 Bad Request
+- Detailed error messages
+- Field-specific validation feedback
+
+5.2 AUTHENTICATION ERRORS
+-------------------------
+- HTTP 400 Bad Request for invalid credentials
+- HTTP 401 Unauthorized for missing/invalid tokens
+- Generic error messages for security
+
+5.3 SERVER ERRORS
+-----------------
+- HTTP 500 Internal Server Error
+- Logged errors with stack traces
+- Generic user-friendly messages
+
+6. CORS CONFIGURATION
+=====================
+- AllowAll policy enabled
+- Any origin, method, and header allowed
+- Configured for cross-origin requests
+
+7. ADMIN USERS (PRE-SEEDED)
+============================
+1. Email: dekuworks1@gmail.com
+   Password: runners1997
+   Role: admin
+   Name: Marcus Brown
+
+2. Email: danielcarey9770@yahoo.com
+   Password: runners0428
+   Role: admin
+   Name: Daniel Carey
+
+8. API RESPONSE FORMATS
+=======================
+
+8.1 SUCCESS RESPONSE
+--------------------
+{
+    "success": true,
+    "message": "Operation completed successfully",
+    "data": { ... }  // Optional, endpoint-specific data
+}
+
+8.2 ERROR RESPONSE
+------------------
+{
+    "success": false,
+    "message": "Error description",
+    "errors": [ ... ]  // Optional, validation errors
+}
+
+9. HTTP STATUS CODES
+====================
+- 200: Success
+- 201: Created (for registration)
+- 400: Bad Request (validation errors)
+- 401: Unauthorized (authentication required)
+- 403: Forbidden (insufficient permissions)
+- 404: Not Found
+- 500: Internal Server Error
+
+10. RATE LIMITING
+==================
+- Currently not implemented
+- Consider implementing for production
+
+11. LOGGING
+============
+- Structured logging with ILogger
+- Error details logged for debugging
+- User-friendly messages returned to clients
+
+12. DEPLOYMENT
+==============
+- Azure App Service: 241runners-api-2025.azurewebsites.net
+- Azure SQL Database: 241runners-sql-2025.database.windows.net
+- Database: 241RunnersAwarenessDB
+- Environment: Production
+- Framework: .NET 8.0 

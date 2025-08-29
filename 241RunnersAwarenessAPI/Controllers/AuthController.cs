@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using BCrypt.Net;
-using _241RunnersAwareness.BackendAPI.Data;
-using _241RunnersAwareness.BackendAPI.Models;
-using _241RunnersAwareness.BackendAPI.Services;
+using _241RunnersAwarenessAPI.Data;
+using _241RunnersAwarenessAPI.Models;
+using _241RunnersAwarenessAPI.Services;
 
-namespace _241RunnersAwareness.BackendAPI.Controllers
+namespace _241RunnersAwarenessAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -13,51 +14,64 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly JwtService _jwtService;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(ApplicationDbContext context, JwtService jwtService)
+        public AuthController(ApplicationDbContext context, JwtService jwtService, ILogger<AuthController> logger)
         {
             _context = context;
             _jwtService = jwtService;
+            _logger = logger;
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<AuthResponse>> Register(RegisterRequest request)
+        public async Task<ActionResult<AuthResponse>> Register([FromBody] RegisterRequest request)
         {
             try
             {
-                // Check if user already exists
-                if (await _context.Users.AnyAsync(u => u.Email == request.Email))
+                // Validate input
+                if (!ModelState.IsValid)
                 {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    
                     return BadRequest(new AuthResponse
                     {
                         Success = false,
-                        Message = "User with this email already exists."
+                        Message = $"Validation failed: {string.Join(", ", errors)}"
                     });
                 }
 
-                // Validate role
-                var allowedRoles = new[] { "user", "parent", "caregiver", "therapist", "adoptiveparent" };
-                if (!allowedRoles.Contains(request.Role.ToLower()))
+                // Check if user already exists
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == request.Email.ToLower());
+                if (existingUser != null)
                 {
                     return BadRequest(new AuthResponse
                     {
                         Success = false,
-                        Message = "Invalid role. Allowed roles: user, parent, caregiver, therapist, adoptiveparent"
+                        Message = "A user with this email already exists."
                     });
                 }
 
                 // Hash password
                 var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
-                // Create user
+                // Create new user
                 var user = new User
                 {
                     Email = request.Email.ToLower(),
                     PasswordHash = passwordHash,
-                    FirstName = request.FirstName,
-                    LastName = request.LastName,
+                    FirstName = request.FirstName.Trim(),
+                    LastName = request.LastName.Trim(),
                     Role = request.Role.ToLower(),
-                    CreatedAt = DateTime.UtcNow
+                    PhoneNumber = request.PhoneNumber?.Trim(),
+                    Address = request.Address?.Trim(),
+                    City = request.City?.Trim(),
+                    State = request.State?.Trim(),
+                    ZipCode = request.ZipCode?.Trim(),
+                    CreatedAt = DateTime.UtcNow,
+                    IsActive = true
                 };
 
                 _context.Users.Add(user);
@@ -66,6 +80,7 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                 // Generate token
                 var token = _jwtService.GenerateToken(user);
 
+                // Return success response
                 return Ok(new AuthResponse
                 {
                     Success = true,
@@ -79,39 +94,49 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                         LastName = user.LastName,
                         FullName = user.FullName,
                         Role = user.Role,
-                        CreatedAt = user.CreatedAt
+                        CreatedAt = user.CreatedAt,
+                        PhoneNumber = user.PhoneNumber,
+                        Address = user.Address,
+                        City = user.City,
+                        State = user.State,
+                        ZipCode = user.ZipCode
                     }
                 });
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error during user registration");
                 return StatusCode(500, new AuthResponse
                 {
                     Success = false,
-                    Message = "An error occurred during registration."
+                    Message = "An error occurred during registration. Please try again."
                 });
             }
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<AuthResponse>> Login(LoginRequest request)
+        public async Task<ActionResult<AuthResponse>> Login([FromBody] LoginRequest request)
         {
             try
             {
-                // Find user
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email.ToLower());
-
-                if (user == null)
+                // Validate input
+                if (!ModelState.IsValid)
                 {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    
                     return BadRequest(new AuthResponse
                     {
                         Success = false,
-                        Message = "Invalid email or password."
+                        Message = $"Validation failed: {string.Join(", ", errors)}"
                     });
                 }
 
-                // Verify password
-                if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+                // Find user
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == request.Email.ToLower());
+                if (user == null)
                 {
                     return BadRequest(new AuthResponse
                     {
@@ -126,7 +151,17 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                     return BadRequest(new AuthResponse
                     {
                         Success = false,
-                        Message = "Account is disabled."
+                        Message = "Account is deactivated. Please contact support."
+                    });
+                }
+
+                // Verify password
+                if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Invalid email or password."
                     });
                 }
 
@@ -137,6 +172,7 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                 // Generate token
                 var token = _jwtService.GenerateToken(user);
 
+                // Return success response
                 return Ok(new AuthResponse
                 {
                     Success = true,
@@ -150,16 +186,22 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
                         LastName = user.LastName,
                         FullName = user.FullName,
                         Role = user.Role,
-                        CreatedAt = user.CreatedAt
+                        CreatedAt = user.CreatedAt,
+                        PhoneNumber = user.PhoneNumber,
+                        Address = user.Address,
+                        City = user.City,
+                        State = user.State,
+                        ZipCode = user.ZipCode
                     }
                 });
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error during user login");
                 return StatusCode(500, new AuthResponse
                 {
                     Success = false,
-                    Message = "An error occurred during login."
+                    Message = "An error occurred during login. Please try again."
                 });
             }
         }

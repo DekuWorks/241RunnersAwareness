@@ -1,6 +1,0 @@
-@_241RunnersAwareness.BackendAPI_HostAddress = http://localhost:5209
-
-GET {{_241RunnersAwareness.BackendAPI_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
