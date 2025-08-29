@@ -117,6 +117,16 @@
             font-size: 0.9rem;
         }
         
+        .success-message {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        
         .auth-links {
             text-align: center;
             margin-top: 30px;
@@ -145,6 +155,27 @@
         
         .back-link a:hover {
             color: #333;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .error-text {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 5px;
+            display: block;
         }
     </style>
 </head>
@@ -182,8 +213,6 @@
                     <span class="error-text" id="passwordError"></span>
                 </div>
                 
-
-                
                 <div class="form-group">
                     <button type="submit" id="submitBtn">
                         <span id="submitText">Sign In</span>
@@ -204,57 +233,113 @@
         </div>
     </div>
 
-    <script type="module">
-        import { saveTokens, isValidEmail, showError, clearAllErrors, showToast } from './assets/js/admin-auth.js';
+    <script>
+        // Admin Authentication Functions
+        const tokenKey = "ra_admin_token";
+        const roleKey = "ra_admin_role";
+        const userKey = "ra_admin_user";
         
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('adminLoginForm');
+        // API Configuration
+        let API_BASE_URL = 'https://241runners-api-2025.azurewebsites.net/api';
+        
+        // Load API configuration
+        async function loadConfig() {
+            try {
+                const response = await fetch('/config.json');
+                const config = await response.json();
+                API_BASE_URL = config.API_BASE_URL;
+            } catch (error) {
+                console.warn('Failed to load config.json, using default API URL');
+            }
+        }
+        
+        // Save authentication data
+        function saveAuthData(token, user) {
+            localStorage.setItem(tokenKey, token);
+            localStorage.setItem(roleKey, user.role);
+            localStorage.setItem(userKey, JSON.stringify(user));
+        }
+        
+        // Validate email format
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        // Show error message
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+        }
+        
+        // Clear all errors
+        function clearAllErrors() {
+            const errorElements = document.querySelectorAll('.error-text');
+            errorElements.forEach(element => {
+                element.textContent = '';
+                element.style.display = 'none';
+            });
+        }
+        
+        // Show alert message
+        function showAlert(message, type = 'error') {
             const alertContainer = document.getElementById('alertContainer');
+            const className = type === 'success' ? 'success-message' : 'error-message';
+            alertContainer.innerHTML = `<div class="${className}">${message}</div>`;
+        }
+        
+        // Set loading state
+        function setLoading(loading) {
             const submitBtn = document.getElementById('submitBtn');
             const submitText = document.getElementById('submitText');
             const loadingSpinner = document.getElementById('loadingSpinner');
             
-            function showAlert(message, type = 'error') {
-                alertContainer.innerHTML = `<div class="error-message">${message}</div>`;
+            if (loading) {
+                submitBtn.disabled = true;
+                submitText.style.display = 'none';
+                loadingSpinner.style.display = 'inline-block';
+            } else {
+                submitBtn.disabled = false;
+                submitText.style.display = 'inline';
+                loadingSpinner.style.display = 'none';
+            }
+        }
+        
+        // Validate form
+        function validateForm() {
+            clearAllErrors();
+            let isValid = true;
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!email) {
+                showError('emailError', 'Email is required');
+                isValid = false;
+            } else if (!isValidEmail(email)) {
+                showError('emailError', 'Please enter a valid email address');
+                isValid = false;
             }
             
-            function setLoading(loading) {
-                if (loading) {
-                    submitBtn.disabled = true;
-                    submitText.style.display = 'none';
-                    loadingSpinner.style.display = 'inline-block';
-                } else {
-                    submitBtn.disabled = false;
-                    submitText.style.display = 'inline';
-                    loadingSpinner.style.display = 'none';
-                }
+            if (!password) {
+                showError('passwordError', 'Password is required');
+                isValid = false;
+            } else if (password.length < 8) {
+                showError('passwordError', 'Password must be at least 8 characters long');
+                isValid = false;
             }
             
-            function validateForm() {
-                clearAllErrors();
-                let isValid = true;
-                
-                const email = document.getElementById('email').value.trim();
-                const password = document.getElementById('password').value;
-                
-                if (!email) {
-                    showError('emailError', 'Email is required');
-                    isValid = false;
-                } else if (!isValidEmail(email)) {
-                    showError('emailError', 'Please enter a valid email address');
-                    isValid = false;
-                }
-                
-                if (!password) {
-                    showError('passwordError', 'Password is required');
-                    isValid = false;
-                } else if (password.length < 8) {
-                    showError('passwordError', 'Password must be at least 8 characters long');
-                    isValid = false;
-                }
-                
-                return isValid;
-            }
+            return isValid;
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadConfig();
+            
+            const form = document.getElementById('adminLoginForm');
             
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
@@ -271,11 +356,6 @@
                 };
                 
                 try {
-                    // Load API configuration
-                    const configResponse = await fetch('/config.json');
-                    const config = await configResponse.json();
-                    const API_BASE_URL = config.API_BASE_URL;
-                    
                     // Attempt login
                     const response = await fetch(`${API_BASE_URL}/auth/login`, {
                         method: 'POST',
@@ -286,31 +366,26 @@
                         body: JSON.stringify(formData)
                     });
                     
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(errorData.message || 'Login failed');
-                    }
-                    
                     const data = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(data.message || 'Login failed');
+                    }
                     
                     // Check if user has admin role
                     if (data.user.role !== 'admin') {
                         throw new Error('Admin role required. You do not have permission to access the admin dashboard.');
                     }
                     
-                    // Save tokens
-                    saveTokens({
-                        accessToken: data.token,
-                        refreshToken: data.refreshToken || '',
-                        role: data.user.role
-                    });
+                    // Save authentication data to localStorage
+                    saveAuthData(data.token, data.user);
                     
-                    showToast('Login successful! Redirecting to admin dashboard...', 'success');
+                    showAlert('Login successful! Redirecting to admin dashboard...', 'success');
                     
                     // Redirect to admin dashboard
                     setTimeout(() => {
                         window.location.href = '/admin/index.html';
-                    }, 1000);
+                    }, 1500);
                     
                 } catch (error) {
                     console.error('Admin login error:', error);
