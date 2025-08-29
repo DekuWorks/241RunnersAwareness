@@ -349,12 +349,20 @@ async function mockRegister(userData) {
     throw new Error('Passwords do not match');
   }
 
+  // Validate role - prevent admin role creation through regular registration
+  const allowedRoles = ['user', 'parent', 'caregiver', 'aba_therapist', 'adoptive_parent'];
+  const userRole = userData.role || 'user';
+  
+  if (!allowedRoles.includes(userRole.toLowerCase())) {
+    throw new Error('Invalid role selected. Admin roles cannot be created through regular registration.');
+  }
+
   // Add user to mock database
   const newUser = {
     email: userData.email,
     password: userData.password,
     fullName: userData.fullName,
-    role: userData.role || 'GeneralUser'
+    role: userRole.toLowerCase()
   };
 
   mockUsers.push(newUser);
@@ -458,6 +466,14 @@ async function handleRegister(userData) {
   console.log('API URL:', `${API_BASE_URL}/auth/register`);
   console.log('User data being sent:', userData);
   
+  // Validate role - prevent admin role creation through regular registration
+  const allowedRoles = ['user', 'parent', 'caregiver', 'aba_therapist', 'adoptive_parent'];
+  const userRole = userData.role || 'user';
+  
+  if (!allowedRoles.includes(userRole.toLowerCase())) {
+    throw new Error('Invalid role selected. Admin roles cannot be created through regular registration.');
+  }
+  
   // For now, use mock authentication since backend is having issues
   console.log('Using mock authentication for immediate functionality');
   
@@ -477,7 +493,7 @@ async function handleRegister(userData) {
         lastName: userData.lastName || userData.fullName?.split(' ').slice(1).join(' ') || '',
         fullName: userData.fullName,
         phoneNumber: userData.phoneNumber || '',
-        role: userData.role || 'user',
+        role: userRole.toLowerCase(),
         // Role-specific fields
         relationshipToRunner: userData.relationshipToRunner,
         licenseNumber: userData.licenseNumber,
