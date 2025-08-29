@@ -225,6 +225,10 @@
             
             <div class="auth-links">
                 <a href="/login.html">← Back to User Login</a>
+                <br><br>
+                <button type="button" onclick="testAPIConnection()" style="background: #6b7280; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">
+                    Test API Connection
+                </button>
             </div>
             
             <div class="back-link">
@@ -335,6 +339,20 @@
             return isValid;
         }
         
+        // Test API connection function
+        async function testAPIConnection() {
+            try {
+                console.log('Testing API connection...');
+                const response = await fetch(`${API_BASE_URL}/auth/test`);
+                const data = await response.json();
+                console.log('API test successful:', data);
+                showAlert('API connection successful! Server is responding.', 'success');
+            } catch (error) {
+                console.error('API test failed:', error);
+                showAlert('API connection failed: ' + error.message, 'error');
+            }
+        }
+        
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadConfig();
@@ -356,7 +374,30 @@
                 };
                 
                 try {
+                    console.log('Attempting login with API URL:', API_BASE_URL);
+                    
+                    // Test API connectivity first
+                    try {
+                        const testResponse = await fetch(`${API_BASE_URL}/auth/test`, {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Client': '241RA-Admin/1.0'
+                            }
+                        });
+                        
+                        if (testResponse.ok) {
+                            const testData = await testResponse.json();
+                            console.log('API connectivity test successful:', testData);
+                        } else {
+                            console.warn('API connectivity test failed:', testResponse.status);
+                        }
+                    } catch (testError) {
+                        console.warn('API connectivity test error:', testError);
+                    }
+                    
                     // Attempt login
+                    console.log('Sending login request...');
                     const response = await fetch(`${API_BASE_URL}/auth/login`, {
                         method: 'POST',
                         headers: {
@@ -366,7 +407,10 @@
                         body: JSON.stringify(formData)
                     });
                     
+                    console.log('Login response status:', response.status);
+                    
                     const data = await response.json();
+                    console.log('Login response data:', data);
                     
                     if (!response.ok) {
                         throw new Error(data.message || 'Login failed');
@@ -389,7 +433,17 @@
                     
                 } catch (error) {
                     console.error('Admin login error:', error);
-                    showAlert(error.message || 'Login failed. Please check your credentials and try again.');
+                    
+                    // Provide more specific error messages
+                    let errorMessage = 'Login failed. Please check your credentials and try again.';
+                    
+                    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                        errorMessage = 'Network error: Unable to connect to the server. Please check your internet connection and try again.';
+                    } else if (error.message) {
+                        errorMessage = error.message;
+                    }
+                    
+                    showAlert(errorMessage);
                 } finally {
                     setLoading(false);
                 }
