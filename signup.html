@@ -217,7 +217,7 @@
                     <span class="error-text" id="lastNameError"></span>
                 </div>
                 
-                <div class="form-group">
+                                <div class="form-group">
                     <label for="email">Email</label>
                     <input 
                         type="email" 
@@ -396,14 +396,13 @@
                 const formData = {
                     firstName: document.getElementById('firstName').value.trim(),
                     lastName: document.getElementById('lastName').value.trim(),
-                    fullName: document.getElementById('firstName').value.trim() + ' ' + document.getElementById('lastName').value.trim(),
                     email: document.getElementById('email').value.trim(),
                     phoneNumber: document.getElementById('phoneNumber').value.trim(),
                     password: document.getElementById('password').value,
                     role: document.getElementById('role').value
                 };
                 
-                const response = await authUtils.fetchJson('/auth/register', {
+                const response = await authUtils.fetchJson(`${API_BASE_URL}/auth/register`, {
                     method: 'POST',
                     body: JSON.stringify(formData)
                 });
