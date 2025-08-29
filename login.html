@@ -112,18 +112,33 @@
         .auth-links {
             text-align: center;
             margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
         }
         
         .auth-links a {
             color: #dc2626;
             text-decoration: none;
             font-weight: 600;
-            margin: 0 10px;
             font-size: 1rem;
+            transition: color 0.3s ease;
         }
         
         .auth-links a:hover {
             text-decoration: underline;
+        }
+        
+        .admin-link {
+            color: #6b7280;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .admin-link:hover {
+            color: #374151;
+            opacity: 1;
         }
         
         .error-text {
@@ -241,15 +256,7 @@
             <div class="auth-links">
                 <a href="/forgot-password.html">Forgot your password?</a>
                 <a href="/signup.html" id="signupLink">Don't have an account? Sign up</a>
-                <div class="login-actions">
-                    <a href="login.html" class="btn">User Login</a>
-                    <div class="dropdown">
-                        <button class="btn btn-secondary">More</button>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="admin/login.html">Admin Login</a>
-                        </div>
-                    </div>
-                </div>
+                <a href="/admin/login.html" class="admin-link">Admin Login</a>
             </div>
         </div>
     </div>
