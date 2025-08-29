@@ -282,6 +282,23 @@
 
     <script src="/js/auth.js"></script>
     <script>
+        // Load API configuration
+        let API_BASE_URL = 'https://241runnersawareness-api.azurewebsites.net/api';
+        
+        async function loadConfig() {
+            try {
+                const response = await fetch('/config.json');
+                const config = await response.json();
+                API_BASE_URL = config.API_BASE_URL;
+                window.API_BASE_URL = API_BASE_URL;
+            } catch (error) {
+                console.warn('Failed to load config.json, using default API URL');
+            }
+        }
+        
+        // Initialize config
+        loadConfig();
+        
         // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const nextUrl = urlParams.get('next');
@@ -386,25 +403,17 @@
                     role: document.getElementById('role').value
                 };
                 
-                const response = await fetch('/api/auth/register', {
+                const response = await authUtils.fetchJson('/auth/register', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(formData)
                 });
                 
-                const data = await response.json();
-                
-                if (response.ok) {
+                if (response.success) {
                     showSuccess('Account created successfully! Redirecting...');
                     
                     // Store auth data
-                    if (data.token) {
-                        localStorage.setItem('ra_auth', JSON.stringify({
-                            token: data.token,
-                            user: data.user
-                        }));
+                    if (response.token) {
+                        authUtils.setAuth(response);
                     }
                     
                     // Redirect after a short delay
@@ -417,12 +426,12 @@
                     }, 1500);
                     
                 } else {
-                    showError(data.message || 'An error occurred during registration.');
+                    showError(response.message || 'An error occurred during registration.');
                 }
                 
             } catch (error) {
                 console.error('Signup error:', error);
-                showError('An error occurred during registration. Please try again.');
+                showError(error.message || 'An error occurred during registration. Please try again.');
             } finally {
                 // Reset loading state
                 signupBtn.disabled = false;
