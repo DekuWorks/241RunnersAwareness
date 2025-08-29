@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users Management - 241 Runners Awareness Admin</title>
+    <meta name="description" content="Manage users for 241 Runners Awareness">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/241-logo.jpg">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/admin/assets/css/admin.css">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Admin Guard -->
+    <script type="module">
+        import { requireAdmin } from './assets/js/admin-auth.js';
+        requireAdmin();
+    </script>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <nav class="admin-sidebar">
+            <div style="padding: 20px; text-align: center;">
+                <h3 style="margin: 0; color: white;">241 Runners</h3>
+                <p style="margin: 5px 0 0 0; color: #bdc3c7; font-size: 0.9rem;">Admin Dashboard</p>
+            </div>
+            
+            <ul class="admin-nav">
+                <li class="admin-nav-item">
+                    <a href="/admin/index.html" class="admin-nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="admin-nav-item">
+                    <a href="/admin/users.html" class="admin-nav-link active">
+                        <i class="fas fa-users"></i>
+                        Users
+                    </a>
+                </li>
+                <li class="admin-nav-item">
+                    <a href="/admin/runners.html" class="admin-nav-link">
+                        <i class="fas fa-running"></i>
+                        Runners
+                    </a>
+                </li>
+                <li class="admin-nav-item">
+                    <a href="/admin/cases.html" class="admin-nav-link">
+                        <i class="fas fa-folder-open"></i>
+                        Cases
+                    </a>
+                </li>
+                <li class="admin-nav-item">
+                    <a href="/admin/audit.html" class="admin-nav-link">
+                        <i class="fas fa-history"></i>
+                        Audit Logs
+                    </a>
+                </li>
+            </ul>
+            
+            <div style="padding: 20px; margin-top: auto;">
+                <button onclick="logout()" class="btn btn-secondary" style="width: 100%;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <div>
+                    <h1>Users Management</h1>
+                    <p style="margin: 5px 0 0 0; color: #666;">Manage user accounts and permissions</p>
+                </div>
+                <div>
+                    <button onclick="window.location.href='/admin/index.html'" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Dashboard
+                    </button>
+                </div>
+            </header>
+
+            <!-- Users Content -->
+            <div class="admin-content">
+                <!-- Search and Filters -->
+                <div class="search-filters">
+                    <div id="searchContainer"></div>
+                    <div id="filterContainer"></div>
+                    <button onclick="refreshUsers()" class="btn btn-primary">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh
+                    </button>
+                </div>
+
+                <!-- Users Table -->
+                <div style="background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="margin: 0; color: #2c3e50;">Users</h2>
+                        <button onclick="addNewUser()" class="btn btn-success">
+                            <i class="fas fa-user-plus"></i>
+                            Add New User
+                        </button>
+                    </div>
+                    
+                    <div id="usersTable"></div>
+                    
+                    <!-- Pagination -->
+                    <div id="pagination" class="pagination"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { logout } from './assets/js/admin-auth.js';
+        import { initUsersPage, loadUsers } from './assets/js/users.js';
+        
+        // Make functions global
+        window.logout = logout;
+        window.refreshUsers = loadUsers;
+        window.addNewUser = () => {
+            // TODO: Implement add new user functionality
+            alert('Add new user functionality coming soon!');
+        };
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            initUsersPage();
+        });
+    </script>
+</body>
+</html> 

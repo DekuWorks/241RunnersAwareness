@@ -8,7 +8,7 @@ const SignupPage = () => {
     email: '',
     password: '',
     fullName: '',
-    role: 'User'
+    role: 'user'
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -163,11 +163,11 @@ const SignupPage = () => {
             required
             className={errors.role ? 'error' : ''}
           >
-            <option value="User">User</option>
-            <option value="Parent">Parent</option>
-            <option value="Caregiver">Caregiver</option>
-            <option value="ABA_Therapist">ABA Therapist</option>
-            <option value="Adoptive_Parent">Adoptive Parent</option>
+            <option value="user">User</option>
+            <option value="parent">Parent</option>
+            <option value="caregiver">Caregiver</option>
+            <option value="aba_therapist">ABA Therapist</option>
+            <option value="adoptive_parent">Adoptive Parent</option>
           </select>
           {errors.role && <span className="error-text">{errors.role}</span>}
         </div>

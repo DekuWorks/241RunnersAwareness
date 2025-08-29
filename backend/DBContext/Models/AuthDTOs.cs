@@ -27,7 +27,9 @@ namespace _241RunnersAwareness.BackendAPI.Models
 
         // Role and role-specific fields
         [Required]
-        public string Role { get; set; } = "user"; // admin, user, therapist, caregiver, parent, adoptive_parent
+        [RegularExpression(@"^(user|parent|caregiver|aba_therapist|adoptive_parent)$", 
+            ErrorMessage = "Role must be one of: user, parent, caregiver, aba_therapist, adoptive_parent")]
+        public string Role { get; set; } = "user"; // user, parent, caregiver, aba_therapist, adoptive_parent
         
         // Common fields
         public string? Address { get; set; }

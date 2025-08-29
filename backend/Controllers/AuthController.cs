@@ -102,6 +102,16 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
         {
             try
             {
+                // Prevent admin role creation through regular registration
+                if (request.Role?.ToLower() == "admin" || request.Role?.ToLower() == "superadmin")
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Admin roles cannot be created through regular registration."
+                    });
+                }
+
                 // Check if user already exists
                 var existingUser = await _context.Users
                     .FirstOrDefaultAsync(u => u.Email == request.Email);
@@ -177,6 +187,16 @@ namespace _241RunnersAwareness.BackendAPI.Controllers
         {
             try
             {
+                // Prevent admin role creation through regular registration
+                if (request.Role?.ToLower() == "admin" || request.Role?.ToLower() == "superadmin")
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Admin roles cannot be created through regular registration."
+                    });
+                }
+
                 // Check if user already exists
                 var existingUser = await _context.Users
                     .FirstOrDefaultAsync(u => u.Email == request.Email);

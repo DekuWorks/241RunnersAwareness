@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - 241 Runners Awareness</title>
+    <meta name="description" content="Admin dashboard for 241 Runners Awareness">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/241-logo.jpg">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/admin/assets/css/admin.css">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Admin Guard -->
+    <script type="module">
+        import { requireAdmin } from './assets/js/admin-auth.js';
+        requireAdmin();
+    </script>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <nav class="admin-sidebar">
+            <div style="padding: 20px; text-align: center;">
+                <h3 style="margin: 0; color: white;">241 Runners</h3>
+                <p style="margin: 5px 0 0 0; color: #bdc3c7; font-size: 0.9rem;">Admin Dashboard</p>
+            </div>
+            
+            <ul class="admin-nav">
+                <li class="admin-nav-item">
+                    <a href="/admin/index.html" class="admin-nav-link active">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="admin-nav-item">
+                    <a href="/admin/users.html" class="admin-nav-link">
+                        <i class="fas fa-users"></i>
+                        Users
+                    </a>
+                </li>
+                <li class="admin-nav-item">
+                    <a href="/admin/runners.html" class="admin-nav-link">
+                        <i class="fas fa-running"></i>
+                        Runners
+                    </a>
+                </li>
+                <li class="admin-nav-item">
+                    <a href="/admin/cases.html" class="admin-nav-link">
+                        <i class="fas fa-folder-open"></i>
+                        Cases
+                    </a>
+                </li>
+                <li class="admin-nav-item">
+                    <a href="/admin/audit.html" class="admin-nav-link">
+                        <i class="fas fa-history"></i>
+                        Audit Logs
+                    </a>
+                </li>
+            </ul>
+            
+            <div style="padding: 20px; margin-top: auto;">
+                <button onclick="logout()" class="btn btn-secondary" style="width: 100%;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <div>
+                    <h1>Admin Dashboard</h1>
+                    <p style="margin: 5px 0 0 0; color: #666;">Welcome back, <span id="adminName">Admin</span></p>
+                </div>
+                <div>
+                    <span id="currentTime"></span>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="admin-content">
+                <!-- Overview Cards -->
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-users"></i> Active Users</h3>
+                        <p class="number" id="activeUsers">-</p>
+                        <p class="change positive" id="activeUsersChange">+12% from last week</p>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-user-plus"></i> New Signups (7d)</h3>
+                        <p class="number" id="newSignups">-</p>
+                        <p class="change positive" id="newSignupsChange">+5 this week</p>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-folder-open"></i> Open Cases</h3>
+                        <p class="number" id="openCases">-</p>
+                        <p class="change" id="openCasesChange">3 urgent cases</p>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Urgent Cases</h3>
+                        <p class="number" id="urgentCases">-</p>
+                        <p class="change negative" id="urgentCasesChange">Requires attention</p>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div style="background: white; border-radius: 8px; padding: 20px; margin-top: 30px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                    <h2 style="margin: 0 0 20px 0; color: #2c3e50;">Recent Activity</h2>
+                    <div id="recentActivity">
+                        <div class="loading-spinner">
+                            <div class="spinner"></div>
+                            <p>Loading recent activity...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div style="background: white; border-radius: 8px; padding: 20px; margin-top: 30px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                    <h2 style="margin: 0 0 20px 0; color: #2c3e50;">Quick Actions</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <button onclick="window.location.href='/admin/users.html'" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i>
+                            Add New User
+                        </button>
+                        <button onclick="window.location.href='/admin/runners.html'" class="btn btn-success">
+                            <i class="fas fa-running"></i>
+                            Add New Runner
+                        </button>
+                        <button onclick="window.location.href='/admin/cases.html'" class="btn btn-warning">
+                            <i class="fas fa-folder-plus"></i>
+                            Create Case
+                        </button>
+                        <button onclick="exportData()" class="btn btn-secondary">
+                            <i class="fas fa-download"></i>
+                            Export Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { fetchWithAuth, showToast, logout } from './assets/js/admin-auth.js';
+        import { showLoading, hideLoading } from './assets/js/admin-ui.js';
+        
+        // Make logout function global
+        window.logout = logout;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update current time
+            function updateTime() {
+                const now = new Date();
+                document.getElementById('currentTime').textContent = now.toLocaleString();
+            }
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // Load dashboard data
+            loadDashboardData();
+        });
+        
+        async function loadDashboardData() {
+            try {
+                showLoading('recentActivity', 'Loading recent activity...');
+                
+                // Load dashboard statistics
+                const statsResponse = await fetchWithAuth('/admin/dashboard/stats');
+                updateDashboardCards(statsResponse);
+                
+                // Load recent activity
+                const activityResponse = await fetchWithAuth('/admin/dashboard/activity');
+                updateRecentActivity(activityResponse);
+                
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showToast('Failed to load dashboard data', 'error');
+                
+                // Show mock data for development
+                showMockData();
+            }
+        }
+        
+        function updateDashboardCards(stats) {
+            document.getElementById('activeUsers').textContent = stats.activeUsers || 0;
+            document.getElementById('newSignups').textContent = stats.newSignups || 0;
+            document.getElementById('openCases').textContent = stats.openCases || 0;
+            document.getElementById('urgentCases').textContent = stats.urgentCases || 0;
+            
+            // Update changes
+            if (stats.activeUsersChange) {
+                document.getElementById('activeUsersChange').textContent = stats.activeUsersChange;
+            }
+            if (stats.newSignupsChange) {
+                document.getElementById('newSignupsChange').textContent = stats.newSignupsChange;
+            }
+            if (stats.openCasesChange) {
+                document.getElementById('openCasesChange').textContent = stats.openCasesChange;
+            }
+            if (stats.urgentCasesChange) {
+                document.getElementById('urgentCasesChange').textContent = stats.urgentCasesChange;
+            }
+        }
+        
+        function updateRecentActivity(activities) {
+            const container = document.getElementById('recentActivity');
+            
+            if (!activities || activities.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center;">No recent activity</p>';
+                return;
+            }
+            
+            const activityHtml = activities.map(activity => `
+                <div style="display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0;">
+                    <div style="margin-right: 15px;">
+                        <i class="fas ${getActivityIcon(activity.type)}" style="color: #e74c3c;"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 500;">${activity.description}</div>
+                        <div style="font-size: 0.9rem; color: #666;">${activity.timestamp}</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = activityHtml;
+        }
+        
+        function getActivityIcon(type) {
+            const icons = {
+                'user_created': 'fa-user-plus',
+                'user_updated': 'fa-user-edit',
+                'case_created': 'fa-folder-plus',
+                'case_updated': 'fa-folder-open',
+                'runner_added': 'fa-running',
+                'runner_updated': 'fa-user-edit',
+                'login': 'fa-sign-in-alt',
+                'logout': 'fa-sign-out-alt'
+            };
+            return icons[type] || 'fa-info-circle';
+        }
+        
+        function showMockData() {
+            // Mock dashboard data for development
+            updateDashboardCards({
+                activeUsers: 156,
+                newSignups: 23,
+                openCases: 8,
+                urgentCases: 2,
+                activeUsersChange: '+12% from last week',
+                newSignupsChange: '+5 this week',
+                openCasesChange: '3 urgent cases',
+                urgentCasesChange: 'Requires attention'
+            });
+            
+            updateRecentActivity([
+                {
+                    type: 'user_created',
+                    description: 'New user registered: john.doe@example.com',
+                    timestamp: '2 minutes ago'
+                },
+                {
+                    type: 'case_created',
+                    description: 'New case created: Missing person report #2025-001',
+                    timestamp: '15 minutes ago'
+                },
+                {
+                    type: 'runner_added',
+                    description: 'New runner profile added: Sarah Johnson',
+                    timestamp: '1 hour ago'
+                },
+                {
+                    type: 'user_updated',
+                    description: 'User profile updated: admin@241runnersawareness.org',
+                    timestamp: '2 hours ago'
+                }
+            ]);
+        }
+        
+        async function exportData() {
+            try {
+                showToast('Preparing export...', 'info');
+                
+                const response = await fetchWithAuth('/admin/export/data', {
+                    method: 'POST'
+                });
+                
+                if (response.downloadUrl) {
+                    // Create download link
+                    const link = document.createElement('a');
+                    link.href = response.downloadUrl;
+                    link.download = `241runners-data-${new Date().toISOString().split('T')[0]}.csv`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    showToast('Export completed successfully', 'success');
+                } else {
+                    showToast('Export failed', 'error');
+                }
+            } catch (error) {
+                console.error('Export error:', error);
+                showToast('Export failed: ' + error.message, 'error');
+            }
+        }
+        
+        // Make export function global
+        window.exportData = exportData;
+    </script>
+</body>
+</html> 
