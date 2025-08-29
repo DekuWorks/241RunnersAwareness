@@ -43,6 +43,42 @@ namespace _241RunnersAwarenessAPI.Controllers
                     });
                 }
 
+                // Additional validation for admin role creation
+                if (request.Role.ToLower() == "admin")
+                {
+                    // Check if the request is coming from an authenticated admin
+                    var authHeader = Request.Headers["Authorization"].FirstOrDefault();
+                    if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+                    {
+                        return Unauthorized(new AuthResponse
+                        {
+                            Success = false,
+                            Message = "Admin creation requires authentication."
+                        });
+                    }
+
+                    var token = authHeader.Substring("Bearer ".Length);
+                    var currentUser = _jwtService.ValidateToken(token);
+                    if (currentUser == null || currentUser.Role.ToLower() != "admin")
+                    {
+                        return Forbid(new AuthResponse
+                        {
+                            Success = false,
+                            Message = "Only existing admins can create new admin users."
+                        });
+                    }
+                }
+
+                // Validate email format more strictly
+                if (!IsValidEmail(request.Email))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Invalid email format."
+                    });
+                }
+
                 // Check if user already exists
                 var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == request.Email.ToLower());
                 if (existingUser != null)
@@ -54,13 +90,23 @@ namespace _241RunnersAwarenessAPI.Controllers
                     });
                 }
 
+                // Validate password strength
+                if (!IsPasswordStrong(request.Password))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+                    });
+                }
+
                 // Hash password
                 var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
                 // Create new user
                 var user = new User
                 {
-                    Email = request.Email.ToLower(),
+                    Email = request.Email.ToLower().Trim(),
                     PasswordHash = passwordHash,
                     FirstName = request.FirstName.Trim(),
                     LastName = request.LastName.Trim(),
@@ -70,6 +116,8 @@ namespace _241RunnersAwarenessAPI.Controllers
                     City = request.City?.Trim(),
                     State = request.State?.Trim(),
                     ZipCode = request.ZipCode?.Trim(),
+                    Organization = request.Organization?.Trim(),
+                    Title = request.Title?.Trim(),
                     CreatedAt = DateTime.UtcNow,
                     IsActive = true
                 };
@@ -99,7 +147,9 @@ namespace _241RunnersAwarenessAPI.Controllers
                         Address = user.Address,
                         City = user.City,
                         State = user.State,
-                        ZipCode = user.ZipCode
+                        ZipCode = user.ZipCode,
+                        Organization = user.Organization,
+                        Title = user.Title
                     }
                 });
             }
@@ -191,7 +241,9 @@ namespace _241RunnersAwarenessAPI.Controllers
                         Address = user.Address,
                         City = user.City,
                         State = user.State,
-                        ZipCode = user.ZipCode
+                        ZipCode = user.ZipCode,
+                        Organization = user.Organization,
+                        Title = user.Title
                     }
                 });
             }
@@ -313,6 +365,45 @@ namespace _241RunnersAwarenessAPI.Controllers
                     Message = "An error occurred during password reset. Please try again."
                 });
             }
+        }
+
+        // Helper methods for validation
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private bool IsPasswordStrong(string password)
+        {
+            if (string.IsNullOrWhiteSpace(password) || password.Length < 8)
+                return false;
+
+            // Check for at least one uppercase letter
+            if (!password.Any(char.IsUpper))
+                return false;
+
+            // Check for at least one lowercase letter
+            if (!password.Any(char.IsLower))
+                return false;
+
+            // Check for at least one digit
+            if (!password.Any(char.IsDigit))
+                return false;
+
+            // Check for at least one special character
+            var specialChars = @"@$!%*?&";
+            if (!password.Any(c => specialChars.Contains(c)))
+                return false;
+
+            return true;
         }
     }
 } 

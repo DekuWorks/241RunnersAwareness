@@ -49,5 +49,13 @@ namespace _241RunnersAwarenessAPI.Models
         
         [MaxLength(20)]
         public string? ZipCode { get; set; }
+        
+        [MaxLength(200)]
+        public string? Organization { get; set; }
+        
+        [MaxLength(100)]
+        public string? Title { get; set; }
+        
+        public DateTime? UpdatedAt { get; set; }
     }
 } 

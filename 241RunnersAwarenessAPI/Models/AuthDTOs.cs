@@ -18,15 +18,17 @@ namespace _241RunnersAwarenessAPI.Models
         
         [Required]
         [MaxLength(100)]
+        [RegularExpression(@"^[a-zA-Z\s\-']+$", ErrorMessage = "First name can only contain letters, spaces, hyphens, and apostrophes")]
         public string FirstName { get; set; } = string.Empty;
         
         [Required]
         [MaxLength(100)]
+        [RegularExpression(@"^[a-zA-Z\s\-']+$", ErrorMessage = "Last name can only contain letters, spaces, hyphens, and apostrophes")]
         public string LastName { get; set; } = string.Empty;
         
         [Required]
-        [RegularExpression("^(user|parent|caregiver|therapist|adoptiveparent)$", 
-            ErrorMessage = "Role must be one of: user, parent, caregiver, therapist, adoptiveparent")]
+        [RegularExpression("^(user|parent|caregiver|therapist|adoptiveparent|admin)$", 
+            ErrorMessage = "Role must be one of: user, parent, caregiver, therapist, adoptiveparent, admin")]
         public string Role { get; set; } = "user";
         
         [Phone]
@@ -44,6 +46,12 @@ namespace _241RunnersAwarenessAPI.Models
         
         [MaxLength(20)]
         public string? ZipCode { get; set; }
+        
+        [MaxLength(200)]
+        public string? Organization { get; set; }
+        
+        [MaxLength(100)]
+        public string? Title { get; set; }
     }
 
     public class LoginRequest
@@ -78,6 +86,8 @@ namespace _241RunnersAwarenessAPI.Models
         public string? City { get; set; }
         public string? State { get; set; }
         public string? ZipCode { get; set; }
+        public string? Organization { get; set; }
+        public string? Title { get; set; }
     }
 
     public class ResetPasswordRequest
