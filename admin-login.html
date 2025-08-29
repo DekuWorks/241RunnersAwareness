@@ -281,13 +281,13 @@
          if (result.success) {
            showAdminMessage('Access granted! Redirecting to admin dashboard...', 'success');
            
-           // Redirect to admin dashboard or profile based on admin
+           // Redirect to admin dashboard based on admin
            setTimeout(() => {
-             // Check if it's a specific admin and redirect to their profile
+             // Check if it's a specific admin and redirect to their personalized dashboard
              if (email === 'dekuworks1@gmail.com') {
-               window.location.href = 'admin/profile.html?admin=marcus';
+               window.location.href = 'admin/index.html?admin=marcus';
              } else if (email === 'danielcarey9770@gmail.com') {
-               window.location.href = 'admin/profile.html?admin=daniel';
+               window.location.href = 'admin/index.html?admin=daniel';
              } else {
                window.location.href = 'admin/index.html';
              }

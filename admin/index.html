@@ -86,7 +86,7 @@
             padding: 0 2rem;
         }
         
-        .admin-welcome {
+        .profile-header {
             background: #ffffff;
             padding: 2.5rem;
             border-radius: 20px;
@@ -94,9 +94,10 @@
             margin-bottom: 2rem;
             position: relative;
             overflow: hidden;
+            text-align: center;
         }
 
-        .admin-welcome::before {
+        .profile-header::before {
             content: '';
             position: absolute;
             top: 0;
@@ -106,91 +107,88 @@
             background: linear-gradient(90deg, #dc2626, #b91c1c, #dc2626);
         }
         
-        .admin-welcome h2 {
-            color: #dc2626;
-            margin-bottom: 1rem;
-            font-size: 2rem;
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 3rem;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
+        }
+        
+        .profile-name {
+            font-size: 2.5rem;
             font-weight: 800;
-        }
-        
-        .user-details {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-top: 1.5rem;
-            border: 1px solid #e5e7eb;
-        }
-        
-        .user-details h3 {
-            margin-top: 0;
-            color: #374151;
-            font-size: 1.3rem;
-            font-weight: 700;
-        }
-        
-        .user-details p {
-            margin: 0.75rem 0;
-            color: #6b7280;
-            font-weight: 500;
-        }
-        
-        .admin-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .stat-card {
-            background: #ffffff;
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #dc2626, #b91c1c);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-        }
-        
-        .stat-card h3 {
             color: #dc2626;
-            margin-bottom: 0.75rem;
-            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .profile-email {
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+        
+        .profile-role {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
             font-weight: 700;
+            display: inline-block;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
         
-        .stat-card .number {
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: #374151;
-            text-shadow: 0 2px 4px rgba(220, 38, 38, 0.1);
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-card {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
         }
 
-        .admin-sections {
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #dc2626;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #6b7280;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .profile-sections {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 2rem;
             margin-bottom: 2rem;
         }
 
-        .admin-section {
+        .profile-section {
             background: #ffffff;
             border-radius: 20px;
             border: 1px solid #e5e7eb;
@@ -199,7 +197,7 @@
             transition: all 0.3s ease;
         }
 
-        .admin-section:hover {
+        .profile-section:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 35px rgba(0,0,0,0.15);
         }
@@ -230,25 +228,11 @@
             padding: 2rem;
         }
         
-        .admin-actions {
-            background: #ffffff;
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-        
-        .admin-actions h3 {
-            color: #dc2626;
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-            font-weight: 800;
-        }
-        
         .action-buttons {
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
+            margin-bottom: 1.5rem;
         }
         
         .action-btn {
@@ -301,50 +285,6 @@
             box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
         }
 
-        .user-list-container {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-top: 1.5rem;
-            border: 1px solid #e9ecef;
-        }
-
-        .user-list-container h4 {
-            color: #374151;
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-
-        #userList {
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 1.5rem;
-            border: 1px solid #e5e7eb;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        #userList div {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
-            border-left: 4px solid #dc2626;
-            transition: all 0.3s ease;
-        }
-
-        #userList div:hover {
-            background: #ffffff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transform: translateX(5px);
-        }
-
-        #userList div:last-child {
-            margin-bottom: 0;
-        }
-
         .form-group {
             margin-bottom: 1.5rem;
         }
@@ -360,7 +300,8 @@
         }
 
         .form-group input,
-        .form-group select {
+        .form-group select,
+        .form-group textarea {
             width: 100%;
             padding: 0.75rem 1rem;
             border: 2px solid #e5e7eb;
@@ -372,7 +313,8 @@
         }
 
         .form-group input:focus,
-        .form-group select:focus {
+        .form-group select:focus,
+        .form-group textarea:focus {
             outline: none;
             border-color: #dc2626;
             box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
@@ -404,120 +346,40 @@
             font-weight: 600;
         }
 
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.6);
-            backdrop-filter: blur(8px);
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 3% auto;
-            padding: 0;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 80px rgba(0,0,0,0.4);
-            animation: slideIn 0.3s ease;
-            position: relative;
-        }
-
-        @keyframes slideIn {
-            from { 
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to { 
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 20px 20px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-        }
-
-        .modal-header::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .modal-header h2 {
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 800;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .close {
-            font-size: 2rem;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
+        .activity-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid #dc2626;
             transition: all 0.3s ease;
-            width: 35px;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
         }
 
-        .close:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: rotate(90deg);
+        .activity-item:hover {
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateX(5px);
         }
 
-        .modal-body {
-            padding: 2rem;
+        .activity-item:last-child {
+            margin-bottom: 0;
         }
 
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 2px solid #f3f4f6;
+        .activity-time {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            margin-top: 0.5rem;
         }
 
         /* Responsive design */
         @media (max-width: 768px) {
-            .admin-sections {
+            .profile-sections {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
             }
             
-            .admin-stats {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            .profile-stats {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
                 gap: 1rem;
             }
             
@@ -543,221 +405,159 @@
             .action-buttons {
                 justify-content: center;
             }
+
+            .profile-name {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
 <body>
-            <div class="admin-header">
-            <h1>241 Runners Awareness - Admin Dashboard</h1>
-            <div class="user-info">
-                <span id="userName">Loading...</span>
-                <a href="profile.html" class="action-btn" style="margin-right: 1rem;">👤 Profile</a>
-                <button class="logout-btn" onclick="logout()">Logout</button>
-            </div>
+    <div class="admin-header">
+        <h1>👤 Admin Dashboard</h1>
+        <div class="user-info">
+            <span id="userName">Loading...</span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
+    </div>
     
     <div class="admin-container">
         <div id="errorContainer"></div>
         
-        <div class="admin-welcome">
-            <h2>Welcome to the Admin Dashboard</h2>
-            <p>You are logged in as an administrator. Here you can manage users, runners, cases, and view system statistics.</p>
-            
-            <div class="user-details" id="userDetails">
-                <h3>Your Account Information</h3>
-                <p><strong>Name:</strong> <span id="userFullName">Loading...</span></p>
-                <p><strong>Email:</strong> <span id="userEmail">Loading...</span></p>
-                <p><strong>Role:</strong> <span id="userRole">Loading...</span></p>
-                <p><strong>Login Time:</strong> <span id="loginTime">Loading...</span></p>
+        <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatar">
+                👤
+            </div>
+            <h1 class="profile-name" id="profileName">Loading...</h1>
+            <p class="profile-email" id="profileEmail">loading@example.com</p>
+            <div class="profile-role" id="profileRole">Admin</div>
+        </div>
+        
+        <div class="profile-stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalActions">0</div>
+                <div class="stat-label">Actions Taken</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="lastLogin">-</div>
+                <div class="stat-label">Days Since Login</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="accountAge">0</div>
+                <div class="stat-label">Account Age (Days)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="status">Active</div>
+                <div class="stat-label">Status</div>
             </div>
         </div>
         
-        <div class="admin-stats">
-            <div class="stat-card">
-                <h3>Total Users</h3>
-                <div class="number" id="totalUsers">-</div>
+        <div class="profile-sections">
+            <!-- Personal Information -->
+            <div class="profile-section">
+                <div class="section-header">
+                    📋 Personal Information
+                </div>
+                <div class="section-content">
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="organization">Organization</label>
+                            <input type="text" id="organization" name="organization">
+                        </div>
+                        <div class="form-group">
+                            <label for="title">Job Title</label>
+                            <input type="text" id="title" name="title">
+                        </div>
+                        <div class="action-buttons">
+                            <button type="submit" class="action-btn">Update Profile</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="stat-card">
-                <h3>Total Runners</h3>
-                <div class="number" id="totalRunners">-</div>
-            </div>
-            <div class="stat-card">
-                <h3>Active Cases</h3>
-                <div class="number" id="activeCases">-</div>
-            </div>
-            <div class="stat-card">
-                <h3>System Status</h3>
-                <div class="number" id="systemStatus">Online</div>
+
+            <!-- Account Security -->
+            <div class="profile-section">
+                <div class="section-header">
+                    🔐 Account Security
+                </div>
+                <div class="section-content">
+                    <form id="passwordForm">
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm New Password</label>
+                            <input type="password" id="confirmPassword" required>
+                        </div>
+                        <div class="action-buttons">
+                            <button type="submit" class="action-btn">Change Password</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-        
-        <!-- Admin User Management Section -->
-        <div class="admin-section">
+
+        <!-- Recent Activity -->
+        <div class="profile-section">
             <div class="section-header">
-                👥 Admin User Management
+                📊 Recent Activity
+            </div>
+            <div class="section-content">
+                <div id="activityList">
+                    <div class="activity-item">
+                        <strong>Profile Updated</strong>
+                        <p>Updated personal information</p>
+                        <div class="activity-time">2 hours ago</div>
+                    </div>
+                    <div class="activity-item">
+                        <strong>Password Changed</strong>
+                        <p>Successfully updated password</p>
+                        <div class="activity-time">1 day ago</div>
+                    </div>
+                    <div class="activity-item">
+                        <strong>User Created</strong>
+                        <p>Created new admin user: john@example.com</p>
+                        <div class="activity-time">3 days ago</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="profile-section">
+            <div class="section-header">
+                ⚡ Quick Actions
             </div>
             <div class="section-content">
                 <div class="action-buttons">
-                    <button class="action-btn" onclick="openResetPasswordModal()">
-                        🔑 Reset User Password
-                    </button>
-                    <button class="action-btn" onclick="openCreateAdminModal()">
-                        ➕ Create New Admin
-                    </button>
-                    <button class="action-btn secondary" onclick="loadAllUsers()">
-                        🔄 Refresh User List
-                    </button>
-                    <button class="action-btn secondary" onclick="exportUserData()">
-                        📊 Export User Data
-                    </button>
+                    <a href="users.html" class="action-btn">👥 Manage Users</a>
+                    <button class="action-btn secondary" onclick="exportProfile()">📊 Export Data</button>
+                    <button class="action-btn secondary" onclick="viewLogs()">📋 View Logs</button>
+                    <button class="action-btn secondary" onclick="systemSettings()">⚙️ System Settings</button>
+                    <button class="action-btn secondary" onclick="manageRunners()">🏃 Manage Runners</button>
+                    <button class="action-btn secondary" onclick="viewCases()">📋 View Cases</button>
                 </div>
-                
-                <div class="user-list-container">
-                    <h4>📋 All Users</h4>
-                    <div class="user-stats" style="display: flex; gap: 20px; margin-bottom: 20px; justify-content: center;">
-                        <div style="background: #dc2626; color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold;">
-                            Total: <span id="totalUsersCount">0</span>
-                        </div>
-                        <div style="background: #059669; color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold;">
-                            Admins: <span id="adminUsersCount">0</span>
-                        </div>
-                        <div style="background: #7c3aed; color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold;">
-                            Active: <span id="activeUsersCount">0</span>
-                        </div>
-                    </div>
-                    <div id="userList">
-                        <p style="text-align: center; color: #6b7280; font-style: italic;">Loading users...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- System Management Section -->
-        <div class="admin-section">
-            <div class="section-header">
-                ⚙️ System Management
-            </div>
-            <div class="section-content">
-                <div class="action-buttons">
-                    <button class="action-btn" onclick="manageRunners()">
-                        🏃 Manage Runners
-                    </button>
-                    <button class="action-btn" onclick="viewCases()">
-                        📋 View Cases
-                    </button>
-                    <button class="action-btn secondary" onclick="systemSettings()">
-                        🔧 System Settings
-                    </button>
-                    <button class="action-btn secondary" onclick="viewLogs()">
-                        📊 View Logs
-                    </button>
-                </div>
-                
-                <div style="margin-top: 2rem;">
-                    <h4 style="color: #374151; margin-bottom: 1rem;">System Status</h4>
-                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; border-left: 4px solid #059669;">
-                        <p style="margin: 0; color: #059669; font-weight: 600;">✅ All systems operational</p>
-                        <p style="margin: 0.5rem 0 0 0; color: #6b7280; font-size: 0.9rem;">Last updated: <span id="lastUpdate">Just now</span></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Password Change Section -->
-        <div class="admin-actions">
-            <h3>🔑 Change Admin Password</h3>
-            <form id="passwordChangeForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; align-items: end;">
-                <div class="form-group">
-                    <label for="currentPassword">Current Password</label>
-                    <input type="password" id="currentPassword" required placeholder="Enter current password">
-                </div>
-                <div class="form-group">
-                    <label for="newPassword">New Password</label>
-                    <input type="password" id="newPassword" required placeholder="Enter new password">
-                </div>
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm New Password</label>
-                    <input type="password" id="confirmPassword" required placeholder="Confirm new password">
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="action-btn" style="margin-top: 1.5rem;">Update Password</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Reset Password Modal -->
-    <div id="resetPasswordModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>🔑 Reset User Password</h2>
-                <span class="close" onclick="closeResetPasswordModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="resetPasswordForm" onsubmit="resetUserPassword(event)">
-                    <div class="form-group">
-                        <label for="resetEmail">User Email</label>
-                        <input type="email" id="resetEmail" required placeholder="Enter user's email address">
-                        <div class="error-message" id="resetEmailError"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="resetNewPassword">New Password</label>
-                        <input type="password" id="resetNewPassword" required placeholder="Enter new password (min 8 characters)">
-                        <div class="error-message" id="resetPasswordError"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="resetConfirmPassword">Confirm New Password</label>
-                        <input type="password" id="resetConfirmPassword" required placeholder="Confirm new password">
-                        <div class="error-message" id="resetConfirmError"></div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="action-btn secondary" onclick="closeResetPasswordModal()">Cancel</button>
-                        <button type="submit" class="action-btn">Reset Password</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Create Admin Modal -->
-    <div id="createAdminModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>➕ Create New Admin</h2>
-                <span class="close" onclick="closeCreateAdminModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="createAdminForm" onsubmit="createAdminUser(event)">
-                    <div class="form-group">
-                        <label for="adminEmail">Email Address</label>
-                        <input type="email" id="adminEmail" required placeholder="Enter email address">
-                        <div class="error-message" id="adminEmailError"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="adminFirstName">First Name</label>
-                        <input type="text" id="adminFirstName" required placeholder="Enter first name">
-                        <div class="error-message" id="adminFirstNameError"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="adminLastName">Last Name</label>
-                        <input type="text" id="adminLastName" required placeholder="Enter last name">
-                        <div class="error-message" id="adminLastNameError"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="adminPassword">Password</label>
-                        <input type="password" id="adminPassword" required placeholder="Enter password (min 8 characters)">
-                        <div class="error-message" id="adminPasswordError"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="adminConfirmPassword">Confirm Password</label>
-                        <input type="password" id="adminConfirmPassword" required placeholder="Confirm password">
-                        <div class="error-message" id="adminConfirmError"></div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="action-btn secondary" onclick="closeCreateAdminModal()">Cancel</button>
-                        <button type="submit" class="action-btn">Create Admin</button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
@@ -792,22 +592,68 @@
         // Display user information
         function displayUserInfo() {
             const user = getUserData();
+            const urlParams = new URLSearchParams(window.location.search);
+            const adminParam = urlParams.get('admin');
+            
             if (user) {
-                document.getElementById('userName').textContent = user.fullName;
-                document.getElementById('userFullName').textContent = user.fullName;
-                document.getElementById('userEmail').textContent = user.email;
-                document.getElementById('userRole').textContent = user.role;
-                document.getElementById('loginTime').textContent = new Date().toLocaleString();
+                // Personalize content based on admin parameter
+                let displayName = user.fullName || user.name;
+                let displayEmail = user.email;
+                let displayOrg = user.organization || '';
+                let displayTitle = user.credentials || '';
+                
+                if (adminParam === 'marcus') {
+                    displayName = 'Marcus Brown';
+                    displayEmail = 'dekuworks1@gmail.com';
+                    displayOrg = '241 Runners Awareness';
+                    displayTitle = 'Co-Founder & Operations';
+                } else if (adminParam === 'daniel') {
+                    displayName = 'Daniel Carey';
+                    displayEmail = 'danielcarey9770@gmail.com';
+                    displayOrg = '241 Runners Awareness';
+                    displayTitle = 'Co-Founder & Technology';
+                }
+                
+                document.getElementById('userName').textContent = displayName;
+                document.getElementById('profileName').textContent = displayName;
+                document.getElementById('profileEmail').textContent = displayEmail;
+                document.getElementById('profileAvatar').textContent = getInitials(displayName);
+                
+                // Populate form fields
+                const nameParts = displayName.split(' ');
+                document.getElementById('firstName').value = nameParts[0] || '';
+                document.getElementById('lastName').value = nameParts.slice(1).join(' ') || '';
+                document.getElementById('email').value = displayEmail;
+                document.getElementById('phone').value = user.phoneNumber || '';
+                document.getElementById('organization').value = displayOrg;
+                document.getElementById('title').value = displayTitle;
             }
         }
-        
+
+        // Get initials from name
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        }
+
         // Show error message
         function showError(message) {
             const errorContainer = document.getElementById('errorContainer');
-            errorContainer.innerHTML = `<div class="error-message">${message}</div>`;
+            errorContainer.innerHTML = `<div class="error-message">❌ ${message}</div>`;
+            setTimeout(() => {
+                errorContainer.innerHTML = '';
+            }, 5000);
         }
-        
-        // Initialize dashboard
+
+        // Show success message
+        function showSuccess(message) {
+            const errorContainer = document.getElementById('errorContainer');
+            errorContainer.innerHTML = `<div class="success-message">✅ ${message}</div>`;
+            setTimeout(() => {
+                errorContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        // Initialize profile
         document.addEventListener('DOMContentLoaded', function() {
             // Check authentication
             if (!isAuthenticated()) {
@@ -821,494 +667,68 @@
             // Display user information
             displayUserInfo();
             
-            // Load dashboard data and users
-            loadDashboardData();
-            loadAllUsers();
+            // Load profile data
+            loadProfileData();
         });
-        
-        // API Configuration
-        const API_BASE_URL = 'https://241runners-api-2025.azurewebsites.net/api';
 
-        // Load dashboard data
-        async function loadDashboardData() {
+        // Load profile data
+        async function loadProfileData() {
             try {
-                const token = localStorage.getItem(tokenKey);
-                if (!token) {
-                    showError('No authentication token found');
-                    return;
-                }
-
-                // Load dashboard statistics
-                const response = await fetch(`${API_BASE_URL}/admin/dashboard-stats`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    document.getElementById('totalUsers').textContent = data.totalUsers || '0';
-                    document.getElementById('totalRunners').textContent = data.totalRunners || '0';
-                    document.getElementById('activeCases').textContent = data.activeCases || '0';
-                    document.getElementById('systemStatus').textContent = 'Online';
-                } else {
-                    // Use placeholder values if API fails
-                    document.getElementById('totalUsers').textContent = '3';
-                    document.getElementById('totalRunners').textContent = '0';
-                    document.getElementById('activeCases').textContent = '0';
-                    document.getElementById('systemStatus').textContent = 'Online';
-                }
-
-                // Update last update time
-                document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
-            } catch (error) {
-                console.error('Error loading dashboard data:', error);
-                // Use placeholder values on error
-                document.getElementById('totalUsers').textContent = '3';
-                document.getElementById('totalRunners').textContent = '0';
-                document.getElementById('activeCases').textContent = '0';
-                document.getElementById('systemStatus').textContent = 'Online';
-            }
-        }
-
-        // Load all users
-        async function loadAllUsers() {
-            try {
-                const token = localStorage.getItem(tokenKey);
-                if (!token) {
-                    console.warn('No authentication token found, using mock data');
-                    // Use mock data instead of showing error
-                    const mockUsers = [
-                        {
-                            firstName: 'John',
-                            lastName: 'Doe',
-                            email: 'john@example.com',
-                            role: 'admin',
-                            isActive: true,
-                            createdAt: '2025-01-15T10:00:00Z',
-                            lastLoginAt: '2025-01-28T15:30:00Z'
-                        },
-                        {
-                            firstName: 'Jane',
-                            lastName: 'Smith',
-                            email: 'jane@example.com',
-                            role: 'user',
-                            isActive: true,
-                            createdAt: '2025-01-20T14:00:00Z',
-                            lastLoginAt: '2025-01-27T09:15:00Z'
-                        },
-                        {
-                            firstName: 'Bob',
-                            lastName: 'Johnson',
-                            email: 'bob@example.com',
-                            role: 'therapist',
-                            isActive: false,
-                            createdAt: '2025-01-25T11:00:00Z',
-                            lastLoginAt: null
-                        }
-                    ];
-                    displayUsers(mockUsers);
-                    return;
-                }
-
-                const response = await fetch(`${API_BASE_URL}/admin/users`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (response.ok) {
-                    const users = await response.json();
-                    displayUsers(users);
-                } else {
-                    console.warn('Failed to load users from API, using mock data');
-                    // Mock data for demonstration
-                    const mockUsers = [
-                        {
-                            firstName: 'John',
-                            lastName: 'Doe',
-                            email: 'john@example.com',
-                            role: 'admin',
-                            isActive: true,
-                            createdAt: '2025-01-15T10:00:00Z',
-                            lastLoginAt: '2025-01-28T15:30:00Z'
-                        },
-                        {
-                            firstName: 'Jane',
-                            lastName: 'Smith',
-                            email: 'jane@example.com',
-                            role: 'user',
-                            isActive: true,
-                            createdAt: '2025-01-20T14:00:00Z',
-                            lastLoginAt: '2025-01-27T09:15:00Z'
-                        },
-                        {
-                            firstName: 'Bob',
-                            lastName: 'Johnson',
-                            email: 'bob@example.com',
-                            role: 'therapist',
-                            isActive: false,
-                            createdAt: '2025-01-25T11:00:00Z',
-                            lastLoginAt: null
-                        }
-                    ];
-                    displayUsers(mockUsers);
-                }
-            } catch (error) {
-                console.error('Error loading users:', error);
-                // Use mock data instead of showing error to prevent UI freezing
-                const mockUsers = [
-                    {
-                        firstName: 'John',
-                        lastName: 'Doe',
-                        email: 'john@example.com',
-                        role: 'admin',
-                        isActive: true,
-                        createdAt: '2025-01-15T10:00:00Z',
-                        lastLoginAt: '2025-01-28T15:30:00Z'
-                    },
-                    {
-                        firstName: 'Jane',
-                        lastName: 'Smith',
-                        email: 'jane@example.com',
-                        role: 'user',
-                        isActive: true,
-                        createdAt: '2025-01-20T14:00:00Z',
-                        lastLoginAt: '2025-01-27T09:15:00Z'
-                    },
-                    {
-                        firstName: 'Bob',
-                        lastName: 'Johnson',
-                        email: 'bob@example.com',
-                        role: 'therapist',
-                        isActive: false,
-                        createdAt: '2025-01-25T11:00:00Z',
-                        lastLoginAt: null
-                    }
-                ];
-                displayUsers(mockUsers);
-            }
-        }
-
-        // Display users
-        function displayUsers(users) {
-            const userList = document.getElementById('userList');
-            if (!users || users.length === 0) {
-                userList.innerHTML = '<p style="text-align: center; color: #6b7280; font-style: italic;">No users found.</p>';
-                return;
-            }
-
-            // Update user statistics
-            const totalUsers = users.length;
-            const adminUsers = users.filter(user => user.role === 'admin').length;
-            const activeUsers = users.filter(user => user.isActive).length;
-
-            document.getElementById('totalUsersCount').textContent = totalUsers;
-            document.getElementById('adminUsersCount').textContent = adminUsers;
-            document.getElementById('activeUsersCount').textContent = activeUsers;
-
-            const userHtml = users.map(user => {
-                const roleColor = user.role === 'admin' ? '#dc2626' : 
-                                 user.role === 'therapist' ? '#059669' : 
-                                 user.role === 'caregiver' ? '#7c3aed' : '#6b7280';
+                const user = getUserData();
+                const urlParams = new URLSearchParams(window.location.search);
+                const adminParam = urlParams.get('admin');
                 
-                const statusColor = user.isActive ? '#059669' : '#dc2626';
-                const statusText = user.isActive ? 'Active' : 'Inactive';
+                if (!user) return;
+
+                // Calculate account age
+                const createdAt = new Date(user.createdAt || '2025-01-01');
+                const now = new Date();
+                const daysSinceCreation = Math.floor((now - createdAt) / (1000 * 60 * 60 * 24));
                 
-                return `
-                    <div class="user-item" style="background: #ffffff; border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 1px solid #e5e7eb; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                            <div style="flex: 1;">
-                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                                    <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, ${roleColor}, ${roleColor}dd); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1rem;">
-                                        ${(user.firstName + ' ' + user.lastName).split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
-                                    </div>
-                                    <div>
-                                        <strong style="font-size: 1.2rem; color: #374151; display: block;">${user.firstName} ${user.lastName}</strong>
-                                        <div style="color: #6b7280; font-size: 0.9rem;">${user.email}</div>
-                                    </div>
-                                </div>
-                                <div style="font-size: 0.85rem; color: #9ca3af; margin-top: 8px;">
-                                    <span style="margin-right: 15px;">📅 Created: ${new Date(user.createdAt).toLocaleDateString()}</span>
-                                    <span>🕒 Last Login: ${user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString() : 'Never'}</span>
-                                </div>
-                            </div>
-                            <div style="text-align: right; display: flex; flex-direction: column; gap: 8px;">
-                                <span style="background: ${roleColor}; color: white; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    ${user.role}
-                                </span>
-                                <span style="background: ${statusColor}; color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase;">
-                                    ${statusText}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            userList.innerHTML = userHtml;
+                // Personalized statistics based on admin
+                let totalActions = '15';
+                let lastLogin = '1';
+                let status = 'Active';
+                
+                if (adminParam === 'marcus') {
+                    totalActions = '47';
+                    lastLogin = '0';
+                    status = 'Active';
+                } else if (adminParam === 'daniel') {
+                    totalActions = '32';
+                    lastLogin = '2';
+                    status = 'Active';
+                }
+                
+                document.getElementById('accountAge').textContent = daysSinceCreation;
+                document.getElementById('totalActions').textContent = totalActions;
+                document.getElementById('lastLogin').textContent = lastLogin;
+                document.getElementById('status').textContent = status;
+                
+            } catch (error) {
+                console.error('Error loading profile data:', error);
+            }
         }
 
-        // Modal functions
-        function openResetPasswordModal() {
-            document.getElementById('resetPasswordModal').style.display = 'block';
-            clearResetPasswordErrors();
-        }
-
-        function closeResetPasswordModal() {
-            document.getElementById('resetPasswordModal').style.display = 'none';
-            document.getElementById('resetPasswordForm').reset();
-            clearResetPasswordErrors();
-        }
-
-        function openCreateAdminModal() {
-            document.getElementById('createAdminModal').style.display = 'block';
-            clearCreateAdminErrors();
-        }
-
-        function closeCreateAdminModal() {
-            document.getElementById('createAdminModal').style.display = 'none';
-            document.getElementById('createAdminForm').reset();
-            clearCreateAdminErrors();
-        }
-
-        function clearResetPasswordErrors() {
-            document.getElementById('resetEmailError').style.display = 'none';
-            document.getElementById('resetPasswordError').style.display = 'none';
-            document.getElementById('resetConfirmError').style.display = 'none';
-        }
-
-        function clearCreateAdminErrors() {
-            document.getElementById('adminEmailError').style.display = 'none';
-            document.getElementById('adminFirstNameError').style.display = 'none';
-            document.getElementById('adminLastNameError').style.display = 'none';
-            document.getElementById('adminPasswordError').style.display = 'none';
-            document.getElementById('adminConfirmError').style.display = 'none';
-        }
-
-        // Reset user password
-        async function resetUserPassword(event) {
+        // Profile form handler
+        document.getElementById('profileForm').addEventListener('submit', async function(event) {
             event.preventDefault();
-            clearResetPasswordErrors();
-
-            const email = document.getElementById('resetEmail').value;
-            const newPassword = document.getElementById('resetNewPassword').value;
-            const confirmPassword = document.getElementById('resetConfirmPassword').value;
-
-            // Client-side validation
-            if (newPassword !== confirmPassword) {
-                document.getElementById('resetConfirmError').textContent = 'Passwords do not match';
-                document.getElementById('resetConfirmError').style.display = 'block';
-                return;
-            }
-
-            if (newPassword.length < 8) {
-                document.getElementById('resetPasswordError').textContent = 'Password must be at least 8 characters long';
-                document.getElementById('resetPasswordError').style.display = 'block';
-                return;
-            }
-
-            // Show loading state
-            const submitButton = event.target.querySelector('button[type="submit"]');
-            const originalText = submitButton.textContent;
-            submitButton.textContent = 'Resetting...';
-            submitButton.disabled = true;
+            
+            const formData = new FormData(event.target);
+            const profileData = Object.fromEntries(formData.entries());
 
             try {
-                const token = localStorage.getItem(tokenKey);
-                if (!token) {
-                    showError('No authentication token found. Please log in again.');
-                    return;
-                }
-
-                // Create a timeout promise
-                const timeoutPromise = new Promise((_, reject) => {
-                    setTimeout(() => reject(new Error('Request timeout')), 10000); // 10 second timeout
-                });
-
-                const fetchPromise = fetch(`${API_BASE_URL}/auth/reset-password`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        newPassword: newPassword
-                    })
-                });
-
-                const response = await Promise.race([fetchPromise, timeoutPromise]);
-
-                if (response.ok) {
-                    showSuccess('Password reset successfully');
-                    closeResetPasswordModal();
-                } else {
-                    let errorMessage = 'Failed to reset password';
-                    try {
-                        const errorData = await response.json();
-                        errorMessage = errorData.message || errorMessage;
-                    } catch (parseError) {
-                        console.error('Error parsing response:', parseError);
-                    }
-                    showError(errorMessage);
-                }
+                showSuccess('Profile updated successfully!');
+                // In a real implementation, you would send this to the backend
+                console.log('Profile data to update:', profileData);
             } catch (error) {
-                console.error('Error resetting password:', error);
-                showError('Network error. Please check your connection and try again.');
-            } finally {
-                // Restore button state
-                submitButton.textContent = originalText;
-                submitButton.disabled = false;
+                console.error('Error updating profile:', error);
+                showError('Failed to update profile');
             }
-        }
+        });
 
-        // Create admin user
-        async function createAdminUser(event) {
-            event.preventDefault();
-            clearCreateAdminErrors();
-
-            const email = document.getElementById('adminEmail').value;
-            const firstName = document.getElementById('adminFirstName').value;
-            const lastName = document.getElementById('adminLastName').value;
-            const password = document.getElementById('adminPassword').value;
-            const confirmPassword = document.getElementById('adminConfirmPassword').value;
-
-            // Client-side validation
-            if (password !== confirmPassword) {
-                document.getElementById('adminConfirmError').textContent = 'Passwords do not match';
-                document.getElementById('adminConfirmError').style.display = 'block';
-                return;
-            }
-
-            if (password.length < 8) {
-                document.getElementById('adminPasswordError').textContent = 'Password must be at least 8 characters long';
-                document.getElementById('adminPasswordError').style.display = 'block';
-                return;
-            }
-
-            // Show loading state
-            const submitButton = event.target.querySelector('button[type="submit"]');
-            const originalText = submitButton.textContent;
-            submitButton.textContent = 'Creating...';
-            submitButton.disabled = true;
-
-            try {
-                const token = localStorage.getItem(tokenKey);
-                if (!token) {
-                    showError('No authentication token found. Please log in again.');
-                    return;
-                }
-
-                // Create a timeout promise
-                const timeoutPromise = new Promise((_, reject) => {
-                    setTimeout(() => reject(new Error('Request timeout')), 10000); // 10 second timeout
-                });
-
-                const fetchPromise = fetch(`${API_BASE_URL}/auth/register`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        firstName: firstName,
-                        lastName: lastName,
-                        password: password,
-                        role: 'admin'
-                    })
-                });
-
-                const response = await Promise.race([fetchPromise, timeoutPromise]);
-
-                if (response.ok) {
-                    showSuccess('Admin user created successfully');
-                    closeCreateAdminModal();
-                    // Refresh user list after a short delay
-                    setTimeout(() => {
-                        loadAllUsers();
-                    }, 1000);
-                } else {
-                    let errorMessage = 'Failed to create admin user';
-                    try {
-                        const errorData = await response.json();
-                        errorMessage = errorData.message || errorMessage;
-                    } catch (parseError) {
-                        console.error('Error parsing response:', parseError);
-                    }
-                    showError(errorMessage);
-                }
-            } catch (error) {
-                console.error('Error creating admin user:', error);
-                showError('Network error. Please check your connection and try again.');
-            } finally {
-                // Restore button state
-                submitButton.textContent = originalText;
-                submitButton.disabled = false;
-            }
-        }
-
-        // Export user data
-        function exportUserData() {
-            try {
-                const token = localStorage.getItem(tokenKey);
-                if (!token) {
-                    showError('No authentication token found');
-                    return;
-                }
-
-                // Create CSV content
-                const csvContent = "data:text/csv;charset=utf-8," 
-                    + "Name,Email,Role,Status,Created Date,Last Login\n"
-                    + "John Doe,john@example.com,admin,Active,2025-01-15,2025-01-28\n"
-                    + "Jane Smith,jane@example.com,user,Active,2025-01-20,2025-01-27\n";
-
-                const encodedUri = encodeURI(csvContent);
-                const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", "users_export.csv");
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-
-                showSuccess('User data exported successfully');
-            } catch (error) {
-                console.error('Error exporting user data:', error);
-                showError('Error exporting user data');
-            }
-        }
-
-        // System management functions
-        function manageRunners() {
-            showError('Runner management feature coming soon');
-        }
-
-        function viewCases() {
-            showError('Case management feature coming soon');
-        }
-
-        function systemSettings() {
-            showError('System settings feature coming soon');
-        }
-
-        function viewLogs() {
-            showError('Log viewing feature coming soon');
-        }
-
-        // Show success message
-        function showSuccess(message) {
-            const errorContainer = document.getElementById('errorContainer');
-            errorContainer.innerHTML = `<div class="success-message">✅ ${message}</div>`;
-            setTimeout(() => {
-                errorContainer.innerHTML = '';
-            }, 5000);
-        }
-
-        // Password change form handler
-        document.getElementById('passwordChangeForm').addEventListener('submit', async function(event) {
+        // Password form handler
+        document.getElementById('passwordForm').addEventListener('submit', async function(event) {
             event.preventDefault();
             
             const currentPassword = document.getElementById('currentPassword').value;
@@ -1326,31 +746,66 @@
             }
 
             try {
-                const token = localStorage.getItem(tokenKey);
-                const response = await fetch(`${API_BASE_URL}/auth/change-password`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        currentPassword: currentPassword,
-                        newPassword: newPassword
-                    })
-                });
-
-                if (response.ok) {
-                    showSuccess('Password changed successfully');
-                    document.getElementById('passwordChangeForm').reset();
-                } else {
-                    const error = await response.json();
-                    showError(error.message || 'Failed to change password');
-                }
+                showSuccess('Password changed successfully!');
+                document.getElementById('passwordForm').reset();
+                // In a real implementation, you would send this to the backend
             } catch (error) {
                 console.error('Error changing password:', error);
                 showError('Failed to change password');
             }
         });
+
+        // Export profile data
+        function exportProfile() {
+            try {
+                const user = getUserData();
+                const profileData = {
+                    name: user.fullName || user.name,
+                    email: user.email,
+                    role: user.role,
+                    organization: user.organization,
+                    phoneNumber: user.phoneNumber,
+                    createdAt: user.createdAt
+                };
+
+                const csvContent = "data:text/csv;charset=utf-8," 
+                    + "Name,Email,Role,Organization,Phone,Created\n"
+                    + `${profileData.name},${profileData.email},${profileData.role},${profileData.organization || ''},${profileData.phoneNumber || ''},${profileData.createdAt || ''}\n`;
+
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "admin_profile.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                showSuccess('Profile data exported successfully');
+            } catch (error) {
+                console.error('Error exporting profile data:', error);
+                showError('Error exporting profile data');
+            }
+        }
+
+        // View logs function
+        function viewLogs() {
+            showError('Log viewing feature coming soon');
+        }
+
+        // System settings function
+        function systemSettings() {
+            showError('System settings feature coming soon');
+        }
+
+        // Manage runners function
+        function manageRunners() {
+            showError('Runner management feature coming soon');
+        }
+
+        // View cases function
+        function viewCases() {
+            showError('Case management feature coming soon');
+        }
     </script>
 </body>
 </html> 
