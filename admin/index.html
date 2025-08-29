@@ -9,9 +9,18 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/241-logo.jpg">
     
+    <!-- Critical CSS for admin dashboard -->
+    <style>
+        body{margin:0;padding:0;background:linear-gradient(135deg,#dc2626 0%,#b91c1c 100%);font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;min-height:100vh}.admin-header{background:#fff;color:#dc2626;padding:1.5rem 2rem;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 20px rgba(0,0,0,0.15);position:relative;overflow:hidden}.admin-header h1{margin:0;font-size:1.8rem;font-weight:800}.admin-container{max-width:1400px;margin:2rem auto;padding:0 2rem}.profile-header{background:#fff;padding:2.5rem;border-radius:20px;box-shadow:0 8px 25px rgba(0,0,0,0.1);margin-bottom:2rem;text-align:center}.profile-avatar{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#dc2626 0%,#b91c1c 100%);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:3rem;color:#fff;font-weight:bold}.profile-name{font-size:2.5rem;font-weight:800;color:#dc2626;margin-bottom:0.5rem}.profile-email{font-size:1.2rem;color:#6b7280;margin-bottom:1rem}.profile-role{background:linear-gradient(135deg,#dc2626 0%,#b91c1c 100%);color:#fff;padding:0.5rem 1.5rem;border-radius:25px;font-weight:700;display:inline-block;text-transform:uppercase;letter-spacing:1px}.logout-btn{background:linear-gradient(135deg,#dc2626 0%,#b91c1c 100%);color:#fff;border:none;padding:0.75rem 1.5rem;border-radius:8px;cursor:pointer;font-size:0.9rem;font-weight:600;transition:all 0.3s ease}
+    </style>
+    
     <!-- Styles -->
-    <link rel="stylesheet" href="/styles.css">
-    <link rel="stylesheet" href="/admin/assets/css/admin.css">
+    <link rel="stylesheet" href="/styles.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/admin/assets/css/admin.css" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="/styles.css">
+        <link rel="stylesheet" href="/admin/assets/css/admin.css">
+    </noscript>
     
     <style>
         /* ============================================
