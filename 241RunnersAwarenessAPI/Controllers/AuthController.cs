@@ -217,5 +217,102 @@ namespace _241RunnersAwarenessAPI.Controllers
         {
             return Ok(new { status = "healthy", timestamp = DateTime.UtcNow });
         }
+
+        [HttpPost("reset-password")]
+        public async Task<ActionResult<AuthResponse>> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            try
+            {
+                // Validate input
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = $"Validation failed: {string.Join(", ", errors)}"
+                    });
+                }
+
+                // Find user by email
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == request.Email.ToLower());
+                if (user == null)
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "User not found."
+                    });
+                }
+
+                // Check if user is active
+                if (!user.IsActive)
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Account is deactivated. Please contact support."
+                    });
+                }
+
+                // Validate new password
+                if (string.IsNullOrWhiteSpace(request.NewPassword))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "New password is required."
+                    });
+                }
+
+                if (request.NewPassword.Length < 8)
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Password must be at least 8 characters long."
+                    });
+                }
+
+                // Check if password contains at least one uppercase, one lowercase, one number, and one special character
+                if (!System.Text.RegularExpressions.Regex.IsMatch(request.NewPassword, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+                    });
+                }
+
+                // Hash new password
+                var newPasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+
+                // Update user password
+                user.PasswordHash = newPasswordHash;
+                user.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"Password reset successful for user: {user.Email}");
+
+                return Ok(new AuthResponse
+                {
+                    Success = true,
+                    Message = "Password reset successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during password reset");
+                return StatusCode(500, new AuthResponse
+                {
+                    Success = false,
+                    Message = "An error occurred during password reset. Please try again."
+                });
+            }
+        }
     }
 } 

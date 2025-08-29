@@ -87,34 +87,7 @@ try
         // Seed admin users if they don't exist
         if (!context.Users.Any())
         {
-            var adminUsers = new[]
-            {
-                new User
-                {
-                    Email = "dekuworks1@gmail.com",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("runners1997"),
-                    FirstName = "Marcus",
-                    LastName = "Brown",
-                    Role = "admin",
-                    IsActive = true,
-                    CreatedAt = DateTime.UtcNow
-                },
-                new User
-                {
-                    Email = "danielcarey9770@yahoo.com",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("runners0428"),
-                    FirstName = "Daniel",
-                    LastName = "Carey",
-                    Role = "admin",
-                    IsActive = true,
-                    CreatedAt = DateTime.UtcNow
-                }
-            };
-            
-            context.Users.AddRange(adminUsers);
-            context.SaveChanges();
-            
-            Console.WriteLine("Admin users seeded successfully!");
+            Console.WriteLine("No users found in database. Please create admin users through the admin dashboard.");
         }
     }
 }
