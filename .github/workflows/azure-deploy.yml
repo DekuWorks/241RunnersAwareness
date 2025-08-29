@@ -4,15 +4,15 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'backend/**'
+      - '241RunnersAwarenessAPI/**'
   pull_request:
     branches: [ main ]
     paths:
-      - 'backend/**'
+      - '241RunnersAwarenessAPI/**'
 
 env:
-  AZURE_WEBAPP_NAME: 241runnersawareness-api
-  AZURE_WEBAPP_PACKAGE_PATH: './backend'
+  AZURE_WEBAPP_NAME: 241runners-api-2025
+  AZURE_WEBAPP_PACKAGE_PATH: './241RunnersAwarenessAPI'
   DOTNET_VERSION: '8.0.x'
 
 jobs:
@@ -30,22 +30,22 @@ jobs:
         
     - name: Restore dependencies
       run: |
-        cd backend
+        cd 241RunnersAwarenessAPI
         dotnet restore
         
     - name: Build with dotnet
       run: |
-        cd backend
+        cd 241RunnersAwarenessAPI
         dotnet build --configuration Release --no-restore
         
     - name: Run tests
       run: |
-        cd backend
+        cd 241RunnersAwarenessAPI
         dotnet test --no-build --verbosity normal --configuration Release
         
     - name: Publish with dotnet
       run: |
-        cd backend
+        cd 241RunnersAwarenessAPI
         dotnet publish -c Release -o ./publish
         
     - name: Deploy to Azure Web App
@@ -53,17 +53,17 @@ jobs:
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ./backend/publish
+        package: ./241RunnersAwarenessAPI/publish
         
     - name: Run database migrations
       run: |
-        cd backend
+        cd 241RunnersAwarenessAPI
         dotnet ef database update --connection "${{ secrets.AZURE_SQL_CONNECTION_STRING }}"
         
     - name: Test deployment
       run: |
         sleep 30
-        curl -f https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/health || exit 1
+        curl -f https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/api/auth/health || exit 1
         
     - name: Test API endpoints
       run: |
@@ -73,5 +73,5 @@ jobs:
         echo "✅ Auth endpoint working"
         
         # Test health endpoint
-        curl -f https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/health || exit 1
+        curl -f https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/api/auth/health || exit 1
         echo "✅ Health endpoint working"

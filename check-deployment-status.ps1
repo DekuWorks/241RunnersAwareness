@@ -11,8 +11,8 @@ Write-Host "==================================================" -ForegroundColor
 
 # Configuration
 $FrontendUrl = "https://241runnersawareness.org"
-$BackendUrl = "https://241runnersawareness-api.azurewebsites.net"
-$ApiHealthUrl = "$BackendUrl/health"
+$BackendUrl = "https://241runners-api-2025.azurewebsites.net"
+$ApiHealthUrl = "$BackendUrl/api/auth/health"
 $ApiTestUrl = "$BackendUrl/api/auth/test"
 
 # Function to test URL
