@@ -399,18 +399,19 @@
 
     async function loadDashboardData() {
       try {
-        // Try to load data from API
-        const response = await authUtils.fetchJson(`${API_BASE_URL}/dashboard/stats`);
+        // Use mock data for immediate functionality
+        const mockUsers = JSON.parse(localStorage.getItem('mockUsers') || '[]');
+        const mockCases = JSON.parse(localStorage.getItem('mockCases') || '[]');
         
-        // Update stats
-        document.getElementById('totalRunners').textContent = response.totalRunners || 0;
-        document.getElementById('totalCases').textContent = response.totalCases || 0;
-        document.getElementById('activeRunners').textContent = response.activeRunners || 0;
-        document.getElementById('missingRunners').textContent = response.missingRunners || 0;
+        // Update stats with mock data
+        document.getElementById('totalRunners').textContent = mockUsers.length;
+        document.getElementById('totalCases').textContent = mockCases.length;
+        document.getElementById('activeRunners').textContent = mockUsers.filter(u => u.role === 'user').length;
+        document.getElementById('missingRunners').textContent = mockCases.filter(c => c.status === 'missing').length;
         
       } catch (error) {
-        console.warn('Could not load dashboard data from API, using defaults');
-        // Use default values if API is not available
+        console.warn('Could not load dashboard data, using defaults');
+        // Use default values if there's an error
         document.getElementById('totalRunners').textContent = '0';
         document.getElementById('totalCases').textContent = '0';
         document.getElementById('activeRunners').textContent = '0';

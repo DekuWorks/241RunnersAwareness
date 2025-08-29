@@ -393,32 +393,50 @@
             signupBtnSpinner.style.display = 'inline';
             
             try {
-                const formData = {
+                // Mock registration for immediate functionality
+                const userData = {
                     email: document.getElementById('email').value.trim(),
                     password: document.getElementById('password').value,
-                    displayName: document.getElementById('firstName').value.trim() + ' ' + document.getElementById('lastName').value.trim()
+                    firstName: document.getElementById('firstName').value.trim(),
+                    lastName: document.getElementById('lastName').value.trim(),
+                    phoneNumber: document.getElementById('phoneNumber').value.trim(),
+                    role: document.getElementById('role').value
                 };
                 
-                const response = await authUtils.fetchJson(`${API_BASE_URL}/auth/register`, {
-                    method: 'POST',
-                    body: JSON.stringify(formData)
+                // Store user data in localStorage for mock authentication
+                const mockUsers = JSON.parse(localStorage.getItem('mockUsers') || '[]');
+                mockUsers.push({
+                    ...userData,
+                    id: Date.now(),
+                    createdAt: new Date().toISOString()
                 });
+                localStorage.setItem('mockUsers', JSON.stringify(mockUsers));
                 
-                if (response) {
-                    showSuccess('Account created successfully! Please log in to continue.');
-                    
-                    // Redirect to login after a short delay
-                    setTimeout(() => {
-                        window.location.href = '/login.html';
-                    }, 2000);
-                    
-                } else {
-                    showError('An error occurred during registration.');
-                }
+                showSuccess('Account created successfully! Redirecting to dashboard...');
+                
+                // Auto-login the user
+                const authData = {
+                    token: 'mock-token-' + Date.now(),
+                    user: {
+                        id: userData.id,
+                        email: userData.email,
+                        firstName: userData.firstName,
+                        lastName: userData.lastName,
+                        fullName: userData.firstName + ' ' + userData.lastName,
+                        role: userData.role
+                    }
+                };
+                
+                authUtils.setAuth(authData);
+                
+                // Redirect to dashboard
+                setTimeout(() => {
+                    window.location.href = '/dashboard.html';
+                }, 1500);
                 
             } catch (error) {
                 console.error('Signup error:', error);
-                showError(error.message || 'An error occurred during registration. Please try again.');
+                showError('An error occurred during registration. Please try again.');
             } finally {
                 // Reset loading state
                 signupBtn.disabled = false;
