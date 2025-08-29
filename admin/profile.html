@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Profile - 241 Runners Awareness</title>
+    <meta name="description" content="Admin profile page for 241 Runners Awareness">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/241-logo.jpg">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/admin/assets/css/admin.css">
+    
+    <style>
+        /* ============================================
+           ADMIN PROFILE - ENHANCED STYLING
+           ============================================ */
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .admin-header {
+            background: #ffffff;
+            color: #dc2626;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #dc2626, #b91c1c, #dc2626);
+        }
+        
+        .admin-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-shadow: 0 2px 4px rgba(220, 38, 38, 0.1);
+        }
+        
+        .admin-header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logout-btn {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+        }
+        
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+        }
+        
+        .admin-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .profile-header {
+            background: #ffffff;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #dc2626, #b91c1c, #dc2626);
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 3rem;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
+        }
+        
+        .profile-name {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #dc2626;
+            margin-bottom: 0.5rem;
+        }
+        
+        .profile-email {
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+        
+        .profile-role {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-card {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #dc2626;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #6b7280;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .profile-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-section {
+            background: #ffffff;
+            border-radius: 20px;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .profile-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            padding: 1.5rem;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+
+        .section-header::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .section-content {
+            padding: 2rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+        
+        .action-btn {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .action-btn:hover::before {
+            left: 100%;
+        }
+        
+        .action-btn:hover {
+            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+        }
+        
+        .action-btn.secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+        }
+        
+        .action-btn.secondary:hover {
+            background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+            box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            color: #374151;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            background: #ffffff;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-group input::placeholder {
+            color: #9ca3af;
+            font-style: italic;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .success-message {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .activity-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid #dc2626;
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+
+        .activity-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            margin-top: 0.5rem;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .profile-sections {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .profile-stats {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+            
+            .admin-container {
+                padding: 0 1rem;
+            }
+            
+            .admin-header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .admin-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section-content {
+                padding: 1.5rem;
+            }
+
+            .action-buttons {
+                justify-content: center;
+            }
+
+            .profile-name {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1>👤 Admin Profile</h1>
+        <div class="user-info">
+            <span id="userName">Loading...</span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+    
+    <div class="admin-container">
+        <div id="errorContainer"></div>
+        
+        <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatar">
+                👤
+            </div>
+            <h1 class="profile-name" id="profileName">Loading...</h1>
+            <p class="profile-email" id="profileEmail">loading@example.com</p>
+            <div class="profile-role" id="profileRole">Admin</div>
+        </div>
+        
+        <div class="profile-stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalActions">0</div>
+                <div class="stat-label">Actions Taken</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="lastLogin">-</div>
+                <div class="stat-label">Days Since Login</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="accountAge">0</div>
+                <div class="stat-label">Account Age (Days)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="status">Active</div>
+                <div class="stat-label">Status</div>
+            </div>
+        </div>
+        
+        <div class="profile-sections">
+            <!-- Personal Information -->
+            <div class="profile-section">
+                <div class="section-header">
+                    📋 Personal Information
+                </div>
+                <div class="section-content">
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="organization">Organization</label>
+                            <input type="text" id="organization" name="organization">
+                        </div>
+                        <div class="form-group">
+                            <label for="title">Job Title</label>
+                            <input type="text" id="title" name="title">
+                        </div>
+                        <div class="action-buttons">
+                            <button type="submit" class="action-btn">Update Profile</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Account Security -->
+            <div class="profile-section">
+                <div class="section-header">
+                    🔐 Account Security
+                </div>
+                <div class="section-content">
+                    <form id="passwordForm">
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm New Password</label>
+                            <input type="password" id="confirmPassword" required>
+                        </div>
+                        <div class="action-buttons">
+                            <button type="submit" class="action-btn">Change Password</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="profile-section">
+            <div class="section-header">
+                📊 Recent Activity
+            </div>
+            <div class="section-content">
+                <div id="activityList">
+                    <div class="activity-item">
+                        <strong>Profile Updated</strong>
+                        <p>Updated personal information</p>
+                        <div class="activity-time">2 hours ago</div>
+                    </div>
+                    <div class="activity-item">
+                        <strong>Password Changed</strong>
+                        <p>Successfully updated password</p>
+                        <div class="activity-time">1 day ago</div>
+                    </div>
+                    <div class="activity-item">
+                        <strong>User Created</strong>
+                        <p>Created new admin user: john@example.com</p>
+                        <div class="activity-time">3 days ago</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="profile-section">
+            <div class="section-header">
+                ⚡ Quick Actions
+            </div>
+            <div class="section-content">
+                <div class="action-buttons">
+                    <a href="index.html" class="action-btn">🏠 Dashboard</a>
+                    <a href="users.html" class="action-btn">👥 Manage Users</a>
+                    <button class="action-btn secondary" onclick="exportProfile()">📊 Export Data</button>
+                    <button class="action-btn secondary" onclick="viewLogs()">📋 View Logs</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Admin Authentication Functions
+        const tokenKey = "ra_admin_token";
+        const roleKey = "ra_admin_role";
+        const userKey = "ra_admin_user";
+        
+        // Check if user is authenticated as admin
+        function isAuthenticated() {
+            const token = localStorage.getItem(tokenKey);
+            const role = localStorage.getItem(roleKey);
+            return !!(token && role === 'admin');
+        }
+        
+        // Get stored user data
+        function getUserData() {
+            const userData = localStorage.getItem(userKey);
+            return userData ? JSON.parse(userData) : null;
+        }
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem(tokenKey);
+            localStorage.removeItem(roleKey);
+            localStorage.removeItem(userKey);
+            window.location.href = '/admin/login.html';
+        }
+        
+        // Display user information
+        function displayUserInfo() {
+            const user = getUserData();
+            const urlParams = new URLSearchParams(window.location.search);
+            const adminParam = urlParams.get('admin');
+            
+            if (user) {
+                // Personalize content based on admin parameter
+                let displayName = user.fullName || user.name;
+                let displayEmail = user.email;
+                let displayOrg = user.organization || '';
+                let displayTitle = user.credentials || '';
+                
+                if (adminParam === 'marcus') {
+                    displayName = 'Marcus Brown';
+                    displayEmail = 'dekuworks1@gmail.com';
+                    displayOrg = '241 Runners Awareness';
+                    displayTitle = 'Co-Founder & Operations';
+                } else if (adminParam === 'daniel') {
+                    displayName = 'Daniel Carey';
+                    displayEmail = 'danielcarey9770@gmail.com';
+                    displayOrg = '241 Runners Awareness';
+                    displayTitle = 'Co-Founder & Technology';
+                }
+                
+                document.getElementById('userName').textContent = displayName;
+                document.getElementById('profileName').textContent = displayName;
+                document.getElementById('profileEmail').textContent = displayEmail;
+                document.getElementById('profileAvatar').textContent = getInitials(displayName);
+                
+                // Populate form fields
+                const nameParts = displayName.split(' ');
+                document.getElementById('firstName').value = nameParts[0] || '';
+                document.getElementById('lastName').value = nameParts.slice(1).join(' ') || '';
+                document.getElementById('email').value = displayEmail;
+                document.getElementById('phone').value = user.phoneNumber || '';
+                document.getElementById('organization').value = displayOrg;
+                document.getElementById('title').value = displayTitle;
+            }
+        }
+
+        // Get initials from name
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorContainer = document.getElementById('errorContainer');
+            errorContainer.innerHTML = `<div class="error-message">❌ ${message}</div>`;
+            setTimeout(() => {
+                errorContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            const errorContainer = document.getElementById('errorContainer');
+            errorContainer.innerHTML = `<div class="success-message">✅ ${message}</div>`;
+            setTimeout(() => {
+                errorContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        // Initialize profile
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            if (!isAuthenticated()) {
+                showError('You must be logged in as an admin to access this page.');
+                setTimeout(() => {
+                    window.location.href = '/admin/login.html';
+                }, 2000);
+                return;
+            }
+            
+            // Display user information
+            displayUserInfo();
+            
+            // Load profile data
+            loadProfileData();
+        });
+
+        // Load profile data
+        async function loadProfileData() {
+            try {
+                const user = getUserData();
+                const urlParams = new URLSearchParams(window.location.search);
+                const adminParam = urlParams.get('admin');
+                
+                if (!user) return;
+
+                // Calculate account age
+                const createdAt = new Date(user.createdAt || '2025-01-01');
+                const now = new Date();
+                const daysSinceCreation = Math.floor((now - createdAt) / (1000 * 60 * 60 * 24));
+                
+                // Personalized statistics based on admin
+                let totalActions = '15';
+                let lastLogin = '1';
+                let status = 'Active';
+                
+                if (adminParam === 'marcus') {
+                    totalActions = '47';
+                    lastLogin = '0';
+                    status = 'Active';
+                } else if (adminParam === 'daniel') {
+                    totalActions = '32';
+                    lastLogin = '2';
+                    status = 'Active';
+                }
+                
+                document.getElementById('accountAge').textContent = daysSinceCreation;
+                document.getElementById('totalActions').textContent = totalActions;
+                document.getElementById('lastLogin').textContent = lastLogin;
+                document.getElementById('status').textContent = status;
+                
+            } catch (error) {
+                console.error('Error loading profile data:', error);
+            }
+        }
+
+        // Profile form handler
+        document.getElementById('profileForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const profileData = Object.fromEntries(formData.entries());
+
+            try {
+                showSuccess('Profile updated successfully!');
+                // In a real implementation, you would send this to the backend
+                console.log('Profile data to update:', profileData);
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                showError('Failed to update profile');
+            }
+        });
+
+        // Password form handler
+        document.getElementById('passwordForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword !== confirmPassword) {
+                showError('New passwords do not match');
+                return;
+            }
+
+            if (newPassword.length < 8) {
+                showError('New password must be at least 8 characters long');
+                return;
+            }
+
+            try {
+                showSuccess('Password changed successfully!');
+                document.getElementById('passwordForm').reset();
+                // In a real implementation, you would send this to the backend
+            } catch (error) {
+                console.error('Error changing password:', error);
+                showError('Failed to change password');
+            }
+        });
+
+        // Export profile data
+        function exportProfile() {
+            try {
+                const user = getUserData();
+                const profileData = {
+                    name: user.fullName || user.name,
+                    email: user.email,
+                    role: user.role,
+                    organization: user.organization,
+                    phoneNumber: user.phoneNumber,
+                    createdAt: user.createdAt
+                };
+
+                const csvContent = "data:text/csv;charset=utf-8," 
+                    + "Name,Email,Role,Organization,Phone,Created\n"
+                    + `${profileData.name},${profileData.email},${profileData.role},${profileData.organization || ''},${profileData.phoneNumber || ''},${profileData.createdAt || ''}\n`;
+
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "admin_profile.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                showSuccess('Profile data exported successfully');
+            } catch (error) {
+                console.error('Error exporting profile data:', error);
+                showError('Error exporting profile data');
+            }
+        }
+
+        // View logs function
+        function viewLogs() {
+            showError('Log viewing feature coming soon');
+        }
+    </script>
+</body>
+</html> 

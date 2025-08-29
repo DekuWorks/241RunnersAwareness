@@ -281,9 +281,16 @@
          if (result.success) {
            showAdminMessage('Access granted! Redirecting to admin dashboard...', 'success');
            
-           // Redirect to admin dashboard
+           // Redirect to admin dashboard or profile based on admin
            setTimeout(() => {
-             window.location.href = 'admin/index.html';
+             // Check if it's a specific admin and redirect to their profile
+             if (email === 'dekuworks1@gmail.com') {
+               window.location.href = 'admin/profile.html?admin=marcus';
+             } else if (email === 'danielcarey9770@gmail.com') {
+               window.location.href = 'admin/profile.html?admin=daniel';
+             } else {
+               window.location.href = 'admin/index.html';
+             }
            }, 1500);
          } else {
            showAdminMessage(result.message || 'Access denied. Admin privileges required.', 'error');

@@ -547,13 +547,14 @@
     </style>
 </head>
 <body>
-    <div class="admin-header">
-        <h1>241 Runners Awareness - Admin Dashboard</h1>
-        <div class="user-info">
-            <span id="userName">Loading...</span>
-            <button class="logout-btn" onclick="logout()">Logout</button>
+            <div class="admin-header">
+            <h1>241 Runners Awareness - Admin Dashboard</h1>
+            <div class="user-info">
+                <span id="userName">Loading...</span>
+                <a href="profile.html" class="action-btn" style="margin-right: 1rem;">👤 Profile</a>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
         </div>
-    </div>
     
     <div class="admin-container">
         <div id="errorContainer"></div>
@@ -1017,25 +1018,31 @@
                 const statusText = user.isActive ? 'Active' : 'Inactive';
                 
                 return `
-                    <div class="user-item" style="border-bottom: 1px solid #e5e7eb; padding: 15px 0;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <div>
-                                <strong style="font-size: 1.1rem; color: #374151;">${user.firstName} ${user.lastName}</strong>
-                                <div style="color: #6b7280; font-size: 0.9rem;">${user.email}</div>
+                    <div class="user-item" style="background: #ffffff; border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 1px solid #e5e7eb; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                                    <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, ${roleColor}, ${roleColor}dd); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1rem;">
+                                        ${(user.firstName + ' ' + user.lastName).split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                                    </div>
+                                    <div>
+                                        <strong style="font-size: 1.2rem; color: #374151; display: block;">${user.firstName} ${user.lastName}</strong>
+                                        <div style="color: #6b7280; font-size: 0.9rem;">${user.email}</div>
+                                    </div>
+                                </div>
+                                <div style="font-size: 0.85rem; color: #9ca3af; margin-top: 8px;">
+                                    <span style="margin-right: 15px;">📅 Created: ${new Date(user.createdAt).toLocaleDateString()}</span>
+                                    <span>🕒 Last Login: ${user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString() : 'Never'}</span>
+                                </div>
                             </div>
-                            <div style="text-align: right;">
-                                <span style="background: ${roleColor}; color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold;">
-                                    ${user.role.toUpperCase()}
+                            <div style="text-align: right; display: flex; flex-direction: column; gap: 8px;">
+                                <span style="background: ${roleColor}; color: white; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    ${user.role}
                                 </span>
-                                <br>
-                                <span style="background: ${statusColor}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-top: 4px; display: inline-block;">
+                                <span style="background: ${statusColor}; color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase;">
                                     ${statusText}
                                 </span>
                             </div>
-                        </div>
-                        <div style="font-size: 0.8rem; color: #9ca3af;">
-                            Created: ${new Date(user.createdAt).toLocaleDateString()} | 
-                            Last Login: ${user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString() : 'Never'}
                         </div>
                     </div>
                 `;
