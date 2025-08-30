@@ -1024,10 +1024,72 @@
 
         // Load dashboard data on page load
         document.addEventListener('DOMContentLoaded', function() {
-            loadDashboardData();
-            loadCurrentAdmin();
-            startDataRefresh();
+            // Check authentication first
+            const token = localStorage.getItem('ra_admin_token');
+            if (!token) {
+                window.location.href = '/admin/login.html';
+                return;
+            }
+            
+            // Initialize dashboard
+            initializeDashboard();
         });
+
+        // Initialize dashboard
+        async function initializeDashboard() {
+            try {
+                // Show loading state
+                showLoadingState();
+                
+                // Load data
+                await loadDashboardData();
+                await loadCurrentAdmin();
+                
+                // Start refresh timer
+                startDataRefresh();
+                
+                // Hide loading state
+                hideLoadingState();
+            } catch (error) {
+                console.error('Error initializing dashboard:', error);
+                showError('systemStatus', 'Failed to initialize dashboard');
+            }
+        }
+
+        // Show loading state
+        function showLoadingState() {
+            const elements = ['totalUsers', 'totalRunners', 'activeAdmins', 'systemStatus'];
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = 'Loading...';
+                    element.className = 'stat-number loading';
+                }
+            });
+            
+            // Show loading for recent sections
+            const recentUsers = document.getElementById('recentUsers');
+            const recentRunners = document.getElementById('recentRunners');
+            
+            if (recentUsers) {
+                recentUsers.innerHTML = '<p class="loading-text">Loading users...</p>';
+            }
+            
+            if (recentRunners) {
+                recentRunners.innerHTML = '<p class="loading-text">Loading runners...</p>';
+            }
+        }
+
+        // Hide loading state
+        function hideLoadingState() {
+            const elements = ['totalUsers', 'totalRunners', 'activeAdmins', 'systemStatus'];
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.className = 'stat-number';
+                }
+            });
+        }
 
         // Load all dashboard data
         async function loadDashboardData() {
@@ -1048,17 +1110,25 @@
         // Load users data
         async function loadUsers() {
             try {
+                console.log('Loading users...');
+                const token = localStorage.getItem('ra_admin_token');
                 const response = await fetch('https://241runners-api.azurewebsites.net/api/auth/users', {
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('ra_admin_token')}`
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     }
                 });
                 
+                console.log('Users response status:', response.status);
+                
                 if (response.ok) {
                     const data = await response.json();
+                    console.log('Users data:', data);
                     dashboardData.users = data.users || [];
                 } else {
-                    throw new Error('Failed to load users');
+                    const errorText = await response.text();
+                    console.error('Users API error:', response.status, errorText);
+                    throw new Error(`Failed to load users: ${response.status}`);
                 }
             } catch (error) {
                 console.error('Error loading users:', error);
@@ -1069,17 +1139,25 @@
         // Load runners data
         async function loadRunners() {
             try {
+                console.log('Loading runners...');
+                const token = localStorage.getItem('ra_admin_token');
                 const response = await fetch('https://241runners-api.azurewebsites.net/api/runners', {
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('ra_admin_token')}`
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     }
                 });
                 
+                console.log('Runners response status:', response.status);
+                
                 if (response.ok) {
                     const data = await response.json();
+                    console.log('Runners data:', data);
                     dashboardData.runners = data || [];
                 } else {
-                    throw new Error('Failed to load runners');
+                    const errorText = await response.text();
+                    console.error('Runners API error:', response.status, errorText);
+                    throw new Error(`Failed to load runners: ${response.status}`);
                 }
             } catch (error) {
                 console.error('Error loading runners:', error);
@@ -1111,12 +1189,18 @@
         // Check system status
         async function checkSystemStatus() {
             try {
+                console.log('Checking system status...');
                 const response = await fetch('https://241runners-api.azurewebsites.net/api/auth/health');
+                
+                console.log('Health response status:', response.status);
                 
                 if (response.ok) {
                     const data = await response.json();
+                    console.log('Health data:', data);
                     dashboardData.systemStatus = data.status === 'healthy' ? 'healthy' : 'error';
                 } else {
+                    const errorText = await response.text();
+                    console.error('Health API error:', response.status, errorText);
                     dashboardData.systemStatus = 'error';
                 }
             } catch (error) {
@@ -1145,7 +1229,9 @@
                     currentAdmin = data.user;
                     updateAdminProfile();
                 } else {
-                    throw new Error('Invalid token');
+                    console.error('Token verification failed:', response.status);
+                    localStorage.removeItem('ra_admin_token');
+                    window.location.href = '/admin/login.html';
                 }
             } catch (error) {
                 console.error('Error loading admin profile:', error);
@@ -1156,16 +1242,35 @@
 
         // Update dashboard UI with loaded data
         function updateDashboardUI() {
+            console.log('Updating dashboard UI with data:', dashboardData);
+            
             // Update statistics
-            document.getElementById('totalUsers').textContent = dashboardData.users.length;
-            document.getElementById('totalRunners').textContent = dashboardData.runners.length;
-            document.getElementById('activeAdmins').textContent = dashboardData.admins.length;
+            const totalUsersElement = document.getElementById('totalUsers');
+            const totalRunnersElement = document.getElementById('totalRunners');
+            const activeAdminsElement = document.getElementById('activeAdmins');
+            
+            if (totalUsersElement) {
+                totalUsersElement.textContent = dashboardData.users.length;
+                console.log('Updated total users:', dashboardData.users.length);
+            }
+            
+            if (totalRunnersElement) {
+                totalRunnersElement.textContent = dashboardData.runners.length;
+                console.log('Updated total runners:', dashboardData.runners.length);
+            }
+            
+            if (activeAdminsElement) {
+                activeAdminsElement.textContent = dashboardData.admins.length;
+                console.log('Updated active admins:', dashboardData.admins.length);
+            }
             
             // Update system status
             const systemStatusElement = document.getElementById('systemStatus');
             if (systemStatusElement) {
-                systemStatusElement.textContent = dashboardData.systemStatus === 'healthy' ? 'Healthy' : 'Error';
+                const statusText = dashboardData.systemStatus === 'healthy' ? 'Healthy' : 'Error';
+                systemStatusElement.textContent = statusText;
                 systemStatusElement.className = dashboardData.systemStatus === 'healthy' ? 'status-healthy' : 'status-error';
+                console.log('Updated system status:', statusText);
             }
 
             // Update recent users
