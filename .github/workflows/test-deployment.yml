@@ -1,0 +1,87 @@
+name: Test Deployment and API
+
+on:
+  workflow_run:
+    workflows: ["Deploy Backend to Azure", "Deploy Static Site to GitHub Pages"]
+    types: [completed]
+  workflow_dispatch:
+
+jobs:
+  test-deployment:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Wait for deployment
+      run: |
+        echo "Waiting for deployment to complete..."
+        sleep 60
+        
+    - name: Test API Health
+      run: |
+        echo "Testing API health endpoint..."
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://241runners-api.azurewebsites.net/api/auth/health)
+        if [ "$response" = "200" ]; then
+          echo "✅ API health check passed"
+        else
+          echo "❌ API health check failed: $response"
+          exit 1
+        fi
+        
+    - name: Test Admin Login
+      run: |
+        echo "Testing admin login..."
+        response=$(curl -s -X POST "https://241runners-api.azurewebsites.net/api/auth/login" \
+          -H "Content-Type: application/json" \
+          -d '{"email":"dekuworks1@gmail.com","password":"NewAdmin123!@"}' \
+          -o /dev/null -w "%{http_code}")
+        if [ "$response" = "200" ]; then
+          echo "✅ Admin login test passed"
+        else
+          echo "❌ Admin login test failed: $response"
+          exit 1
+        fi
+        
+    - name: Test Static Site
+      run: |
+        echo "Testing static site..."
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://241runnersawareness.org/)
+        if [ "$response" = "200" ]; then
+          echo "✅ Static site test passed"
+        else
+          echo "❌ Static site test failed: $response"
+          exit 1
+        fi
+        
+    - name: Test Admin Dashboard
+      run: |
+        echo "Testing admin dashboard..."
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://241runnersawareness.org/admin/login.html)
+        if [ "$response" = "200" ]; then
+          echo "✅ Admin dashboard test passed"
+        else
+          echo "❌ Admin dashboard test failed: $response"
+          exit 1
+        fi
+        
+    - name: Test Cases Page
+      run: |
+        echo "Testing cases page..."
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://241runnersawareness.org/cases.html)
+        if [ "$response" = "200" ]; then
+          echo "✅ Cases page test passed"
+        else
+          echo "❌ Cases page test failed: $response"
+          exit 1
+        fi
+        
+    - name: Deployment Summary
+      run: |
+        echo "🎉 All deployment tests passed!"
+        echo "✅ API: https://241runners-api.azurewebsites.net"
+        echo "✅ Static Site: https://241runnersawareness.org"
+        echo "✅ Admin Dashboard: https://241runnersawareness.org/admin/"
+        echo "✅ Cases Page: https://241runnersawareness.org/cases.html" 

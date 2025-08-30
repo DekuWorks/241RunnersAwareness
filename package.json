@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "echo 'No linting configured in root'",
     "format:check": "echo 'No formatting check configured in root'",
-    "test": "echo 'No tests configured in root'"
+    "test": "echo 'No tests configured in root'",
+    "build": "echo 'Static site - no build step required'"
   },
   "devDependencies": {},
   "dependencies": {}

@@ -73,31 +73,30 @@ jobs:
           
       - name: Build backend
         run: |
-          if [ -d "backend" ]; then
-            cd backend
+          if [ -d "241RunnersAwarenessAPI" ]; then
+            cd 241RunnersAwarenessAPI
             dotnet build --no-restore
           fi
           
       - name: Build frontend
         run: |
-          if [ -d "frontend" ]; then
-            cd frontend
+          if [ -f "package.json" ]; then
             npm ci
             npm run build
           fi
           
       - name: Run backend tests
         run: |
-          if [ -d "backend" ]; then
-            cd backend
+          if [ -d "241RunnersAwarenessAPI" ]; then
+            cd 241RunnersAwarenessAPI
             dotnet test --no-build --verbosity normal
           fi
           
       - name: Run frontend tests
         run: |
-          if [ -d "frontend" ]; then
-            cd frontend
+          if [ -f "package.json" ]; then
             npm test --if-present
+          fi
           fi
 
   # Linting and Code Style
