@@ -270,12 +270,6 @@ namespace _241RunnersAwarenessAPI.Controllers
             return Ok(new { status = "healthy", timestamp = DateTime.UtcNow });
         }
 
-        [HttpPost("test-reset")]
-        public ActionResult<string> TestReset()
-        {
-            return Ok(new { message = "Test reset endpoint working", timestamp = DateTime.UtcNow });
-        }
-
         /*
         [HttpPost("reset-password")]
         public async Task<ActionResult<AuthResponse>> ResetPassword([FromBody] ResetPasswordRequest request)
