@@ -156,4 +156,29 @@ namespace _241RunnersAwarenessAPI.Models
         public string Message { get; set; } = string.Empty;
         public UserInfo? User { get; set; }
     }
+
+    public class PasswordResetRequest
+    {
+        [Required]
+        public string CurrentPassword { get; set; } = string.Empty;
+
+        [Required]
+        [MinLength(8)]
+        public string NewPassword { get; set; } = string.Empty;
+
+        [Required]
+        [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
+        public string ConfirmNewPassword { get; set; } = string.Empty;
+    }
+
+    public class AdminPasswordResetRequest
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [Required]
+        [MinLength(8)]
+        public string NewPassword { get; set; } = string.Empty;
+    }
 } 

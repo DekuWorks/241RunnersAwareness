@@ -117,8 +117,7 @@ namespace _241RunnersAwarenessAPI.Controllers
                     City = request.City?.Trim(),
                     State = request.State?.Trim(),
                     ZipCode = request.ZipCode?.Trim(),
-                    Organization = request.Organization?.Trim(),
-                    Title = request.Title?.Trim(),
+                    // Organization and Title will be null for now until we fix the database schema
                     CreatedAt = DateTime.UtcNow,
                     IsActive = true
                 };
@@ -265,6 +264,350 @@ namespace _241RunnersAwarenessAPI.Controllers
             return Ok(new { message = "API is working!", timestamp = DateTime.UtcNow, status = "healthy" });
         }
 
+        [HttpPost("create-first-admin")]
+        public async Task<ActionResult<AuthResponse>> CreateFirstAdmin([FromBody] RegisterRequest request)
+        {
+            try
+            {
+                // Check if any admin users exist
+                var adminExists = await _context.Users.AnyAsync(u => u.Role.ToLower() == "admin");
+                if (adminExists)
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Admin users already exist. Use the regular admin creation endpoint."
+                    });
+                }
+
+                // Validate input
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = $"Validation failed: {string.Join(", ", errors)}"
+                    });
+                }
+
+                // Validate email format
+                if (!IsValidEmail(request.Email))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Invalid email format."
+                    });
+                }
+
+                // Check if user already exists
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == request.Email.ToLower());
+                if (existingUser != null)
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "A user with this email already exists."
+                    });
+                }
+
+                // Validate password strength
+                if (!IsPasswordStrong(request.Password))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+                    });
+                }
+
+                // Create new admin user
+                var user = new User
+                {
+                    Email = request.Email.ToLower(),
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
+                    Role = "admin",
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    PhoneNumber = request.PhoneNumber,
+                    Address = request.Address,
+                    City = request.City,
+                    State = request.State,
+                    ZipCode = request.ZipCode
+                    // Organization and Title will be null for now until we fix the database schema
+                };
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                // Generate token
+                var token = _jwtService.GenerateToken(user);
+
+                return Ok(new AuthResponse
+                {
+                    Success = true,
+                    Message = "First admin user created successfully.",
+                    Token = token,
+                    User = new UserInfo
+                    {
+                        Id = user.Id,
+                        Email = user.Email,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        FullName = user.FullName,
+                        Role = user.Role,
+                        CreatedAt = user.CreatedAt,
+                        PhoneNumber = user.PhoneNumber,
+                        Address = user.Address,
+                        City = user.City,
+                        State = user.State,
+                        ZipCode = user.ZipCode,
+                        Organization = user.Organization,
+                        Title = user.Title
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating first admin user");
+                return StatusCode(500, new AuthResponse
+                {
+                    Success = false,
+                    Message = "An error occurred while creating the admin user. Please try again."
+                });
+            }
+        }
+
+        [HttpPost("create-admin")]
+        public async Task<ActionResult<AuthResponse>> CreateAdmin([FromBody] RegisterRequest request)
+        {
+            try
+            {
+                // Validate input
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = $"Validation failed: {string.Join(", ", errors)}"
+                    });
+                }
+
+                // Validate email format
+                if (!IsValidEmail(request.Email))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Invalid email format."
+                    });
+                }
+
+                // Check if user already exists
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == request.Email.ToLower());
+                if (existingUser != null)
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "A user with this email already exists."
+                    });
+                }
+
+                // Validate password strength
+                if (!IsPasswordStrong(request.Password))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+                    });
+                }
+
+                // Create new admin user
+                var user = new User
+                {
+                    Email = request.Email.ToLower(),
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
+                    Role = "admin",
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    PhoneNumber = request.PhoneNumber,
+                    Address = request.Address,
+                    City = request.City,
+                    State = request.State,
+                    ZipCode = request.ZipCode
+                    // Organization and Title will be null for now until we fix the database schema
+                };
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                // Generate token
+                var token = _jwtService.GenerateToken(user);
+
+                return Ok(new AuthResponse
+                {
+                    Success = true,
+                    Message = "Admin user created successfully.",
+                    Token = token,
+                    User = new UserInfo
+                    {
+                        Id = user.Id,
+                        Email = user.Email,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        FullName = user.FullName,
+                        Role = user.Role,
+                        CreatedAt = user.CreatedAt,
+                        PhoneNumber = user.PhoneNumber,
+                        Address = user.Address,
+                        City = user.City,
+                        State = user.State,
+                        ZipCode = user.ZipCode,
+                        Organization = user.Organization,
+                        Title = user.Title
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating admin user");
+                return StatusCode(500, new AuthResponse
+                {
+                    Success = false,
+                    Message = "An error occurred while creating the admin user. Please try again."
+                });
+            }
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<ActionResult<AuthResponse>> ResetPassword([FromBody] PasswordResetRequest request)
+        {
+            try
+            {
+                // Validate input
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = $"Validation failed: {string.Join(", ", errors)}"
+                    });
+                }
+
+                // Get current user from JWT token
+                var authHeader = Request.Headers["Authorization"].FirstOrDefault();
+                if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+                {
+                    return Unauthorized(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Authentication required."
+                    });
+                }
+
+                var token = authHeader.Substring("Bearer ".Length);
+                var currentUser = _jwtService.ValidateToken(token);
+                if (currentUser == null)
+                {
+                    return Unauthorized(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Invalid or expired token."
+                    });
+                }
+
+                // Get user ID from claims
+                var userIdClaim = currentUser.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    return Unauthorized(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Invalid user token."
+                    });
+                }
+
+                // Get user from database
+                var user = await _context.Users.FindAsync(userId);
+                if (user == null)
+                {
+                    return NotFound(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "User not found."
+                    });
+                }
+
+                // Verify current password
+                if (!BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.PasswordHash))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Current password is incorrect."
+                    });
+                }
+
+                // Validate new password strength
+                if (!IsPasswordStrong(request.NewPassword))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "New password must contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+                    });
+                }
+
+                // Hash new password
+                var newPasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+
+                // Update user password
+                user.PasswordHash = newPasswordHash;
+                // user.UpdatedAt = DateTime.UtcNow; // This column doesn't exist yet
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"Password reset successful for user: {user.Email}");
+
+                return Ok(new AuthResponse
+                {
+                    Success = true,
+                    Message = "Password reset successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during password reset");
+                return StatusCode(500, new AuthResponse
+                {
+                    Success = false,
+                    Message = "An error occurred during password reset. Please try again."
+                });
+            }
+        }
+
+
+
         [HttpGet("health")]
         public async Task<ActionResult> Health()
         {
@@ -288,6 +631,49 @@ namespace _241RunnersAwarenessAPI.Controllers
                 return StatusCode(500, new { 
                     status = "unhealthy", 
                     timestamp = DateTime.UtcNow,
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpGet("users")]
+        public async Task<ActionResult<object>> GetUsers()
+        {
+            try
+            {
+                var users = await _context.Users
+                    .Select(u => new
+                    {
+                        u.Id,
+                        u.Email,
+                        u.FirstName,
+                        u.LastName,
+                        u.Role,
+                        u.IsActive,
+                        u.CreatedAt,
+                        u.LastLoginAt,
+                        u.PhoneNumber,
+                        u.Address,
+                        u.City,
+                        u.State,
+                        u.ZipCode
+                    })
+                    .ToListAsync();
+                
+                return Ok(new
+                {
+                    success = true,
+                    users = users,
+                    count = users.Count
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving users: {Message}", ex.Message);
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "An error occurred while retrieving users.",
                     error = ex.Message
                 });
             }
@@ -464,9 +850,8 @@ namespace _241RunnersAwarenessAPI.Controllers
                 user.City = request.City;
                 user.State = request.State;
                 user.ZipCode = request.ZipCode;
-                user.Organization = request.Organization;
-                user.Title = request.Title;
-                user.UpdatedAt = DateTime.UtcNow;
+                // Organization and Title will be null for now until we fix the database schema
+                // user.UpdatedAt = DateTime.UtcNow; // This column doesn't exist yet
 
                 await _context.SaveChangesAsync();
 
@@ -654,6 +1039,46 @@ namespace _241RunnersAwarenessAPI.Controllers
                 return false;
 
             return true;
+        }
+
+        [HttpPost("reset-admin-password")]
+        public async Task<ActionResult<AuthResponse>> ResetAdminPassword([FromBody] AdminPasswordResetRequest request)
+        {
+            try
+            {
+                // This is a temporary endpoint for testing - should be removed in production
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == request.Email.ToLower());
+                if (user == null)
+                {
+                    return NotFound(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "User not found."
+                    });
+                }
+
+                // Update password
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+                user.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"Admin password reset for user: {user.Email}");
+
+                return Ok(new AuthResponse
+                {
+                    Success = true,
+                    Message = "Admin password reset successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during admin password reset");
+                return StatusCode(500, new AuthResponse
+                {
+                    Success = false,
+                    Message = "An error occurred during password reset. Please try again."
+                });
+            }
         }
     }
 } 
