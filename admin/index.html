@@ -772,6 +772,9 @@
                     <button id="logoutBtn" class="logout-button" onclick="logout()">
                         <span>🚪 Logout</span>
                     </button>
+                    <button id="refreshBtn" class="logout-button" onclick="refreshDashboard()" style="margin-left: 10px;">
+                        <span>🔄 Refresh</span>
+                    </button>
             </div>
             </div>
         </div>
@@ -1098,6 +1101,15 @@
             window.location.href = '/admin/login.html';
         }
 
+        // Refresh dashboard function
+        async function refreshDashboard() {
+            console.log('Manual refresh triggered...');
+            showLoadingState();
+            await loadDashboardData();
+            hideLoadingState();
+            showToast('Dashboard refreshed!', 'success');
+        }
+
         // Initialize dashboard
         async function initializeDashboard() {
             try {
@@ -1164,13 +1176,25 @@
         // Load all dashboard data
         async function loadDashboardData() {
             try {
-                await Promise.all([
-                    loadUsers(),
-                    loadRunners(),
-                    loadAdmins(),
-                    checkSystemStatus()
-                ]);
+                console.log('Starting to load dashboard data...');
+                
+                // Load data sequentially to avoid race conditions
+                await loadUsers();
+                console.log('Users loaded:', dashboardData.users.length);
+                
+                await loadRunners();
+                console.log('Runners loaded:', dashboardData.runners.length);
+                
+                await loadAdmins();
+                console.log('Admins loaded:', dashboardData.admins.length);
+                
+                await checkSystemStatus();
+                console.log('System status:', dashboardData.systemStatus);
+                
+                console.log('All data loaded, updating UI...');
                 updateDashboardUI();
+                
+                console.log('Dashboard data loading completed successfully');
             } catch (error) {
                 console.error('Error loading dashboard data:', error);
                 showError('systemStatus', 'Error loading dashboard data');
@@ -1193,7 +1217,13 @@
                 if (response.ok) {
                     const data = await response.json();
                     console.log('Users data:', data);
-                    dashboardData.users = data.users || [];
+                    if (data.success && data.users) {
+                        dashboardData.users = data.users;
+                        console.log('Users loaded successfully:', data.users.length);
+                    } else {
+                        console.error('Invalid users data format:', data);
+                        dashboardData.users = [];
+                    }
                 } else {
                     const errorText = await response.text();
                     console.error('Users API error:', response.status, errorText);
