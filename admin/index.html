@@ -18,8 +18,8 @@
     <link rel="stylesheet" href="/styles.css" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="/admin/assets/css/admin.css" media="print" onload="this.media='all'">
     <noscript>
-        <link rel="stylesheet" href="/styles.css">
-        <link rel="stylesheet" href="/admin/assets/css/admin.css">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/admin/assets/css/admin.css">
     </noscript>
     
     <style>
@@ -334,7 +334,7 @@
             color: #9ca3af;
             font-style: italic;
         }
-
+        
         .error-message {
             background: #fef2f2;
             border: 1px solid #fecaca;
@@ -664,7 +664,7 @@
                 ⚡ Quick Actions
             </div>
             <div class="section-content">
-                <div class="action-buttons">
+            <div class="action-buttons">
                     <a href="users.html" class="action-btn">👥 Manage Users</a>
                     <button class="action-btn" onclick="openCreateAdminModal()">➕ Create New Admin</button>
                     <button class="action-btn secondary" onclick="exportProfile()">📊 Export Data</button>
@@ -738,6 +738,9 @@
         function isAuthenticated() {
             const token = localStorage.getItem(tokenKey);
             const role = localStorage.getItem(roleKey);
+            console.log('Auth check - Token:', token ? 'Present' : 'Missing');
+            console.log('Auth check - Role:', role);
+            console.log('Auth check - Result:', !!(token && role === 'admin'));
             return !!(token && role === 'admin');
         }
         
@@ -800,7 +803,7 @@
         function getInitials(name) {
             return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
         }
-
+        
         // Show error message
         function showError(message) {
             const errorContainer = document.getElementById('errorContainer');
@@ -821,8 +824,12 @@
 
         // Initialize profile
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Admin dashboard loading...');
+            console.log('Current localStorage keys:', Object.keys(localStorage));
+            
             // Check authentication
             if (!isAuthenticated()) {
+                console.log('Authentication failed, redirecting to login...');
                 showError('You must be logged in as an admin to access this page.');
                 setTimeout(() => {
                     window.location.href = '/admin/login.html';
