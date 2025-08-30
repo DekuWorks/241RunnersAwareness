@@ -1,7 +1,7 @@
 -- Create Runners Table for 241 Runners Awareness API (Simplified Version)
 -- This script creates the Runners table without foreign key constraints
 
-USE [241runners-db];
+USE [241RunnersAwarenessDB];
 GO
 
 -- Create the Runners table

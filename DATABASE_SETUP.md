@@ -13,14 +13,14 @@ This document provides instructions for creating the Runners table in the Azure 
 ### Connection Details
 
 - **Server**: `241runners-sql-2025.database.windows.net`
-- **Database**: `241runners-db`
+- **Database**: `241RunnersAwarenessDB`
 - **Username**: `241runners-admin`
 - **Password**: `241Runners2025!`
 
 ### Option 1: Azure Portal Query Editor (Recommended)
 
 1. **Login to Azure Portal**: Go to [portal.azure.com](https://portal.azure.com)
-2. **Navigate to SQL Database**: Find the `241runners-db` database
+2. **Navigate to SQL Database**: Find the `241RunnersAwarenessDB` database
 3. **Open Query Editor**: Click on "Query editor" in the left menu
 4. **Connect**: Use the admin credentials to connect
 5. **Execute Script**: Copy and paste the contents of `create_runners_table_simple.sql`
