@@ -276,6 +276,7 @@ namespace _241RunnersAwarenessAPI.Controllers
             return Ok(new { message = "Test reset endpoint working", timestamp = DateTime.UtcNow });
         }
 
+        /*
         [HttpPost("reset-password")]
         public async Task<ActionResult<AuthResponse>> ResetPassword([FromBody] ResetPasswordRequest request)
         {
@@ -372,6 +373,7 @@ namespace _241RunnersAwarenessAPI.Controllers
                 });
             }
         }
+        */
 
         // Helper methods for validation
         private bool IsValidEmail(string email)
