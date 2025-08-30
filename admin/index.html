@@ -1013,6 +1013,255 @@
     <!-- Scripts -->
     <script src="/admin/assets/js/admin-auth.js"></script>
     <script>
+        // Dashboard data loading and management
+        let currentAdmin = null;
+        let dashboardData = {
+            users: [],
+            runners: [],
+            admins: [],
+            systemStatus: 'loading'
+        };
+
+        // Load dashboard data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+            loadCurrentAdmin();
+            startDataRefresh();
+        });
+
+        // Load all dashboard data
+        async function loadDashboardData() {
+            try {
+                await Promise.all([
+                    loadUsers(),
+                    loadRunners(),
+                    loadAdmins(),
+                    checkSystemStatus()
+                ]);
+                updateDashboardUI();
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showError('systemStatus', 'Error loading dashboard data');
+            }
+        }
+
+        // Load users data
+        async function loadUsers() {
+            try {
+                const response = await fetch('https://241runners-api.azurewebsites.net/api/auth/users', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('ra_admin_token')}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    dashboardData.users = data.users || [];
+                } else {
+                    throw new Error('Failed to load users');
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+                dashboardData.users = [];
+            }
+        }
+
+        // Load runners data
+        async function loadRunners() {
+            try {
+                const response = await fetch('https://241runners-api.azurewebsites.net/api/runners', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('ra_admin_token')}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    dashboardData.runners = data || [];
+                } else {
+                    throw new Error('Failed to load runners');
+                }
+            } catch (error) {
+                console.error('Error loading runners:', error);
+                dashboardData.runners = [];
+            }
+        }
+
+        // Load admins data
+        async function loadAdmins() {
+            try {
+                const response = await fetch('https://241runners-api.azurewebsites.net/api/auth/users', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('ra_admin_token')}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    dashboardData.admins = (data.users || []).filter(user => user.role === 'admin');
+                } else {
+                    throw new Error('Failed to load admins');
+                }
+            } catch (error) {
+                console.error('Error loading admins:', error);
+                dashboardData.admins = [];
+            }
+        }
+
+        // Check system status
+        async function checkSystemStatus() {
+            try {
+                const response = await fetch('https://241runners-api.azurewebsites.net/api/auth/health');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    dashboardData.systemStatus = data.status === 'healthy' ? 'healthy' : 'error';
+                } else {
+                    dashboardData.systemStatus = 'error';
+                }
+            } catch (error) {
+                console.error('Error checking system status:', error);
+                dashboardData.systemStatus = 'error';
+            }
+        }
+
+        // Load current admin profile
+        async function loadCurrentAdmin() {
+            try {
+                const token = localStorage.getItem('ra_admin_token');
+                if (!token) {
+                    window.location.href = '/admin/login.html';
+                    return;
+                }
+
+                const response = await fetch('https://241runners-api.azurewebsites.net/api/auth/verify', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    currentAdmin = data.user;
+                    updateAdminProfile();
+                } else {
+                    throw new Error('Invalid token');
+                }
+            } catch (error) {
+                console.error('Error loading admin profile:', error);
+                localStorage.removeItem('ra_admin_token');
+                window.location.href = '/admin/login.html';
+            }
+        }
+
+        // Update dashboard UI with loaded data
+        function updateDashboardUI() {
+            // Update statistics
+            document.getElementById('totalUsers').textContent = dashboardData.users.length;
+            document.getElementById('totalRunners').textContent = dashboardData.runners.length;
+            document.getElementById('activeAdmins').textContent = dashboardData.admins.length;
+            
+            // Update system status
+            const systemStatusElement = document.getElementById('systemStatus');
+            if (systemStatusElement) {
+                systemStatusElement.textContent = dashboardData.systemStatus === 'healthy' ? 'Healthy' : 'Error';
+                systemStatusElement.className = dashboardData.systemStatus === 'healthy' ? 'status-healthy' : 'status-error';
+            }
+
+            // Update recent users
+            updateRecentUsers();
+            
+            // Update recent runners
+            updateRecentRunners();
+        }
+
+        // Update recent users display
+        function updateRecentUsers() {
+            const container = document.getElementById('recentUsers');
+            if (!container) return;
+
+            const recentUsers = dashboardData.users.slice(0, 5);
+            
+            if (recentUsers.length === 0) {
+                container.innerHTML = '<p class="no-data">No users found</p>';
+                return;
+            }
+
+            const usersHtml = recentUsers.map(user => `
+                <div class="recent-item">
+                    <div class="user-info">
+                        <div class="user-name">${user.firstName} ${user.lastName}</div>
+                        <div class="user-email">${user.email}</div>
+                        <div class="user-role">${user.role}</div>
+                    </div>
+                    <div class="user-status ${user.isActive ? 'active' : 'inactive'}">
+                        ${user.isActive ? 'Active' : 'Inactive'}
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = usersHtml;
+        }
+
+        // Update recent runners display
+        function updateRecentRunners() {
+            const container = document.getElementById('recentRunners');
+            if (!container) return;
+
+            const recentRunners = dashboardData.runners.slice(0, 5);
+            
+            if (recentRunners.length === 0) {
+                container.innerHTML = '<p class="no-data">No runners found</p>';
+                return;
+            }
+
+            const runnersHtml = recentRunners.map(runner => `
+                <div class="recent-item">
+                    <div class="runner-info">
+                        <div class="runner-name">${runner.firstName} ${runner.lastName}</div>
+                        <div class="runner-location">${runner.city}, ${runner.state}</div>
+                        <div class="runner-status ${runner.status.toLowerCase()}">${runner.status}</div>
+                    </div>
+                    <div class="runner-urgency ${runner.isUrgent ? 'urgent' : 'normal'}">
+                        ${runner.isUrgent ? 'URGENT' : 'Normal'}
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = runnersHtml;
+        }
+
+        // Update admin profile display
+        function updateAdminProfile() {
+            if (!currentAdmin) return;
+
+            const profileName = document.getElementById('profileName');
+            const profileEmail = document.getElementById('profileEmail');
+            
+            if (profileName) {
+                profileName.textContent = `${currentAdmin.firstName} ${currentAdmin.lastName}`;
+            }
+            
+            if (profileEmail) {
+                profileEmail.textContent = currentAdmin.email;
+            }
+        }
+
+        // Start automatic data refresh
+        function startDataRefresh() {
+            setInterval(() => {
+                loadDashboardData();
+            }, 30000); // Refresh every 30 seconds
+        }
+
+        // Show error message
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = message;
+                element.className = 'status-error';
+            }
+        }
         // Enhanced Admin Dashboard JavaScript
         let currentAdmin = null;
         let refreshInterval = null;

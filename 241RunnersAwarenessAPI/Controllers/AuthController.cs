@@ -608,6 +608,89 @@ namespace _241RunnersAwarenessAPI.Controllers
 
 
 
+        [HttpGet("verify")]
+        public async Task<ActionResult<AuthResponse>> VerifyToken()
+        {
+            try
+            {
+                // Get current user from JWT token
+                var authHeader = Request.Headers["Authorization"].FirstOrDefault();
+                if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+                {
+                    return Unauthorized(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Authentication required."
+                    });
+                }
+
+                var token = authHeader.Substring("Bearer ".Length);
+                var currentUser = _jwtService.ValidateToken(token);
+                if (currentUser == null)
+                {
+                    return Unauthorized(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Invalid or expired token."
+                    });
+                }
+
+                // Get user ID from claims
+                var userIdClaim = currentUser.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    return Unauthorized(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Invalid user token."
+                    });
+                }
+
+                // Get user from database
+                var user = await _context.Users.FindAsync(userId);
+                if (user == null)
+                {
+                    return NotFound(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "User not found."
+                    });
+                }
+
+                return Ok(new AuthResponse
+                {
+                    Success = true,
+                    Message = "Token is valid.",
+                    User = new UserInfo
+                    {
+                        Id = user.Id,
+                        Email = user.Email,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        FullName = user.FullName,
+                        Role = user.Role,
+                        CreatedAt = user.CreatedAt,
+                        PhoneNumber = user.PhoneNumber,
+                        Address = user.Address,
+                        City = user.City,
+                        State = user.State,
+                        ZipCode = user.ZipCode,
+                        Organization = user.Organization,
+                        Title = user.Title
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error verifying token");
+                return StatusCode(500, new AuthResponse
+                {
+                    Success = false,
+                    Message = "An error occurred while verifying the token."
+                });
+            }
+        }
+
         [HttpGet("health")]
         public async Task<ActionResult> Health()
         {
