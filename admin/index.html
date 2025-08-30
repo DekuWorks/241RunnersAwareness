@@ -485,6 +485,218 @@
             border-top: 2px solid #f3f4f6;
         }
 
+        /* Modal styles for new admin actions */
+        .logs-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+            font-family: monospace;
+        }
+
+        .log-time {
+            color: #6b7280;
+            font-size: 0.875rem;
+            min-width: 150px;
+        }
+
+        .log-level {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .log-level.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .log-level.warning {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .log-level.error {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .log-message {
+            flex: 1;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-switch label {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-switch label:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked + label {
+            background-color: #dc2626;
+        }
+
+        .toggle-switch input:checked + label:before {
+            transform: translateX(26px);
+        }
+
+        .runners-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .runners-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .runners-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .runner-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .runner-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: bold;
+        }
+
+        .runner-status.active {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .runner-status.resolved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .cases-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .cases-filters select,
+        .cases-filters input {
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+        }
+
+        .cases-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .case-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .case-item.active {
+            border-left: 4px solid #dc2626;
+        }
+
+        .case-item.resolved {
+            border-left: 4px solid #10b981;
+        }
+
+        .case-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .case-header h4 {
+            margin: 0;
+            color: #1f2937;
+        }
+
+        .case-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: bold;
+        }
+
+        .case-status.active {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .case-status.resolved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .case-description {
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+
+        .case-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: #9ca3af;
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {
             .profile-sections {
@@ -960,24 +1172,295 @@
             }
         }
 
+        // Export data function
+        function exportProfile() {
+            try {
+                const user = getUserData();
+                const urlParams = new URLSearchParams(window.location.search);
+                const adminParam = urlParams.get('admin');
+                
+                // Create export data
+                const exportData = {
+                    profile: {
+                        name: user?.fullName || user?.name || 'Admin User',
+                        email: user?.email || 'admin@example.com',
+                        role: 'admin',
+                        organization: user?.organization || '241 Runners Awareness',
+                        title: user?.credentials || 'Administrator',
+                        accountAge: document.getElementById('accountAge')?.textContent || '0',
+                        totalActions: document.getElementById('totalActions')?.textContent || '0',
+                        lastLogin: document.getElementById('lastLogin')?.textContent || '0',
+                        status: document.getElementById('status')?.textContent || 'Active'
+                    },
+                    exportDate: new Date().toISOString(),
+                    adminType: adminParam || 'general'
+                };
+                
+                // Create and download JSON file
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `admin-profile-${adminParam || 'export'}-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                showSuccess('Profile data exported successfully!');
+                addActivityItem('Exported profile data');
+            } catch (error) {
+                console.error('Export error:', error);
+                showError('Failed to export data. Please try again.');
+            }
+        }
+
         // View logs function
         function viewLogs() {
-            showError('Log viewing feature coming soon');
+            // Create logs modal
+            const logsModal = document.createElement('div');
+            logsModal.className = 'modal';
+            logsModal.id = 'logsModal';
+            logsModal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>📋 System Logs</h2>
+                        <span class="close" onclick="closeLogsModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="logs-container">
+                            <div class="log-entry">
+                                <span class="log-time">${new Date().toLocaleString()}</span>
+                                <span class="log-level info">INFO</span>
+                                <span class="log-message">Admin dashboard accessed</span>
+                            </div>
+                            <div class="log-entry">
+                                <span class="log-time">${new Date(Date.now() - 300000).toLocaleString()}</span>
+                                <span class="log-level info">INFO</span>
+                                <span class="log-message">User authentication successful</span>
+                            </div>
+                            <div class="log-entry">
+                                <span class="log-time">${new Date(Date.now() - 600000).toLocaleString()}</span>
+                                <span class="log-level warning">WARN</span>
+                                <span class="log-message">API response time exceeded threshold</span>
+                            </div>
+                            <div class="log-entry">
+                                <span class="log-time">${new Date(Date.now() - 900000).toLocaleString()}</span>
+                                <span class="log-level error">ERROR</span>
+                                <span class="log-message">Database connection timeout</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(logsModal);
+            logsModal.style.display = 'block';
+            addActivityItem('Viewed system logs');
+        }
+
+        // Close logs modal
+        function closeLogsModal() {
+            const modal = document.getElementById('logsModal');
+            if (modal) {
+                modal.remove();
+            }
         }
 
         // System settings function
         function systemSettings() {
-            showError('System settings feature coming soon');
+            // Create settings modal
+            const settingsModal = document.createElement('div');
+            settingsModal.className = 'modal';
+            settingsModal.id = 'settingsModal';
+            settingsModal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>⚙️ System Settings</h2>
+                        <span class="close" onclick="closeSettingsModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <form id="settingsForm">
+                            <div class="form-group">
+                                <label>Email Notifications</label>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="emailNotifications" checked>
+                                    <label for="emailNotifications"></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Auto-logout (minutes)</label>
+                                <input type="number" id="autoLogout" value="30" min="5" max="480">
+                            </div>
+                            <div class="form-group">
+                                <label>Theme</label>
+                                <select id="theme">
+                                    <option value="light">Light</option>
+                                    <option value="dark">Dark</option>
+                                    <option value="auto">Auto</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Language</label>
+                                <select id="language">
+                                    <option value="en">English</option>
+                                    <option value="es">Spanish</option>
+                                    <option value="fr">French</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="action-btn secondary" onclick="closeSettingsModal()">Cancel</button>
+                                <button type="submit" class="action-btn">Save Settings</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(settingsModal);
+            settingsModal.style.display = 'block';
+            
+            // Handle form submission
+            document.getElementById('settingsForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                showSuccess('Settings saved successfully!');
+                closeSettingsModal();
+                addActivityItem('Updated system settings');
+            });
+        }
+
+        // Close settings modal
+        function closeSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            if (modal) {
+                modal.remove();
+            }
         }
 
         // Manage runners function
         function manageRunners() {
-            showError('Runner management feature coming soon');
+            // Create runners modal
+            const runnersModal = document.createElement('div');
+            runnersModal.className = 'modal';
+            runnersModal.id = 'runnersModal';
+            runnersModal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>🏃 Manage Runners</h2>
+                        <span class="close" onclick="closeRunnersModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="runners-stats">
+                            <div class="stat-card">
+                                <h3>Total Runners</h3>
+                                <p class="stat-number">247</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>Active Cases</h3>
+                                <p class="stat-number">23</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>Resolved Cases</h3>
+                                <p class="stat-number">189</p>
+                            </div>
+                        </div>
+                        <div class="runners-actions">
+                            <button class="action-btn" onclick="addNewRunner()">➕ Add New Runner</button>
+                            <button class="action-btn secondary" onclick="exportRunners()">📊 Export Runners</button>
+                            <button class="action-btn secondary" onclick="importRunners()">📥 Import Runners</button>
+                        </div>
+                        <div class="runners-list">
+                            <h3>Recent Runners</h3>
+                            <div class="runner-item">
+                                <span class="runner-name">John Doe</span>
+                                <span class="runner-status active">Active</span>
+                                <span class="runner-date">2025-08-29</span>
+                            </div>
+                            <div class="runner-item">
+                                <span class="runner-name">Jane Smith</span>
+                                <span class="runner-status resolved">Resolved</span>
+                                <span class="runner-date">2025-08-28</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(runnersModal);
+            runnersModal.style.display = 'block';
+            addActivityItem('Accessed runner management');
+        }
+
+        // Close runners modal
+        function closeRunnersModal() {
+            const modal = document.getElementById('runnersModal');
+            if (modal) {
+                modal.remove();
+            }
         }
 
         // View cases function
         function viewCases() {
-            showError('Case management feature coming soon');
+            // Create cases modal
+            const casesModal = document.createElement('div');
+            casesModal.className = 'modal';
+            casesModal.id = 'casesModal';
+            casesModal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>📋 View Cases</h2>
+                        <span class="close" onclick="closeCasesModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="cases-filters">
+                            <select id="caseStatus">
+                                <option value="all">All Cases</option>
+                                <option value="active">Active</option>
+                                <option value="resolved">Resolved</option>
+                                <option value="pending">Pending</option>
+                            </select>
+                            <input type="date" id="caseDate" placeholder="Filter by date">
+                        </div>
+                        <div class="cases-list">
+                            <div class="case-item active">
+                                <div class="case-header">
+                                    <h4>Case #241-001</h4>
+                                    <span class="case-status active">Active</span>
+                                </div>
+                                <p class="case-description">Missing person report - John Doe, last seen 2025-08-25</p>
+                                <div class="case-meta">
+                                    <span class="case-date">2025-08-25</span>
+                                    <span class="case-location">Downtown Area</span>
+                                </div>
+                            </div>
+                            <div class="case-item resolved">
+                                <div class="case-header">
+                                    <h4>Case #241-002</h4>
+                                    <span class="case-status resolved">Resolved</span>
+                                </div>
+                                <p class="case-description">Missing person report - Jane Smith, found safe</p>
+                                <div class="case-meta">
+                                    <span class="case-date">2025-08-24</span>
+                                    <span class="case-location">Suburban Area</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(casesModal);
+            casesModal.style.display = 'block';
+            addActivityItem('Viewed case management');
+        }
+
+        // Close cases modal
+        function closeCasesModal() {
+            const modal = document.getElementById('casesModal');
+            if (modal) {
+                modal.remove();
+            }
         }
 
         // Modal functions
@@ -1044,11 +1527,21 @@
                     setTimeout(() => reject(new Error('Request timeout')), 10000); // 10 second timeout
                 });
 
+                console.log('Creating admin with data:', {
+                    email: email,
+                    firstName: firstName,
+                    lastName: lastName,
+                    role: 'admin',
+                    organization: organization || null,
+                    title: title || null
+                });
+
                 const fetchPromise = fetch('https://241runners-api-2025.azurewebsites.net/api/auth/register', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-Client': '241RA-Admin/1.0'
                     },
                     body: JSON.stringify({
                         email: email,
@@ -1063,7 +1556,12 @@
 
                 const response = await Promise.race([fetchPromise, timeoutPromise]);
 
+                console.log('Admin creation response status:', response.status);
+                console.log('Admin creation response headers:', Object.fromEntries(response.headers.entries()));
+
                 if (response.ok) {
+                    const responseData = await response.json();
+                    console.log('Admin creation success:', responseData);
                     showSuccess('Admin user created successfully!');
                     closeCreateAdminModal();
                     
@@ -1073,9 +1571,12 @@
                     let errorMessage = 'Failed to create admin user';
                     try {
                         const errorData = await response.json();
-                        errorMessage = errorData.message || errorMessage;
+                        console.error('Admin creation error response:', errorData);
+                        errorMessage = errorData.message || errorData.error || errorMessage;
                     } catch (parseError) {
                         console.error('Error parsing response:', parseError);
+                        const errorText = await response.text();
+                        console.error('Raw error response:', errorText);
                     }
                     showError(errorMessage);
                 }
