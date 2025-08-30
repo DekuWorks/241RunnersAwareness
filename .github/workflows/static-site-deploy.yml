@@ -25,24 +25,24 @@ jobs:
     - name: Setup Pages
       uses: actions/configure-pages@v4
       
+    - name: Prepare static site files
+      run: |
+        # Create a temporary directory for static files
+        mkdir -p static-site
+        
+        # Copy all static files and directories
+        cp -r *.html *.css *.js *.jpg *.jpeg *.png *.pdf static-site/ 2>/dev/null || true
+        cp -r admin/ assets/ js/ partials/ docs/ static-site/ 2>/dev/null || true
+        cp CNAME _headers config.json static-site/ 2>/dev/null || true
+        
+        # List what we have
+        echo "Static site files prepared:"
+        ls -la static-site/
+        
     - name: Upload static site files
       uses: actions/upload-pages-artifact@v3
       with:
-        path: |
-          *.html
-          *.css
-          *.js
-          *.jpg
-          *.jpeg
-          *.png
-          *.pdf
-          admin/
-          assets/
-          js/
-          partials/
-          CNAME
-          _headers
-          config.json
+        path: static-site
         
     - name: Deploy to GitHub Pages
       id: deployment
