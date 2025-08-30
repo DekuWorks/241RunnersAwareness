@@ -39,8 +39,7 @@ namespace _241RunnersAwarenessAPI.Controllers
                 if (!string.IsNullOrEmpty(name))
                     query = query.Where(r => 
                         r.FirstName.Contains(name) || 
-                        r.LastName.Contains(name) || 
-                        r.FullName.Contains(name));
+                        r.LastName.Contains(name));
 
                 if (age.HasValue)
                     query = query.Where(r => r.Age == age.Value);
@@ -58,7 +57,6 @@ namespace _241RunnersAwarenessAPI.Controllers
                     query = query.Where(r => r.IsUrgent == urgent.Value);
 
                 var runners = await query
-                    .Include(r => r.ReportedByUser)
                     .OrderByDescending(r => r.DateReported)
                     .ToListAsync();
 
@@ -67,10 +65,10 @@ namespace _241RunnersAwarenessAPI.Controllers
                     Id = r.Id,
                     FirstName = r.FirstName,
                     LastName = r.LastName,
-                    FullName = r.FullName,
+                    FullName = $"{r.FirstName} {r.LastName}",
                     RunnerId = r.RunnerId,
                     Age = r.Age,
-                    CalculatedAge = r.CalculatedAge,
+                    CalculatedAge = r.Age,
                     Gender = r.Gender,
                     Status = r.Status,
                     City = r.City,
@@ -94,7 +92,7 @@ namespace _241RunnersAwarenessAPI.Controllers
                     Medications = r.Medications,
                     Allergies = r.Allergies,
                     EmergencyContacts = r.EmergencyContacts,
-                    ReportedBy = r.ReportedByUser?.FullName ?? "Anonymous"
+                    ReportedBy = "Anonymous"
                 });
 
                 return Ok(dtos);
@@ -112,7 +110,6 @@ namespace _241RunnersAwarenessAPI.Controllers
             try
             {
                 var runner = await _context.Runners
-                    .Include(r => r.ReportedByUser)
                     .FirstOrDefaultAsync(r => r.Id == id && r.IsActive);
 
                 if (runner == null)
@@ -123,10 +120,10 @@ namespace _241RunnersAwarenessAPI.Controllers
                     Id = runner.Id,
                     FirstName = runner.FirstName,
                     LastName = runner.LastName,
-                    FullName = runner.FullName,
+                    FullName = $"{runner.FirstName} {runner.LastName}",
                     RunnerId = runner.RunnerId,
                     Age = runner.Age,
-                    CalculatedAge = runner.CalculatedAge,
+                    CalculatedAge = runner.Age,
                     Gender = runner.Gender,
                     Status = runner.Status,
                     City = runner.City,
@@ -150,7 +147,7 @@ namespace _241RunnersAwarenessAPI.Controllers
                     Medications = runner.Medications,
                     Allergies = runner.Allergies,
                     EmergencyContacts = runner.EmergencyContacts,
-                    ReportedBy = runner.ReportedByUser?.FullName ?? "Anonymous"
+                    ReportedBy = "Anonymous"
                 };
 
                 return Ok(dto);
