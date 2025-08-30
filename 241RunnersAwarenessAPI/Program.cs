@@ -68,20 +68,31 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-// Initialize database
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    try
-    {
-        context.Database.EnsureCreated();
-        Console.WriteLine("Database initialized successfully");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Database initialization error: {ex.Message}");
-    }
-}
+        // Initialize database and apply migrations
+        using (var scope = app.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            try
+            {
+                // Apply any pending migrations
+                context.Database.Migrate();
+                Console.WriteLine("Database migrations applied successfully");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Database migration error: {ex.Message}");
+                // Fallback to EnsureCreated if migrations fail
+                try
+                {
+                    context.Database.EnsureCreated();
+                    Console.WriteLine("Database initialized with EnsureCreated");
+                }
+                catch (Exception ex2)
+                {
+                    Console.WriteLine($"Database initialization error: {ex2.Message}");
+                }
+            }
+        }
 
 app.UseHttpsRedirection();
 
