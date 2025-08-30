@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Cases - 241 Runners Awareness</title>
+    <meta name="description" content="View and manage your reported missing persons cases.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="241-logo.jpg">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="critical.css">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="241-logo.jpg" as="image">
+    <link rel="preload" href="js/my-cases.js" as="script">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="nav-brand">
+                <a href="index.html">
+                    <img src="241-logo.jpg" alt="241 Runners Awareness" class="logo">
+                    <span class="brand-text">241 Runners Awareness</span>
+                </a>
+            </div>
+            
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html">Home</a>
+                <a href="aboutus.html">About</a>
+                <a href="cases.html">Cases</a>
+                <a href="map.html">Map</a>
+                <a href="dna-tracking.html">DNA Tracking</a>
+                <a href="report-case.html">Report Case</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="profile.html">Profile</a>
+                <a href="#" id="logoutBtn" class="nav-login">Logout</a>
+            </div>
+            
+            <div class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section my-cases-hero">
+            <div class="hero-content">
+                <h1 class="hero-title">My Cases</h1>
+                <p class="hero-subtitle">Manage and track your reported missing persons cases</p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="myTotalCases">0</div>
+                        <div class="stat-label">My Cases</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="myActiveCases">0</div>
+                        <div class="stat-label">Active</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="myResolvedCases">0</div>
+                        <div class="stat-label">Resolved</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="quick-actions-section">
+            <div class="container">
+                <div class="quick-actions">
+                    <a href="report-case.html" class="action-card">
+                        <div class="action-icon">📝</div>
+                        <h3>Report New Case</h3>
+                        <p>Report a missing person case</p>
+                    </a>
+                    <a href="cases.html" class="action-card">
+                        <div class="action-icon">👥</div>
+                        <h3>View All Cases</h3>
+                        <p>See all community cases</p>
+                    </a>
+                    <a href="map.html" class="action-card">
+                        <div class="action-icon">🗺️</div>
+                        <h3>View on Map</h3>
+                        <p>See cases on interactive map</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filters Section -->
+        <section class="filters-section">
+            <div class="container">
+                <div class="filters-container">
+                    <div class="filter-group">
+                        <label for="statusFilter">Status:</label>
+                        <select id="statusFilter" class="filter-select">
+                            <option value="">All Statuses</option>
+                            <option value="Missing">Missing</option>
+                            <option value="Found">Found</option>
+                            <option value="Safe">Safe</option>
+                            <option value="Deceased">Deceased</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="urgencyFilter">Urgency:</label>
+                        <select id="urgencyFilter" class="filter-select">
+                            <option value="">All Cases</option>
+                            <option value="urgent">Urgent Only</option>
+                            <option value="recent">Recent Only</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="searchFilter">Search:</label>
+                        <input type="text" id="searchFilter" class="filter-input" placeholder="Search by name, description...">
+                    </div>
+                    
+                    <button id="clearFilters" class="btn-secondary">Clear Filters</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- My Cases Section -->
+        <section class="my-cases-section">
+            <div class="container">
+                <div class="cases-header">
+                    <h2>My Reported Cases</h2>
+                    <div class="cases-count">
+                        Showing <span id="showingCount">0</span> of <span id="totalCount">0</span> cases
+                    </div>
+                </div>
+                
+                <!-- Loading State -->
+                <div id="loadingState" class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <p>Loading your cases...</p>
+                </div>
+                
+                <!-- Error State -->
+                <div id="errorState" class="error-state" style="display: none;">
+                    <div class="error-icon">⚠️</div>
+                    <h3>Unable to load your cases</h3>
+                    <p>Please check your connection and try again.</p>
+                    <button id="retryButton" class="btn-primary">Retry</button>
+                </div>
+                
+                <!-- Empty State -->
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <div class="empty-icon">📋</div>
+                    <h3>No cases found</h3>
+                    <p>You haven't reported any cases yet. Start by reporting a missing person case.</p>
+                    <a href="report-case.html" class="btn-primary">Report Your First Case</a>
+                </div>
+                
+                <!-- Cases Grid -->
+                <div id="casesGrid" class="cases-grid">
+                    <!-- Cases will be loaded here -->
+                </div>
+                
+                <!-- Load More Button -->
+                <div id="loadMoreContainer" class="load-more-container" style="display: none;">
+                    <button id="loadMoreButton" class="btn-secondary">Load More Cases</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-content">
+                    <h2>Need to Update a Case?</h2>
+                    <p>If you have new information about any of your reported cases, please update the case details or contact us directly.</p>
+                    <div class="cta-buttons">
+                        <a href="report-case.html" class="btn-primary">Report New Information</a>
+                        <a href="contact.html" class="btn-secondary">Contact Support</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>241 Runners Awareness</h3>
+                    <p>Supporting families affected by missing persons cases through community awareness and advanced technology.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="aboutus.html">About Us</a></li>
+                        <li><a href="cases.html">Cases</a></li>
+                        <li><a href="report-case.html">Report Case</a></li>
+                        <li><a href="dna-tracking.html">DNA Tracking</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Use</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="auth-utils.js"></script>
+    <script src="js/my-cases.js"></script>
+    <script src="performance.js"></script>
+</body>
+</html> 
