@@ -824,11 +824,6 @@
                 <p>Update your personal information, contact details, and account preferences.</p>
                 <button class="action-button">Profile Settings</button>
             </div>
-            <div class="action-card" onclick="testAPIConnection()">
-                <h3>🔧 Test API Connection</h3>
-                <p>Test the API connection and data loading functionality.</p>
-                <button class="action-button">Test API</button>
-            </div>
         </div>
     </div>
 
@@ -1390,57 +1385,7 @@
             }
         }
 
-        // Test API connection function
-        async function testAPIConnection() {
-            console.log('=== API Connection Test ===');
-            
-            const token = localStorage.getItem('ra_admin_token');
-            console.log('Token present:', !!token);
-            
-            if (!token) {
-                alert('No token found! Please login first.');
-                return;
-            }
-            
-            try {
-                // Test health endpoint
-                console.log('Testing health endpoint...');
-                const healthResponse = await fetch('https://241runners-api.azurewebsites.net/api/auth/health');
-                console.log('Health status:', healthResponse.status);
-                
-                if (healthResponse.ok) {
-                    const healthData = await healthResponse.json();
-                    console.log('Health data:', healthData);
-                    alert(`Health check: ${healthData.status}\nUsers: ${healthData.users}\nRunners: ${healthData.runners}`);
-                } else {
-                    alert('Health check failed!');
-                }
-                
-                // Test users endpoint
-                console.log('Testing users endpoint...');
-                const usersResponse = await fetch('https://241runners-api.azurewebsites.net/api/auth/users', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-                console.log('Users status:', usersResponse.status);
-                
-                if (usersResponse.ok) {
-                    const usersData = await usersResponse.json();
-                    console.log('Users data:', usersData);
-                    alert(`Users loaded: ${usersData.users.length} users found`);
-                } else {
-                    const errorText = await usersResponse.text();
-                    console.error('Users error:', errorText);
-                    alert(`Users API failed: ${usersResponse.status}`);
-                }
-                
-            } catch (error) {
-                console.error('API test error:', error);
-                alert(`API test failed: ${error.message}`);
-            }
-        }
+
         // Enhanced Admin Dashboard JavaScript
         let currentAdmin = null;
         let refreshInterval = null;
