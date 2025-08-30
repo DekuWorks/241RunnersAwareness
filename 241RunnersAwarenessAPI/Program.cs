@@ -74,6 +74,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Initialize database and seed admin users
+// Azure deployment trigger - Sat Aug 30 00:42:00 UTC 2025
 try
 {
     using (var scope = app.Services.CreateScope())
