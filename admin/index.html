@@ -1031,7 +1031,39 @@
     <div id="toastContainer" class="toast-container"></div>
 
     <!-- Scripts -->
-    <script src="/admin/assets/js/admin-auth.js"></script>
+    <script>
+        // Import admin auth functions manually since we're not using modules
+        function saveAuthData(token, user) {
+            localStorage.setItem('ra_admin_token', token);
+            localStorage.setItem('ra_admin_role', user.role);
+            localStorage.setItem('ra_admin_user', JSON.stringify(user));
+        }
+        
+        function clearAuthData() {
+            localStorage.removeItem('ra_admin_token');
+            localStorage.removeItem('ra_admin_role');
+            localStorage.removeItem('ra_admin_user');
+        }
+        
+        function isAuthenticated() {
+            const token = localStorage.getItem('ra_admin_token');
+            const role = localStorage.getItem('ra_admin_role');
+            return !!(token && role === 'admin');
+        }
+        
+        function requireAdmin() {
+            if (!isAuthenticated()) {
+                window.location.href = "/admin/login.html";
+                return false;
+            }
+            return true;
+        }
+        
+        function authHeader() {
+            const token = localStorage.getItem('ra_admin_token');
+            return token ? { "Authorization": `Bearer ${token}` } : {};
+        }
+    </script>
     <script>
         // API Configuration
         const API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
@@ -1051,26 +1083,7 @@
             console.log('Dashboard DOM loaded');
             
             // Check authentication first
-            const token = localStorage.getItem('ra_admin_token');
-            const role = localStorage.getItem('ra_admin_role');
-            const user = localStorage.getItem('ra_admin_user');
-            
-            console.log('Dashboard loaded - Token:', token ? 'Present' : 'Missing');
-            console.log('Dashboard loaded - Role:', role);
-            console.log('Dashboard loaded - User:', user);
-            
-            if (!token) {
-                console.log('No token found, redirecting to login');
-                window.location.href = '/admin/login.html';
-                return;
-            }
-            
-            if (role !== 'admin') {
-                console.log('User is not admin, redirecting to login');
-                localStorage.removeItem('ra_admin_token');
-                localStorage.removeItem('ra_admin_role');
-                localStorage.removeItem('ra_admin_user');
-                window.location.href = '/admin/login.html';
+            if (!requireAdmin()) {
                 return;
             }
             
@@ -1081,9 +1094,7 @@
         // Logout function
         function logout() {
             console.log('Logging out...');
-            localStorage.removeItem('ra_admin_token');
-            localStorage.removeItem('ra_admin_role');
-            localStorage.removeItem('ra_admin_user');
+            clearAuthData();
             window.location.href = '/admin/login.html';
         }
 
@@ -1170,10 +1181,9 @@
         async function loadUsers() {
             try {
                 console.log('Loading users...');
-                const token = localStorage.getItem('ra_admin_token');
                 const response = await fetch(`${API_BASE_URL}/auth/users`, {
                     headers: {
-                        'Authorization': `Bearer ${token}`,
+                        ...authHeader(),
                         'Content-Type': 'application/json'
                     }
                 });
@@ -1199,10 +1209,9 @@
         async function loadRunners() {
             try {
                 console.log('Loading runners...');
-                const token = localStorage.getItem('ra_admin_token');
                 const response = await fetch(`${API_BASE_URL}/runners`, {
                     headers: {
-                        'Authorization': `Bearer ${token}`,
+                        ...authHeader(),
                         'Content-Type': 'application/json'
                     }
                 });
@@ -1228,9 +1237,7 @@
         async function loadAdmins() {
             try {
                 const response = await fetch(`${API_BASE_URL}/auth/users`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('ra_admin_token')}`
-                    }
+                    headers: authHeader()
                 });
                 
                 if (response.ok) {
@@ -1272,16 +1279,13 @@
         async function loadCurrentAdmin() {
             try {
                 console.log('Loading current admin profile...');
-                const token = localStorage.getItem('ra_admin_token');
-                if (!token) {
+                if (!isAuthenticated()) {
                     window.location.href = '/admin/login.html';
                     return;
                 }
 
                 const response = await fetch(`${API_BASE_URL}/auth/verify`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    headers: authHeader()
                 });
                 
                 console.log('Verify response status:', response.status);
@@ -1293,12 +1297,12 @@
                     updateAdminProfile();
                 } else {
                     console.error('Token verification failed:', response.status);
-                    localStorage.removeItem('ra_admin_token');
+                    clearAuthData();
                     window.location.href = '/admin/login.html';
                 }
             } catch (error) {
                 console.error('Error loading admin profile:', error);
-                localStorage.removeItem('ra_admin_token');
+                clearAuthData();
                 window.location.href = '/admin/login.html';
             }
         }
