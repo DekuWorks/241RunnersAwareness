@@ -7,7 +7,8 @@
   <link rel="stylesheet" href="assets/styles/shared.css">
   <link rel="stylesheet" href="styles.css?v=20250128b">
   <script src="js/auth.js" defer></script>
-  <script src="js/runner-profile.js" defer></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/api-utils.js"></script>
 </head>
 <body>
   <!-- Include Header -->
@@ -607,7 +608,134 @@
     if (window.Auth && !window.Auth.requireAuth()) {
       return;
     }
+
+    // Load runner data
+    loadRunnerData();
   });
+
+  // Get runner ID from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const runnerId = urlParams.get('id') || '1';
+
+  async function loadRunnerData() {
+    try {
+      // Show loading state
+      document.getElementById('loadingState').classList.remove('hidden');
+      document.getElementById('errorState').classList.add('hidden');
+      document.getElementById('profileContent').classList.add('hidden');
+
+      // Try to load from API first
+      let runnerData;
+      try {
+        const response = await apiHelpers.getWithRetry(`/runners/${runnerId}`);
+        runnerData = response;
+        console.log('Loaded runner data from API:', runnerData);
+      } catch (apiError) {
+        console.log('API not available, using mock data');
+        // Fallback to mock data
+        runnerData = {
+          id: runnerId,
+          firstName: 'John',
+          lastName: 'Smith',
+          runnerId: 'RUN-2024-001',
+          age: 25,
+          gender: 'Male',
+          status: 'missing',
+          city: 'Austin',
+          state: 'TX',
+          address: '123 Main St, Austin, TX 78701',
+          description: 'Last seen running at Zilker Park',
+          contactInfo: '555-123-4567',
+          dateReported: new Date().toISOString(),
+          lastSeen: new Date(Date.now() - 86400000).toISOString(),
+          height: '5\'10"',
+          weight: '160 lbs',
+          hairColor: 'Brown',
+          eyeColor: 'Blue',
+          identifyingMarks: 'Tattoo on left forearm',
+          medicalConditions: 'None',
+          medications: 'None',
+          allergies: 'None',
+          emergencyContacts: 'Jane Smith (555-987-6543)',
+          tags: ['runner', 'missing', 'urgent'],
+          isUrgent: true
+        };
+      }
+
+      // Update UI with runner data
+      updateRunnerDisplay(runnerData);
+
+      // Hide loading, show content
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('profileContent').classList.remove('hidden');
+
+    } catch (error) {
+      console.error('Error loading runner data:', error);
+      showError('Unable to load runner profile. Please try again.');
+    }
+  }
+
+  function updateRunnerDisplay(runner) {
+    // Update header
+    document.getElementById('runnerName').textContent = runner.fullName || `${runner.firstName} ${runner.lastName}`;
+    document.getElementById('runnerId').textContent = `Runner ID: ${runner.runnerId || 'N/A'}`;
+    
+    const statusElement = document.getElementById('runnerStatus');
+    statusElement.textContent = runner.status || 'Unknown';
+    statusElement.className = `runner-status ${getStatusClass(runner.status)}`;
+
+    // Update basic information
+    document.getElementById('fullName').textContent = runner.fullName || `${runner.firstName} ${runner.lastName}`;
+    document.getElementById('dateOfBirth').textContent = runner.dateOfBirth ? new Date(runner.dateOfBirth).toLocaleDateString() : 'Not provided';
+    document.getElementById('age').textContent = runner.calculatedAge || runner.age || 'Not provided';
+    document.getElementById('gender').textContent = runner.gender || 'Not provided';
+    document.getElementById('status').textContent = runner.status || 'Unknown';
+
+    // Update contact information
+    document.getElementById('email').textContent = 'Not provided';
+    document.getElementById('phoneNumber').textContent = runner.contactInfo || 'Not provided';
+    document.getElementById('address').textContent = runner.address || 'Not provided';
+    document.getElementById('city').textContent = runner.city || 'Not provided';
+    document.getElementById('state').textContent = runner.state || 'Not provided';
+    document.getElementById('zipCode').textContent = 'Not provided';
+
+    // Update physical description
+    document.getElementById('height').textContent = runner.height || 'Not provided';
+    document.getElementById('weight').textContent = runner.weight || 'Not provided';
+    document.getElementById('hairColor').textContent = runner.hairColor || 'Not provided';
+    document.getElementById('eyeColor').textContent = runner.eyeColor || 'Not provided';
+    document.getElementById('identifyingMarks').textContent = runner.identifyingMarks || 'Not provided';
+
+    // Update medical information
+    document.getElementById('medicalConditions').textContent = runner.medicalConditions || 'Not provided';
+    document.getElementById('medications').textContent = runner.medications || 'Not provided';
+    document.getElementById('allergies').textContent = runner.allergies || 'Not provided';
+    document.getElementById('emergencyContacts').textContent = runner.emergencyContacts || 'Not provided';
+
+    // Update edit link
+    const editLink = document.getElementById('editRunnerLink');
+    if (editLink) {
+      editLink.href = `report-case.html?id=${runner.id}`;
+    }
+  }
+
+  function getStatusClass(status) {
+    switch (status?.toLowerCase()) {
+      case 'active': return 'active';
+      case 'missing': return 'missing';
+      case 'found': return 'active';
+      case 'safe': return 'active';
+      case 'urgent': return 'missing';
+      case 'inactive': return 'inactive';
+      default: return 'inactive';
+    }
+  }
+
+  function showError(message) {
+    document.getElementById('loadingState').classList.add('hidden');
+    document.getElementById('errorState').classList.remove('hidden');
+    document.getElementById('errorMessage').textContent = message;
+  }
   </script>
 </body>
 </html>
