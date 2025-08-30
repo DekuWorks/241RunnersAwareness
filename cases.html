@@ -8,7 +8,8 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <link rel="stylesheet" href="styles.css?v=20250128b" />
-  <script src="auth-utils.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/api-utils.js"></script>
   <style>
     .cases-container {
       max-width: 900px;
@@ -125,11 +126,10 @@
   <footer role="contentinfo">
     <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
   </footer>
-  <script src="mock-cases-data.js"></script>
   <script>
     const caseList = document.getElementById('caseList');
     const filterForm = document.getElementById('filterForm');
-    let currentCases = [...mockCasesData];
+    let currentCases = [];
 
     function buildQuery() {
       const params = [];
@@ -148,26 +148,30 @@
       return params.length ? '?' + params.join('&') : '';
     }
 
-    function filterCases() {
-      const id = document.getElementById('runnerId').value.trim().toLowerCase();
-      const name = document.getElementById('name').value.trim().toLowerCase();
+    async function filterCases() {
+      const id = document.getElementById('runnerId').value.trim();
+      const name = document.getElementById('name').value.trim();
       const age = document.getElementById('age').value.trim();
       const status = document.getElementById('status').value;
-      const state = document.getElementById('state').value.trim().toLowerCase();
-      const tags = document.getElementById('tags').value.trim().toLowerCase();
+      const state = document.getElementById('state').value.trim();
+      const tags = document.getElementById('tags').value.trim();
 
-      currentCases = mockCasesData.filter(caseItem => {
-        const matchesId = !id || caseItem.id.toLowerCase().includes(id);
-        const matchesName = !name || caseItem.name.toLowerCase().includes(name);
-        const matchesAge = !age || caseItem.age.toString() === age;
-        const matchesStatus = !status || caseItem.status === status;
-        const matchesState = !state || caseItem.state.toLowerCase().includes(state);
-        const matchesTags = !tags || caseItem.tags.some(tag => tag.toLowerCase().includes(tags));
-        
-        return matchesId && matchesName && matchesAge && matchesStatus && matchesState && matchesTags;
-      });
+      // Build query parameters
+      const params = new URLSearchParams();
+      if (id) params.append('id', id);
+      if (name) params.append('name', name);
+      if (age) params.append('age', age);
+      if (status) params.append('status', status);
+      if (state) params.append('state', state);
+      if (tags) params.append('tags', tags);
 
-      displayCases();
+                  try {
+                currentCases = await apiHelpers.get(`/cases?${params.toString()}`);
+                displayCases();
+            } catch (error) {
+                showApiError(error, 'Loading cases');
+                caseList.innerHTML = '<div style="text-align:center; color:#ef4444;">Error loading cases. Please try again.</div>';
+            }
     }
 
     function displayCases() {
@@ -183,27 +187,30 @@
             <span class="status-badge status-${c.status.toLowerCase()}">${c.status}</span>
           </div>
           <div class="case-details">
-            <div><strong>Case ID:</strong> ${c.id}</div>
+            <div><strong>Case ID:</strong> ${c.caseId}</div>
             <div><strong>Age:</strong> ${c.age} years old</div>
             <div><strong>Location:</strong> ${c.city}, ${c.state}</div>
             <div><strong>Date Reported:</strong> ${new Date(c.dateReported).toLocaleDateString()}</div>
-            <div><strong>Description:</strong> ${c.description}</div>
-            <div><strong>Contact:</strong> ${c.contactInfo}</div>
+            <div><strong>Description:</strong> ${c.description || 'No description available'}</div>
+            <div><strong>Contact:</strong> ${c.contactInfo || 'No contact information available'}</div>
           </div>
           <div class="case-tags">
-            ${c.tags.map(tag => `<span class="tag">${tag}</span>`).join(' ')}
+            ${(c.tags || []).map(tag => `<span class="tag">${tag}</span>`).join(' ')}
           </div>
         </div>
       `).join('');
     }
 
-    function fetchCases() {
+    async function fetchCases() {
       caseList.innerHTML = '<div style="text-align:center; color:#888;">Loading cases...</div>';
-      // Simulate loading delay
-      setTimeout(() => {
-        currentCases = [...mockCasesData];
-        displayCases();
-      }, 500);
+      
+                  try {
+                currentCases = await apiHelpers.getWithRetry('/cases');
+                displayCases();
+            } catch (error) {
+                showApiError(error, 'Loading cases');
+                caseList.innerHTML = '<div style="text-align:center; color:#ef4444;">Error loading cases. Please try again.</div>';
+            }
     }
 
     filterForm.addEventListener('submit', e => {
@@ -212,8 +219,13 @@
     });
 
     // CSV Export functionality
-    document.getElementById('exportAllBtn').addEventListener('click', () => {
-      exportCsv(mockCasesData);
+    document.getElementById('exportAllBtn').addEventListener('click', async () => {
+                  try {
+                const allCases = await apiHelpers.get('/cases');
+                exportCsv(allCases);
+            } catch (error) {
+                showApiError(error, 'Exporting cases');
+            }
     });
 
     document.getElementById('exportFilteredBtn').addEventListener('click', () => {
@@ -227,16 +239,16 @@
         const csvContent = [
           headers.join(','),
           ...data.map(caseItem => [
-            caseItem.id,
+            caseItem.caseId,
             `"${caseItem.name}"`,
             caseItem.age,
             caseItem.status,
             caseItem.state,
             `"${caseItem.city}"`,
             caseItem.dateReported,
-            `"${caseItem.description}"`,
-            caseItem.contactInfo,
-            `"${caseItem.tags.join('; ')}"`
+            `"${caseItem.description || ''}"`,
+            caseItem.contactInfo || '',
+            `"${(caseItem.tags || []).join('; ')}"`
           ].join(','))
         ].join('\n');
 

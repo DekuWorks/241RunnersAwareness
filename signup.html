@@ -100,6 +100,46 @@
             background: #9ca3af;
             cursor: not-allowed;
         }
+
+        /* Real-time validation styles */
+        .form-group {
+            position: relative;
+        }
+
+        .validation-message {
+            font-size: 12px;
+            margin-top: 4px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        .validation-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .validation-message.error {
+            color: #ef4444;
+        }
+
+        .validation-message.success {
+            color: #10b981;
+        }
+
+        .form-control {
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-control.valid {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .form-control.invalid {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
         
         .error-message {
             background: #fee;
@@ -201,6 +241,7 @@
                         name="firstName" 
                         required
                         placeholder="Enter your first name"
+                        class="form-control"
                     >
                     <span class="error-text" id="firstNameError"></span>
                 </div>
@@ -213,6 +254,7 @@
                         name="lastName" 
                         required
                         placeholder="Enter your last name"
+                        class="form-control"
                     >
                     <span class="error-text" id="lastNameError"></span>
                 </div>
@@ -225,6 +267,7 @@
                         name="email" 
                         required
                         placeholder="Enter your email"
+                        class="form-control"
                     >
                     <span class="error-text" id="emailError"></span>
                 </div>
@@ -237,6 +280,7 @@
                         name="phoneNumber" 
                         required
                         placeholder="Enter your phone number"
+                        class="form-control"
                     >
                     <span class="error-text" id="phoneNumberError"></span>
                 </div>
@@ -249,13 +293,14 @@
                         name="password" 
                         required
                         placeholder="Enter your password"
+                        class="form-control"
                     >
                     <span class="error-text" id="passwordError"></span>
                 </div>
                 
                 <div class="form-group">
                     <label for="role">Role</label>
-                    <select id="role" name="role" required>
+                    <select id="role" name="role" required class="form-control">
                         <option value="">Select your role</option>
                         <option value="user">User</option>
                         <option value="parent">Parent</option>
@@ -283,7 +328,7 @@
     <script src="/js/auth.js"></script>
     <script>
         // Load API configuration
-        let API_BASE_URL = 'https://241runners-api-2025.azurewebsites.net/api';
+        let API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
         
         async function loadConfig() {
             try {
@@ -295,9 +340,125 @@
                 console.warn('Failed to load config.json, using default API URL');
             }
         }
+
+        // Real-time validation function
+        function validateField(fieldId, value, validationRules) {
+            const field = document.getElementById(fieldId);
+            const errorSpan = document.getElementById(fieldId + 'Error');
+            
+            if (!field || !errorSpan) return { isValid: true };
+            
+            let isValid = true;
+            let message = '';
+            
+            // Remove existing classes
+            field.classList.remove('valid', 'invalid');
+            
+            // Apply validation rules
+            for (const rule of validationRules) {
+                if (rule.required && (!value || value.trim() === '')) {
+                    isValid = false;
+                    message = rule.message || 'This field is required';
+                    break;
+                }
+                
+                if (rule.pattern && value && !rule.pattern.test(value)) {
+                    isValid = false;
+                    message = rule.message || 'Invalid format';
+                    break;
+                }
+                
+                if (rule.minLength && value && value.length < rule.minLength) {
+                    isValid = false;
+                    message = rule.message || `Minimum ${rule.minLength} characters required`;
+                    break;
+                }
+                
+                if (rule.custom && !rule.custom(value)) {
+                    isValid = false;
+                    message = rule.message || 'Invalid value';
+                    break;
+                }
+            }
+            
+            // Update UI
+            if (value === '') {
+                field.classList.remove('valid', 'invalid');
+                errorSpan.textContent = '';
+            } else if (isValid) {
+                field.classList.add('valid');
+                errorSpan.textContent = '✓ Valid';
+                errorSpan.style.color = '#10b981';
+            } else {
+                field.classList.add('invalid');
+                errorSpan.textContent = message;
+                errorSpan.style.color = '#ef4444';
+            }
+            
+            return { isValid, message };
+        }
+
+        // Setup real-time validation
+        function setupRealTimeValidation() {
+            // First Name validation
+            document.getElementById('firstName').addEventListener('input', function() {
+                validateField('firstName', this.value, [
+                    { required: true, message: 'First name is required' },
+                    { pattern: /^[a-zA-Z\s\-']+$/, message: 'Only letters, spaces, hyphens, and apostrophes allowed' }
+                ]);
+            });
+
+            // Last Name validation
+            document.getElementById('lastName').addEventListener('input', function() {
+                validateField('lastName', this.value, [
+                    { required: true, message: 'Last name is required' },
+                    { pattern: /^[a-zA-Z\s\-']+$/, message: 'Only letters, spaces, hyphens, and apostrophes allowed' }
+                ]);
+            });
+
+            // Email validation
+            document.getElementById('email').addEventListener('input', function() {
+                validateField('email', this.value, [
+                    { required: true, message: 'Email is required' },
+                    { pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Please enter a valid email address' }
+                ]);
+            });
+
+            // Phone validation
+            document.getElementById('phoneNumber').addEventListener('input', function() {
+                validateField('phoneNumber', this.value, [
+                    { required: true, message: 'Phone number is required' },
+                    { pattern: /^[\+]?[1-9][\d]{0,15}$/, message: 'Please enter a valid phone number' }
+                ]);
+            });
+
+            // Password validation
+            document.getElementById('password').addEventListener('input', function() {
+                validateField('password', this.value, [
+                    { required: true, message: 'Password is required' },
+                    { minLength: 8, message: 'Password must be at least 8 characters' },
+                    { 
+                        custom: (value) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/.test(value),
+                        message: 'Password must contain uppercase, lowercase, number, and special character'
+                    }
+                ]);
+            });
+
+            // Role validation
+            document.getElementById('role').addEventListener('change', function() {
+                validateField('role', this.value, [
+                    { required: true, message: 'Please select a role' }
+                ]);
+            });
+        }
         
         // Initialize config
         loadConfig();
+        
+        // Setup real-time validation when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            setupRealTimeValidation();
+        });
         
         // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
@@ -392,37 +553,49 @@
             signupBtnText.style.display = 'none';
             signupBtnSpinner.style.display = 'inline';
             
-            try {
-                const formData = {
-                    email: document.getElementById('email').value.trim(),
-                    password: document.getElementById('password').value,
-                    firstName: document.getElementById('firstName').value.trim(),
-                    lastName: document.getElementById('lastName').value.trim(),
-                    role: document.getElementById('role').value
-                };
-                
-                // Use authUtils for registration
-                const response = await authUtils.fetchJson('/auth/register', {
-                    method: 'POST',
-                    body: JSON.stringify(formData)
-                });
-                
-                if (response.success) {
-                    showSuccess('Account created successfully! Redirecting to login...');
+                            try {
+                    const formData = {
+                        email: document.getElementById('email').value.trim(),
+                        password: document.getElementById('password').value,
+                        firstName: document.getElementById('firstName').value.trim(),
+                        lastName: document.getElementById('lastName').value.trim(),
+                        role: document.getElementById('role').value,
+                        phoneNumber: document.getElementById('phoneNumber').value.trim() || null,
+                        organization: null,
+                        title: null
+                    };
                     
-                    // Redirect to login page
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 1500);
+                    console.log('Sending registration data:', formData);
                     
-                } else {
-                    showError(response.message || 'Registration failed. Please try again.');
-                }
-                
-            } catch (error) {
-                console.error('Signup error:', error);
-                showError('An error occurred during registration. Please try again.');
-            } finally {
+                    // Use the full API URL for registration
+                    const response = await fetch('https://241runners-api.azurewebsites.net/api/auth/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    console.log('Response status:', response.status);
+                    const result = await response.json();
+                    console.log('Registration result:', result);
+                    
+                    if (result.success) {
+                        showSuccess('Account created successfully! Redirecting to login...');
+                        
+                        // Redirect to login page
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 1500);
+                        
+                    } else {
+                        showError(result.message || 'Registration failed. Please try again.');
+                    }
+                    
+                } catch (error) {
+                    console.error('Signup error:', error);
+                    showError('Network error. Please check your connection and try again.');
+                } finally {
                 // Reset loading state
                 signupBtn.disabled = false;
                 signupBtnText.style.display = 'inline';

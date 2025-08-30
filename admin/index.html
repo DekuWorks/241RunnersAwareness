@@ -34,6 +34,169 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
         }
+
+        /* Toast Notification System */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-bottom: 10px;
+            padding: 16px 20px;
+            min-width: 300px;
+            max-width: 400px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            pointer-events: auto;
+            border-left: 4px solid #dc2626;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left-color: #10b981;
+        }
+
+        .toast.error {
+            border-left-color: #ef4444;
+        }
+
+        .toast.warning {
+            border-left-color: #f59e0b;
+        }
+
+        .toast.info {
+            border-left-color: #3b82f6;
+        }
+
+        .toast-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toast-close:hover {
+            color: #374151;
+        }
+
+        .toast-message {
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.4;
+        }
+
+        /* Real-time validation styles */
+        .form-group {
+            position: relative;
+        }
+
+        .validation-message {
+            font-size: 12px;
+            margin-top: 4px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        .validation-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .validation-message.error {
+            color: #ef4444;
+        }
+
+        .validation-message.success {
+            color: #10b981;
+        }
+
+        .validation-message.warning {
+            color: #f59e0b;
+        }
+
+        .form-control {
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-control.valid {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .form-control.invalid {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+
+        .form-control.warning {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+
+        /* Loading animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #dc2626;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Progress bar for form submission */
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #dc2626, #b91c1c);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
         
         .admin-header {
             background: #ffffff;
@@ -788,11 +951,13 @@
                     <form id="profileForm">
                         <div class="form-group">
                             <label for="firstName">First Name</label>
-                            <input type="text" id="firstName" name="firstName" required>
+                            <input type="text" id="firstName" name="firstName" required class="form-control">
+                            <div id="firstNameValidation" class="validation-message"></div>
                         </div>
                         <div class="form-group">
                             <label for="lastName">Last Name</label>
-                            <input type="text" id="lastName" name="lastName" required>
+                            <input type="text" id="lastName" name="lastName" required class="form-control">
+                            <div id="lastNameValidation" class="validation-message"></div>
                         </div>
                         <div class="form-group">
                             <label for="email">Email Address</label>
@@ -800,15 +965,18 @@
                         </div>
                         <div class="form-group">
                             <label for="phone">Phone Number</label>
-                            <input type="tel" id="phone" name="phone">
+                            <input type="tel" id="phone" name="phone" class="form-control">
+                            <div id="phoneValidation" class="validation-message"></div>
                         </div>
                         <div class="form-group">
                             <label for="organization">Organization</label>
-                            <input type="text" id="organization" name="organization">
+                            <input type="text" id="organization" name="organization" class="form-control">
+                            <div id="organizationValidation" class="validation-message"></div>
                         </div>
                         <div class="form-group">
                             <label for="title">Job Title</label>
-                            <input type="text" id="title" name="title">
+                            <input type="text" id="title" name="title" class="form-control">
+                            <div id="titleValidation" class="validation-message"></div>
                         </div>
                         <div class="action-buttons">
                             <button type="submit" class="action-btn">Update Profile</button>
@@ -826,15 +994,21 @@
                     <form id="passwordForm">
                         <div class="form-group">
                             <label for="currentPassword">Current Password</label>
-                            <input type="password" id="currentPassword" required>
+                            <input type="password" id="currentPassword" required class="form-control">
+                            <div id="currentPasswordValidation" class="validation-message"></div>
                         </div>
                         <div class="form-group">
                             <label for="newPassword">New Password</label>
-                            <input type="password" id="newPassword" required>
+                            <input type="password" id="newPassword" required class="form-control">
+                            <div id="newPasswordValidation" class="validation-message"></div>
+                            <div class="progress-bar">
+                                <div id="passwordStrength" class="progress-fill"></div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="confirmPassword">Confirm New Password</label>
-                            <input type="password" id="confirmPassword" required>
+                            <input type="password" id="confirmPassword" required class="form-control">
+                            <div id="confirmPasswordValidation" class="validation-message"></div>
                         </div>
                         <div class="action-buttons">
                             <button type="submit" class="action-btn">Change Password</button>
@@ -888,6 +1062,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
 
     <!-- Create Admin Modal -->
     <div id="createAdminModal" class="modal">
@@ -1016,28 +1193,335 @@
             return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
         }
         
-        // Show error message
-        function showError(message) {
-            const errorContainer = document.getElementById('errorContainer');
-            errorContainer.innerHTML = `<div class="error-message">❌ ${message}</div>`;
+        // Enhanced Toast Notification System
+        function showToast(type, title, message, duration = 5000) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icon = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            }[type] || 'ℹ️';
+            
+            toast.innerHTML = `
+                <div class="toast-header">
+                    <span class="toast-title">${icon} ${title}</span>
+                    <button class="toast-close" onclick="this.parentElement.parentElement.remove()">&times;</button>
+                </div>
+                <div class="toast-message">${message}</div>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Trigger animation
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            // Auto remove
             setTimeout(() => {
-                errorContainer.innerHTML = '';
-            }, 5000);
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
         }
 
-        // Show success message
-        function showSuccess(message) {
-            const errorContainer = document.getElementById('errorContainer');
-            errorContainer.innerHTML = `<div class="success-message">✅ ${message}</div>`;
-            setTimeout(() => {
-                errorContainer.innerHTML = '';
-            }, 5000);
+        // Convenience functions
+        function showSuccess(message, title = 'Success') {
+            showToast('success', title, message);
+        }
+
+        function showError(message, title = 'Error') {
+            showToast('error', title, message);
+        }
+
+        function showWarning(message, title = 'Warning') {
+            showToast('warning', title, message);
+        }
+
+        function showInfo(message, title = 'Info') {
+            showToast('info', title, message);
+        }
+
+        // Form state tracking
+        let formHasChanges = false;
+        let autoSaveTimeout = null;
+
+        // Track form changes
+        function trackFormChanges() {
+            const profileForm = document.getElementById('profileForm');
+            const inputs = profileForm.querySelectorAll('input, textarea, select');
+            
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    formHasChanges = true;
+                    showFormStatus();
+                    
+                    // Clear existing auto-save timeout
+                    if (autoSaveTimeout) {
+                        clearTimeout(autoSaveTimeout);
+                    }
+                    
+                    // Set new auto-save timeout (5 seconds)
+                    autoSaveTimeout = setTimeout(() => {
+                        if (formHasChanges) {
+                            showInfo('You have unsaved changes. Click "Update Profile" to save.', 'Unsaved Changes');
+                        }
+                    }, 5000);
+                });
+            });
+        }
+
+        // Show form status
+        function showFormStatus() {
+            const submitButton = document.querySelector('#profileForm button[type="submit"]');
+            if (formHasChanges) {
+                submitButton.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+                submitButton.textContent = 'Update Profile (Unsaved Changes)';
+            } else {
+                submitButton.style.background = 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)';
+                submitButton.textContent = 'Update Profile';
+            }
+        }
+
+        // Reset form change tracking
+        function resetFormChangeTracking() {
+            formHasChanges = false;
+            if (autoSaveTimeout) {
+                clearTimeout(autoSaveTimeout);
+                autoSaveTimeout = null;
+            }
+            showFormStatus();
+        }
+
+        // Connection status monitoring
+        function checkConnectionStatus() {
+            const statusIndicator = document.createElement('div');
+            statusIndicator.id = 'connectionStatus';
+            statusIndicator.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 9999;
+                padding: 8px 12px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                opacity: 0;
+                transform: translateY(-20px);
+            `;
+            document.body.appendChild(statusIndicator);
+
+            function updateStatus(isOnline) {
+                if (isOnline) {
+                    statusIndicator.textContent = '🟢 Connected';
+                    statusIndicator.style.background = '#10b981';
+                    statusIndicator.style.color = 'white';
+                    statusIndicator.style.opacity = '1';
+                    statusIndicator.style.transform = 'translateY(0)';
+                    
+                    setTimeout(() => {
+                        statusIndicator.style.opacity = '0';
+                        statusIndicator.style.transform = 'translateY(-20px)';
+                    }, 3000);
+                } else {
+                    statusIndicator.textContent = '🔴 Offline';
+                    statusIndicator.style.background = '#ef4444';
+                    statusIndicator.style.color = 'white';
+                    statusIndicator.style.opacity = '1';
+                    statusIndicator.style.transform = 'translateY(0)';
+                }
+            }
+
+            // Check initial status
+            updateStatus(navigator.onLine);
+
+            // Listen for online/offline events
+            window.addEventListener('online', () => {
+                updateStatus(true);
+                showSuccess('Connection restored!', 'Back Online');
+            });
+
+            window.addEventListener('offline', () => {
+                updateStatus(false);
+                showWarning('You are currently offline. Some features may not work.', 'Connection Lost');
+            });
+        }
+
+        // Real-time validation functions
+        function validateField(fieldId, value, validationRules) {
+            const field = document.getElementById(fieldId);
+            const validationDiv = document.getElementById(fieldId + 'Validation');
+            
+            if (!field || !validationDiv) return { isValid: true };
+            
+            let isValid = true;
+            let message = '';
+            let type = 'success';
+            
+            // Remove existing classes
+            field.classList.remove('valid', 'invalid', 'warning');
+            
+            // Apply validation rules
+            for (const rule of validationRules) {
+                if (rule.required && (!value || value.trim() === '')) {
+                    isValid = false;
+                    message = rule.message || 'This field is required';
+                    type = 'error';
+                    break;
+                }
+                
+                if (rule.pattern && value && !rule.pattern.test(value)) {
+                    isValid = false;
+                    message = rule.message || 'Invalid format';
+                    type = 'error';
+                    break;
+                }
+                
+                if (rule.minLength && value && value.length < rule.minLength) {
+                    isValid = false;
+                    message = rule.message || `Minimum ${rule.minLength} characters required`;
+                    type = 'error';
+                    break;
+                }
+                
+                if (rule.maxLength && value && value.length > rule.maxLength) {
+                    isValid = false;
+                    message = rule.message || `Maximum ${rule.maxLength} characters allowed`;
+                    type = 'warning';
+                    break;
+                }
+                
+                if (rule.custom && !rule.custom(value)) {
+                    isValid = false;
+                    message = rule.message || 'Invalid value';
+                    type = 'error';
+                    break;
+                }
+            }
+            
+            // Update UI
+            if (value === '') {
+                field.classList.remove('valid', 'invalid', 'warning');
+                validationDiv.textContent = '';
+                validationDiv.classList.remove('show', 'error', 'success', 'warning');
+            } else if (isValid) {
+                field.classList.add('valid');
+                validationDiv.textContent = '✓ Valid';
+                validationDiv.className = 'validation-message show success';
+            } else {
+                field.classList.add(type === 'warning' ? 'warning' : 'invalid');
+                validationDiv.textContent = message;
+                validationDiv.className = `validation-message show ${type}`;
+            }
+            
+            return { isValid, message, type };
+        }
+
+        // Password strength checker
+        function checkPasswordStrength(password) {
+            const strengthBar = document.getElementById('passwordStrength');
+            if (!strengthBar) return 0;
+            
+            let strength = 0;
+            let checks = 0;
+            
+            if (password.length >= 8) strength += 25;
+            if (/[a-z]/.test(password)) strength += 25;
+            if (/[A-Z]/.test(password)) strength += 25;
+            if (/[0-9]/.test(password)) strength += 25;
+            if (/[@$!%*?&]/.test(password)) strength += 25;
+            
+            strength = Math.min(strength, 100);
+            strengthBar.style.width = strength + '%';
+            
+            // Update color based on strength
+            if (strength < 40) {
+                strengthBar.style.background = '#ef4444';
+            } else if (strength < 70) {
+                strengthBar.style.background = '#f59e0b';
+            } else {
+                strengthBar.style.background = '#10b981';
+            }
+            
+            return strength;
+        }
+
+        // Real-time validation event listeners
+        function setupRealTimeValidation() {
+            // First Name validation
+            document.getElementById('firstName').addEventListener('input', function() {
+                validateField('firstName', this.value, [
+                    { required: true, message: 'First name is required' },
+                    { pattern: /^[a-zA-Z\s\-']+$/, message: 'Only letters, spaces, hyphens, and apostrophes allowed' },
+                    { maxLength: 100, message: 'First name too long' }
+                ]);
+            });
+
+            // Last Name validation
+            document.getElementById('lastName').addEventListener('input', function() {
+                validateField('lastName', this.value, [
+                    { required: true, message: 'Last name is required' },
+                    { pattern: /^[a-zA-Z\s\-']+$/, message: 'Only letters, spaces, hyphens, and apostrophes allowed' },
+                    { maxLength: 100, message: 'Last name too long' }
+                ]);
+            });
+
+            // Phone validation
+            document.getElementById('phone').addEventListener('input', function() {
+                const cleanPhone = this.value.replace(/[\s\-\(\)]/g, '');
+                validateField('phone', this.value, [
+                    { pattern: /^[\+]?[1-9][\d]{0,15}$/, message: 'Please enter a valid phone number' }
+                ]);
+            });
+
+            // Organization validation
+            document.getElementById('organization').addEventListener('input', function() {
+                validateField('organization', this.value, [
+                    { maxLength: 200, message: 'Organization name too long' }
+                ]);
+            });
+
+            // Title validation
+            document.getElementById('title').addEventListener('input', function() {
+                validateField('title', this.value, [
+                    { maxLength: 100, message: 'Job title too long' }
+                ]);
+            });
+
+            // Password validation
+            document.getElementById('newPassword').addEventListener('input', function() {
+                const strength = checkPasswordStrength(this.value);
+                validateField('newPassword', this.value, [
+                    { required: true, message: 'New password is required' },
+                    { minLength: 8, message: 'Password must be at least 8 characters' },
+                    { 
+                        custom: (value) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/.test(value),
+                        message: 'Password must contain uppercase, lowercase, number, and special character'
+                    }
+                ]);
+            });
+
+            // Confirm password validation
+            document.getElementById('confirmPassword').addEventListener('input', function() {
+                const newPassword = document.getElementById('newPassword').value;
+                validateField('confirmPassword', this.value, [
+                    { required: true, message: 'Please confirm your password' },
+                    { 
+                        custom: (value) => value === newPassword,
+                        message: 'Passwords do not match'
+                    }
+                ]);
+            });
         }
 
         // Initialize profile
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Admin dashboard loading...');
             console.log('Current localStorage keys:', Object.keys(localStorage));
+            
+
             
             // Check authentication
             if (!isAuthenticated()) {
@@ -1054,6 +1538,21 @@
             
             // Load profile data
             loadProfileData();
+            
+            // Load current user profile for form fields
+            loadCurrentUserProfile();
+            
+            // Setup real-time validation
+            setupRealTimeValidation();
+            
+            // Setup form change tracking
+            trackFormChanges();
+            
+            // Setup connection status monitoring
+            checkConnectionStatus();
+            
+            // Show welcome message
+            showInfo('Welcome to the Admin Dashboard! Your profile management tools are ready.', 'Dashboard Loaded');
         });
 
         // Load profile data
@@ -1100,15 +1599,96 @@
             event.preventDefault();
             
             const formData = new FormData(event.target);
-            const profileData = Object.fromEntries(formData.entries());
+            const profileData = {
+                firstName: formData.get('firstName'),
+                lastName: formData.get('lastName'),
+                phoneNumber: formData.get('phone'),
+                organization: formData.get('organization'),
+                title: formData.get('title')
+            };
+
+            // Enhanced client-side validation with real-time feedback
+            const firstNameValidation = validateField('firstName', profileData.firstName, [
+                { required: true, message: 'First name is required' },
+                { pattern: /^[a-zA-Z\s\-']+$/, message: 'Only letters, spaces, hyphens, and apostrophes allowed' }
+            ]);
+
+            const lastNameValidation = validateField('lastName', profileData.lastName, [
+                { required: true, message: 'Last name is required' },
+                { pattern: /^[a-zA-Z\s\-']+$/, message: 'Only letters, spaces, hyphens, and apostrophes allowed' }
+            ]);
+
+            if (!firstNameValidation.isValid || !lastNameValidation.isValid) {
+                showError('Please fix the validation errors before submitting');
+                return;
+            }
+
+            // Validate phone number format if provided
+            if (profileData.phoneNumber && profileData.phoneNumber.trim()) {
+                const phoneValidation = validateField('phone', profileData.phoneNumber, [
+                    { pattern: /^[\+]?[1-9][\d]{0,15}$/, message: 'Please enter a valid phone number' }
+                ]);
+                
+                if (!phoneValidation.isValid) {
+                    showError('Please enter a valid phone number');
+                    return;
+                }
+            }
 
             try {
-                showSuccess('Profile updated successfully!');
-                // In a real implementation, you would send this to the backend
-                console.log('Profile data to update:', profileData);
+                // Show loading state with enhanced feedback
+                const submitButton = event.target.querySelector('button[type="submit"]');
+                const originalText = submitButton.textContent;
+                submitButton.innerHTML = '<span class="loading-spinner"></span>Updating Profile...';
+                submitButton.disabled = true;
+
+                // Show progress notification
+                showInfo('Updating your profile information...', 'Processing');
+
+                const token = localStorage.getItem('ra_admin_token');
+                if (!token) {
+                    showError('Authentication required. Please log in again.');
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                    return;
+                }
+
+                const response = await fetch('https://241runners-api.azurewebsites.net/api/auth/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(profileData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccess('Profile updated successfully! Your changes have been saved to the database.', 'Profile Updated');
+                    
+                    // Update the displayed user data
+                    if (result.user) {
+                        updateProfileDisplay(result.user);
+                    }
+                    
+                    // Reset form change tracking
+                    resetFormChangeTracking();
+                    
+                    // Show additional success details
+                    setTimeout(() => {
+                        showInfo(`Updated: ${profileData.firstName} ${profileData.lastName}`, 'Changes Saved');
+                    }, 1000);
+                } else {
+                    showError(result.message || 'Failed to update profile. Please try again.', 'Update Failed');
+                }
             } catch (error) {
                 console.error('Error updating profile:', error);
-                showError('Failed to update profile');
+                showError('Network error. Please check your connection and try again.', 'Connection Error');
+            } finally {
+                // Reset button state
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
             }
         });
 
@@ -1120,23 +1700,104 @@
             const newPassword = document.getElementById('newPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
 
-            if (newPassword !== confirmPassword) {
-                showError('New passwords do not match');
+            // Enhanced validation with real-time feedback
+            if (!currentPassword) {
+                showError('Current password is required');
                 return;
             }
 
-            if (newPassword.length < 8) {
-                showError('New password must be at least 8 characters long');
+            const newPasswordValidation = validateField('newPassword', newPassword, [
+                { required: true, message: 'New password is required' },
+                { minLength: 8, message: 'Password must be at least 8 characters' },
+                { 
+                    custom: (value) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/.test(value),
+                    message: 'Password must contain uppercase, lowercase, number, and special character'
+                }
+            ]);
+
+            const confirmPasswordValidation = validateField('confirmPassword', confirmPassword, [
+                { required: true, message: 'Please confirm your password' },
+                { 
+                    custom: (value) => value === newPassword,
+                    message: 'Passwords do not match'
+                }
+            ]);
+
+            if (!newPasswordValidation.isValid || !confirmPasswordValidation.isValid) {
+                showError('Please fix the password validation errors before submitting');
                 return;
+            }
+
+            // Check password strength
+            const strength = checkPasswordStrength(newPassword);
+            if (strength < 70) {
+                showWarning('Your password strength is weak. Consider using a stronger password.', 'Weak Password');
             }
 
             try {
-                showSuccess('Password changed successfully!');
-                document.getElementById('passwordForm').reset();
-                // In a real implementation, you would send this to the backend
+                // Show loading state with enhanced feedback
+                const submitButton = event.target.querySelector('button[type="submit"]');
+                const originalText = submitButton.textContent;
+                submitButton.innerHTML = '<span class="loading-spinner"></span>Changing Password...';
+                submitButton.disabled = true;
+
+                // Show progress notification
+                showInfo('Verifying current password and updating...', 'Processing');
+
+                const token = localStorage.getItem('ra_admin_token');
+                if (!token) {
+                    showError('Authentication required. Please log in again.');
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                    return;
+                }
+
+                const response = await fetch('https://241runners-api.azurewebsites.net/api/auth/password', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        currentPassword: currentPassword,
+                        newPassword: newPassword
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccess('Password changed successfully! Your new password is now active.', 'Password Updated');
+                    
+                    // Reset form and clear validation states
+                    document.getElementById('passwordForm').reset();
+                    document.getElementById('passwordStrength').style.width = '0%';
+                    
+                    // Clear validation messages
+                    ['currentPassword', 'newPassword', 'confirmPassword'].forEach(fieldId => {
+                        const field = document.getElementById(fieldId);
+                        const validation = document.getElementById(fieldId + 'Validation');
+                        if (field) field.classList.remove('valid', 'invalid', 'warning');
+                        if (validation) {
+                            validation.textContent = '';
+                            validation.classList.remove('show', 'error', 'success', 'warning');
+                        }
+                    });
+                    
+                    // Show security reminder
+                    setTimeout(() => {
+                        showInfo('Remember to use your new password for future logins.', 'Security Reminder');
+                    }, 1000);
+                } else {
+                    showError(result.message || 'Failed to change password. Please try again.', 'Password Change Failed');
+                }
             } catch (error) {
                 console.error('Error changing password:', error);
-                showError('Failed to change password');
+                showError('Network error. Please check your connection and try again.', 'Connection Error');
+            } finally {
+                // Reset button state
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
             }
         });
 
@@ -1169,6 +1830,51 @@
             } catch (error) {
                 console.error('Error exporting profile data:', error);
                 showError('Error exporting profile data');
+            }
+        }
+
+        // Function to update profile display with new data
+        function updateProfileDisplay(user) {
+            // Update profile header
+            const profileName = document.querySelector('.profile-name');
+            const profileEmail = document.querySelector('.profile-email');
+            const profileRole = document.querySelector('.profile-role');
+            
+            if (profileName) profileName.textContent = user.fullName;
+            if (profileEmail) profileEmail.textContent = user.email;
+            if (profileRole) profileRole.textContent = user.role.toUpperCase();
+            
+            // Update form fields
+            const firstNameField = document.getElementById('firstName');
+            const lastNameField = document.getElementById('lastName');
+            const phoneField = document.getElementById('phone');
+            const organizationField = document.getElementById('organization');
+            const titleField = document.getElementById('title');
+            
+            if (firstNameField) firstNameField.value = user.firstName || '';
+            if (lastNameField) lastNameField.value = user.lastName || '';
+            if (phoneField) phoneField.value = user.phoneNumber || '';
+            if (organizationField) organizationField.value = user.organization || '';
+            if (titleField) titleField.value = user.title || '';
+        }
+
+        // Function to load current user profile data
+        async function loadCurrentUserProfile() {
+            try {
+                const token = localStorage.getItem('ra_admin_token');
+                if (!token) {
+                    console.error('No authentication token found');
+                    return;
+                }
+
+                // For now, we'll use the stored user data
+                // In a real implementation, you might want to fetch fresh data from the server
+                const userData = JSON.parse(localStorage.getItem('ra_admin_user') || '{}');
+                if (userData) {
+                    updateProfileDisplay(userData);
+                }
+            } catch (error) {
+                console.error('Error loading user profile:', error);
             }
         }
 

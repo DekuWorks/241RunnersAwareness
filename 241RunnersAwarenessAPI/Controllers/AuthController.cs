@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using BCrypt.Net;
 using _241RunnersAwarenessAPI.Data;
 using _241RunnersAwarenessAPI.Models;
@@ -57,11 +58,11 @@ namespace _241RunnersAwarenessAPI.Controllers
                         });
                     }
 
-                    var token = authHeader.Substring("Bearer ".Length);
-                    var currentUser = _jwtService.ValidateToken(token);
-                    if (currentUser == null || currentUser.Role.ToLower() != "admin")
+                    var authToken = authHeader.Substring("Bearer ".Length);
+                    var currentUser = _jwtService.ValidateToken(authToken);
+                    if (currentUser == null || currentUser.FindFirst(ClaimTypes.Role)?.Value.ToLower() != "admin")
                     {
-                        return Forbid(new AuthResponse
+                        return StatusCode(403, new AuthResponse
                         {
                             Success = false,
                             Message = "Only existing admins can create new admin users."
@@ -265,9 +266,31 @@ namespace _241RunnersAwarenessAPI.Controllers
         }
 
         [HttpGet("health")]
-        public ActionResult<string> Health()
+        public async Task<ActionResult> Health()
         {
-            return Ok(new { status = "healthy", timestamp = DateTime.UtcNow });
+            try
+            {
+                // Test database connection
+                var userCount = await _context.Users.CountAsync();
+                var caseCount = await _context.Cases.CountAsync();
+                
+                return Ok(new { 
+                    status = "healthy", 
+                    timestamp = DateTime.UtcNow,
+                    database = "connected",
+                    users = userCount,
+                    cases = caseCount
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Health check failed");
+                return StatusCode(500, new { 
+                    status = "unhealthy", 
+                    timestamp = DateTime.UtcNow,
+                    error = ex.Message
+                });
+            }
         }
 
         /*
@@ -368,6 +391,231 @@ namespace _241RunnersAwarenessAPI.Controllers
             }
         }
         */
+
+        [HttpPut("profile")]
+        public async Task<ActionResult<ProfileUpdateResponse>> UpdateProfile([FromBody] ProfileUpdateRequest request)
+        {
+            try
+            {
+                // Validate input
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    
+                    return BadRequest(new ProfileUpdateResponse
+                    {
+                        Success = false,
+                        Message = $"Validation failed: {string.Join(", ", errors)}"
+                    });
+                }
+
+                // Get current user from JWT token
+                var authHeader = Request.Headers["Authorization"].FirstOrDefault();
+                if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+                {
+                    return Unauthorized(new ProfileUpdateResponse
+                    {
+                        Success = false,
+                        Message = "Authentication required."
+                    });
+                }
+
+                var token = authHeader.Substring("Bearer ".Length);
+                var currentUser = _jwtService.ValidateToken(token);
+                if (currentUser == null)
+                {
+                    return Unauthorized(new ProfileUpdateResponse
+                    {
+                        Success = false,
+                        Message = "Invalid or expired token."
+                    });
+                }
+
+                // Get user ID from claims
+                var userIdClaim = currentUser.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    return Unauthorized(new ProfileUpdateResponse
+                    {
+                        Success = false,
+                        Message = "Invalid user token."
+                    });
+                }
+
+                // Get user from database
+                var user = await _context.Users.FindAsync(userId);
+                if (user == null)
+                {
+                    return NotFound(new ProfileUpdateResponse
+                    {
+                        Success = false,
+                        Message = "User not found."
+                    });
+                }
+
+                // Update user profile
+                user.FirstName = request.FirstName;
+                user.LastName = request.LastName;
+                user.PhoneNumber = request.PhoneNumber;
+                user.Address = request.Address;
+                user.City = request.City;
+                user.State = request.State;
+                user.ZipCode = request.ZipCode;
+                user.Organization = request.Organization;
+                user.Title = request.Title;
+                user.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"Profile updated for user: {user.Email}");
+
+                return Ok(new ProfileUpdateResponse
+                {
+                    Success = true,
+                    Message = "Profile updated successfully.",
+                    User = new UserInfo
+                    {
+                        Id = user.Id,
+                        Email = user.Email,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        FullName = user.FullName,
+                        Role = user.Role,
+                        CreatedAt = user.CreatedAt,
+                        PhoneNumber = user.PhoneNumber,
+                        Address = user.Address,
+                        City = user.City,
+                        State = user.State,
+                        ZipCode = user.ZipCode,
+                        Organization = user.Organization,
+                        Title = user.Title
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during profile update");
+                return StatusCode(500, new ProfileUpdateResponse
+                {
+                    Success = false,
+                    Message = "An error occurred during profile update. Please try again."
+                });
+            }
+        }
+
+        [HttpPut("password")]
+        public async Task<ActionResult<AuthResponse>> ChangePassword([FromBody] PasswordChangeRequest request)
+        {
+            try
+            {
+                // Validate input
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = $"Validation failed: {string.Join(", ", errors)}"
+                    });
+                }
+
+                // Get current user from JWT token
+                var authHeader = Request.Headers["Authorization"].FirstOrDefault();
+                if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+                {
+                    return Unauthorized(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Authentication required."
+                    });
+                }
+
+                var token = authHeader.Substring("Bearer ".Length);
+                var currentUser = _jwtService.ValidateToken(token);
+                if (currentUser == null)
+                {
+                    return Unauthorized(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Invalid or expired token."
+                    });
+                }
+
+                // Get user ID from claims
+                var userIdClaim = currentUser.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    return Unauthorized(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Invalid user token."
+                    });
+                }
+
+                // Get user from database
+                var user = await _context.Users.FindAsync(userId);
+                if (user == null)
+                {
+                    return NotFound(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "User not found."
+                    });
+                }
+
+                // Verify current password
+                if (!BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.PasswordHash))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Current password is incorrect."
+                    });
+                }
+
+                // Validate new password strength
+                if (!IsPasswordStrong(request.NewPassword))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "New password must contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+                    });
+                }
+
+                // Hash new password
+                var newPasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+
+                // Update user password
+                user.PasswordHash = newPasswordHash;
+                user.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"Password changed for user: {user.Email}");
+
+                return Ok(new AuthResponse
+                {
+                    Success = true,
+                    Message = "Password changed successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during password change");
+                return StatusCode(500, new AuthResponse
+                {
+                    Success = false,
+                    Message = "An error occurred during password change. Please try again."
+                });
+            }
+        }
 
         // Helper methods for validation
         private bool IsValidEmail(string email)

@@ -11,6 +11,8 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <link rel="stylesheet" href="styles.css?v=20250128b" />
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/api-utils.js"></script>
     <style>
         /* Enhanced Map Styles */
         #map {
@@ -689,22 +691,26 @@
             noDataEl.style.display = 'none';
 
             try {
-                // Simulate API call with mock data
-                await new Promise(resolve => setTimeout(resolve, 800));
+                // Use real API to get cases with location data
+                const cases = await apiHelpers.getWithRetry('/cases');
                 
-                // Check if mock data is available
-                console.log('Checking for mockHoustonData...');
-                console.log('window.mockHoustonData:', window.mockHoustonData);
-                console.log('typeof mockHoustonData:', typeof mockHoustonData);
-                
-                if (typeof window.mockHoustonData === 'undefined') {
-                    throw new Error('Mock data not loaded - window.mockHoustonData is undefined');
-                }
-                
-                const data = window.mockHoustonData;
-                currentData = data.individuals || [];
+                // Convert cases to map format (for now, use default coordinates if not available)
+                currentData = cases.map(caseItem => ({
+                    id: caseItem.id,
+                    fullName: caseItem.name,
+                    currentStatus: caseItem.status,
+                    latitude: 29.7604, // Default to Houston coordinates
+                    longitude: -95.3698,
+                    city: caseItem.city,
+                    state: caseItem.state,
+                    dateAdded: caseItem.dateReported,
+                    address: `${caseItem.city}, ${caseItem.state}`,
+                    age: caseItem.age,
+                    gender: 'Not specified',
+                    dateOfBirth: null
+                }));
 
-                console.log('Loaded data:', currentData.length, 'individuals');
+                console.log('Loaded data:', currentData.length, 'cases');
 
                 if (currentData.length === 0) {
                     loadingEl.style.display = 'none';
@@ -717,7 +723,7 @@
                 loadingEl.style.display = 'none';
                 
             } catch (error) {
-                console.error('Error loading runners data:', error);
+                showApiError(error, 'Loading map data');
                 loadingEl.style.display = 'none';
                 errorEl.style.display = 'block';
                 errorEl.textContent = `Error loading data: ${error.message}`;
