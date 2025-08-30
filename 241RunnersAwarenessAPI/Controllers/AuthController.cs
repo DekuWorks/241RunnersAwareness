@@ -272,14 +272,14 @@ namespace _241RunnersAwarenessAPI.Controllers
             {
                 // Test database connection
                 var userCount = await _context.Users.CountAsync();
-                var caseCount = await _context.Cases.CountAsync();
+                var missingPersonCount = await _context.MissingPersons.CountAsync();
                 
                 return Ok(new { 
                     status = "healthy", 
                     timestamp = DateTime.UtcNow,
                     database = "connected",
                     users = userCount,
-                    cases = caseCount
+                    missingPersons = missingPersonCount
                 });
             }
             catch (Exception ex)

@@ -166,7 +166,7 @@
       if (tags) params.append('tags', tags);
 
                   try {
-                currentCases = await apiHelpers.get(`/cases?${params.toString()}`);
+                currentCases = await apiHelpers.get(`/missingpersons?${params.toString()}`);
                 displayCases();
             } catch (error) {
                 showApiError(error, 'Loading cases');
@@ -205,7 +205,7 @@
       caseList.innerHTML = '<div style="text-align:center; color:#888;">Loading cases...</div>';
       
                   try {
-                currentCases = await apiHelpers.getWithRetry('/cases');
+                currentCases = await apiHelpers.getWithRetry('/missingpersons');
                 displayCases();
             } catch (error) {
                 showApiError(error, 'Loading cases');
@@ -221,7 +221,7 @@
     // CSV Export functionality
     document.getElementById('exportAllBtn').addEventListener('click', async () => {
                   try {
-                const allCases = await apiHelpers.get('/cases');
+                const allCases = await apiHelpers.get('/missingpersons');
                 exportCsv(allCases);
             } catch (error) {
                 showApiError(error, 'Exporting cases');

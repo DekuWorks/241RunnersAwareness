@@ -691,8 +691,8 @@
             noDataEl.style.display = 'none';
 
             try {
-                // Use real API to get cases with location data
-                const cases = await apiHelpers.getWithRetry('/cases');
+                // Use real API to get missing persons with location data
+                const cases = await apiHelpers.getWithRetry('/missingpersons');
                 
                 // Convert cases to map format (for now, use default coordinates if not available)
                 currentData = cases.map(caseItem => ({

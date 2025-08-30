@@ -11,7 +11,7 @@ namespace _241RunnersAwarenessAPI.Data
         }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<Case> Cases { get; set; }
+        public DbSet<MissingPerson> MissingPersons { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
