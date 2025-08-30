@@ -531,6 +531,23 @@
             font-weight: 600;
             font-size: 0.9rem;
         }
+        
+        .logout-button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .logout-button:hover {
+            background: #b91c1c;
+        }
 
         .live-dot {
             width: 8px;
@@ -751,7 +768,10 @@
                     <div class="live-indicator">
                         <div class="live-dot"></div>
                         <span>Live Database Connection</span>
-    </div>
+                    </div>
+                    <button id="logoutBtn" class="logout-button" onclick="logout()">
+                        <span>🚪 Logout</span>
+                    </button>
             </div>
             </div>
         </div>
@@ -1024,6 +1044,8 @@
 
         // Load dashboard data on page load
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Dashboard DOM loaded');
+            
             // Check authentication first
             const token = localStorage.getItem('ra_admin_token');
             const role = localStorage.getItem('ra_admin_role');
@@ -1052,21 +1074,37 @@
             initializeDashboard();
         });
 
+        // Logout function
+        function logout() {
+            console.log('Logging out...');
+            localStorage.removeItem('ra_admin_token');
+            localStorage.removeItem('ra_admin_role');
+            localStorage.removeItem('ra_admin_user');
+            window.location.href = '/admin/login.html';
+        }
+
         // Initialize dashboard
         async function initializeDashboard() {
             try {
+                console.log('Initializing dashboard...');
+                
                 // Show loading state
                 showLoadingState();
                 
-                // Load data
-                await loadDashboardData();
+                // Load current admin first
                 await loadCurrentAdmin();
+                
+                // Load dashboard data
+                await loadDashboardData();
                 
                 // Start refresh timer
                 startDataRefresh();
                 
-                // Hide loading state
+                // Hide loading state and update UI
                 hideLoadingState();
+                updateDashboardUI();
+                
+                console.log('Dashboard initialized successfully');
             } catch (error) {
                 console.error('Error initializing dashboard:', error);
                 showError('systemStatus', 'Failed to initialize dashboard');
@@ -1229,6 +1267,7 @@
         // Load current admin profile
         async function loadCurrentAdmin() {
             try {
+                console.log('Loading current admin profile...');
                 const token = localStorage.getItem('ra_admin_token');
                 if (!token) {
                     window.location.href = '/admin/login.html';
@@ -1241,8 +1280,11 @@
                     }
                 });
                 
+                console.log('Verify response status:', response.status);
+                
                 if (response.ok) {
                     const data = await response.json();
+                    console.log('Admin profile data:', data);
                     currentAdmin = data.user;
                     updateAdminProfile();
                 } else {
@@ -1265,6 +1307,14 @@
             const totalUsersElement = document.getElementById('totalUsers');
             const totalRunnersElement = document.getElementById('totalRunners');
             const activeAdminsElement = document.getElementById('activeAdmins');
+            const systemStatusElement = document.getElementById('systemStatus');
+            
+            console.log('Dashboard elements found:', {
+                totalUsers: !!totalUsersElement,
+                totalRunners: !!totalRunnersElement,
+                activeAdmins: !!activeAdminsElement,
+                systemStatus: !!systemStatusElement
+            });
             
             if (totalUsersElement) {
                 totalUsersElement.textContent = dashboardData.users.length;
@@ -1282,7 +1332,6 @@
             }
             
             // Update system status
-            const systemStatusElement = document.getElementById('systemStatus');
             if (systemStatusElement) {
                 const statusText = dashboardData.systemStatus === 'healthy' ? 'Healthy' : 'Error';
                 systemStatusElement.textContent = statusText;
@@ -1355,17 +1404,28 @@
 
         // Update admin profile display
         function updateAdminProfile() {
-            if (!currentAdmin) return;
+            console.log('Updating admin profile display...');
+            if (!currentAdmin) {
+                console.log('No current admin data');
+                return;
+            }
 
             const profileName = document.getElementById('profileName');
-            const profileEmail = document.getElementById('profileEmail');
+            const profileEmail = document.getElementById('adminEmail');
+            
+            console.log('Profile elements found:', {
+                profileName: !!profileName,
+                profileEmail: !!profileEmail
+            });
             
             if (profileName) {
                 profileName.textContent = `${currentAdmin.firstName} ${currentAdmin.lastName}`;
+                console.log('Updated profile name:', `${currentAdmin.firstName} ${currentAdmin.lastName}`);
             }
             
             if (profileEmail) {
                 profileEmail.textContent = currentAdmin.email;
+                console.log('Updated profile email:', currentAdmin.email);
             }
         }
 
@@ -1383,6 +1443,19 @@
                 element.textContent = message;
                 element.className = 'status-error';
             }
+        }
+
+        // Action button functions
+        function openUserManagement() {
+            alert('User Management feature coming soon!');
+        }
+
+        function openRunnerManagement() {
+            alert('Runner Management feature coming soon!');
+        }
+
+        function openSystemSettings() {
+            alert('System Settings feature coming soon!');
         }
 
 
