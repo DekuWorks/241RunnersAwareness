@@ -1083,15 +1083,10 @@
 
         // Load dashboard data on page load
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Dashboard DOM loaded');
+            console.log('Old dashboard detected - redirecting to new admindash.html');
             
-            // Check authentication first
-            if (!requireAdmin()) {
-                return;
-            }
-            
-            // Initialize dashboard
-            initializeDashboard();
+            // Redirect to the new admin dashboard
+            window.location.href = '/admin/admindash.html';
         });
 
         // Logout function
