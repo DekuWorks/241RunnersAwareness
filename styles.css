@@ -76,6 +76,14 @@ body {
   justify-content: flex-start;
 }
 
+/* Override body background for cases pages */
+body:has(.cases-hero),
+body:has(.my-cases-hero) {
+  background: #000 !important;
+  color: #fff;
+  align-items: stretch;
+}
+
 /* 
  * ============================================
  * DARK MODE THEME SUPPORT
@@ -102,7 +110,7 @@ body.dark-mode {
 header {
   background: #000; /* Black header background */
   color: #fff; /* White text */
-  padding: 0 20px 10px;
+  padding: 0;
   position: -webkit-sticky; /* Safari */
   position: sticky; /* Stays at top when scrolling */
   top: 0;
@@ -3274,4 +3282,862 @@ body.dark-mode .action-card h3 {
 
 body.dark-mode .action-card p {
     color: #9ca3af;
+}
+
+/* ============================================
+ * CASES PAGE COMPLETE RESTYLING
+ * ============================================
+ * 
+ * Complete restyling to match the main static site design.
+ */
+
+/* Cases Page Header - Match Main Site */
+.cases-hero ~ header,
+.my-cases-hero ~ header {
+    background: #000;
+    color: #fff;
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    margin: 0;
+}
+
+/* Header Bar - Center Logo Like Main Site */
+.cases-hero ~ header .header-bar,
+.my-cases-hero ~ header .header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding-top: 15px;
+    position: relative;
+    width: 100%;
+    margin: 0;
+}
+
+/* Nav Brand - Center Logo and Text */
+.cases-hero ~ header .nav-brand,
+.my-cases-hero ~ header .nav-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #fff;
+}
+
+.cases-hero ~ header .nav-brand img,
+.my-cases-hero ~ header .nav-brand img {
+    width: 50px;
+    height: 50px;
+    border: 2px solid #fff;
+}
+
+.cases-hero ~ header .nav-brand .brand-text,
+.my-cases-hero ~ header .nav-brand .brand-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+/* Navigation Menu - Match Main Site */
+.cases-hero ~ header nav,
+.my-cases-hero ~ header nav {
+    background: #111;
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 12px 0;
+    flex-wrap: wrap;
+}
+
+.cases-hero ~ header .nav-menu,
+.my-cases-hero ~ header .nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.cases-hero ~ header .nav-menu a,
+.my-cases-hero ~ header .nav-menu a {
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.cases-hero ~ header .nav-menu a:hover,
+.my-cases-hero ~ header .nav-menu a:hover {
+    background-color: #dc2626;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.cases-hero ~ header .nav-menu a.active,
+.my-cases-hero ~ header .nav-menu a.active {
+    background-color: #dc2626;
+    color: #fff;
+}
+
+/* Cases Page Main Content - Match Main Site */
+.cases-hero ~ main,
+.my-cases-hero ~ main {
+    flex: 1;
+    padding: 0;
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+    background: #000;
+}
+
+/* Fix cases page body to be all black */
+body:has(.cases-hero),
+body:has(.my-cases-hero) {
+    background: #000 !important;
+}
+
+/* Ensure header covers full width on cases pages */
+.cases-hero ~ header,
+.my-cases-hero ~ header {
+    background: #000;
+    color: #fff;
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    margin: 0;
+    left: 0;
+    right: 0;
+}
+
+/* Cases Hero Section - Enhanced */
+.cases-hero,
+.my-cases-hero {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: white;
+    text-align: center;
+    padding: 4rem 0;
+    position: relative;
+    margin: 0;
+}
+
+.cases-hero .hero-content,
+.my-cases-hero .hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.cases-hero .hero-title,
+.my-cases-hero .hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: white;
+}
+
+.cases-hero .hero-subtitle,
+.my-cases-hero .hero-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    color: white;
+}
+
+/* Enhanced Hero Stats */
+.cases-hero .hero-stats,
+.my-cases-hero .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.cases-hero .stat-item,
+.my-cases-hero .stat-item {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    min-width: 120px;
+}
+
+.cases-hero .stat-number,
+.my-cases-hero .stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: white;
+}
+
+.cases-hero .stat-label,
+.my-cases-hero .stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    color: white;
+    font-weight: 500;
+}
+
+/* Enhanced Filters Section */
+.cases-hero ~ .filters-section,
+.my-cases-hero ~ .filters-section {
+    background: #f8f9fa;
+    padding: 2rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.cases-hero ~ .filters-section .container,
+.my-cases-hero ~ .filters-section .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.cases-hero ~ .filters-container,
+.my-cases-hero ~ .filters-container {
+    display: flex;
+    gap: 1rem;
+    align-items: end;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.cases-hero ~ .filter-group,
+.my-cases-hero ~ .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 150px;
+}
+
+.cases-hero ~ .filter-group label,
+.my-cases-hero ~ .filter-group label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.cases-hero ~ .filter-select,
+.cases-hero ~ .filter-input,
+.my-cases-hero ~ .filter-select,
+.my-cases-hero ~ .filter-input {
+    padding: 0.75rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    min-width: 150px;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.cases-hero ~ .filter-select:hover,
+.cases-hero ~ .filter-input:hover,
+.my-cases-hero ~ .filter-select:hover,
+.my-cases-hero ~ .filter-input:hover {
+    border-color: #dc2626;
+}
+
+.cases-hero ~ .filter-select:focus,
+.cases-hero ~ .filter-input:focus,
+.my-cases-hero ~ .filter-select:focus,
+.my-cases-hero ~ .filter-input:focus {
+    outline: none;
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+/* Enhanced Cases Section */
+.cases-hero ~ .cases-section,
+.my-cases-hero ~ .cases-section {
+    padding: 2rem 0;
+    background: #fff;
+}
+
+.cases-hero ~ .cases-section .container,
+.my-cases-hero ~ .cases-section .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.cases-hero ~ .cases-header,
+.my-cases-hero ~ .cases-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.cases-hero ~ .cases-header h2,
+.my-cases-hero ~ .cases-header h2 {
+    color: #1f2937;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.cases-hero ~ .cases-count,
+.my-cases-hero ~ .cases-count {
+    color: #6b7280;
+    font-size: 0.9rem;
+    font-weight: 500;
+    background: #f3f4f6;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+}
+
+/* Enhanced CTA Section */
+.cases-hero ~ .cta-section,
+.my-cases-hero ~ .cta-section {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: white;
+    padding: 4rem 0;
+    margin-top: 3rem;
+    text-align: center;
+    position: relative;
+}
+
+.cases-hero ~ .cta-section .container,
+.my-cases-hero ~ .cta-section .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.cases-hero ~ .cta-content,
+.my-cases-hero ~ .cta-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.cases-hero ~ .cta-content h2,
+.my-cases-hero ~ .cta-content h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: white;
+}
+
+.cases-hero ~ .cta-content p,
+.my-cases-hero ~ .cta-content p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    color: white;
+}
+
+.cases-hero ~ .cta-buttons,
+.my-cases-hero ~ .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cases-hero ~ .cta-buttons .btn-primary,
+.my-cases-hero ~ .cta-buttons .btn-primary {
+    background: white;
+    color: #dc2626;
+    border: 2px solid white;
+    font-weight: 700;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.cases-hero ~ .cta-buttons .btn-primary:hover,
+.my-cases-hero ~ .cta-buttons .btn-primary:hover {
+    background: transparent;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.cases-hero ~ .cta-buttons .btn-secondary,
+.my-cases-hero ~ .cta-buttons .btn-secondary {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    font-weight: 700;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.cases-hero ~ .cta-buttons .btn-secondary:hover,
+.my-cases-hero ~ .cta-buttons .btn-secondary:hover {
+    background: white;
+    color: #dc2626;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Enhanced Footer Styling for Cases Pages */
+.cases-hero ~ footer,
+.my-cases-hero ~ footer {
+    background: #000;
+    color: #fff;
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: auto;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Fix footer styling for ALL pages - make consistent */
+footer {
+    background: #000 !important;
+    color: #fff;
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: auto;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+footer .footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    text-align: left;
+    margin-bottom: 2rem;
+}
+
+footer .footer-section {
+    margin-bottom: 1rem;
+}
+
+footer .footer-section h3,
+footer .footer-section h4 {
+    color: #fff;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+footer .footer-section p {
+    color: #ccc;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+footer .footer-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+footer .footer-section ul li {
+    margin-bottom: 0.75rem;
+}
+
+footer .footer-section ul li a {
+    color: #fff !important;
+    text-decoration: none !important;
+    transition: color 0.3s ease;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+footer .footer-section ul li a:hover {
+    color: #dc2626 !important;
+    text-decoration: underline !important;
+}
+
+footer .footer-bottom {
+    border-top: 1px solid #333;
+    padding-top: 1rem;
+    margin-top: 2rem;
+    text-align: center;
+}
+
+footer .footer-bottom p {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.cases-hero ~ footer .container,
+.my-cases-hero ~ footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.cases-hero ~ footer .footer-content,
+.my-cases-hero ~ footer .footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    text-align: left;
+    margin-bottom: 2rem;
+}
+
+.cases-hero ~ footer .footer-section,
+.my-cases-hero ~ footer .footer-section {
+    margin-bottom: 1rem;
+}
+
+.cases-hero ~ footer .footer-section h3,
+.my-cases-hero ~ footer .footer-section h3,
+.cases-hero ~ footer .footer-section h4,
+.my-cases-hero ~ footer .footer-section h4 {
+    color: #fff;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.cases-hero ~ footer .footer-section p,
+.my-cases-hero ~ footer .footer-section p {
+    color: #ccc;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.cases-hero ~ footer .footer-section ul,
+.my-cases-hero ~ footer .footer-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.cases-hero ~ footer .footer-section ul li,
+.my-cases-hero ~ footer .footer-section ul li {
+    margin-bottom: 0.75rem;
+}
+
+.cases-hero ~ footer .footer-section ul li a,
+.my-cases-hero ~ footer .footer-section ul li a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.cases-hero ~ footer .footer-section ul li a:hover,
+.my-cases-hero ~ footer .footer-section ul li a:hover {
+    color: #dc2626;
+    text-decoration: underline;
+}
+
+.cases-hero ~ footer .footer-bottom,
+.my-cases-hero ~ footer .footer-bottom {
+    border-top: 1px solid #333;
+    padding-top: 1rem;
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.cases-hero ~ footer .footer-bottom p,
+.my-cases-hero ~ footer .footer-bottom p {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+/* Enhanced Responsive Design for Cases Pages */
+@media (max-width: 768px) {
+    /* Header responsive */
+    .cases-hero ~ header .nav-menu,
+    .my-cases-hero ~ header .nav-menu {
+        gap: 1rem;
+    }
+    
+    .cases-hero ~ header .nav-menu a,
+    .my-cases-hero ~ header .nav-menu a {
+        font-size: 0.9rem;
+        padding: 6px 12px;
+    }
+    
+    /* Hero responsive */
+    .cases-hero .hero-title,
+    .my-cases-hero .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .cases-hero .hero-subtitle,
+    .my-cases-hero .hero-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .cases-hero .hero-stats,
+    .my-cases-hero .hero-stats {
+        gap: 2rem;
+    }
+    
+    .cases-hero .stat-item,
+    .my-cases-hero .stat-item {
+        min-width: 100px;
+        padding: 1rem;
+    }
+    
+    .cases-hero .stat-number,
+    .my-cases-hero .stat-number {
+        font-size: 2rem;
+    }
+    
+    /* Filters responsive */
+    .cases-hero ~ .filters-container,
+    .my-cases-hero ~ .filters-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .cases-hero ~ .filter-select,
+    .cases-hero ~ .filter-input,
+    .my-cases-hero ~ .filter-select,
+    .my-cases-hero ~ .filter-input {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    /* Cases header responsive */
+    .cases-hero ~ .cases-header,
+    .my-cases-hero ~ .cases-header {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+    
+    .cases-hero ~ .cases-header h2,
+    .my-cases-hero ~ .cases-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    /* CTA responsive */
+    .cases-hero ~ .cta-content h2,
+    .my-cases-hero ~ .cta-content h2 {
+        font-size: 2rem;
+    }
+    
+    .cases-hero ~ .cta-buttons,
+    .my-cases-hero ~ .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .cases-hero ~ .cta-buttons .btn-primary,
+    .cases-hero ~ .cta-buttons .btn-secondary,
+    .my-cases-hero ~ .cta-buttons .btn-primary,
+    .my-cases-hero ~ .cta-buttons .btn-secondary {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    /* Footer responsive */
+    .cases-hero ~ footer .footer-content,
+    .my-cases-hero ~ footer .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 1.5rem;
+    }
+}
+
+/* Global Footer Responsive Design */
+@media (max-width: 768px) {
+    footer .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 1.5rem;
+    }
+    
+    footer .container {
+        padding: 0 1rem;
+    }
+    
+    footer .footer-section h3,
+    footer .footer-section h4 {
+        font-size: 1rem;
+    }
+    
+    footer .footer-section ul li a {
+        font-size: 0.85rem;
+    }
+}
+    /* Header responsive */
+    .cases-hero ~ header .nav-menu,
+    .my-cases-hero ~ header .nav-menu {
+        gap: 1rem;
+    }
+    
+    .cases-hero ~ header .nav-menu a,
+    .my-cases-hero ~ header .nav-menu a {
+        font-size: 0.9rem;
+        padding: 6px 12px;
+    }
+    
+    /* Hero responsive */
+    .cases-hero .hero-title,
+    .my-cases-hero .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .cases-hero .hero-subtitle,
+    .my-cases-hero .hero-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .cases-hero .hero-stats,
+    .my-cases-hero .hero-stats {
+        gap: 2rem;
+    }
+    
+    .cases-hero .stat-item,
+    .my-cases-hero .stat-item {
+        min-width: 100px;
+        padding: 1rem;
+    }
+    
+    .cases-hero .stat-number,
+    .my-cases-hero .stat-number {
+        font-size: 2rem;
+    }
+    
+    /* Filters responsive */
+    .cases-hero ~ .filters-container,
+    .my-cases-hero ~ .filters-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .cases-hero ~ .filter-select,
+    .cases-hero ~ .filter-input,
+    .my-cases-hero ~ .filter-select,
+    .my-cases-hero ~ .filter-input {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    /* Cases header responsive */
+    .cases-hero ~ .cases-header,
+    .my-cases-hero ~ .cases-header {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+    
+    .cases-hero ~ .cases-header h2,
+    .my-cases-hero ~ .cases-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    /* CTA responsive */
+    .cases-hero ~ .cta-content h2,
+    .my-cases-hero ~ .cta-content h2 {
+        font-size: 2rem;
+    }
+    
+    .cases-hero ~ .cta-buttons,
+    .my-cases-hero ~ .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .cases-hero ~ .cta-buttons .btn-primary,
+    .cases-hero ~ .cta-buttons .btn-secondary,
+    .my-cases-hero ~ .cta-buttons .btn-primary,
+    .my-cases-hero ~ .cta-buttons .btn-secondary {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    /* Footer responsive */
+    .cases-hero ~ footer .footer-content,
+    .my-cases-hero ~ footer .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Hero responsive */
+    .cases-hero .hero-title,
+    .my-cases-hero .hero-title {
+        font-size: 2rem;
+    }
+    
+    .cases-hero .hero-subtitle,
+    .my-cases-hero .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .cases-hero .hero-stats,
+    .my-cases-hero .hero-stats {
+        gap: 1rem;
+    }
+    
+    .cases-hero .stat-item,
+    .my-cases-hero .stat-item {
+        min-width: 80px;
+        padding: 0.75rem;
+    }
+    
+    .cases-hero .stat-number,
+    .my-cases-hero .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .cases-hero .stat-label,
+    .my-cases-hero .stat-label {
+        font-size: 0.8rem;
+    }
+    
+    /* Section padding responsive */
+    .cases-hero,
+    .my-cases-hero {
+        padding: 2rem 0;
+    }
+    
+    .cases-hero ~ .filters-section,
+    .my-cases-hero ~ .filters-section {
+        padding: 1.5rem 0;
+    }
+    
+    .cases-hero ~ .cases-section,
+    .my-cases-hero ~ .cases-section {
+        padding: 1.5rem 0;
+    }
+    
+    .cases-hero ~ .cta-section,
+    .my-cases-hero ~ .cta-section {
+        padding: 2rem 0;
+    }
+    
+    /* CTA responsive */
+    .cases-hero ~ .cta-content h2,
+    .my-cases-hero ~ .cta-content h2 {
+        font-size: 1.75rem;
+    }
+    
+    .cases-hero ~ .cta-content p,
+    .my-cases-hero ~ .cta-content p {
+        font-size: 1rem;
+    }
 }
