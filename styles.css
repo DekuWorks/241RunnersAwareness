@@ -79,7 +79,7 @@ body {
 /* Override body background for cases pages */
 body:has(.cases-hero),
 body:has(.my-cases-hero) {
-  background: #000 !important;
+  background: #ff0000 !important;
   color: #fff;
   align-items: stretch;
 }
@@ -3320,7 +3320,7 @@ body.dark-mode .action-card p {
 /* Cases Page Header - Match Main Site */
 .cases-hero ~ header,
 .my-cases-hero ~ header {
-    background: #000;
+    background: #000 !important;
     color: #fff;
     padding: 0;
     position: sticky;
@@ -3363,7 +3363,7 @@ body.dark-mode .action-card p {
 /* Navigation - Match Main Site */
 .cases-hero ~ header nav,
 .my-cases-hero ~ header nav {
-    background: #111;
+    background: #000 !important;
     display: flex;
     justify-content: center;
     gap: 1.5rem;
@@ -3466,7 +3466,7 @@ body.dark-mode .action-card p {
     width: 100%;
     margin: 0;
     box-sizing: border-box;
-    background: #000;
+    background: #ff0000;
 }
 
 /* Fix cases page body to be all black */
@@ -3563,9 +3563,12 @@ body:has(.my-cases-hero) {
 /* Enhanced Filters Section */
 .cases-hero ~ .filters-section,
 .my-cases-hero ~ .filters-section {
-    background: #f8f9fa;
-    padding: 2rem 0;
-    border-bottom: 1px solid #e9ecef;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 16px;
+    margin: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: none;
 }
 
 .cases-hero ~ .filters-section .container,
@@ -3634,6 +3637,9 @@ body:has(.my-cases-hero) {
 .my-cases-hero ~ .cases-section {
     padding: 2rem 0;
     background: #fff;
+    border-radius: 16px;
+    margin: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 /* Ensure case cards are visible on cases pages */
@@ -3677,7 +3683,21 @@ body:has(.my-cases-hero) {
 .my-cases-hero ~ .cases-section .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0;
+}
+
+.cases-hero ~ .filters-section .container,
+.my-cases-hero ~ .filters-section .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.cases-hero ~ .cta-section .container,
+.my-cases-hero ~ .cta-section .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0;
 }
 
 .cases-hero ~ .cases-header,
@@ -3712,12 +3732,24 @@ body:has(.my-cases-hero) {
 /* Enhanced CTA Section */
 .cases-hero ~ .cta-section,
 .my-cases-hero ~ .cta-section {
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-    color: white;
-    padding: 4rem 0;
-    margin-top: 3rem;
+    background: #fff;
+    color: #374151;
+    padding: 4rem 2rem;
+    margin: 2rem;
     text-align: center;
     position: relative;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.cases-hero ~ .cta-content h2,
+.my-cases-hero ~ .cta-content h2 {
+    color: #1f2937 !important;
+}
+
+.cases-hero ~ .cta-content p,
+.my-cases-hero ~ .cta-content p {
+    color: #374151 !important;
 }
 
 .cases-hero ~ .cta-section .container,
@@ -3760,9 +3792,9 @@ body:has(.my-cases-hero) {
 
 .cases-hero ~ .cta-buttons .btn-primary,
 .my-cases-hero ~ .cta-buttons .btn-primary {
-    background: white;
-    color: #dc2626;
-    border: 2px solid white;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: white;
+    border: 2px solid #dc2626;
     font-weight: 700;
     padding: 1rem 2rem;
     font-size: 1rem;
@@ -3771,17 +3803,16 @@ body:has(.my-cases-hero) {
 
 .cases-hero ~ .cta-buttons .btn-primary:hover,
 .my-cases-hero ~ .cta-buttons .btn-primary:hover {
-    background: transparent;
-    color: white;
+    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
 }
 
 .cases-hero ~ .cta-buttons .btn-secondary,
 .my-cases-hero ~ .cta-buttons .btn-secondary {
     background: transparent;
-    color: white;
-    border: 2px solid white;
+    color: #dc2626;
+    border: 2px solid #dc2626;
     font-weight: 700;
     padding: 1rem 2rem;
     font-size: 1rem;
@@ -3790,10 +3821,10 @@ body:has(.my-cases-hero) {
 
 .cases-hero ~ .cta-buttons .btn-secondary:hover,
 .my-cases-hero ~ .cta-buttons .btn-secondary:hover {
-    background: white;
-    color: #dc2626;
+    background: #dc2626;
+    color: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
 }
 
 /* Enhanced Footer Styling for Cases Pages */
