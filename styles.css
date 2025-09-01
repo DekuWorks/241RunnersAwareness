@@ -3302,9 +3302,11 @@ body.dark-mode .action-card p {
     z-index: 1000;
     width: 100%;
     margin: 0;
+    left: 0;
+    right: 0;
 }
 
-/* Header Bar - Center Logo Like Main Site */
+/* Header Bar - Match Main Site Structure */
 .cases-hero ~ header .header-bar,
 .my-cases-hero ~ header .header-bar {
     display: flex;
@@ -3317,32 +3319,22 @@ body.dark-mode .action-card p {
     margin: 0;
 }
 
-/* Nav Brand - Center Logo and Text */
-.cases-hero ~ header .nav-brand,
-.my-cases-hero ~ header .nav-brand {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    text-decoration: none;
-    color: #fff;
-}
-
-.cases-hero ~ header .nav-brand img,
-.my-cases-hero ~ header .nav-brand img {
+.cases-hero ~ header .header-bar img,
+.my-cases-hero ~ header .header-bar img {
     width: 50px;
     height: 50px;
     border: 2px solid #fff;
 }
 
-.cases-hero ~ header .nav-brand .brand-text,
-.my-cases-hero ~ header .nav-brand .brand-text {
+.cases-hero ~ header .header-bar h1,
+.my-cases-hero ~ header .header-bar h1 {
     font-size: 1.5rem;
     font-weight: 700;
     color: #fff;
+    margin: 0;
 }
 
-/* Navigation Menu - Match Main Site */
+/* Navigation - Match Main Site */
 .cases-hero ~ header nav,
 .my-cases-hero ~ header nav {
     background: #111;
@@ -3353,18 +3345,8 @@ body.dark-mode .action-card p {
     flex-wrap: wrap;
 }
 
-.cases-hero ~ header .nav-menu,
-.my-cases-hero ~ header .nav-menu {
-    display: flex;
-    list-style: none;
-    gap: 2rem;
-    align-items: center;
-    margin: 0;
-    padding: 0;
-}
-
-.cases-hero ~ header .nav-menu a,
-.my-cases-hero ~ header .nav-menu a {
+.cases-hero ~ header nav a,
+.my-cases-hero ~ header nav a {
     color: #fff;
     text-decoration: none;
     padding: 8px 16px;
@@ -3374,18 +3356,79 @@ body.dark-mode .action-card p {
     white-space: nowrap;
 }
 
-.cases-hero ~ header .nav-menu a:hover,
-.my-cases-hero ~ header .nav-menu a:hover {
+.cases-hero ~ header nav a:hover,
+.my-cases-hero ~ header nav a:hover {
     background-color: #dc2626;
     color: #fff;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.cases-hero ~ header .nav-menu a.active,
-.my-cases-hero ~ header .nav-menu a.active {
+.cases-hero ~ header nav a[aria-current="page"],
+.my-cases-hero ~ header nav a[aria-current="page"] {
     background-color: #dc2626;
     color: #fff;
+}
+
+/* Theme Toggle and Hamburger - Match Main Site */
+.cases-hero ~ header .theme-toggle,
+.my-cases-hero ~ header .theme-toggle {
+    position: absolute;
+    right: 80px;
+    top: 20px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    z-index: 1001;
+    color: #fff;
+}
+
+.cases-hero ~ header .theme-toggle:hover,
+.my-cases-hero ~ header .theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}
+
+.cases-hero ~ header .hamburger,
+.my-cases-hero ~ header .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    z-index: 1001;
+}
+
+.cases-hero ~ header .hamburger span,
+.my-cases-hero ~ header .hamburger span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: #fff;
+    margin: 5px 0;
+    transition: 0.3s;
+}
+
+.cases-hero ~ header .hamburger.active span:nth-child(1),
+.my-cases-hero ~ header .hamburger.active span:nth-child(1) {
+    transform: rotate(-45deg) translate(-5px, 6px);
+}
+
+.cases-hero ~ header .hamburger.active span:nth-child(2),
+.my-cases-hero ~ header .hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.cases-hero ~ header .hamburger.active span:nth-child(3),
+.my-cases-hero ~ header .hamburger.active span:nth-child(3) {
+    transform: rotate(45deg) translate(-5px, -6px);
 }
 
 /* Cases Page Main Content - Match Main Site */
@@ -3861,16 +3904,53 @@ footer .footer-bottom p {
 
 /* Enhanced Responsive Design for Cases Pages */
 @media (max-width: 768px) {
-    /* Header responsive */
-    .cases-hero ~ header .nav-menu,
-    .my-cases-hero ~ header .nav-menu {
-        gap: 1rem;
+    /* Header responsive - Match Main Site */
+    .cases-hero ~ header .hamburger,
+    .my-cases-hero ~ header .hamburger {
+        display: block;
     }
     
-    .cases-hero ~ header .nav-menu a,
-    .my-cases-hero ~ header .nav-menu a {
-        font-size: 0.9rem;
-        padding: 6px 12px;
+    .cases-hero ~ header .theme-toggle,
+    .my-cases-hero ~ header .theme-toggle {
+        right: 70px;
+        top: 15px;
+    }
+    
+    .cases-hero ~ header nav,
+    .my-cases-hero ~ header nav {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.95);
+        flex-direction: column;
+        justify-content: center;
+        transition: left 0.3s ease;
+        z-index: 1000;
+    }
+    
+    .cases-hero ~ header nav.active,
+    .my-cases-hero ~ header nav.active {
+        left: 0;
+    }
+    
+    .cases-hero ~ header nav a,
+    .my-cases-hero ~ header nav a {
+        font-size: 1.2rem;
+        padding: 15px 20px;
+        margin: 5px 0;
+    }
+    
+    .cases-hero ~ header .header-bar,
+    .my-cases-hero ~ header .header-bar {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .cases-hero ~ header .header-bar h1,
+    .my-cases-hero ~ header .header-bar h1 {
+        font-size: 1.5rem;
     }
     
     /* Hero responsive */
