@@ -1314,6 +1314,19 @@ body.dark-mode .demo-btn:hover {
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  color: #374151 !important;
+}
+
+.case-card * {
+  color: inherit;
+}
+
+.case-card h1, .case-card h2, .case-card h3, .case-card h4, .case-card h5, .case-card h6 {
+  color: #1f2937 !important;
+}
+
+.case-card p {
+  color: #374151 !important;
 }
 
 .case-card::before {
@@ -1342,11 +1355,18 @@ body.dark-mode .demo-btn:hover {
 
 .case-header h3 {
   margin: 0;
-  color: #1f2937;
+  color: #1f2937 !important;
   font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.3;
   flex: 1;
+}
+
+.case-header p {
+  color: #374151 !important;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
 }
 
 .case-details {
@@ -1363,16 +1383,22 @@ body.dark-mode .demo-btn:hover {
   background: #f9fafb;
   border-radius: 8px;
   border-left: 3px solid #dc2626;
+  color: #374151 !important;
 }
 
 .case-details strong {
-  color: #374151;
+  color: #374151 !important;
   font-weight: 600;
   display: block;
   margin-bottom: 0.25rem;
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.case-details span {
+  color: #374151 !important;
+  font-weight: 500;
 }
 
 .case-tags {
@@ -3608,6 +3634,43 @@ body:has(.my-cases-hero) {
 .my-cases-hero ~ .cases-section {
     padding: 2rem 0;
     background: #fff;
+}
+
+/* Ensure case cards are visible on cases pages */
+.cases-hero ~ .case-card,
+.my-cases-hero ~ .case-card {
+    background: white !important;
+    color: #374151 !important;
+}
+
+.cases-hero ~ .case-card *,
+.my-cases-hero ~ .case-card * {
+    color: inherit !important;
+}
+
+.cases-hero ~ .case-card h1, .cases-hero ~ .case-card h2, .cases-hero ~ .case-card h3, .cases-hero ~ .case-card h4, .cases-hero ~ .case-card h5, .cases-hero ~ .case-card h6,
+.my-cases-hero ~ .case-card h1, .my-cases-hero ~ .case-card h2, .my-cases-hero ~ .case-card h3, .my-cases-hero ~ .case-card h4, .my-cases-hero ~ .case-card h5, .my-cases-hero ~ .case-card h6 {
+    color: #1f2937 !important;
+}
+
+.cases-hero ~ .case-card p,
+.my-cases-hero ~ .case-card p {
+    color: #374151 !important;
+}
+
+.cases-hero ~ .case-details div,
+.my-cases-hero ~ .case-details div {
+    color: #374151 !important;
+}
+
+.cases-hero ~ .case-details strong,
+.my-cases-hero ~ .case-details strong {
+    color: #374151 !important;
+}
+
+.cases-hero ~ .case-details span,
+.my-cases-hero ~ .case-details span {
+    color: #374151 !important;
 }
 
 .cases-hero ~ .cases-section .container,
