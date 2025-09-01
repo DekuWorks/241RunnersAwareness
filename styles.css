@@ -3679,6 +3679,168 @@ body:has(.my-cases-hero) {
     color: #374151 !important;
 }
 
+/* Specific case card element styling */
+.case-name {
+    color: #1f2937 !important;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.case-id {
+    color: #6b7280 !important;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.case-status {
+    color: #374151 !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    background: #f3f4f6;
+}
+
+.urgent-badge {
+    color: white !important;
+    background: #dc2626;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+.detail-item {
+    color: #374151 !important;
+    margin-bottom: 0.5rem;
+}
+
+.detail-label {
+    color: #6b7280 !important;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-right: 0.5rem;
+}
+
+.detail-value {
+    color: #374151 !important;
+    font-weight: 500;
+}
+
+.case-description {
+    color: #374151 !important;
+    margin: 1rem 0;
+}
+
+.case-description p {
+    color: #374151 !important;
+    line-height: 1.6;
+}
+
+.case-physical {
+    color: #374151 !important;
+    margin: 1rem 0;
+}
+
+.physical-item {
+    color: #374151 !important;
+    margin-bottom: 0.5rem;
+}
+
+.physical-label {
+    color: #6b7280 !important;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-right: 0.5rem;
+}
+
+.physical-value {
+    color: #374151 !important;
+    font-weight: 500;
+}
+
+.case-marks,
+.case-medical {
+    color: #374151 !important;
+    margin: 1rem 0;
+}
+
+.case-marks strong,
+.case-medical strong {
+    color: #1f2937 !important;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.case-marks p,
+.case-medical p {
+    color: #374151 !important;
+    line-height: 1.6;
+}
+
+/* Case action buttons styling */
+.case-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.case-actions .btn-primary {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: white !important;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+}
+
+.case-actions .btn-primary:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+    text-decoration: none;
+    color: white !important;
+}
+
+.case-actions .btn-secondary {
+    background: transparent;
+    color: #dc2626 !important;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: 2px solid #dc2626;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+}
+
+.case-actions .btn-secondary:hover {
+    background: #dc2626;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+    text-decoration: none;
+}
+
 .cases-hero ~ .cases-section .container,
 .my-cases-hero ~ .cases-section .container {
     max-width: 1200px;
@@ -3998,6 +4160,17 @@ footer .footer-bottom p {
 
 /* Enhanced Responsive Design for Cases Pages */
 @media (max-width: 768px) {
+    /* Case action buttons responsive */
+    .case-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .case-actions .btn-primary,
+    .case-actions .btn-secondary {
+        width: 100%;
+        text-align: center;
+    }
     /* Header responsive - Match Main Site */
     .cases-hero ~ header .hamburger,
     .my-cases-hero ~ header .hamburger {
