@@ -609,8 +609,18 @@
       return;
     }
 
-    // Load runner data
+      // Wait for config to load, then load runner data
+  if (window.APP_CONFIG) {
     loadRunnerData();
+  } else {
+    // Wait for config to load
+    const checkConfig = setInterval(() => {
+      if (window.APP_CONFIG) {
+        clearInterval(checkConfig);
+        loadRunnerData();
+      }
+    }, 100);
+  }
   });
 
   // Get runner ID from URL
@@ -627,11 +637,20 @@
       // Try to load from API first
       let runnerData;
       try {
-        const response = await apiHelpers.getWithRetry(`/runners/${runnerId}`);
-        runnerData = response;
+        const response = await fetch(`${window.APP_CONFIG.API_BASE_URL}/runners/${runnerId}`);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        runnerData = await response.json();
         console.log('Loaded runner data from API:', runnerData);
       } catch (apiError) {
-        console.log('API not available, using mock data');
+        console.log('API not available, using mock data:', apiError);
+        // Show error but continue with mock data
+        if (apiError.message.includes('404')) {
+          console.log('Runner not found, using mock data');
+        } else {
+          console.log('API error, using mock data:', apiError.message);
+        }
         // Fallback to mock data
         runnerData = {
           id: runnerId,
