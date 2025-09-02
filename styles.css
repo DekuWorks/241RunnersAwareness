@@ -1652,6 +1652,41 @@ body.dark-mode .admin-btn:hover {
   text-decoration: underline;
 }
 
+/* Error text styling */
+.error-text {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 8px;
+  display: block;
+}
+
+/* Spinner styling for loading states */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Admin link styling */
+.admin-link {
+  color: #6b7280;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.admin-link:hover {
+  color: #374151;
+  opacity: 1;
+}
+
 /* 
  * ============================================
  * ADMIN LOGIN PAGE STYLES
