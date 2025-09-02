@@ -582,11 +582,26 @@
                     console.log('Registration result:', result);
                     
                     if (result.success) {
-                        showSuccess('Account created successfully! Redirecting to login...');
+                        showSuccess('Account created successfully! Logging you in...');
                         
-                        // Redirect to login page
+                        // Store user data and token
+                        const userData = {
+                            token: result.token,
+                            user: {
+                                email: formData.email,
+                                firstName: formData.firstName,
+                                lastName: formData.lastName,
+                                role: formData.role,
+                                phone: formData.phoneNumber,
+                                createdAt: new Date().toISOString()
+                            }
+                        };
+                        
+                        localStorage.setItem('user', JSON.stringify(userData));
+                        
+                        // Redirect to profile page
                         setTimeout(() => {
-                            window.location.href = 'login.html';
+                            window.location.href = 'profile.html';
                         }, 1500);
                         
                     } else {

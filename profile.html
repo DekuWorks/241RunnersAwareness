@@ -3,121 +3,370 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Profile - 241Runners Awareness</title>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="auth-utils.js"></script>
-  <link rel="stylesheet" href="styles.css?v=20250128f" />
-  <link rel="stylesheet" href="forms.css?v=20250128f" />
+  <title>My Profile - 241 Runners Awareness</title>
+  <link rel="stylesheet" href="https://241runnersawareness.org/styles.css">
+  <link rel="stylesheet" href="https://241runnersawareness.org/forms.css">
+  <script src="https://241runnersawareness.org/js/auth.js" defer></script>
+  <style>
+    .profile-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .profile-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding: 2rem;
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      color: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(220, 38, 38, 0.3);
+    }
+
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: white;
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: #dc2626;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .profile-name {
+      font-size: 2rem;
+      margin: 0 0 0.5rem 0;
+      font-weight: 600;
+    }
+
+    .profile-email {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin: 0;
+    }
+
+    .profile-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .stat-item {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1rem;
+      border-radius: 12px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-number {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .profile-sections {
+      display: grid;
+      gap: 2rem;
+    }
+
+    .profile-section {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #f3f4f6;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      color: #1f2937;
+      margin: 0;
+    }
+
+    .edit-btn {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.2s;
+    }
+
+    .edit-btn:hover {
+      background: #b91c1c;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-value {
+      color: #1f2937;
+      font-size: 1rem;
+      padding: 0.75rem;
+      background: #f9fafb;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .action-card {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s;
+      text-align: center;
+    }
+
+    .action-card:hover {
+      border-color: #dc2626;
+      background: #fef2f2;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(220, 38, 38, 0.15);
+    }
+
+    .action-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .action-title {
+      color: #dc2626;
+      margin: 0 0 0.5rem 0;
+      font-weight: 600;
+    }
+
+    .action-desc {
+      color: #6b7280;
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    .loading-state {
+      text-align: center;
+      padding: 3rem;
+      color: #6b7280;
+    }
+
+    .loading-spinner {
+      border: 4px solid #f3f4f6;
+      border-top: 4px solid #dc2626;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .profile-container {
+        padding: 1rem;
+      }
+      
+      .profile-header {
+        padding: 1.5rem;
+      }
+      
+      .profile-avatar {
+        width: 100px;
+        height: 100px;
+        font-size: 2.5rem;
+      }
+      
+      .profile-name {
+        font-size: 1.5rem;
+      }
+      
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .quick-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
   <!-- Header -->
-  <header role="banner">
-    <nav class="navbar">
-      <div class="nav-container">
-        <div class="nav-brand">
-          <a href="index.html">
-            <img src="241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
-          </a>
-        </div>
-        <div class="nav-menu" id="navMenu">
-          <a href="index.html" class="nav-link">Home</a>
-          <a href="map.html">��️ Map</a>
-          <a href="dna-tracking.html">🧬 DNA Tracking</a>
-          <a href="aboutus.html">ℹ️ About</a>
-          <a href="profile.html" class="nav-link" id="profileLink" style="display: none;">Profile</a>
-          <a href="admin/index.html" class="nav-link" id="dashboardLink" style="display: none;">Dashboard</a>
-          <a href="user-management.html" class="nav-link" id="userManagementLink" style="display: none;">User Management</a>
-          <a href="login.html" class="nav-link" id="loginLink">Login</a>
-          <a href="signup.html" class="nav-link" id="signupLink">Sign Up</a>
-          <button class="nav-link logout-btn" id="logoutBtn" style="display: none;" onclick="handleLogout()">Logout</button>
-        </div>
-        <div class="nav-toggle" id="navToggle">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </div>
+  <header>
+    <div class="header-bar">
+      <img src="https://241runnersawareness.org/241-logo.jpg" alt="241 Runners Awareness Logo" class="logo" />
+      <h1>241 Runners Awareness</h1>
+    </div>
+    
+    <nav>
+      <a href="https://241runnersawareness.org">Home</a>
+      <a href="https://241runnersawareness.org/aboutus.html">About Us</a>
+      <a href="https://241runnersawareness.org/cases.html">Cases</a>
+      <a href="https://241runnersawareness.org/map.html">Map</a>
+      <a href="https://241runnersawareness.org/dna-tracking.html">DNA Tracking</a>
+      <a href="https://241runnersawareness.org/report-case.html">Report Case</a>
+      <a href="https://241runnersawareness.org/profile.html" aria-current="page">Profile</a>
+      <a href="https://241runnersawareness.org/dashboard.html">Dashboard</a>
+      <button id="logoutBtn" class="logout-btn">Logout</button>
     </nav>
+    
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
+      ☀️
+    </button>
+    
+    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </header>
 
-  <main role="main">
-    <div class="container">
-      <div class="profile-container">
-        <div class="profile-card">
-          <div class="profile-header">
-            <h1>👤 User Profile</h1>
-            <p>Manage your account information and settings</p>
-          </div>
+  <!-- Main Content -->
+  <main>
+    <div class="profile-container">
+      <!-- Loading State -->
+      <div id="loadingState" class="loading-state">
+        <div class="loading-spinner"></div>
+        <p>Loading your profile...</p>
+      </div>
 
-          <!-- Profile Information -->
-          <div class="profile-section">
-            <h2>Account Information</h2>
-            <div class="profile-info">
-              <div class="info-item">
-                <label>Email:</label>
-                <span id="userEmail">Loading...</span>
-                <span class="verified-badge" id="emailVerified" style="display: none;">✓</span>
-              </div>
-              <div class="info-item">
-                <label>Full Name:</label>
-                <span id="userFullName">Loading...</span>
-              </div>
-              <div class="info-item">
-                <label>Role:</label>
-                <span id="userRole">Loading...</span>
-              </div>
-              <div class="info-item">
-                <label>Phone Number:</label>
-                <span id="userPhone">Loading...</span>
-                <span class="verified-badge" id="phoneVerified" style="display: none;">✓</span>
-              </div>
-              <div class="info-item">
-                <label>Member Since:</label>
-                <span id="userCreatedAt">Loading...</span>
-              </div>
+      <!-- Profile Content -->
+      <div id="profileContent" style="display: none;">
+        <!-- Profile Header -->
+        <div class="profile-header">
+          <div class="profile-avatar" id="profileAvatar">
+            👤
+          </div>
+          <h1 class="profile-name" id="profileName">Loading...</h1>
+          <p class="profile-email" id="profileEmail">loading@example.com</p>
+          
+          <!-- Profile Stats -->
+          <div class="profile-stats">
+            <div class="stat-item">
+              <div class="stat-number" id="totalCases">0</div>
+              <div class="stat-label">Cases Reported</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" id="activeCases">0</div>
+              <div class="stat-label">Active Cases</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" id="memberSince">0</div>
+              <div class="stat-label">Days Member</div>
             </div>
           </div>
+        </div>
 
-          <!-- Update Phone Number -->
-          <div class="profile-section">
-            <h2>Update Phone Number</h2>
-            <form id="updatePhoneForm" class="profile-form">
-              <div class="form-group">
-                <label for="newPhone">New Phone Number</label>
-                <input type="tel" id="newPhone" name="newPhone" placeholder="(555) 123-4567" required>
-              </div>
-              <button type="submit" class="btn btn-primary">Update Phone Number</button>
-            </form>
+        <!-- Personal Information -->
+        <div class="profile-section">
+          <div class="section-header">
+            <h2 class="section-title">Personal Information</h2>
+            <button class="edit-btn" onclick="editPersonalInfo()">Edit</button>
           </div>
-
-          <!-- Change Password -->
-          <div class="profile-section">
-            <h2>Change Password</h2>
-            <form id="changePasswordForm" class="profile-form">
-              <div class="form-group">
-                <label for="currentPassword">Current Password</label>
-                <input type="password" id="currentPassword" name="currentPassword" required>
-              </div>
-              <div class="form-group">
-                <label for="newPassword">New Password</label>
-                <input type="password" id="newPassword" name="newPassword" minlength="8" required>
-                <small>Password must be at least 8 characters long</small>
-              </div>
-              <div class="form-group">
-                <label for="confirmNewPassword">Confirm New Password</label>
-                <input type="password" id="confirmNewPassword" name="confirmNewPassword" minlength="8" required>
-              </div>
-              <button type="submit" class="btn btn-primary">Change Password</button>
-            </form>
-          </div>
-
-          <!-- Account Actions -->
-          <div class="profile-section">
-            <h2>Account Actions</h2>
-            <div class="account-actions">
-              <button class="btn btn-secondary" onclick="requestPasswordReset()">Request Password Reset Email</button>
-              <button class="btn btn-danger" onclick="deleteAccount()">Delete Account</button>
+          <div class="info-grid">
+            <div class="info-item">
+              <label class="info-label">Full Name</label>
+              <div class="info-value" id="fullName">Loading...</div>
             </div>
+            <div class="info-item">
+              <label class="info-label">Email</label>
+              <div class="info-value" id="email">Loading...</div>
+            </div>
+            <div class="info-label">Phone</label>
+            <div class="info-value" id="phone">Loading...</div>
+            </div>
+            <div class="info-item">
+              <label class="info-label">Location</label>
+              <div class="info-value" id="location">Loading...</div>
+            </div>
+            <div class="info-item">
+              <label class="info-label">Member Since</label>
+              <div class="info-value" id="memberDate">Loading...</div>
+            </div>
+            <div class="info-item">
+              <label class="info-label">Account Status</label>
+              <div class="info-value" id="accountStatus">Loading...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="profile-section">
+          <div class="section-header">
+            <h2 class="section-title">Quick Actions</h2>
+          </div>
+          <div class="quick-actions">
+            <a href="https://241runnersawareness.org/report-case.html" class="action-card">
+              <span class="action-icon">📝</span>
+              <h3 class="action-title">Report a Case</h3>
+              <p class="action-desc">Report a missing person or update existing case</p>
+            </a>
+            <a href="https://241runnersawareness.org/dashboard.html" class="action-card">
+              <span class="action-icon">📊</span>
+              <h3 class="action-title">View Dashboard</h3>
+              <p class="action-desc">See your cases and activity overview</p>
+            </a>
+            <a href="https://241runnersawareness.org/cases.html" class="action-card">
+              <span class="action-icon">🔍</span>
+              <h3 class="action-title">Browse Cases</h3>
+              <p class="action-desc">View all active missing person cases</p>
+            </a>
+            <a href="https://241runnersawareness.org/map.html" class="action-card">
+              <span class="action-icon">🗺️</span>
+              <h3 class="action-title">View Map</h3>
+              <p class="action-desc">See cases on interactive map</p>
+            </a>
           </div>
         </div>
       </div>
@@ -129,365 +378,163 @@
   </footer>
 
   <script>
-    let currentUser = null;
+    // API Configuration
+    const API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+    
+    // Check authentication on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuth();
+      loadProfileData();
+      setupEventListeners();
+    });
 
-    // Check authentication and load user data
-    function checkAuthAndLoadProfile() {
+    // Check authentication
+    function checkAuth() {
       const user = localStorage.getItem('user');
       if (!user) {
-        window.location.href = 'login.html';
+        window.location.href = 'https://241runnersawareness.org/login.html';
         return;
       }
-
-      try {
-        currentUser = JSON.parse(user);
-        loadUserProfile();
-        updateNavigation();
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-        localStorage.removeItem('user');
-        window.location.href = 'login.html';
-      }
     }
 
-    // Load user profile data
-    function loadUserProfile() {
-      if (!currentUser) return;
-
-      document.getElementById('userEmail').textContent = currentUser.email || 'N/A';
-      document.getElementById('userFullName').textContent = currentUser.fullName || 'N/A';
-      document.getElementById('userRole').textContent = currentUser.role || 'N/A';
-      document.getElementById('userPhone').textContent = currentUser.phoneNumber || 'Not set';
-      document.getElementById('userCreatedAt').textContent = currentUser.createdAt ? 
-        new Date(currentUser.createdAt).toLocaleDateString() : 'N/A';
-
-      // Show verification badges
-      if (currentUser.emailVerified) {
-        document.getElementById('emailVerified').style.display = 'inline';
-      }
-      if (currentUser.phoneVerified) {
-        document.getElementById('phoneVerified').style.display = 'inline';
-      }
-    }
-
-    // Update navigation based on user role
-    function updateNavigation() {
-      const profileLink = document.getElementById('profileLink');
-      const dashboardLink = document.getElementById('dashboardLink');
-      const userManagementLink = document.getElementById('userManagementLink');
-      const loginLink = document.getElementById('loginLink');
-      const signupLink = document.getElementById('signupLink');
+    // Set up event listeners
+    function setupEventListeners() {
+      // Logout button
       const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+      }
 
-      if (currentUser) {
-        profileLink.style.display = 'inline-block';
-        logoutBtn.style.display = 'inline-block';
-        loginLink.style.display = 'none';
-        signupLink.style.display = 'none';
+      // Theme toggle
+      const themeToggle = document.getElementById('theme-toggle');
+      if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+      }
 
-        if (currentUser.role === 'admin') {
-          dashboardLink.style.display = 'inline-block';
-          userManagementLink.style.display = 'inline-block';
+      // Hamburger menu
+      const hamburger = document.querySelector('.hamburger');
+      const nav = document.querySelector('nav');
+      if (hamburger && nav) {
+        hamburger.addEventListener('click', function() {
+          hamburger.classList.toggle('active');
+          nav.classList.toggle('active');
+        });
+      }
+    }
+
+    // Load profile data
+    async function loadProfileData() {
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || !user.token) {
+          throw new Error('No authentication token found');
         }
-      } else {
-        profileLink.style.display = 'none';
-        dashboardLink.style.display = 'none';
-        userManagementLink.style.display = 'none';
-        logoutBtn.style.display = 'none';
-        loginLink.style.display = 'inline-block';
-        signupLink.style.display = 'inline-block';
-      }
-    }
 
-    // Handle phone number update
-    document.getElementById('updatePhoneForm').addEventListener('submit', async function(event) {
-      event.preventDefault();
-      
-      const newPhone = document.getElementById('newPhone').value;
-      
-      try {
-        // For now, update the local user data (in real implementation, this would call the API)
-        currentUser.phoneNumber = newPhone;
-        currentUser.phoneVerified = false; // Reset verification
-        localStorage.setItem('user', JSON.stringify(currentUser));
-        
-        loadUserProfile();
-        showNotification('Phone number updated successfully! Please verify your new phone number.', 'success');
-        document.getElementById('updatePhoneForm').reset();
-      } catch (error) {
-        console.error('Error updating phone number:', error);
-        showNotification('Error updating phone number. Please try again.', 'error');
-      }
-    });
-
-    // Handle password change
-    document.getElementById('changePasswordForm').addEventListener('submit', async function(event) {
-      event.preventDefault();
-      
-      const currentPassword = document.getElementById('currentPassword').value;
-      const newPassword = document.getElementById('newPassword').value;
-      const confirmNewPassword = document.getElementById('confirmNewPassword').value;
-
-      if (newPassword !== confirmNewPassword) {
-        showNotification('New passwords do not match!', 'error');
-        return;
-      }
-
-      if (newPassword.length < 8) {
-        showNotification('New password must be at least 8 characters long!', 'error');
-        return;
-      }
-
-      try {
-        // For now, show success message (in real implementation, this would call the API)
-        showNotification('Password changed successfully!', 'success');
-        document.getElementById('changePasswordForm').reset();
-      } catch (error) {
-        console.error('Error changing password:', error);
-        showNotification('Error changing password. Please try again.', 'error');
-      }
-    });
-
-    // Request password reset
-    function requestPasswordReset() {
-      showNotification('Password reset email sent! Check your inbox.', 'success');
-    }
-
-    // Delete account
-    function deleteAccount() {
-      if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-        localStorage.removeItem('user');
-        showNotification('Account deleted. Redirecting to home page...', 'success');
-        setTimeout(() => {
-          window.location.href = 'index.html';
-        }, 2000);
-      }
-    }
-
-    // Show notification function
-    function showNotification(message, type = 'info') {
-      const notification = document.createElement('div');
-      notification.className = `notification notification-${type}`;
-      notification.textContent = message;
-      
-      // Style the notification
-      notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        color: white;
-        font-weight: 500;
-        z-index: 1000;
-        max-width: 400px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        animation: slideIn 0.3s ease-out;
-      `;
-      
-      // Set background color based on type
-      switch(type) {
-        case 'success':
-          notification.style.backgroundColor = '#10b981';
-          break;
-        case 'error':
-          notification.style.backgroundColor = '#ef4444';
-          break;
-        case 'warning':
-          notification.style.backgroundColor = '#f59e0b';
-          break;
-        default:
-          notification.style.backgroundColor = '#3b82f6';
-      }
-      
-      document.body.appendChild(notification);
-      
-      // Remove notification after 5 seconds
-      setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease-in';
-        setTimeout(() => {
-          if (notification.parentNode) {
-            notification.parentNode.removeChild(notification);
+        // Load user profile from API
+        const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+          headers: {
+            'Authorization': `Bearer ${user.token}`,
+            'Content-Type': 'application/json'
           }
-        }, 300);
-      }, 5000);
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to load profile data');
+        }
+
+        const profileData = await response.json();
+        updateProfileDisplay(profileData);
+
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        // Use local storage data as fallback
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+          updateProfileDisplay({
+            firstName: user.firstName || 'User',
+            lastName: user.lastName || '',
+            email: user.email || 'user@example.com',
+            phone: user.phone || 'Not provided',
+            location: user.location || 'Not provided',
+            memberSince: user.createdAt || new Date().toISOString(),
+            casesReported: 0,
+            activeCases: 0
+          });
+        }
+      } finally {
+        // Hide loading, show content
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('profileContent').style.display = 'block';
+      }
     }
 
-    // Add CSS animations
-    const style = document.createElement('style');
-    style.textContent = `
-      .profile-container {
-        max-width: 800px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-      }
-
-      .profile-card {
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-      }
-
-      body.dark-mode .profile-card {
-        background: #374151;
-        color: #f9fafb;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      }
-
-      .profile-header {
-        background: linear-gradient(135deg, #ff0000, #ff6b6b);
-        color: white;
-        padding: 2rem;
-        text-align: center;
-      }
-
-      .profile-header h1 {
-        margin: 0 0 0.5rem 0;
-        font-size: 2rem;
-      }
-
-      .profile-header p {
-        margin: 0;
-        opacity: 0.9;
-      }
-
-      .profile-section {
-        padding: 2rem;
-        border-bottom: 1px solid #e5e7eb;
-      }
-
-      body.dark-mode .profile-section {
-        border-bottom-color: #6b7280;
-      }
-
-      .profile-section:last-child {
-        border-bottom: none;
-      }
-
-      .profile-section h2 {
-        color: #ff0000;
-        margin: 0 0 1rem 0;
-        font-size: 1.5rem;
-      }
-
-      body.dark-mode .profile-section h2 {
-        color: #ff6b6b;
-      }
-
-      .profile-info {
-        display: grid;
-        gap: 1rem;
-      }
-
-      .info-item {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 1rem;
-        background: #f9fafb;
-        border-radius: 8px;
-      }
-
-      body.dark-mode .info-item {
-        background: #4b5563;
-      }
-
-      .info-item label {
-        font-weight: 600;
-        min-width: 120px;
-        color: #374151;
-      }
-
-      body.dark-mode .info-item label {
-        color: #d1d5db;
-      }
-
-      .info-item span {
-        color: #6b7280;
-      }
-
-      body.dark-mode .info-item span {
-        color: #9ca3af;
-      }
-
-      .verified-badge {
-        color: #10b981 !important;
-        font-weight: bold;
-      }
-
-      .profile-form {
-        display: grid;
-        gap: 1rem;
-        max-width: 400px;
-      }
-
-      .account-actions {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-      }
-
-      @keyframes slideIn {
-        from {
-          transform: translateX(100%);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
-      }
+    // Update profile display
+    function updateProfileDisplay(data) {
+      // Update header
+      const fullName = `${data.firstName || ''} ${data.lastName || ''}`.trim() || 'User';
+      const initials = fullName.split(' ').map(n => n[0]).join('').toUpperCase();
       
-      @keyframes slideOut {
-        from {
-          transform: translateX(0);
-          opacity: 1;
-        }
-        to {
-          transform: translateX(100%);
-          opacity: 0;
-        }
+      document.getElementById('profileAvatar').textContent = initials || '👤';
+      document.getElementById('profileName').textContent = fullName;
+      document.getElementById('profileEmail').textContent = data.email || 'No email';
+
+      // Update stats
+      document.getElementById('totalCases').textContent = data.casesReported || 0;
+      document.getElementById('activeCases').textContent = data.activeCases || 0;
+      
+      const memberDate = new Date(data.memberSince);
+      const daysSince = Math.floor((new Date() - memberDate) / (1000 * 60 * 60 * 24));
+      document.getElementById('memberSince').textContent = daysSince;
+
+      // Update personal info
+      document.getElementById('fullName').textContent = fullName;
+      document.getElementById('email').textContent = data.email || 'Not provided';
+      document.getElementById('phone').textContent = data.phone || 'Not provided';
+      document.getElementById('location').textContent = data.location || 'Not provided';
+      document.getElementById('memberDate').textContent = memberDate.toLocaleDateString();
+      document.getElementById('accountStatus').textContent = 'Active';
+    }
+
+    // Edit personal information
+    function editPersonalInfo() {
+      // For now, redirect to a settings page or show edit modal
+      alert('Edit functionality coming soon! This will allow you to update your profile information.');
+    }
+
+    // Logout function
+    function logout() {
+      localStorage.removeItem('user');
+      window.location.href = 'https://241runnersawareness.org/login.html';
+    }
+
+    // Theme toggle
+    function toggleTheme() {
+      const body = document.body;
+      const themeToggle = document.getElementById('theme-toggle');
+      
+      body.classList.toggle('dark-mode');
+      
+      if (body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+        themeToggle.textContent = '🌙';
+        themeToggle.setAttribute('aria-pressed', 'true');
+      } else {
+        localStorage.setItem('theme', 'light');
+        themeToggle.textContent = '☀️';
+        themeToggle.setAttribute('aria-pressed', 'false');
       }
+    }
 
-      @media (max-width: 768px) {
-        .profile-container {
-          margin: 1rem auto;
-        }
-
-        .profile-header {
-          padding: 1.5rem;
-        }
-
-        .profile-section {
-          padding: 1.5rem;
-        }
-
-        .info-item {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 0.5rem;
-        }
-
-        .info-item label {
-          min-width: auto;
-        }
-
-        .account-actions {
-          flex-direction: column;
-        }
+    // Check for saved theme preference
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+      document.body.classList.add('dark-mode');
+      const themeToggle = document.getElementById('theme-toggle');
+      if (themeToggle) {
+        themeToggle.textContent = '🌙';
+        themeToggle.setAttribute('aria-pressed', 'true');
       }
-    `;
-    document.head.appendChild(style);
-
-    // Hamburger menu functionality
-    document.getElementById('navToggle').addEventListener('click', function() {
-      document.getElementById('navMenu').classList.toggle('active');
-      this.classList.toggle('active');
-    });
-
-    // Initialize page
-    checkAuthAndLoadProfile();
+    }
   </script>
 </body>
 </html>
