@@ -762,239 +762,12 @@ namespace _241RunnersAwarenessAPI.Controllers
             }
         }
 
-        /*
-        [HttpPost("reset-password")]
-        public async Task<ActionResult<AuthResponse>> ResetPassword([FromBody] ResetPasswordRequest request)
+        [HttpPut("users/{id}")]
+        public async Task<ActionResult<AuthResponse>> UpdateUser(int id, [FromBody] UserUpdateRequest request)
         {
             try
             {
-                // Validate input
-                if (!ModelState.IsValid)
-                {
-                    var errors = ModelState.Values
-                        .SelectMany(v => v.Errors)
-                        .Select(e => e.ErrorMessage)
-                        .ToList();
-                    
-                    return BadRequest(new AuthResponse
-                    {
-                        Success = false,
-                        Message = $"Validation failed: {string.Join(", ", errors)}"
-                    });
-                }
-
-                // Find user by email
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == request.Email.ToLower());
-                if (user == null)
-                {
-                    return BadRequest(new AuthResponse
-                    {
-                        Success = false,
-                        Message = "User not found."
-                    });
-                }
-
-                // Check if user is active
-                if (!user.IsActive)
-                {
-                    return BadRequest(new AuthResponse
-                    {
-                        Success = false,
-                        Message = "Account is deactivated. Please contact support."
-                    });
-                }
-
-                // Validate new password
-                if (string.IsNullOrWhiteSpace(request.NewPassword))
-                {
-                    return BadRequest(new AuthResponse
-                    {
-                        Success = false,
-                        Message = "New password is required."
-                    });
-                }
-
-                if (request.NewPassword.Length < 8)
-                {
-                    return BadRequest(new AuthResponse
-                    {
-                        Success = false,
-                        Message = "Password must be at least 8 characters long."
-                    });
-                }
-
-                // Check if password contains at least one uppercase, one lowercase, one number, and one special character
-                if (!System.Text.RegularExpressions.Regex.IsMatch(request.NewPassword, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"))
-                {
-                    return BadRequest(new AuthResponse
-                    {
-                        Success = false,
-                        Message = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character."
-                    });
-                }
-
-                // Hash new password
-                var newPasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
-
-                // Update user password
-                user.PasswordHash = newPasswordHash;
-                user.UpdatedAt = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
-
-                _logger.LogInformation($"Password reset successful for user: {user.Email}");
-
-                return Ok(new AuthResponse
-                {
-                    Success = true,
-                    Message = "Password reset successfully."
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error during password reset");
-                return StatusCode(500, new AuthResponse
-                {
-                    Success = false,
-                    Message = "An error occurred during password reset. Please try again."
-                });
-            }
-        }
-        */
-
-        [HttpPut("profile")]
-        public async Task<ActionResult<ProfileUpdateResponse>> UpdateProfile([FromBody] ProfileUpdateRequest request)
-        {
-            try
-            {
-                // Validate input
-                if (!ModelState.IsValid)
-                {
-                    var errors = ModelState.Values
-                        .SelectMany(v => v.Errors)
-                        .Select(e => e.ErrorMessage)
-                        .ToList();
-                    
-                    return BadRequest(new ProfileUpdateResponse
-                    {
-                        Success = false,
-                        Message = $"Validation failed: {string.Join(", ", errors)}"
-                    });
-                }
-
-                // Get current user from JWT token
-                var authHeader = Request.Headers["Authorization"].FirstOrDefault();
-                if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
-                {
-                    return Unauthorized(new ProfileUpdateResponse
-                    {
-                        Success = false,
-                        Message = "Authentication required."
-                    });
-                }
-
-                var token = authHeader.Substring("Bearer ".Length);
-                var currentUser = _jwtService.ValidateToken(token);
-                if (currentUser == null)
-                {
-                    return Unauthorized(new ProfileUpdateResponse
-                    {
-                        Success = false,
-                        Message = "Invalid or expired token."
-                    });
-                }
-
-                // Get user ID from claims
-                var userIdClaim = currentUser.FindFirst(ClaimTypes.NameIdentifier);
-                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
-                {
-                    return Unauthorized(new ProfileUpdateResponse
-                    {
-                        Success = false,
-                        Message = "Invalid user token."
-                    });
-                }
-
-                // Get user from database
-                var user = await _context.Users.FindAsync(userId);
-                if (user == null)
-                {
-                    return NotFound(new ProfileUpdateResponse
-                    {
-                        Success = false,
-                        Message = "User not found."
-                    });
-                }
-
-                // Update user profile
-                user.FirstName = request.FirstName;
-                user.LastName = request.LastName;
-                user.PhoneNumber = request.PhoneNumber;
-                user.Address = request.Address;
-                user.City = request.City;
-                user.State = request.State;
-                user.ZipCode = request.ZipCode;
-                // Organization and Title will be null for now until we fix the database schema
-                // user.UpdatedAt = DateTime.UtcNow; // This column doesn't exist yet
-
-                await _context.SaveChangesAsync();
-
-                _logger.LogInformation($"Profile updated for user: {user.Email}");
-
-                return Ok(new ProfileUpdateResponse
-                {
-                    Success = true,
-                    Message = "Profile updated successfully.",
-                    User = new UserInfo
-                    {
-                        Id = user.Id,
-                        Email = user.Email,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        FullName = user.FullName,
-                        Role = user.Role,
-                        CreatedAt = user.CreatedAt,
-                        PhoneNumber = user.PhoneNumber,
-                        Address = user.Address,
-                        City = user.City,
-                        State = user.State,
-                        ZipCode = user.ZipCode,
-                        Organization = user.Organization,
-                        Title = user.Title
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error during profile update");
-                return StatusCode(500, new ProfileUpdateResponse
-                {
-                    Success = false,
-                    Message = "An error occurred during profile update. Please try again."
-                });
-            }
-        }
-
-        [HttpPut("password")]
-        public async Task<ActionResult<AuthResponse>> ChangePassword([FromBody] PasswordChangeRequest request)
-        {
-            try
-            {
-                // Validate input
-                if (!ModelState.IsValid)
-                {
-                    var errors = ModelState.Values
-                        .SelectMany(v => v.Errors)
-                        .Select(e => e.ErrorMessage)
-                        .ToList();
-                    
-                    return BadRequest(new AuthResponse
-                    {
-                        Success = false,
-                        Message = $"Validation failed: {string.Join(", ", errors)}"
-                    });
-                }
-
-                // Get current user from JWT token
+                // Check if user is authenticated and is admin
                 var authHeader = Request.Headers["Authorization"].FirstOrDefault();
                 if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
                 {
@@ -1005,30 +778,19 @@ namespace _241RunnersAwarenessAPI.Controllers
                     });
                 }
 
-                var token = authHeader.Substring("Bearer ".Length);
-                var currentUser = _jwtService.ValidateToken(token);
-                if (currentUser == null)
+                var authToken = authHeader.Substring("Bearer ".Length);
+                var currentUser = _jwtService.ValidateToken(authToken);
+                if (currentUser == null || currentUser.FindFirst(ClaimTypes.Role)?.Value.ToLower() != "admin")
                 {
-                    return Unauthorized(new AuthResponse
+                    return StatusCode(403, new AuthResponse
                     {
                         Success = false,
-                        Message = "Invalid or expired token."
+                        Message = "Admin access required."
                     });
                 }
 
-                // Get user ID from claims
-                var userIdClaim = currentUser.FindFirst(ClaimTypes.NameIdentifier);
-                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
-                {
-                    return Unauthorized(new AuthResponse
-                    {
-                        Success = false,
-                        Message = "Invalid user token."
-                    });
-                }
-
-                // Get user from database
-                var user = await _context.Users.FindAsync(userId);
+                // Find the user to update
+                var user = await _context.Users.FindAsync(id);
                 if (user == null)
                 {
                     return NotFound(new AuthResponse
@@ -1038,49 +800,116 @@ namespace _241RunnersAwarenessAPI.Controllers
                     });
                 }
 
-                // Verify current password
-                if (!BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.PasswordHash))
+                // Check if email is being changed and if it's already taken
+                if (request.Email.ToLower() != user.Email.ToLower())
                 {
-                    return BadRequest(new AuthResponse
+                    var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == request.Email.ToLower());
+                    if (existingUser != null)
                     {
-                        Success = false,
-                        Message = "Current password is incorrect."
-                    });
+                        return BadRequest(new AuthResponse
+                        {
+                            Success = false,
+                            Message = "A user with this email already exists."
+                        });
+                    }
                 }
 
-                // Validate new password strength
-                if (!IsPasswordStrong(request.NewPassword))
-                {
-                    return BadRequest(new AuthResponse
-                    {
-                        Success = false,
-                        Message = "New password must contain at least one uppercase letter, one lowercase letter, one number, and one special character."
-                    });
-                }
-
-                // Hash new password
-                var newPasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
-
-                // Update user password
-                user.PasswordHash = newPasswordHash;
+                // Update user information
+                user.FirstName = request.FirstName;
+                user.LastName = request.LastName;
+                user.Email = request.Email;
+                user.PhoneNumber = request.PhoneNumber;
+                user.Role = request.Role;
                 user.UpdatedAt = DateTime.UtcNow;
+
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation($"Password changed for user: {user.Email}");
+                _logger.LogInformation($"User updated by admin: {user.Email}");
 
                 return Ok(new AuthResponse
                 {
                     Success = true,
-                    Message = "Password changed successfully."
+                    Message = "User updated successfully."
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during password change");
+                _logger.LogError(ex, "Error updating user");
                 return StatusCode(500, new AuthResponse
                 {
                     Success = false,
-                    Message = "An error occurred during password change. Please try again."
+                    Message = "An error occurred while updating the user. Please try again."
+                });
+            }
+        }
+
+        [HttpDelete("users/{id}")]
+        public async Task<ActionResult<AuthResponse>> DeleteUser(int id)
+        {
+            try
+            {
+                // Check if user is authenticated and is admin
+                var authHeader = Request.Headers["Authorization"].FirstOrDefault();
+                if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+                {
+                    return Unauthorized(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Authentication required."
+                    });
+                }
+
+                var authToken = authHeader.Substring("Bearer ".Length);
+                var currentUser = _jwtService.ValidateToken(authToken);
+                if (currentUser == null || currentUser.FindFirst(ClaimTypes.Role)?.Value.ToLower() != "admin")
+                {
+                    return StatusCode(403, new AuthResponse
+                    {
+                        Success = false,
+                        Message = "Admin access required."
+                    });
+                }
+
+                // Find the user to delete
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
+                {
+                    return NotFound(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "User not found."
+                    });
+                }
+
+                // Prevent admin from deleting themselves
+                if (currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value == id.ToString())
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = "You cannot delete your own account."
+                    });
+                }
+
+                // Remove user
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"User deleted by admin: {user.Email}");
+
+                return Ok(new AuthResponse
+                {
+                    Success = true,
+                    Message = "User deleted successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting user");
+                return StatusCode(500, new AuthResponse
+                {
+                    Success = false,
+                    Message = "An error occurred while deleting the user. Please try again."
                 });
             }
         }

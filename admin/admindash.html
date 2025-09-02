@@ -431,6 +431,359 @@
                 text-align: center;
             }
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            align-items: center;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .refresh-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: #b91c1c;
+        }
+
+        /* Table Styles */
+        .users-table-container,
+        .runners-table-container {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+
+        .users-table,
+        .runners-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .users-table th,
+        .runners-table th {
+            background: #f9fafb;
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .users-table td,
+        .runners-table td {
+            padding: 12px;
+            border-bottom: 1px solid #f3f4f6;
+            vertical-align: middle;
+        }
+
+        .users-table tr:hover,
+        .runners-table tr:hover {
+            background-color: #f9fafb;
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #2563eb;
+        }
+
+        .btn-delete {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #b91c1c;
+        }
+
+        .btn-view {
+            background: #059669;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #047857;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .btn-primary {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #b91c1c;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        /* Status Indicators */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background-color: #059669;
+            color: white;
+        }
+
+        .status-inactive {
+            background-color: #6b7280;
+            color: white;
+        }
+
+        .status-missing {
+            background-color: #dc2626;
+            color: white;
+        }
+
+        .status-found {
+            background-color: #059669;
+            color: white;
+        }
+
+        .status-safe {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        /* Loading States */
+        .loading-text {
+            text-align: center;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #6b7280;
+            font-style: italic;
+            padding: 40px;
+        }
+
+        /* Responsive Modal */
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .search-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
     </style>
 </head>
 <body>
@@ -525,6 +878,230 @@
                 <h3>👤 Profile Settings</h3>
                 <p>Update your personal information, contact details, and account preferences.</p>
                 <button class="action-button">Profile Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Management Modal -->
+    <div id="userManagementModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>👥 User Management</h2>
+                <span class="close" onclick="closeUserManagementModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="search-bar">
+                    <input type="text" id="userSearchInput" placeholder="Search users by name, email, or role..." onkeyup="filterUsers()">
+                    <button onclick="refreshUsers()" class="refresh-btn">🔄 Refresh</button>
+                </div>
+                
+                <div class="users-table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Users will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Runner Management Modal -->
+    <div id="runnerManagementModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🏃 Runner Management</h2>
+                <span class="close" onclick="closeRunnerManagementModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="search-bar">
+                    <input type="text" id="runnerSearchInput" placeholder="Search runners by name, ID, or location..." onkeyup="filterRunners()">
+                    <button onclick="refreshRunners()" class="refresh-btn">🔄 Refresh</button>
+                </div>
+                
+                <div class="runners-table-container">
+                    <table class="runners-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Runner ID</th>
+                                <th>Status</th>
+                                <th>Location</th>
+                                <th>Date Reported</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="runnersTableBody">
+                            <!-- Runners will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Admin Modal -->
+    <div id="addAdminModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>➕ Add New Admin</h2>
+                <span class="close" onclick="closeAddAdminModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addAdminForm">
+                    <div class="form-group">
+                        <label for="newAdminFirstName">First Name *</label>
+                        <input type="text" id="newAdminFirstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newAdminLastName">Last Name *</label>
+                        <input type="text" id="newAdminLastName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newAdminEmail">Email *</label>
+                        <input type="email" id="newAdminEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newAdminPhone">Phone Number</label>
+                        <input type="tel" id="newAdminPhone">
+                    </div>
+                    <div class="form-group">
+                        <label for="newAdminPassword">Password *</label>
+                        <input type="password" id="newAdminPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newAdminConfirmPassword">Confirm Password *</label>
+                        <input type="password" id="newAdminConfirmPassword" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Create Admin</button>
+                        <button type="button" class="btn-secondary" onclick="closeAddAdminModal()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="editUserModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ Edit User</h2>
+                <span class="close" onclick="closeEditUserModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="editUserForm">
+                    <input type="hidden" id="editUserId">
+                    <div class="form-group">
+                        <label for="editUserFirstName">First Name *</label>
+                        <input type="text" id="editUserFirstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editUserLastName">Last Name *</label>
+                        <input type="text" id="editUserLastName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editUserEmail">Email *</label>
+                        <input type="email" id="editUserEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editUserPhone">Phone Number</label>
+                        <input type="tel" id="editUserPhone">
+                    </div>
+                    <div class="form-group">
+                        <label for="editUserRole">Role *</label>
+                        <select id="editUserRole" required>
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Update User</button>
+                        <button type="button" class="btn-secondary" onclick="closeEditUserModal()">Cancel</button>
+                        <button type="button" class="btn-danger" onclick="deleteUser()">Delete User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Runner Modal -->
+    <div id="editRunnerModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ Edit Runner</h2>
+                <span class="close" onclick="closeEditRunnerModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="editRunnerForm">
+                    <input type="hidden" id="editRunnerId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editRunnerFirstName">First Name *</label>
+                            <input type="text" id="editRunnerFirstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editRunnerLastName">Last Name *</label>
+                            <input type="text" id="editRunnerLastName" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editRunnerAge">Age *</label>
+                            <input type="number" id="editRunnerAge" required min="0" max="120">
+                        </div>
+                        <div class="form-group">
+                            <label for="editRunnerGender">Gender</label>
+                            <select id="editRunnerGender">
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editRunnerCity">City *</label>
+                            <input type="text" id="editRunnerCity" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editRunnerState">State *</label>
+                            <input type="text" id="editRunnerState" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="editRunnerStatus">Status *</label>
+                        <select id="editRunnerStatus" required>
+                            <option value="missing">Missing</option>
+                            <option value="found">Found</option>
+                            <option value="safe">Safe</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editRunnerDescription">Description</label>
+                        <textarea id="editRunnerDescription" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="editRunnerIsUrgent">Urgent Case</label>
+                        <input type="checkbox" id="editRunnerIsUrgent">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Update Runner</button>
+                        <button type="button" class="btn-secondary" onclick="closeEditRunnerModal()">Cancel</button>
+                        <button type="button" class="btn-danger" onclick="deleteRunner()">Delete Runner</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -995,27 +1572,422 @@
 
         // Action button functions
         function openUserManagement() {
-            showToast('User Management feature coming soon!', 'info');
+            document.getElementById('userManagementModal').style.display = 'block';
+            loadUsersTable();
+        }
+
+        function closeUserManagementModal() {
+            document.getElementById('userManagementModal').style.display = 'none';
         }
 
         function openRunnerManagement() {
-            showToast('Runner Management feature coming soon!', 'info');
+            document.getElementById('runnerManagementModal').style.display = 'block';
+            loadRunnersTable();
         }
 
+        function closeRunnerManagementModal() {
+            document.getElementById('runnerManagementModal').style.display = 'none';
+        }
+
+        function openAddAdminModal() {
+            document.getElementById('addAdminModal').style.display = 'block';
+            document.getElementById('addAdminForm').reset();
+        }
+
+        function closeAddAdminModal() {
+            document.getElementById('addAdminModal').style.display = 'none';
+        }
+
+        function openEditUserModal(userId) {
+            const user = dashboardData.users.find(u => u.id === userId);
+            if (!user) return;
+
+            document.getElementById('editUserId').value = user.id;
+            document.getElementById('editUserFirstName').value = user.firstName;
+            document.getElementById('editUserLastName').value = user.lastName;
+            document.getElementById('editUserEmail').value = user.email;
+            document.getElementById('editUserPhone').value = user.phoneNumber || '';
+            document.getElementById('editUserRole').value = user.role;
+
+            document.getElementById('editUserModal').style.display = 'block';
+        }
+
+        function closeEditUserModal() {
+            document.getElementById('editUserModal').style.display = 'none';
+        }
+
+        function openEditRunnerModal(runnerId) {
+            const runner = dashboardData.runners.find(r => r.id === runnerId);
+            if (!runner) return;
+
+            document.getElementById('editRunnerId').value = runner.id;
+            document.getElementById('editRunnerFirstName').value = runner.firstName;
+            document.getElementById('editRunnerLastName').value = runner.lastName;
+            document.getElementById('editRunnerAge').value = runner.age;
+            document.getElementById('editRunnerGender').value = runner.gender || '';
+            document.getElementById('editRunnerCity').value = runner.city;
+            document.getElementById('editRunnerState').value = runner.state;
+            document.getElementById('editRunnerStatus').value = runner.status;
+            document.getElementById('editRunnerDescription').value = runner.description || '';
+            document.getElementById('editRunnerIsUrgent').checked = runner.isUrgent;
+
+            document.getElementById('editRunnerModal').style.display = 'block';
+        }
+
+        function closeEditRunnerModal() {
+            document.getElementById('editRunnerModal').style.display = 'none';
+        }
+
+        // Load users table
+        async function loadUsersTable() {
+            const tbody = document.getElementById('usersTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '<tr><td colspan="6" class="loading-text">Loading users...</td></tr>';
+
+            try {
+                await loadUsers();
+                displayUsersTable();
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="6" class="no-data">Error loading users</td></tr>';
+            }
+        }
+
+        // Display users table
+        function displayUsersTable() {
+            const tbody = document.getElementById('usersTableBody');
+            if (!tbody) return;
+
+            if (dashboardData.users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="no-data">No users found</td></tr>';
+                return;
+            }
+
+            const usersHtml = dashboardData.users.map(user => `
+                <tr>
+                    <td>${user.firstName} ${user.lastName}</td>
+                    <td>${user.email}</td>
+                    <td><span class="status-badge ${user.role === 'admin' ? 'status-active' : 'status-inactive'}">${user.role}</span></td>
+                    <td>${user.phoneNumber || 'N/A'}</td>
+                    <td><span class="status-badge status-active">Active</span></td>
+                    <td>
+                        <button class="action-btn btn-edit" onclick="openEditUserModal(${user.id})">✏️ Edit</button>
+                        <button class="action-btn btn-view" onclick="viewUserDetails(${user.id})">👁️ View</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            tbody.innerHTML = usersHtml;
+        }
+
+        // Load runners table
+        async function loadRunnersTable() {
+            const tbody = document.getElementById('runnersTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '<tr><td colspan="6" class="loading-text">Loading runners...</td></tr>';
+
+            try {
+                await loadRunners();
+                displayRunnersTable();
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="6" class="no-data">Error loading runners</td></tr>';
+            }
+        }
+
+        // Display runners table
+        function displayRunnersTable() {
+            const tbody = document.getElementById('runnersTableBody');
+            if (!tbody) return;
+
+            if (dashboardData.runners.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="no-data">No runners found</td></tr>';
+                return;
+            }
+
+            const runnersHtml = dashboardData.runners.map(runner => `
+                <tr>
+                    <td>${runner.firstName} ${runner.lastName}</td>
+                    <td>${runner.runnerId}</td>
+                    <td><span class="status-badge status-${runner.status}">${runner.status}</span></td>
+                    <td>${runner.city}, ${runner.state}</td>
+                    <td>${new Date(runner.dateReported).toLocaleDateString()}</td>
+                    <td>
+                        <button class="action-btn btn-edit" onclick="openEditRunnerModal(${runner.id})">✏️ Edit</button>
+                        <button class="action-btn btn-view" onclick="viewRunnerDetails(${runner.id})">👁️ View</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            tbody.innerHTML = runnersHtml;
+        }
+
+        // Filter functions
+        function filterUsers() {
+            const searchTerm = document.getElementById('userSearchInput').value.toLowerCase();
+            const tbody = document.getElementById('usersTableBody');
+            
+            if (!tbody) return;
+
+            const rows = tbody.querySelectorAll('tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        function filterRunners() {
+            const searchTerm = document.getElementById('runnerSearchInput').value.toLowerCase();
+            const tbody = document.getElementById('runnersTableBody');
+            
+            if (!tbody) return;
+
+            const rows = tbody.querySelectorAll('tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        // Refresh functions
+        function refreshUsers() {
+            loadUsersTable();
+        }
+
+        function refreshRunners() {
+            loadRunnersTable();
+        }
+
+        // Form submission handlers
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add Admin Form
+            const addAdminForm = document.getElementById('addAdminForm');
+            if (addAdminForm) {
+                addAdminForm.addEventListener('submit', handleAddAdmin);
+            }
+
+            // Edit User Form
+            const editUserForm = document.getElementById('editUserForm');
+            if (editUserForm) {
+                editUserForm.addEventListener('submit', handleEditUser);
+            }
+
+            // Edit Runner Form
+            const editRunnerForm = document.getElementById('editRunnerForm');
+            if (editRunnerForm) {
+                editRunnerForm.addEventListener('submit', handleEditRunner);
+            }
+        });
+
+        // Handle Add Admin
+        async function handleAddAdmin(e) {
+            e.preventDefault();
+            
+            const formData = {
+                firstName: document.getElementById('newAdminFirstName').value.trim(),
+                lastName: document.getElementById('newAdminLastName').value.trim(),
+                email: document.getElementById('newAdminEmail').value.trim(),
+                phoneNumber: document.getElementById('newAdminPhone').value.trim() || null,
+                password: document.getElementById('newAdminPassword').value,
+                role: 'admin'
+            };
+
+            if (formData.password !== document.getElementById('newAdminConfirmPassword').value) {
+                showToast('Passwords do not match!', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        ...authHeader(),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    showToast('Admin created successfully!', 'success');
+                    closeAddAdminModal();
+                    await loadDashboardData();
+                    updateDashboardUI();
+                } else {
+                    const error = await response.json();
+                    showToast(error.message || 'Failed to create admin', 'error');
+                }
+            } catch (error) {
+                showToast('Error creating admin', 'error');
+            }
+        }
+
+        // Handle Edit User
+        async function handleEditUser(e) {
+            e.preventDefault();
+            
+            const userId = document.getElementById('editUserId').value;
+            const formData = {
+                firstName: document.getElementById('editUserFirstName').value.trim(),
+                lastName: document.getElementById('editUserLastName').value.trim(),
+                email: document.getElementById('editUserEmail').value.trim(),
+                phoneNumber: document.getElementById('editUserPhone').value.trim() || null,
+                role: document.getElementById('editUserRole').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/users/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        ...authHeader(),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    showToast('User updated successfully!', 'success');
+                    closeEditUserModal();
+                    await loadDashboardData();
+                    updateDashboardUI();
+                } else {
+                    const error = await response.json();
+                    showToast(error.message || 'Failed to update user', 'error');
+                }
+            } catch (error) {
+                showToast('Error updating user', 'error');
+            }
+        }
+
+        // Handle Edit Runner
+        async function handleEditRunner(e) {
+            e.preventDefault();
+            
+            const runnerId = document.getElementById('editRunnerId').value;
+            const formData = {
+                firstName: document.getElementById('editRunnerFirstName').value.trim(),
+                lastName: document.getElementById('editRunnerLastName').value.trim(),
+                age: parseInt(document.getElementById('editRunnerAge').value),
+                gender: document.getElementById('editRunnerGender').value,
+                city: document.getElementById('editRunnerCity').value.trim(),
+                state: document.getElementById('editRunnerState').value.trim(),
+                status: document.getElementById('editRunnerStatus').value,
+                description: document.getElementById('editRunnerDescription').value.trim(),
+                isUrgent: document.getElementById('editRunnerIsUrgent').checked
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/runners/${runnerId}`, {
+                    method: 'PUT',
+                    headers: {
+                        ...authHeader(),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    showToast('Runner updated successfully!', 'success');
+                    closeEditRunnerModal();
+                    await loadDashboardData();
+                    updateDashboardUI();
+                } else {
+                    const error = await response.json();
+                    showToast(error.message || 'Failed to update runner', 'error');
+                }
+            } catch (error) {
+                showToast('Error updating runner', 'error');
+            }
+        }
+
+        // Delete functions
+        async function deleteUser() {
+            const userId = document.getElementById('editUserId').value;
+            if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: authHeader()
+                });
+
+                if (response.ok) {
+                    showToast('User deleted successfully!', 'success');
+                    closeEditUserModal();
+                    await loadDashboardData();
+                    updateDashboardUI();
+                } else {
+                    showToast('Failed to delete user', 'error');
+                }
+            } catch (error) {
+                showToast('Error deleting user', 'error');
+            }
+        }
+
+        async function deleteRunner() {
+            const runnerId = document.getElementById('editRunnerId').value;
+            if (!confirm('Are you sure you want to delete this runner? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/runners/${runnerId}`, {
+                    method: 'DELETE',
+                    headers: authHeader()
+                });
+
+                if (response.ok) {
+                    showToast('Runner deleted successfully!', 'success');
+                    closeEditRunnerModal();
+                    await loadDashboardData();
+                    updateDashboardUI();
+                } else {
+                    showToast('Failed to delete runner', 'error');
+                }
+            } catch (error) {
+                showToast('Error deleting runner', 'error');
+            }
+        }
+
+        // View functions
+        function viewUserDetails(userId) {
+            const user = dashboardData.users.find(u => u.id === userId);
+            if (user) {
+                showToast(`Viewing ${user.firstName} ${user.lastName}`, 'info');
+                // Could open a detailed view modal here
+            }
+        }
+
+        function viewRunnerDetails(runnerId) {
+            const runner = dashboardData.runners.find(r => r.id === runnerId);
+            if (runner) {
+                showToast(`Viewing ${runner.firstName} ${runner.lastName}`, 'info');
+                // Could open a detailed view modal here
+            }
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        // Placeholder functions for other features
         function openSystemSettings() {
             showToast('System Settings feature coming soon!', 'info');
         }
 
-        function openAddAdminModal() {
-            showToast('Add Admin feature coming soon!', 'info');
+        function openProfileSettings() {
+            showToast('Profile Settings feature coming soon!', 'info');
         }
 
         function openPasswordResetModal() {
             showToast('Password Reset feature coming soon!', 'info');
-        }
-
-        function openProfileSettings() {
-            showToast('Profile Settings feature coming soon!', 'info');
         }
 
         // Toast notification function

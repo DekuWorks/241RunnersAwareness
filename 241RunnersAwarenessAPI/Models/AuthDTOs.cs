@@ -98,9 +98,37 @@ namespace _241RunnersAwarenessAPI.Models
         
         [Required]
         [MinLength(8)]
+        [MaxLength(100)]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", 
             ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character")]
         public string NewPassword { get; set; } = string.Empty;
+    }
+
+    public class UserUpdateRequest
+    {
+        [Required]
+        [MaxLength(100)]
+        [RegularExpression(@"^[a-zA-Z\s\-']+$", ErrorMessage = "First name can only contain letters, spaces, hyphens, and apostrophes")]
+        public string FirstName { get; set; } = string.Empty;
+        
+        [Required]
+        [MaxLength(100)]
+        [RegularExpression(@"^[a-zA-Z\s\-']+$", ErrorMessage = "Last name can only contain letters, spaces, hyphens, and apostrophes")]
+        public string LastName { get; set; } = string.Empty;
+        
+        [Required]
+        [EmailAddress]
+        [MaxLength(255)]
+        public string Email { get; set; } = string.Empty;
+        
+        [Phone]
+        [MaxLength(20)]
+        public string? PhoneNumber { get; set; }
+        
+        [Required]
+        [RegularExpression("^(user|parent|caregiver|therapist|adoptiveparent|admin)$", 
+            ErrorMessage = "Role must be one of: user, parent, caregiver, therapist, adoptiveparent, admin")]
+        public string Role { get; set; } = "user";
     }
 
     public class ProfileUpdateRequest
