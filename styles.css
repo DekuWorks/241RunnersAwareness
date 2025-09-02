@@ -125,6 +125,52 @@ body {
   justify-content: flex-start;
 }
 
+/* Global component backgrounds - ensure all components are white */
+.container,
+section,
+.card,
+.profile-card,
+.auth-card,
+.case-card,
+.feature-card,
+.stat-card,
+.form-container,
+.auth-container,
+.profile-container,
+.dashboard-container,
+.admin-dashboard,
+.admin-section,
+.modal-content,
+.form-step,
+.search-results,
+.search-result-item,
+.toast,
+.message {
+  background: white !important;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--gray-200);
+  margin: 1rem 0;
+}
+
+/* Ensure main content areas have white backgrounds */
+main {
+  background: white;
+  border-radius: 12px;
+  margin: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer background */
+footer {
+  background: white;
+  border-radius: 12px;
+  margin: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
 /* Override body background for cases pages */
 body:has(.cases-hero),
 body:has(.my-cases-hero) {
@@ -237,7 +283,7 @@ img {
 
 /* ===== Navbar ===== */
 nav {
-  background: #111;
+  background: #000;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -3904,18 +3950,17 @@ body.dark-mode .action-card p {
 /* Enhanced Admin Dashboard */
 .admin-dashboard {
   min-height: 100vh;
-  background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+  background: var(--red-urgent);
   padding: 20px;
   box-sizing: border-box;
 }
 
 .dashboard-header {
-  background: rgba(255, 255, 255, 0.95);
+  background: white;
   border-radius: 16px;
   padding: 30px;
   margin-bottom: 30px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
 }
 
 .admin-profile {
@@ -3960,11 +4005,10 @@ body.dark-mode .action-card p {
 }
 
 .stat-card {
-  background: rgba(255, 255, 255, 0.95);
+  background: white;
   border-radius: 12px;
   padding: 25px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -3995,11 +4039,10 @@ body.dark-mode .action-card p {
 }
 
 .content-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: white;
   border-radius: 16px;
   padding: 30px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
 }
 
 .content-section h2 {
@@ -5458,6 +5501,9 @@ footer .footer-bottom p {
   background: white;
   padding: 2rem 0;
   border-bottom: 1px solid var(--gray-200);
+  margin: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .filters-container {
@@ -5502,7 +5548,7 @@ footer .footer-bottom p {
 /* Cases Section */
 .cases-section {
   padding: 3rem 0;
-  background: var(--gray-50);
+  background: white;
 }
 
 .cases-header {
