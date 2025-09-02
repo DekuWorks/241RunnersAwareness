@@ -93,6 +93,25 @@
                     <label class="info-label">Status</label>
                     <span id="status" class="info-value">Loading...</span>
                   </div>
+                  <div class="info-item">
+                    <label class="info-label">Date Reported</label>
+                    <span id="dateReported" class="info-value">Loading...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Case Description -->
+            <div class="profile-card">
+              <div class="card-header">
+                <h2 class="card-title">Case Description</h2>
+              </div>
+              <div class="card-body">
+                <div class="info-grid">
+                  <div class="info-item full-width">
+                    <label class="info-label">Description</label>
+                    <span id="description" class="info-value">Loading...</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -634,30 +653,49 @@
       document.getElementById('errorState').classList.add('hidden');
       document.getElementById('profileContent').classList.add('hidden');
 
+      console.log('Loading runner data for ID:', runnerId);
+      console.log('API Base URL:', window.APP_CONFIG?.API_BASE_URL);
+
       // Try to load from API first
       let runnerData;
       try {
-        const response = await fetch(`${window.APP_CONFIG.API_BASE_URL}/runners/${runnerId}`);
+        const apiUrl = `${window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api'}/runners/${runnerId}`;
+        console.log('Fetching from API:', apiUrl);
+        
+        const response = await fetch(apiUrl);
+        console.log('API Response status:', response.status);
+        
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
+        
         runnerData = await response.json();
         console.log('Loaded runner data from API:', runnerData);
-      } catch (apiError) {
-        console.log('API not available, using mock data:', apiError);
-        // Show error but continue with mock data
-        if (apiError.message.includes('404')) {
-          console.log('Runner not found, using mock data');
-        } else {
-          console.log('API error, using mock data:', apiError.message);
+        
+        // Validate that we got actual data
+        if (!runnerData || !runnerData.id) {
+          throw new Error('Invalid runner data received from API');
         }
-        // Fallback to mock data
+        
+      } catch (apiError) {
+        console.error('API Error:', apiError);
+        
+        // Only show error for 404 (not found), otherwise use mock data
+        if (apiError.message.includes('404')) {
+          showError(`Runner with ID ${runnerId} not found.`);
+          return;
+        }
+        
+        console.log('API not available, using mock data for development');
+        // Fallback to mock data for development
         runnerData = {
           id: runnerId,
           firstName: 'John',
           lastName: 'Smith',
+          fullName: 'John Smith',
           runnerId: 'RUN-2024-001',
           age: 25,
+          calculatedAge: 25,
           gender: 'Male',
           status: 'missing',
           city: 'Austin',
@@ -695,28 +733,33 @@
   }
 
   function updateRunnerDisplay(runner) {
+    console.log('Updating display with runner data:', runner);
+    
     // Update header
-    document.getElementById('runnerName').textContent = runner.fullName || `${runner.firstName} ${runner.lastName}`;
+    const fullName = runner.fullName || `${runner.firstName || ''} ${runner.lastName || ''}`.trim();
+    document.getElementById('runnerName').textContent = fullName || 'Unknown Runner';
     document.getElementById('runnerId').textContent = `Runner ID: ${runner.runnerId || 'N/A'}`;
     
     const statusElement = document.getElementById('runnerStatus');
-    statusElement.textContent = runner.status || 'Unknown';
-    statusElement.className = `runner-status ${getStatusClass(runner.status)}`;
+    const status = runner.status || 'Unknown';
+    statusElement.textContent = status;
+    statusElement.className = `runner-status ${getStatusClass(status)}`;
 
     // Update basic information
-    document.getElementById('fullName').textContent = runner.fullName || `${runner.firstName} ${runner.lastName}`;
+    document.getElementById('fullName').textContent = fullName || 'Not provided';
     document.getElementById('dateOfBirth').textContent = runner.dateOfBirth ? new Date(runner.dateOfBirth).toLocaleDateString() : 'Not provided';
     document.getElementById('age').textContent = runner.calculatedAge || runner.age || 'Not provided';
     document.getElementById('gender').textContent = runner.gender || 'Not provided';
-    document.getElementById('status').textContent = runner.status || 'Unknown';
+    document.getElementById('status').textContent = status;
+    document.getElementById('dateReported').textContent = runner.dateReported ? new Date(runner.dateReported).toLocaleDateString() : 'Not provided';
 
     // Update contact information
-    document.getElementById('email').textContent = 'Not provided';
+    document.getElementById('email').textContent = runner.email || 'Not provided';
     document.getElementById('phoneNumber').textContent = runner.contactInfo || 'Not provided';
     document.getElementById('address').textContent = runner.address || 'Not provided';
     document.getElementById('city').textContent = runner.city || 'Not provided';
     document.getElementById('state').textContent = runner.state || 'Not provided';
-    document.getElementById('zipCode').textContent = 'Not provided';
+    document.getElementById('zipCode').textContent = runner.zipCode || 'Not provided';
 
     // Update physical description
     document.getElementById('height').textContent = runner.height || 'Not provided';
@@ -730,6 +773,16 @@
     document.getElementById('medications').textContent = runner.medications || 'Not provided';
     document.getElementById('allergies').textContent = runner.allergies || 'Not provided';
     document.getElementById('emergencyContacts').textContent = runner.emergencyContacts || 'Not provided';
+
+    // Update description if available
+    if (document.getElementById('description')) {
+      document.getElementById('description').textContent = runner.description || 'No description available';
+    }
+
+    // Update date reported if available
+    if (document.getElementById('dateReported')) {
+      document.getElementById('dateReported').textContent = runner.dateReported ? new Date(runner.dateReported).toLocaleDateString() : 'Not provided';
+    }
 
     // Update edit link
     const editLink = document.getElementById('editRunnerLink');
