@@ -62,7 +62,10 @@ class CasesPage {
         try {
             this.showLoading();
             
-            const response = await fetch('https://241runners-api.azurewebsites.net/api/runners');
+            // Use the configured API base URL
+            const apiUrl = window.APP_CONFIG?.API_BASE_URL || 'http://localhost:5248/api';
+            const response = await fetch(`${apiUrl}/runners`);
+            
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -77,7 +80,18 @@ class CasesPage {
             
         } catch (error) {
             console.error('Error loading cases:', error);
-            this.showError();
+            
+            // Show sample data when API fails (for development/demo purposes)
+            if (window.APP_CONFIG?.ENVIRONMENT === 'development') {
+                console.log('Showing sample data due to API failure');
+                this.cases = this.getSampleData();
+                this.filteredCases = [...this.cases];
+                this.hideLoading();
+                this.renderCases();
+                this.updateStats();
+            } else {
+                this.showError();
+            }
         }
     }
     
@@ -149,6 +163,71 @@ class CasesPage {
         this.currentPage = 1;
         this.renderCases();
         this.updateStats();
+    }
+    
+    getSampleData() {
+        return [
+            {
+                id: 1,
+                runnerId: "RUN001",
+                firstName: "Sarah",
+                lastName: "Johnson",
+                age: 28,
+                gender: "Female",
+                height: "5'6\"",
+                weight: "140 lbs",
+                eyeColor: "Blue",
+                hairColor: "Brown",
+                city: "Austin",
+                state: "TX",
+                status: "Missing",
+                isUrgent: true,
+                dateReported: "2025-01-15",
+                description: "Sarah was last seen leaving her apartment complex on the morning of January 15th. She was wearing a blue jacket and carrying a black backpack.",
+                identifyingMarks: "Small birthmark on left wrist",
+                medicalConditions: "Asthma"
+            },
+            {
+                id: 2,
+                runnerId: "RUN002",
+                firstName: "Michael",
+                lastName: "Chen",
+                age: 34,
+                gender: "Male",
+                height: "6'0\"",
+                weight: "180 lbs",
+                eyeColor: "Brown",
+                hairColor: "Black",
+                city: "Houston",
+                state: "TX",
+                status: "Missing",
+                isUrgent: false,
+                dateReported: "2025-01-10",
+                description: "Michael was last seen at his workplace. He didn't show up for his shift and hasn't been in contact with family or friends.",
+                identifyingMarks: "Tattoo of a dragon on right forearm",
+                medicalConditions: "None known"
+            },
+            {
+                id: 3,
+                runnerId: "RUN003",
+                firstName: "Emily",
+                lastName: "Rodriguez",
+                age: 22,
+                gender: "Female",
+                height: "5'4\"",
+                weight: "125 lbs",
+                eyeColor: "Green",
+                hairColor: "Blonde",
+                city: "Dallas",
+                state: "TX",
+                status: "Found",
+                isUrgent: false,
+                dateReported: "2025-01-05",
+                description: "Emily was found safe at a friend's house. She had been staying there without informing her family.",
+                identifyingMarks: "Piercing in left eyebrow",
+                medicalConditions: "None known"
+            }
+        ];
     }
     
     renderCases() {
