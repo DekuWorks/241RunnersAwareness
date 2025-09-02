@@ -127,7 +127,6 @@ body {
 
 /* Global component backgrounds - ensure all components are white */
 .container,
-section,
 .card,
 .profile-card,
 .auth-card,
@@ -154,7 +153,7 @@ section,
 }
 
 /* Ensure main content areas have white backgrounds */
-main {
+.main-content {
   background: white;
   border-radius: 12px;
   margin: 1rem;
@@ -163,7 +162,7 @@ main {
 }
 
 /* Footer background */
-footer {
+.footer-container {
   background: white;
   border-radius: 12px;
   margin: 1rem;
@@ -5435,13 +5434,70 @@ footer .footer-bottom p {
  * ============================================
  */
 
-/* Cases Hero Section */
+/* Cases page specific styling */
 .cases-hero {
-  background: linear-gradient(135deg, var(--red-urgent) 0%, var(--red-medium) 100%);
+  background: var(--red-urgent);
   color: white;
   padding: 4rem 0;
   text-align: center;
+  margin: 0;
+  border-radius: 0;
 }
+
+.cases-hero .hero-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.cases-hero .hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.cases-hero .hero-subtitle {
+  font-size: 1.25rem;
+  margin: 0 0 2rem 0;
+  opacity: 0.9;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cases-hero .hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.cases-hero .stat-item {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  min-width: 120px;
+}
+
+.cases-hero .stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--yellow-bright);
+}
+
+.cases-hero .stat-label {
+  font-size: 0.875rem;
+  margin: 0.5rem 0 0 0;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
 
 .cases-hero .hero-content {
   max-width: 1200px;
