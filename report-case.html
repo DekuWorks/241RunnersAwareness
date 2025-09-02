@@ -7,11 +7,12 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <link rel="stylesheet" href="https://241runnersawareness.org/styles.css?v=20250128f" />
-  <link rel="stylesheet" href="https://241runnersawareness.org/forms.css?v=20250128f" />
-  <script src="https://241runnersawareness.org/auth-utils.js"></script>
-
-    /* Report Case Container - matches React app layout */
+  <link rel="stylesheet" href="https://241runnersawareness.org/styles.css" />
+  <link rel="stylesheet" href="https://241runnersawareness.org/forms.css" />
+  
+  <!-- Custom CSS for Report Case Form -->
+  <style>
+    /* Report Case Container */
     .report-container {
       max-width: 800px;
       margin: 0 auto;
@@ -23,7 +24,7 @@
       align-items: center;
     }
 
-    /* Form Header - matches React app styling */
+    /* Form Header */
     .form-header {
       margin-bottom: 2rem;
       text-align: center;
@@ -42,7 +43,7 @@
       margin: 0;
     }
 
-    /* Progress Bar - matches React app styling */
+    /* Progress Bar */
     .progress-container {
       margin-bottom: 2rem;
       width: 100%;
@@ -59,7 +60,7 @@
 
     .progress-fill {
       height: 100%;
-      background-color: #2563eb;
+      background-color: #dc2626;
       transition: width 0.3s ease;
     }
 
@@ -70,7 +71,7 @@
       color: #6b7280;
     }
 
-    /* Form Steps - matches React app styling */
+    /* Form Steps */
     .form-step {
       background: white;
       border-radius: 0.5rem;
@@ -87,7 +88,7 @@
       display: block;
     }
 
-    /* Form Groups - matches React app styling */
+    /* Form Groups */
     .form-group {
       margin-bottom: 1.25rem;
     }
@@ -100,14 +101,10 @@
       font-size: 0.875rem;
     }
 
-    /* Search Styles */
-    .search-container {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .search-input {
-      flex: 1;
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
       padding: 0.75rem;
       border: 1px solid #d1d5db;
       border-radius: 0.375rem;
@@ -115,132 +112,116 @@
       transition: border-color 0.15s ease-in-out;
     }
 
-    .search-input:focus {
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
       outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
     }
 
-    .search-btn {
-      padding: 0.75rem 1rem;
-      white-space: nowrap;
+    .form-group input.error,
+    .form-group select.error,
+    .form-group textarea.error {
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
     }
 
-    .search-results {
-      margin-top: 1rem;
-      padding: 1rem;
-      background-color: #f8fafc;
-      border-radius: 0.375rem;
-      border: 1px solid #e2e8f0;
+    .error-message {
+      color: #dc2626;
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      display: none;
     }
 
-    .search-results h3 {
-      margin: 0 0 0.75rem 0;
-      font-size: 1rem;
-      font-weight: 600;
-      color: #374151;
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
     }
 
-    .search-results-list {
+    .form-navigation {
       display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .search-result-item {
-      display: flex;
+      justify-content: space-between;
       align-items: center;
-      padding: 0.75rem;
-      background-color: white;
-      border: 1px solid #e2e8f0;
+      margin-top: 2rem;
+      width: 100%;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.5rem;
+      border: none;
       border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
       cursor: pointer;
       transition: all 0.15s ease-in-out;
     }
 
-    .search-result-item:hover {
-      border-color: #2563eb;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    .btn-primary {
+      background-color: #dc2626;
+      color: white;
     }
 
-    .search-result-item.selected {
-      border-color: #2563eb;
-      background-color: #eff6ff;
+    .btn-primary:hover {
+      background-color: #b91c1c;
     }
 
-    .search-result-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background-color: #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 0.75rem;
-      flex-shrink: 0;
-      font-size: 1rem;
-      color: #6b7280;
+    .btn-secondary {
+      background-color: #6b7280;
+      color: white;
     }
 
-    .search-result-info {
-      flex: 1;
+    .btn-secondary:hover {
+      background-color: #4b5563;
     }
 
-    .search-result-name {
-      font-weight: 600;
-      color: #111827;
-      margin: 0 0 0.25rem 0;
+    .btn-success {
+      background-color: #10b981;
+      color: white;
     }
 
-    .search-result-details {
-      font-size: 0.875rem;
-      color: #6b7280;
-      margin: 0;
+    .btn-success:hover {
+      background-color: #059669;
     }
 
-    .search-result-status {
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.25rem;
-      font-size: 0.75rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      margin-left: 0.5rem;
-    }
-
-    .search-result-status.missing {
-      background-color: #fef2f2;
+    .required {
       color: #dc2626;
     }
 
-    .search-result-status.found {
-      background-color: #f0fdf4;
-      color: #16a34a;
+    /* Quick Access Buttons */
+    .quick-access {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
-    .search-result-status.safe {
-      background-color: #f0fdf4;
-      color: #16a34a;
+    .quick-btn {
+      background-color: #f3f4f6;
+      color: #374151;
+      border: 2px solid #e5e7eb;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      transition: all 0.15s ease-in-out;
     }
 
-    .no-results {
-      margin-top: 1rem;
-      padding: 1rem;
-      background-color: #f8fafc;
-      border-radius: 0.375rem;
-      border: 1px solid #e2e8f0;
-      text-align: center;
-      color: #6b7280;
+    .quick-btn:hover {
+      background-color: #dc2626;
+      color: white;
+      border-color: #dc2626;
     }
 
-    /* Responsive search */
-    @media (max-width: 640px) {
-      .search-container {
-        flex-direction: column;
-      }
-      
-      .search-btn {
-        width: 100%;
-      }
+    .quick-btn.active {
+      background-color: #dc2626;
+      color: white;
+      border-color: #dc2626;
     }
 
     /* Message Styles */
@@ -285,84 +266,6 @@
       }
     }
 
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #d1d5db;
-      border-radius: 0.375rem;
-      font-size: 0.875rem;
-      transition: border-color 0.15s ease-in-out;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-
-    .form-navigation {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 2rem;
-      width: 100%;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 0.375rem;
-      font-size: 0.875rem;
-      font-weight: 600;
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.15s ease-in-out;
-    }
-
-    .btn-primary {
-      background-color: #2563eb;
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background-color: #1d4ed8;
-    }
-
-    .btn-secondary {
-      background-color: #6b7280;
-      color: white;
-    }
-
-    .btn-secondary:hover {
-      background-color: #4b5563;
-    }
-
-    .btn-success {
-      background-color: #10b981;
-      color: white;
-    }
-
-    .btn-success:hover {
-      background-color: #059669;
-    }
-
-    .required {
-      color: #dc2626;
-    }
-
     /* Responsive design */
     @media (max-width: 768px) {
       .form-row {
@@ -377,7 +280,13 @@
       .btn {
         width: 100%;
       }
+
+      .quick-access {
+        flex-direction: column;
+        align-items: center;
+      }
     }
+  </style>
 
 </head>
 <body>
@@ -419,72 +328,120 @@
       <!-- Form Header -->
       <div class="form-header">
         <h1>Report Missing Person Case</h1>
-        <p>Help us locate missing individuals by providing detailed information about the case.</p>
+        <p>Quick and easy reporting for missing persons. Choose your reporting method below.</p>
       </div>
 
-      <!-- Progress Bar -->
-      <div class="progress-container">
-        <div class="progress-bar">
-          <div class="progress-fill" id="progressFill"></div>
-        </div>
-        <div class="progress-text">Step <span id="currentStep">1</span> of <span id="totalSteps">11</span></div>
+      <!-- Quick Access Buttons -->
+      <div class="quick-access">
+        <button type="button" class="quick-btn active" onclick="showQuickReport()">Quick Report</button>
+        <button type="button" class="quick-btn" onclick="showDetailedReport()">Detailed Report</button>
+        <button type="button" class="quick-btn" onclick="showExistingRunner()">Update Existing</button>
       </div>
 
-      <!-- Step 0: Runner Search -->
-      <div class="form-step active" id="step0">
-        <h2>Search for Existing Runner</h2>
-        <p>First, let's check if this person is already in our system. You can search by name, runner ID, or location.</p>
+      <!-- Quick Report Form (Simplified) -->
+      <div class="form-step active" id="quickReport">
+        <h2>Quick Report - Essential Information</h2>
+        <p>Provide the most critical information for immediate response.</p>
         
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First Name <span class="required">*</span></label>
+            <input type="text" id="firstName" name="firstName" required>
+            <div class="error-message" id="firstNameError">First name is required</div>
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name <span class="required">*</span></label>
+            <input type="text" id="lastName" name="lastName" required>
+            <div class="error-message" id="lastNameError">Last name is required</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="age">Age <span class="required">*</span></label>
+            <input type="number" id="age" name="age" min="0" max="120" required>
+            <div class="error-message" id="ageError">Age is required</div>
+          </div>
+          <div class="form-group">
+            <label for="gender">Gender</label>
+            <select id="gender" name="gender">
+              <option value="">Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
         <div class="form-group">
-          <label for="runnerSearch">Search for Runner</label>
-          <div class="search-container">
-            <input type="text" id="runnerSearch" name="runnerSearch" placeholder="Enter name, runner ID, city, or state..." class="search-input">
-            <button type="button" id="searchButton" class="btn btn-primary search-btn">Search</button>
-          </div>
+          <label for="lastSeenLocation">Last Seen Location <span class="required">*</span></label>
+          <input type="text" id="lastSeenLocation" name="lastSeenLocation" placeholder="Address, city, or specific location" required>
+          <div class="error-message" id="lastSeenLocationError">Last seen location is required</div>
         </div>
 
-        <!-- Search Results -->
-        <div id="searchResults" class="search-results" style="display: none;">
-          <h3>Search Results</h3>
-          <div id="searchResultsList" class="search-results-list">
-            <!-- Results will be populated here -->
-          </div>
+        <div class="form-group">
+          <label for="lastSeenDate">Date Last Seen <span class="required">*</span></label>
+          <input type="datetime-local" id="lastSeenDate" name="lastSeenDate" required>
+          <div class="error-message" id="lastSeenDateError">Date last seen is required</div>
         </div>
 
-        <!-- No Results Message -->
-        <div id="noResults" class="no-results" style="display: none;">
-          <p>No existing runners found. You can proceed to create a new case.</p>
+        <div class="form-group">
+          <label for="description">Description <span class="required">*</span></label>
+          <textarea id="description" name="description" rows="3" placeholder="Physical description, clothing, circumstances..." required></textarea>
+          <div class="error-message" id="descriptionError">Description is required</div>
+        </div>
+
+        <div class="form-group">
+          <label for="contactPhone">Contact Phone <span class="required">*</span></label>
+          <input type="tel" id="contactPhone" name="contactPhone" placeholder="Your phone number for updates" required>
+          <div class="error-message" id="contactPhoneError">Contact phone is required</div>
+        </div>
+
+        <div class="form-group">
+          <label for="urgency">Urgency Level <span class="required">*</span></label>
+          <select id="urgency" name="urgency" required>
+            <option value="">Select urgency</option>
+            <option value="Low">Low - General concern</option>
+            <option value="Medium" selected>Medium - Missing for hours</option>
+            <option value="High">High - Missing for days</option>
+            <option value="Critical">Critical - Immediate danger</option>
+          </select>
+          <div class="error-message" id="urgencyError">Urgency level is required</div>
         </div>
 
         <div class="form-navigation">
           <div></div>
-          <button type="button" class="btn btn-primary" onclick="nextStep()">Continue to Case Details</button>
+          <button type="button" class="btn btn-success" onclick="submitQuickReport()">Submit Quick Report</button>
         </div>
       </div>
 
-      <!-- Step 1: Basic Information -->
-      <div class="form-step" id="step1">
-        <h2>Basic Information</h2>
-        <p>Please provide the basic information about the missing person.</p>
+      <!-- Detailed Report Form -->
+      <div class="form-step" id="detailedReport">
+        <h2>Detailed Report - Comprehensive Information</h2>
+        <p>Provide detailed information for thorough case investigation.</p>
         
         <div class="form-group">
           <label for="title">Case Title <span class="required">*</span></label>
           <input type="text" id="title" name="title" placeholder="e.g., Missing Person - John Doe" required>
+          <div class="error-message" id="titleError">Case title is required</div>
         </div>
 
         <div class="form-group">
           <label for="description">Case Description <span class="required">*</span></label>
           <textarea id="description" name="description" rows="4" placeholder="Provide a detailed description of the case and circumstances..." required></textarea>
+          <div class="error-message" id="descriptionError">Case description is required</div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label for="firstName">First Name <span class="required">*</span></label>
             <input type="text" id="firstName" name="firstName" required>
+            <div class="error-message" id="firstNameError">First name is required</div>
           </div>
           <div class="form-group">
             <label for="lastName">Last Name <span class="required">*</span></label>
             <input type="text" id="lastName" name="lastName" required>
+            <div class="error-message" id="lastNameError">Last name is required</div>
           </div>
         </div>
 
@@ -496,6 +453,7 @@
           <div class="form-group">
             <label for="dateOfBirth">Date of Birth <span class="required">*</span></label>
             <input type="date" id="dateOfBirth" name="dateOfBirth" required>
+            <div class="error-message" id="dateOfBirthError">Date of birth is required</div>
           </div>
         </div>
 
@@ -510,569 +468,119 @@
           </select>
         </div>
 
-        <div class="form-navigation">
-          <div></div>
-          <button class="btn btn-primary" onclick="nextStep()">Next Step</button>
-        </div>
-      </div>
-
-      <!-- Step 2: Contact & Address Information -->
-      <div class="form-step" id="step2">
-        <h2>Contact & Address Information</h2>
-        <p>Please provide contact and address information for the missing person.</p>
-        
         <div class="form-group">
-          <label for="lastKnownAddress">Last Known Address</label>
-          <input type="text" id="lastKnownAddress" name="lastKnownAddress" placeholder="Full address where they were last known to live">
+          <label for="lastSeenLocation">Last Seen Location <span class="required">*</span></label>
+          <input type="text" id="lastSeenLocation" name="lastSeenLocation" placeholder="Address, city, or specific location" required>
+          <div class="error-message" id="lastSeenLocationError">Last seen location is required</div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="city">City</label>
-            <input type="text" id="city" name="city" placeholder="City">
-          </div>
-          <div class="form-group">
-            <label for="state">State</label>
-            <input type="text" id="state" name="state" placeholder="State">
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="zipCode">Zip Code</label>
-            <input type="text" id="zipCode" name="zipCode" placeholder="Zip Code">
-          </div>
-          <div class="form-group">
-            <label for="phoneNumber">Phone Number</label>
-            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="Phone number">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" placeholder="Email address">
-        </div>
-
-        <div class="form-navigation">
-          <button class="btn btn-secondary" onclick="prevStep()">Previous</button>
-          <button class="btn btn-primary" onclick="nextStep()">Next Step</button>
-        </div>
-      </div>
-
-      <!-- Step 3: Physical Description -->
-      <div class="form-step" id="step3">
-        <h2>Physical Description</h2>
-        <p>Help us identify the missing person with physical characteristics.</p>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label for="height">Height</label>
-            <input type="text" id="height" name="height" placeholder="e.g., 5'10"">
-          </div>
-          <div class="form-group">
-            <label for="weight">Weight</label>
-            <input type="text" id="weight" name="weight" placeholder="e.g., 150 lbs">
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="hairColor">Hair Color</label>
-            <select id="hairColor" name="hairColor">
-              <option value="">Select hair color</option>
-              <option value="Black">Black</option>
-              <option value="Brown">Brown</option>
-              <option value="Blonde">Blonde</option>
-              <option value="Red">Red</option>
-              <option value="Gray">Gray</option>
-              <option value="White">White</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="eyeColor">Eye Color</label>
-            <select id="eyeColor" name="eyeColor">
-              <option value="">Select eye color</option>
-              <option value="Brown">Brown</option>
-              <option value="Blue">Blue</option>
-              <option value="Green">Green</option>
-              <option value="Hazel">Hazel</option>
-              <option value="Gray">Gray</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="distinguishingFeatures">Distinguishing Features</label>
-          <textarea id="distinguishingFeatures" name="distinguishingFeatures" rows="3" placeholder="Scars, tattoos, birthmarks, or other identifying features..."></textarea>
-        </div>
-
-        <div class="form-navigation">
-          <button class="btn btn-secondary" onclick="prevStep()">Previous</button>
-          <button class="btn btn-primary" onclick="nextStep()">Next Step</button>
-        </div>
-      </div>
-
-      <!-- Step 4: Special Needs & Disability Information -->
-      <div class="form-step" id="step4">
-        <h2>Special Needs & Disability Information</h2>
-        <p>Please provide information about any special needs or disabilities that may be relevant.</p>
-        
-        <div class="form-group">
-          <label for="primaryDisability">Primary Disability/Special Need</label>
-          <select id="primaryDisability" name="primaryDisability">
-            <option value="">Select primary disability/special need</option>
-            <option value="Autism">Autism</option>
-            <option value="Down Syndrome">Down Syndrome</option>
-            <option value="Cerebral Palsy">Cerebral Palsy</option>
-            <option value="Intellectual Disability">Intellectual Disability</option>
-            <option value="Sensory Impairment">Sensory Impairment</option>
-            <option value="Alzheimer's/Dementia">Alzheimer's/Dementia</option>
-            <option value="Mental Health Condition">Mental Health Condition</option>
-            <option value="Physical Disability">Physical Disability</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="disabilityDescription">Disability Description</label>
-          <textarea id="disabilityDescription" name="disabilityDescription" rows="3" placeholder="Describe the disability or special need in detail..."></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="communicationMethod">Communication Method</label>
-          <select id="communicationMethod" name="communicationMethod">
-            <option value="">Select communication method</option>
-            <option value="Verbal">Verbal</option>
-            <option value="Non-verbal">Non-verbal</option>
-            <option value="Sign Language">Sign Language</option>
-            <option value="AAC Device">AAC Device</option>
-            <option value="Picture Cards">Picture Cards</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="communicationNeeds">Communication Needs</label>
-          <textarea id="communicationNeeds" name="communicationNeeds" rows="2" placeholder="Describe any specific communication needs..."></textarea>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="isNonVerbal" name="isNonVerbal">
-              Is Non-Verbal
-            </label>
-          </div>
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="usesAACDevice" name="usesAACDevice">
-              Uses AAC Device
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="aacDeviceType">AAC Device Type</label>
-          <input type="text" id="aacDeviceType" name="aacDeviceType" placeholder="Type of AAC device if applicable">
-        </div>
-
-        <div class="form-navigation">
-          <button class="btn btn-secondary" onclick="prevStep()">Previous</button>
-          <button class="btn btn-primary" onclick="nextStep()">Next Step</button>
-        </div>
-      </div>
-
-      <!-- Step 5: Mobility & Sensory Information -->
-      <div class="form-step" id="step5">
-        <h2>Mobility & Sensory Information</h2>
-        <p>Please provide information about mobility and sensory needs.</p>
-        
-        <div class="form-group">
-          <label for="mobilityStatus">Mobility Status</label>
-          <select id="mobilityStatus" name="mobilityStatus">
-            <option value="">Select mobility status</option>
-            <option value="Independent">Independent</option>
-            <option value="Wheelchair">Wheelchair</option>
-            <option value="Walker">Walker</option>
-            <option value="Cane">Cane</option>
-            <option value="Assistance Required">Assistance Required</option>
-          </select>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="usesWheelchair" name="usesWheelchair">
-              Uses Wheelchair
-            </label>
-          </div>
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="usesMobilityDevice" name="usesMobilityDevice">
-              Uses Mobility Device
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="mobilityDeviceType">Mobility Device Type</label>
-          <input type="text" id="mobilityDeviceType" name="mobilityDeviceType" placeholder="Type of mobility device if applicable">
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="hasVisualImpairment" name="hasVisualImpairment">
-              Has Visual Impairment
-            </label>
-          </div>
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="hasHearingImpairment" name="hasHearingImpairment">
-              Has Hearing Impairment
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>
-            <input type="checkbox" id="hasSensoryProcessingDisorder" name="hasSensoryProcessingDisorder">
-            Has Sensory Processing Disorder
-          </label>
-        </div>
-
-        <div class="form-group">
-          <label for="sensoryTriggers">Sensory Triggers</label>
-          <textarea id="sensoryTriggers" name="sensoryTriggers" rows="2" placeholder="Loud noises, bright lights, crowds, etc."></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="sensoryComforts">Sensory Comforts</label>
-          <textarea id="sensoryComforts" name="sensoryComforts" rows="2" placeholder="Preferred items, calming techniques"></textarea>
-        </div>
-
-        <div class="form-navigation">
-          <button class="btn btn-secondary" onclick="prevStep()">Previous</button>
-          <button class="btn btn-primary" onclick="nextStep()">Next Step</button>
-        </div>
-      </div>
-
-      <!-- Step 6: Behavioral & Safety Information -->
-      <div class="form-step" id="step6">
-        <h2>Behavioral & Safety Information</h2>
-        <p>Please provide information about behavioral patterns and safety concerns.</p>
-        
-        <div class="form-group">
-          <label for="behavioralTriggers">Behavioral Triggers</label>
-          <textarea id="behavioralTriggers" name="behavioralTriggers" rows="2" placeholder="What triggers challenging behaviors?"></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="calmingTechniques">Calming Techniques</label>
-          <textarea id="calmingTechniques" name="calmingTechniques" rows="2" placeholder="What helps calm them down?"></textarea>
-        </div>
-
-        <div class="form-group">
-          <label>
-            <input type="checkbox" id="mayWanderOrElope" name="mayWanderOrElope">
-            May Wander or Elope
-          </label>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="isAttractedToWater" name="isAttractedToWater">
-              Is Attracted to Water
-            </label>
-          </div>
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="isAttractedToRoads" name="isAttractedToRoads">
-              Is Attracted to Roads
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>
-            <input type="checkbox" id="isAttractedToBrightLights" name="isAttractedToBrightLights">
-            Is Attracted to Bright Lights
-          </label>
-        </div>
-
-        <div class="form-group">
-          <label for="wanderingPatterns">Wandering Patterns</label>
-          <textarea id="wanderingPatterns" name="wanderingPatterns" rows="2" placeholder="Describe any known wandering patterns..."></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="preferredLocations">Preferred Locations</label>
-          <textarea id="preferredLocations" name="preferredLocations" rows="2" placeholder="Places they like to go or are drawn to..."></textarea>
-        </div>
-
-        <div class="form-navigation">
-          <button class="btn btn-secondary" onclick="prevStep()">Previous</button>
-          <button class="btn btn-primary" onclick="nextStep()">Next Step</button>
-        </div>
-      </div>
-
-      <!-- Step 7: Medical Information -->
-      <div class="form-step" id="step7">
-        <h2>Medical Information</h2>
-        <p>Please provide relevant medical information.</p>
-        
-        <div class="form-group">
-          <label for="medicalConditions">Medical Conditions</label>
-          <textarea id="medicalConditions" name="medicalConditions" rows="3" placeholder="List any medical conditions..."></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="medications">Medications</label>
-          <textarea id="medications" name="medications" rows="2" placeholder="List current medications..."></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="allergies">Allergies</label>
-          <textarea id="allergies" name="allergies" rows="2" placeholder="List any allergies..."></textarea>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="requiresMedication" name="requiresMedication">
-              Requires Medication
-            </label>
-          </div>
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="hasSeizureDisorder" name="hasSeizureDisorder">
-              Has Seizure Disorder
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="medicationSchedule">Medication Schedule</label>
-          <textarea id="medicationSchedule" name="medicationSchedule" rows="2" placeholder="Describe medication schedule if applicable..."></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="seizureTriggers">Seizure Triggers</label>
-          <textarea id="seizureTriggers" name="seizureTriggers" rows="2" placeholder="What triggers seizures?"></textarea>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="hasDiabetes" name="hasDiabetes">
-              Has Diabetes
-            </label>
-          </div>
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="hasAsthma" name="hasAsthma">
-              Has Asthma
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>
-            <input type="checkbox" id="hasHeartCondition" name="hasHeartCondition">
-            Has Heart Condition
-          </label>
-        </div>
-
-        <div class="form-navigation">
-          <button class="btn btn-secondary" onclick="prevStep()">Previous</button>
-          <button class="btn btn-primary" onclick="nextStep()">Next Step</button>
-        </div>
-      </div>
-
-      <!-- Step 8: Emergency Response Information -->
-      <div class="form-step" id="step8">
-        <h2>Emergency Response Information</h2>
-        <p>Please provide information for emergency responders.</p>
-        
-        <div class="form-group">
-          <label for="emergencyResponseInstructions">Emergency Response Instructions</label>
-          <textarea id="emergencyResponseInstructions" name="emergencyResponseInstructions" rows="3" placeholder="Special instructions for emergency responders..."></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="preferredEmergencyContact">Preferred Emergency Contact</label>
-          <input type="text" id="preferredEmergencyContact" name="preferredEmergencyContact" placeholder="Name of preferred emergency contact">
-        </div>
-
-        <div class="form-group">
-          <label>
-            <input type="checkbox" id="shouldCall911" name="shouldCall911">
-            Should Call 911
-          </label>
-        </div>
-
-        <div class="form-group">
-          <label for="specialInstructionsForFirstResponders">Special Instructions for First Responders</label>
-          <textarea id="specialInstructionsForFirstResponders" name="specialInstructionsForFirstResponders" rows="3" placeholder="Any special instructions for first responders..."></textarea>
-        </div>
-
-        <div class="form-navigation">
-          <button class="btn btn-secondary" onclick="prevStep()">Previous</button>
-          <button class="btn btn-primary" onclick="nextStep()">Next Step</button>
-        </div>
-      </div>
-
-      <!-- Step 9: Alert Configuration -->
-      <div class="form-step" id="step9">
-        <h2>Alert Configuration</h2>
-        <p>Configure how you want to receive alerts about this case.</p>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="enableRealTimeAlerts" name="enableRealTimeAlerts" checked>
-              Enable Real-Time Alerts
-            </label>
-          </div>
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="enableSMSAlerts" name="enableSMSAlerts" checked>
-              Enable SMS Alerts
-            </label>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="enableEmailAlerts" name="enableEmailAlerts" checked>
-              Enable Email Alerts
-            </label>
-          </div>
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="enablePushNotifications" name="enablePushNotifications" checked>
-              Enable Push Notifications
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="alertRadius">Alert Radius</label>
-          <select id="alertRadius" name="alertRadius">
-            <option value="1 mile">1 mile</option>
-            <option value="5 miles" selected>5 miles</option>
-            <option value="10 miles">10 miles</option>
-            <option value="County">County</option>
-            <option value="State">State</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="alertRadiusMiles">Alert Radius (Miles)</label>
-          <input type="number" id="alertRadiusMiles" name="alertRadiusMiles" value="5" min="1" max="100">
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="hasGPSDevice" name="hasGPSDevice">
-              Has GPS Device
-            </label>
-          </div>
-          <div class="form-group">
-            <label for="gpsDeviceType">GPS Device Type</label>
-            <input type="text" id="gpsDeviceType" name="gpsDeviceType" placeholder="Type of GPS device if applicable">
-          </div>
-        </div>
-
-        <div class="form-navigation">
-          <button class="btn btn-secondary" onclick="prevStep()">Previous</button>
-          <button class="btn btn-primary" onclick="nextStep()">Next Step</button>
-        </div>
-      </div>
-
-      <!-- Step 10: Last Known Location & Case Details -->
-      <div class="form-step" id="step10">
-        <h2>Last Known Location & Case Details</h2>
-        <p>Where was the person last seen and additional case information.</p>
-        
         <div class="form-group">
           <label for="lastSeenDate">Date Last Seen <span class="required">*</span></label>
           <input type="datetime-local" id="lastSeenDate" name="lastSeenDate" required>
+          <div class="error-message" id="lastSeenDateError">Date last seen is required</div>
         </div>
 
         <div class="form-group">
-          <label for="lastSeenLocation">Location Last Seen <span class="required">*</span></label>
-          <input type="text" id="lastSeenLocation" name="lastSeenLocation" placeholder="Address, city, or specific location" required>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="latitude">Latitude</label>
-            <input type="number" id="latitude" name="latitude" step="any" placeholder="e.g., 34.0522">
-          </div>
-          <div class="form-group">
-            <label for="longitude">Longitude</label>
-            <input type="number" id="longitude" name="longitude" step="any" placeholder="e.g., -118.2437">
-          </div>
+          <label for="contactPhone">Contact Phone <span class="required">*</span></label>
+          <input type="tel" id="contactPhone" name="contactPhone" placeholder="Your phone number for updates" required>
+          <div class="error-message" id="contactPhoneError">Contact phone is required</div>
         </div>
 
         <div class="form-group">
-          <label for="priority">Priority Level <span class="required">*</span></label>
-          <select id="priority" name="priority" required>
-            <option value="">Select priority level</option>
-            <option value="Low">Low</option>
-            <option value="Medium" selected>Medium</option>
-            <option value="High">High</option>
-            <option value="Critical">Critical</option>
+          <label for="urgency">Urgency Level <span class="required">*</span></label>
+          <select id="urgency" name="urgency" required>
+            <option value="">Select urgency</option>
+            <option value="Low">Low - General concern</option>
+            <option value="Medium" selected>Medium - Missing for hours</option>
+            <option value="High">High - Missing for days</option>
+            <option value="Critical">Critical - Immediate danger</option>
           </select>
-        </div>
-
-        <div class="form-group">
-          <label for="riskLevel">Risk Level <span class="required">*</span></label>
-          <select id="riskLevel" name="riskLevel" required>
-            <option value="">Select risk level</option>
-            <option value="Low">Low</option>
-            <option value="Medium" selected>Medium</option>
-            <option value="High">High</option>
-            <option value="Critical">Critical</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="lawEnforcementCaseNumber">Law Enforcement Case Number</label>
-          <input type="text" id="lawEnforcementCaseNumber" name="lawEnforcementCaseNumber" placeholder="Police case number if available">
-        </div>
-
-        <div class="form-group">
-          <label for="investigatingAgency">Investigating Agency</label>
-          <input type="text" id="investigatingAgency" name="investigatingAgency" placeholder="Police department or investigating agency">
-        </div>
-
-        <div class="form-group">
-          <label>
-            <input type="checkbox" id="isPublic" name="isPublic">
-            Make Case Public
-          </label>
-          <small>Public cases can be shared and viewed by anyone</small>
+          <div class="error-message" id="urgencyError">Urgency level is required</div>
         </div>
 
         <div class="form-navigation">
-          <button class="btn btn-secondary" onclick="prevStep()">Previous</button>
-          <button class="btn btn-success" onclick="submitCase()">Submit Case</button>
+          <div></div>
+          <button type="button" class="btn btn-success" onclick="submitDetailedReport()">Submit Detailed Report</button>
         </div>
       </div>
 
-      <!-- Success Message -->
-      <div id="successMessage" class="success-message" style="display: none;">
-        <h3>✅ Case Submitted Successfully!</h3>
-        <p>Your missing person case has been submitted and is being reviewed by our team. You will receive updates via email.</p>
-        <a href="https://241runnersawareness.org/dashboard.html" class="btn btn-primary">Return to Dashboard</a>
+      <!-- Existing Runner Update Form -->
+      <div class="form-step" id="existingRunner">
+        <h2>Update Existing Runner</h2>
+        <p>Search for and update an existing missing person case.</p>
+        
+        <div class="form-group">
+          <label for="runnerSearch">Search for Runner</label>
+          <input type="text" id="runnerSearch" name="runnerSearch" placeholder="Enter name, runner ID, city, or state...">
+        </div>
+
+        <div class="form-group">
+          <label for="updateType">Update Type <span class="required">*</span></label>
+          <select id="updateType" name="updateType" required>
+            <option value="">Select update type</option>
+            <option value="found">Person Found</option>
+            <option value="location">New Location</option>
+            <option value="status">Status Change</option>
+            <option value="contact">Contact Information</option>
+            <option value="other">Other Update</option>
+          </select>
+          <div class="error-message" id="updateTypeError">Update type is required</div>
+        </div>
+
+        <div class="form-group">
+          <label for="updateDetails">Update Details <span class="required">*</span></label>
+          <textarea id="updateDetails" name="updateDetails" rows="4" placeholder="Provide details about the update..." required></textarea>
+          <div class="error-message" id="updateDetailsError">Update details are required</div>
+        </div>
+
+        <div class="form-group">
+          <label for="contactPhone">Contact Phone <span class="required">*</span></label>
+          <input type="tel" id="contactPhone" name="contactPhone" placeholder="Your phone number for verification" required>
+          <div class="error-message" id="contactPhoneError">Contact phone is required</div>
+        </div>
+
+        <div class="form-navigation">
+          <div></div>
+          <button type="button" class="btn btn-success" onclick="submitRunnerUpdate()">Submit Update</button>
+        </div>
       </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+        <div class="form-row">
+          
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     </div>
   </main>
 
@@ -1086,9 +594,7 @@
         ? 'http://localhost:5113/api' 
         : 'https://241runnersawareness-api.azurewebsites.net/api';
     
-    let currentStep = 0; // Start at step 0 (runner search)
-    const totalSteps = 11; // Updated total steps
-    let selectedRunner = null; // Store selected runner data
+    let currentForm = 'quickReport'; // Track current form
 
     // Check authentication
     function checkAuth() {
@@ -1572,3 +1078,5 @@
   </script>
 </body>
 </html>
+
+
