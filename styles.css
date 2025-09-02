@@ -152,6 +152,33 @@ body {
   margin: 1rem 0;
 }
 
+/* Global centering for all sections and heroes */
+section,
+.hero,
+.cases-hero,
+.hero-section {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Ensure all content is properly centered */
+.hero-content,
+.cases-hero .hero-content,
+.hero-section .hero-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Ensure main content areas have white backgrounds */
 .main-content {
   background: white;
@@ -202,37 +229,23 @@ body.dark-mode {
 
 /* Main header container */
 header {
-  background: #000; /* Black header background */
+  background: #000 !important; /* Completely black header background */
   color: #fff; /* White text */
   padding: 0;
   position: -webkit-sticky; /* Safari */
   position: sticky; /* Stays at top when scrolling */
   top: 0;
   z-index: 1000; /* High z-index to stay above content */
-  
-  /* Smooth transitions for interactive elements */
-  -webkit-transition: all 0.3s ease; /* Safari/Chrome */
-  -moz-transition: all 0.3s ease; /* Firefox */
-  -o-transition: all 0.3s ease; /* Opera */
-  transition: all 0.3s ease; /* Smooth transitions */
   width: 100%;
   margin: 0;
 }
 
 /* 
- * Sticky header scroll effect
- * 
- * Adds visual feedback when user scrolls down the page.
- * Creates a more polished, modern navigation experience.
+ * Sticky header scroll effect - Keep completely black
  */
 header.scrolled {
-  background: rgba(0, 0, 0, 0.95);
-  -webkit-backdrop-filter: blur(10px); /* Safari */
-  backdrop-filter: blur(10px);
-  -webkit-box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3); /* Safari/Chrome */
-  -moz-box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3); /* Firefox */
+  background: #000 !important;
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
-  padding: 0 20px 5px;
 }
 
 /* Dark mode header styling */
@@ -282,7 +295,7 @@ img {
 
 /* ===== Navbar ===== */
 nav {
-  background: #000;
+  background: #000 !important;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -5855,6 +5868,11 @@ footer .footer-bottom p {
   text-align: center;
   position: relative;
   overflow: hidden;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .hero::before {
@@ -6003,6 +6021,135 @@ footer .footer-bottom p {
 .feature-card .btn {
   display: inline-block;
   text-decoration: none;
+}
+
+/* ============================================
+ * GLOBAL CARD STYLES
+ * ============================================
+ */
+
+/* Ensure ALL cards are white with consistent styling */
+.card,
+.feature-card,
+.case-card,
+.stat-card,
+.profile-card,
+.auth-card,
+.action-card,
+.quick-actions .action-card,
+.features-grid .feature-card,
+.cases-grid .case-card,
+.dashboard-stats .stat-card,
+.admin-dashboard .stat-card,
+.admin-dashboard .content-section,
+.admin-dashboard .dashboard-header {
+  background: white !important;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--gray-200);
+  padding: 2rem;
+  margin: 1rem 0;
+  transition: all 0.3s ease;
+}
+
+/* Card hover effects */
+.card:hover,
+.feature-card:hover,
+.case-card:hover,
+.stat-card:hover,
+.action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================
+ * ABOUT PAGE STYLES
+ * ============================================
+ */
+
+/* About page container */
+.about-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.about-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+/* Mission statement and sections */
+.mission-statement,
+.israel-legacy-section,
+.what-we-do-section {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--gray-200);
+  text-align: left;
+}
+
+.mission-statement h3,
+.israel-legacy-section h3,
+.what-we-do-section h3 {
+  color: var(--red-urgent);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.mission-statement p,
+.israel-legacy-section p,
+.what-we-do-section p {
+  color: var(--gray-700);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+/* Team grid */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.team-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--gray-200);
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.team-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.team-card img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border: 3px solid var(--red-urgent);
+}
+
+.image-caption {
+  font-weight: 600;
+  color: var(--gray-900);
+  font-size: 1rem;
 }
 
 /* ============================================
