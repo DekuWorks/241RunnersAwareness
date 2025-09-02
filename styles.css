@@ -5353,3 +5353,381 @@ footer .footer-bottom p {
         font-size: 1rem;
     }
 }
+
+/* ============================================
+ * CASES PAGE STYLES
+ * ============================================
+ */
+
+/* Cases Hero Section */
+.cases-hero {
+  background: linear-gradient(135deg, var(--red-urgent) 0%, var(--red-medium) 100%);
+  color: white;
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.cases-hero .hero-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.cases-hero .hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.cases-hero .hero-subtitle {
+  font-size: 1.25rem;
+  margin: 0 0 2rem 0;
+  opacity: 0.9;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cases-hero .hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.cases-hero .stat-item {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  min-width: 120px;
+}
+
+.cases-hero .stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--yellow-bright);
+}
+
+.cases-hero .stat-label {
+  font-size: 0.875rem;
+  margin: 0.5rem 0 0 0;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Filters Section */
+.filters-section {
+  background: white;
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.filters-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.filter-select,
+.filter-input {
+  padding: 0.75rem;
+  border: 2px solid var(--gray-300);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  min-width: 150px;
+}
+
+.filter-select:focus,
+.filter-input:focus {
+  outline: none;
+  border-color: var(--red-urgent);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+/* Cases Section */
+.cases-section {
+  padding: 3rem 0;
+  background: var(--gray-50);
+}
+
+.cases-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 2rem;
+}
+
+.cases-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0;
+}
+
+.cases-count {
+  font-size: 0.875rem;
+  color: var(--gray-600);
+}
+
+/* Cases Grid */
+.cases-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.case-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--gray-200);
+  transition: all 0.3s ease;
+}
+
+.case-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.case-card.urgent {
+  border-left: 4px solid var(--red-urgent);
+}
+
+.case-card.found {
+  border-left: 4px solid var(--green-bright);
+}
+
+.case-card.safe {
+  border-left: 4px solid var(--green-medium);
+}
+
+.case-card.deceased {
+  border-left: 4px solid var(--gray-600);
+}
+
+.case-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.case-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin: 0;
+}
+
+.case-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.case-status.missing {
+  background: var(--red-urgent);
+  color: white;
+}
+
+.case-status.found {
+  background: var(--green-bright);
+  color: white;
+}
+
+.case-status.safe {
+  background: var(--green-medium);
+  color: white;
+}
+
+.case-status.deceased {
+  background: var(--gray-600);
+  color: white;
+}
+
+.case-details {
+  margin-bottom: 1rem;
+}
+
+.case-detail {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.case-detail-label {
+  font-weight: 600;
+  color: var(--gray-700);
+  min-width: 80px;
+}
+
+.case-detail-value {
+  color: var(--gray-600);
+}
+
+.case-description {
+  color: var(--gray-700);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.case-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.case-actions .btn {
+  flex: 1;
+  text-align: center;
+}
+
+/* Loading, Error, and Empty States */
+.loading-state,
+.error-state,
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--gray-300);
+  border-top: 4px solid var(--red-urgent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-icon,
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.error-state h3,
+.empty-state h3 {
+  color: var(--gray-900);
+  margin: 0 0 0.5rem 0;
+}
+
+.error-state p,
+.empty-state p {
+  color: var(--gray-600);
+  margin: 0 0 1.5rem 0;
+}
+
+/* Load More Container */
+.load-more-container {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+/* ============================================
+ * CTA SECTION STYLES
+ * ============================================
+ */
+
+/* CTA Section */
+.cta-section {
+  background: linear-gradient(135deg, var(--red-urgent) 0%, var(--red-medium) 100%);
+  color: white;
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.cta-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.cta-content h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.cta-content p {
+  font-size: 1.125rem;
+  margin: 0 0 2rem 0;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cta-buttons .btn {
+  min-width: 200px;
+}
+
+/* ============================================
+ * CTA BUTTON STYLES
+ * ============================================
+ */
+
+/* CTA Secondary Button - Transparent with white border */
+.cta-secondary-btn {
+  background: transparent !important;
+  color: white !important;
+  border: 2px solid white !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 8px !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  display: inline-block !important;
+}
+
+.cta-secondary-btn:hover {
+  background: white !important;
+  color: var(--red-urgent) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
