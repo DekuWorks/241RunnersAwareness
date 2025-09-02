@@ -357,42 +357,47 @@
   <script>
   // Load header and footer
   document.addEventListener('DOMContentLoaded', function() {
+    console.log('📄 DOM Content Loaded, starting initialization...');
+    
     // Load header
     fetch('https://241runnersawareness.org/partials/header.html')
       .then(response => response.text())
       .then(html => {
-        document.getElementById('header-placeholder').innerHTML = html;
+        const headerPlaceholder = document.getElementById('header-placeholder');
+        if (headerPlaceholder) {
+          headerPlaceholder.innerHTML = html;
+          console.log('✅ Header loaded successfully');
+        }
       })
-      .catch(error => console.error('Error loading header:', error));
+      .catch(error => console.error('❌ Error loading header:', error));
 
     // Load footer
     fetch('https://241runnersawareness.org/partials/footer.html')
       .then(response => response.text())
       .then(html => {
-        document.getElementById('footer-placeholder').innerHTML = html;
+        const footerPlaceholder = document.getElementById('footer-placeholder');
+        if (footerPlaceholder) {
+          footerPlaceholder.innerHTML = html;
+          console.log('✅ Footer loaded successfully');
+        }
       })
-      .catch(error => console.error('Error loading footer:', error));
+      .catch(error => console.error('❌ Error loading footer:', error));
 
     // Check authentication and set up display
     setupAuthenticationDisplay();
+    console.log('✅ Authentication display setup complete');
 
-    // Wait for config to load, then load runner data
-    if (window.APP_CONFIG) {
-      loadRunnerData();
-    } else {
-      // Wait for config to load
-      const checkConfig = setInterval(() => {
-        if (window.APP_CONFIG) {
-          clearInterval(checkConfig);
-          loadRunnerData();
-        }
-      }, 100);
-    }
+    // Load runner data immediately (no need to wait for config)
+    console.log('🚀 Calling loadRunnerData...');
+    loadRunnerData();
   });
 
   // Get runner ID from URL
   const urlParams = new URLSearchParams(window.location.search);
   const runnerId = urlParams.get('id') || '1';
+  
+  console.log('🔍 Runner ID from URL:', runnerId);
+  console.log('🌐 Current page URL:', window.location.href);
 
   function setupAuthenticationDisplay() {
     // Check if user is authenticated
@@ -420,19 +425,25 @@
 
   async function loadRunnerData() {
     try {
+      console.log('🚀 Starting to load runner data...');
+      
       // Show loading state
-      document.getElementById('loadingState').classList.remove('hidden');
-      document.getElementById('errorState').classList.add('hidden');
-      document.getElementById('profileContent').classList.add('hidden');
+      const loadingState = document.getElementById('loadingState');
+      const errorState = document.getElementById('errorState');
+      const profileContent = document.getElementById('profileContent');
+      
+      if (loadingState) loadingState.classList.remove('hidden');
+      if (errorState) errorState.classList.add('hidden');
+      if (profileContent) profileContent.classList.add('hidden');
 
-      console.log('Loading runner data for ID:', runnerId);
+      console.log('📋 Loading runner data for ID:', runnerId);
 
       // Load from API
       const apiUrl = `https://241runners-api.azurewebsites.net/api/runners/${runnerId}`;
-      console.log('Fetching from API:', apiUrl);
+      console.log('🌐 Fetching from API:', apiUrl);
       
       const response = await fetch(apiUrl);
-      console.log('API Response status:', response.status);
+      console.log('📡 API Response status:', response.status);
       
       if (!response.ok) {
         if (response.status === 404) {
@@ -444,7 +455,7 @@
       }
       
       const runnerData = await response.json();
-      console.log('Loaded runner data from API:', runnerData);
+      console.log('✅ Loaded runner data from API:', runnerData);
       
       // Validate that we got actual data
       if (!runnerData || !runnerData.id) {
@@ -455,11 +466,13 @@
       updateRunnerDisplay(runnerData);
 
       // Hide loading, show content
-      document.getElementById('loadingState').classList.add('hidden');
-      document.getElementById('profileContent').classList.remove('hidden');
+      if (loadingState) loadingState.classList.add('hidden');
+      if (profileContent) profileContent.classList.remove('hidden');
+      
+      console.log('🎉 Runner profile loaded successfully!');
 
     } catch (error) {
-      console.error('Error loading runner data:', error);
+      console.error('❌ Error loading runner data:', error);
       showError('Unable to load runner profile. Please try again.');
     }
   }
