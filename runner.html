@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Runner Profile - 241 Runners Awareness</title>
-  <link rel="stylesheet" href="assets/styles/shared.css">
-  <link rel="stylesheet" href="styles.css?v=20250128b">
-  <script src="js/auth.js" defer></script>
-  <script src="assets/js/config.js"></script>
-  <script src="assets/js/api-utils.js"></script>
+  <link rel="stylesheet" href="https://241runnersawareness.org/assets/styles/shared.css">
+  <link rel="stylesheet" href="https://241runnersawareness.org/styles.css?v=20250128b">
+  <script src="https://241runnersawareness.org/js/auth.js" defer></script>
+  <script src="https://241runnersawareness.org/assets/js/config.js"></script>
+  <script src="https://241runnersawareness.org/assets/js/api-utils.js"></script>
 </head>
 <body>
   <!-- Include Header -->
@@ -38,7 +38,7 @@
       <div class="runner-header-sticky">
         <div class="runner-header-content">
           <div class="runner-avatar">
-            <img id="runnerAvatar" src="/default-avatar.jpg" alt="Runner Avatar" class="runner-avatar-img">
+            <img id="runnerAvatar" src="https://241runnersawareness.org/default-avatar.jpg" alt="Runner Avatar" class="runner-avatar-img">
           </div>
           <div class="runner-header-info">
             <h1 id="runnerName" class="runner-name">Loading...</h1>
@@ -46,17 +46,25 @@
             <span id="runnerStatus" class="runner-status">Loading...</span>
           </div>
           <div class="runner-header-actions">
-            <a href="dashboard.html" class="btn btn-secondary">
+            <a href="https://241runnersawareness.org/cases.html" class="btn btn-secondary">
               <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
               </svg>
-              Back to Dashboard
+              Back to Cases
             </a>
-            <a id="editRunnerLink" href="#" class="btn btn-primary">
+            <!-- Only show edit link for authenticated users -->
+            <a id="editRunnerLink" href="#" class="btn btn-primary" style="display: none;">
               <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
               </svg>
               Edit in App
+            </a>
+            <!-- Show report case link for all users -->
+            <a id="reportCaseLink" href="https://241runnersawareness.org/report-case.html" class="btn btn-primary">
+              <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Report Case
             </a>
           </div>
         </div>
@@ -116,10 +124,11 @@
               </div>
             </div>
 
-            <!-- Contact Information -->
-            <div class="profile-card">
+            <!-- Contact Information - Only show for authenticated users -->
+            <div id="contactInfoCard" class="profile-card" style="display: none;">
               <div class="card-header">
                 <h2 class="card-title">Contact Information</h2>
+                <small class="card-subtitle">Only visible to authenticated users</small>
               </div>
               <div class="card-body">
                 <div class="info-grid">
@@ -146,6 +155,29 @@
                   <div class="info-item">
                     <label class="info-label">ZIP Code</label>
                     <span id="zipCode" class="info-value">Loading...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Public Location Information -->
+            <div class="profile-card">
+              <div class="card-header">
+                <h2 class="card-title">Location Information</h2>
+              </div>
+              <div class="card-body">
+                <div class="info-grid">
+                  <div class="info-item">
+                    <label class="info-label">City</label>
+                    <span id="publicCity" class="info-value">Loading...</span>
+                  </div>
+                  <div class="info-item">
+                    <label class="info-label">State</label>
+                    <span id="publicState" class="info-value">Loading...</span>
+                  </div>
+                  <div class="info-item">
+                    <label class="info-label">Last Seen</label>
+                    <span id="lastSeen" class="info-value">Loading...</span>
                   </div>
                 </div>
               </div>
@@ -182,10 +214,11 @@
               </div>
             </div>
 
-            <!-- Medical Information -->
-            <div class="profile-card">
+            <!-- Medical Information - Only show for authenticated users -->
+            <div id="medicalInfoCard" class="profile-card" style="display: none;">
               <div class="card-header">
                 <h2 class="card-title">Medical Information</h2>
+                <small class="card-subtitle">Only visible to authenticated users</small>
               </div>
               <div class="card-body">
                 <div class="info-grid">
@@ -211,8 +244,8 @@
           </div>
         </div>
 
-        <!-- Cases Section -->
-        <div class="profile-section">
+        <!-- Cases Section - Only show for authenticated users -->
+        <div id="casesSection" class="profile-section" style="display: none;">
           <div class="section-header">
             <h2 class="section-title">Cases</h2>
             <div class="section-actions">
@@ -447,6 +480,13 @@
     margin: 0;
   }
 
+  .card-subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: var(--spacing-xs) 0 0 0;
+    font-style: italic;
+  }
+
   .card-body {
     padding: var(--spacing-lg);
   }
@@ -608,7 +648,7 @@
   // Load header and footer
   document.addEventListener('DOMContentLoaded', function() {
     // Load header
-    fetch('partials/header.html')
+    fetch('https://241runnersawareness.org/partials/header.html')
       .then(response => response.text())
       .then(html => {
         document.getElementById('header-placeholder').innerHTML = html;
@@ -616,35 +656,57 @@
       .catch(error => console.error('Error loading header:', error));
 
     // Load footer
-    fetch('partials/footer.html')
+    fetch('https://241runnersawareness.org/partials/footer.html')
       .then(response => response.text())
       .then(html => {
         document.getElementById('footer-placeholder').innerHTML = html;
       })
       .catch(error => console.error('Error loading footer:', error));
 
-    // Check authentication
-    if (window.Auth && !window.Auth.requireAuth()) {
-      return;
-    }
+    // Check authentication and set up display
+    setupAuthenticationDisplay();
 
-      // Wait for config to load, then load runner data
-  if (window.APP_CONFIG) {
-    loadRunnerData();
-  } else {
-    // Wait for config to load
-    const checkConfig = setInterval(() => {
-      if (window.APP_CONFIG) {
-        clearInterval(checkConfig);
-        loadRunnerData();
-      }
-    }, 100);
-  }
+    // Wait for config to load, then load runner data
+    if (window.APP_CONFIG) {
+      loadRunnerData();
+    } else {
+      // Wait for config to load
+      const checkConfig = setInterval(() => {
+        if (window.APP_CONFIG) {
+          clearInterval(checkConfig);
+          loadRunnerData();
+        }
+      }, 100);
+    }
   });
 
   // Get runner ID from URL
   const urlParams = new URLSearchParams(window.location.search);
   const runnerId = urlParams.get('id') || '1';
+
+  function setupAuthenticationDisplay() {
+    // Check if user is authenticated
+    const isAuthenticated = window.Auth && window.Auth.isAuthenticated();
+    
+    if (isAuthenticated) {
+      // Show all sections for authenticated users
+      document.getElementById('contactInfoCard').style.display = 'block';
+      document.getElementById('medicalInfoCard').style.display = 'block';
+      document.getElementById('casesSection').style.display = 'block';
+      document.getElementById('editRunnerLink').style.display = 'inline-flex';
+      document.getElementById('reportCaseLink').style.display = 'inline-flex';
+    } else {
+      // Hide sensitive sections for public users
+      document.getElementById('contactInfoCard').style.display = 'none';
+      document.getElementById('medicalInfoCard').style.display = 'none';
+      document.getElementById('casesSection').style.display = 'none';
+      document.getElementById('editRunnerLink').style.display = 'none';
+      
+      // Show message for restricted sections
+      document.getElementById('casesContainer').innerHTML = '<p style="text-align: center; color: var(--color-text-secondary); padding: var(--spacing-lg);">You must be logged in to view cases and medical information.</p>';
+      document.getElementById('photosContainer').innerHTML = '<p style="text-align: center; color: var(--color-text-secondary); padding: var(--spacing-lg);">You must be logged in to view photos.</p>';
+    }
+  }
 
   async function loadRunnerData() {
     try {
@@ -753,13 +815,30 @@
     document.getElementById('status').textContent = status;
     document.getElementById('dateReported').textContent = runner.dateReported ? new Date(runner.dateReported).toLocaleDateString() : 'Not provided';
 
-    // Update contact information
-    document.getElementById('email').textContent = runner.email || 'Not provided';
-    document.getElementById('phoneNumber').textContent = runner.contactInfo || 'Not provided';
-    document.getElementById('address').textContent = runner.address || 'Not provided';
-    document.getElementById('city').textContent = runner.city || 'Not provided';
-    document.getElementById('state').textContent = runner.state || 'Not provided';
-    document.getElementById('zipCode').textContent = runner.zipCode || 'Not provided';
+    // Update contact information (only if authenticated)
+    if (document.getElementById('email')) {
+      document.getElementById('email').textContent = runner.email || 'Not provided';
+    }
+    if (document.getElementById('phoneNumber')) {
+      document.getElementById('phoneNumber').textContent = runner.contactInfo || 'Not provided';
+    }
+    if (document.getElementById('address')) {
+      document.getElementById('address').textContent = runner.address || 'Not provided';
+    }
+    if (document.getElementById('city')) {
+      document.getElementById('city').textContent = runner.city || 'Not provided';
+    }
+    if (document.getElementById('state')) {
+      document.getElementById('state').textContent = runner.state || 'Not provided';
+    }
+    if (document.getElementById('zipCode')) {
+      document.getElementById('zipCode').textContent = runner.zipCode || 'Not provided';
+    }
+
+    // Update public location information
+    document.getElementById('publicCity').textContent = runner.city || 'Not provided';
+    document.getElementById('publicState').textContent = runner.state || 'Not provided';
+    document.getElementById('lastSeen').textContent = runner.lastSeen ? new Date(runner.lastSeen).toLocaleDateString() : 'Not provided';
 
     // Update physical description
     document.getElementById('height').textContent = runner.height || 'Not provided';
@@ -768,11 +847,19 @@
     document.getElementById('eyeColor').textContent = runner.eyeColor || 'Not provided';
     document.getElementById('identifyingMarks').textContent = runner.identifyingMarks || 'Not provided';
 
-    // Update medical information
-    document.getElementById('medicalConditions').textContent = runner.medicalConditions || 'Not provided';
-    document.getElementById('medications').textContent = runner.medications || 'Not provided';
-    document.getElementById('allergies').textContent = runner.allergies || 'Not provided';
-    document.getElementById('emergencyContacts').textContent = runner.emergencyContacts || 'Not provided';
+    // Update medical information (only if authenticated)
+    if (document.getElementById('medicalConditions')) {
+      document.getElementById('medicalConditions').textContent = runner.medicalConditions || 'Not provided';
+    }
+    if (document.getElementById('medications')) {
+      document.getElementById('medications').textContent = runner.medications || 'Not provided';
+    }
+    if (document.getElementById('allergies')) {
+      document.getElementById('allergies').textContent = runner.allergies || 'Not provided';
+    }
+    if (document.getElementById('emergencyContacts')) {
+      document.getElementById('emergencyContacts').textContent = runner.emergencyContacts || 'Not provided';
+    }
 
     // Update description if available
     if (document.getElementById('description')) {
@@ -784,10 +871,10 @@
       document.getElementById('dateReported').textContent = runner.dateReported ? new Date(runner.dateReported).toLocaleDateString() : 'Not provided';
     }
 
-    // Update edit link
+    // Update edit link for authenticated users
     const editLink = document.getElementById('editRunnerLink');
-    if (editLink) {
-      editLink.href = `report-case.html?id=${runner.id}`;
+    if (editLink && window.Auth && window.Auth.isAuthenticated()) {
+      editLink.href = `https://241runnersawareness.org/report-case.html?id=${runner.id}`;
     }
   }
 

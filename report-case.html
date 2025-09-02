@@ -7,8 +7,8 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <link rel="stylesheet" href="styles.css?v=20250128b" />
-  <script src="auth-utils.js"></script>
+  <link rel="stylesheet" href="https://241runnersawareness.org/styles.css?v=20250128b" />
+  <script src="https://241runnersawareness.org/auth-utils.js"></script>
   <style>
     /* Report Case Container - matches React app layout */
     .report-container {
@@ -99,16 +99,200 @@
       font-size: 0.875rem;
     }
 
+    /* Search Styles */
+    .search-container {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      transition: border-color 0.15s ease-in-out;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .search-btn {
+      padding: 0.75rem 1rem;
+      white-space: nowrap;
+    }
+
+    .search-results {
+      margin-top: 1rem;
+      padding: 1rem;
+      background-color: #f8fafc;
+      border-radius: 0.375rem;
+      border: 1px solid #e2e8f0;
+    }
+
+    .search-results h3 {
+      margin: 0 0 0.75rem 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .search-results-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .search-result-item {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem;
+      background-color: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      transition: all 0.15s ease-in-out;
+    }
+
+    .search-result-item:hover {
+      border-color: #2563eb;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-result-item.selected {
+      border-color: #2563eb;
+      background-color: #eff6ff;
+    }
+
+    .search-result-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 0.75rem;
+      flex-shrink: 0;
+      font-size: 1rem;
+      color: #6b7280;
+    }
+
+    .search-result-info {
+      flex: 1;
+    }
+
+    .search-result-name {
+      font-weight: 600;
+      color: #111827;
+      margin: 0 0 0.25rem 0;
+    }
+
+    .search-result-details {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin: 0;
+    }
+
+    .search-result-status {
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      margin-left: 0.5rem;
+    }
+
+    .search-result-status.missing {
+      background-color: #fef2f2;
+      color: #dc2626;
+    }
+
+    .search-result-status.found {
+      background-color: #f0fdf4;
+      color: #16a34a;
+    }
+
+    .search-result-status.safe {
+      background-color: #f0fdf4;
+      color: #16a34a;
+    }
+
+    .no-results {
+      margin-top: 1rem;
+      padding: 1rem;
+      background-color: #f8fafc;
+      border-radius: 0.375rem;
+      border: 1px solid #e2e8f0;
+      text-align: center;
+      color: #6b7280;
+    }
+
+    /* Responsive search */
+    @media (max-width: 640px) {
+      .search-container {
+        flex-direction: column;
+      }
+      
+      .search-btn {
+        width: 100%;
+      }
+    }
+
+    /* Message Styles */
+    .message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 1rem 1.5rem;
+      border-radius: 0.5rem;
+      color: white;
+      font-weight: 500;
+      z-index: 1000;
+      max-width: 400px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .message-success {
+      background-color: #10b981;
+    }
+
+    .message-error {
+      background-color: #ef4444;
+    }
+
+    .message-warning {
+      background-color: #f59e0b;
+    }
+
+    .message-info {
+      background-color: #3b82f6;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
     .form-group input,
     .form-group select,
     .form-group textarea {
       width: 100%;
       padding: 0.75rem;
-      border: 2px solid #e5e7eb;
-      border-radius: 0.5rem;
-      font-size: 1rem;
-      transition: border-color 0.3s ease;
-      background: #fff;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      transition: border-color 0.15s ease-in-out;
     }
 
     .form-group input:focus,
@@ -119,84 +303,32 @@
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
-    .form-group textarea {
-      resize: vertical;
-      min-height: 100px;
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
     }
 
-    /* File Upload - matches React app styling */
-    .file-upload {
-      border: 2px dashed #d1d5db;
-      border-radius: 0.5rem;
-      padding: 2rem;
-      text-align: center;
-      background: #f9fafb;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .file-upload:hover {
-      border-color: #2563eb;
-      background: #f0f9ff;
-    }
-
-    .file-upload.dragover {
-      border-color: #2563eb;
-      background: #f0f9ff;
-    }
-
-    .file-upload input[type="file"] {
-      display: none;
-    }
-
-    .upload-icon {
-      font-size: 2rem;
-      color: #6b7280;
-      margin-bottom: 0.5rem;
-    }
-
-    .upload-text {
-      color: #6b7280;
-      font-size: 0.875rem;
-    }
-
-    /* Navigation Buttons - matches React app styling */
     .form-navigation {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-top: 2rem;
-      padding-top: 1rem;
-      border-top: 1px solid #e5e7eb;
+      width: 100%;
     }
 
     .btn {
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.375rem;
-      font-size: 0.875rem;
-      font-weight: 500;
-      text-decoration: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.3s ease;
-      border: 1px solid transparent;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
       cursor: pointer;
-    }
-
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .btn-secondary {
-      background-color: #f3f4f6;
-      color: #374151;
-      border-color: #d1d5db;
-    }
-
-    .btn-secondary:hover:not(:disabled) {
-      background-color: #e5e7eb;
+      transition: all 0.15s ease-in-out;
     }
 
     .btn-primary {
@@ -204,65 +336,43 @@
       color: white;
     }
 
-    .btn-primary:hover:not(:disabled) {
+    .btn-primary:hover {
       background-color: #1d4ed8;
     }
 
-    .btn-success {
-      background-color: #059669;
+    .btn-secondary {
+      background-color: #6b7280;
       color: white;
     }
 
-    .btn-success:hover:not(:disabled) {
-      background-color: #047857;
+    .btn-secondary:hover {
+      background-color: #4b5563;
     }
 
-    /* Validation Messages */
-    .error-message {
+    .btn-success {
+      background-color: #10b981;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background-color: #059669;
+    }
+
+    .required {
       color: #dc2626;
-      font-size: 0.875rem;
-      margin-top: 0.25rem;
     }
 
-    .success-message {
-      color: #059669;
-      font-size: 0.875rem;
-      margin-top: 0.25rem;
-    }
-
-    /* Loading State */
-    .loading {
-      opacity: 0.6;
-      pointer-events: none;
-    }
-
-    .spinner {
-      display: inline-block;
-      width: 1rem;
-      height: 1rem;
-      border: 2px solid #f3f3f3;
-      border-top: 2px solid #2563eb;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-right: 0.5rem;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Responsive Design */
+    /* Responsive design */
     @media (max-width: 768px) {
-      .report-container {
-        padding: 1rem;
+      .form-row {
+        grid-template-columns: 1fr;
       }
-
+      
       .form-navigation {
         flex-direction: column;
         gap: 1rem;
       }
-
+      
       .btn {
         width: 100%;
       }
@@ -270,25 +380,25 @@
   </style>
 </head>
 <body>
-  <header role="banner">
+  <!-- Header -->
+  <header>
     <div class="header-bar">
-      <img src="/241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
+      <img src="https://241runnersawareness.org/241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
       <h1>241 Runners Awareness</h1>
     </div>
-
-    <nav role="navigation" aria-label="Main navigation">
-      <a href="index.html">Home</a>
-      <a href="aboutus.html">About Us</a>
-      <a href="cases.html">Cases</a>
-      <a href="map.html">🗺️ Map</a>
-      <a href="dna-tracking.html">🧬 DNA Tracking</a>
-      <a href="signup.html" id="signupLink">Sign Up</a>
-      <a href="login.html" id="loginLink">Login</a>
-      <a href="dashboard.html" id="dashboardLink" style="display: none;">📊 Dashboard</a>
-      <a href="runner-profile.html?id=1" id="runnerProfileLink" style="display: none;">🏃 Runner Profile</a>
+    
+    <nav>
+      <a href="https://241runnersawareness.org">Home</a>
+      <a href="https://241runnersawareness.org/aboutus.html">About Us</a>
+      <a href="https://241runnersawareness.org/cases.html">Cases</a>
+      <a href="https://241runnersawareness.org/map.html">Map</a>
+      <a href="https://241runnersawareness.org/dna-tracking.html">DNA Tracking</a>
+      <a href="https://241runnersawareness.org/report-case.html" aria-current="page">Report Case</a>
+      <a href="https://241runnersawareness.org/login.html">Login</a>
+      <a href="https://241runnersawareness.org/signup.html">Sign Up</a>
+      <a href="https://241runnersawareness.org/profile.html" id="profileLink" style="display: none;">Profile</a>
+      <a href="https://241runnersawareness.org/admin/index.html" id="dashboardLink" style="display: none;">Dashboard</a>
       <button id="logoutBtn" style="display: none;" class="logout-btn">Logout</button>
-      <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
-      <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
     </nav>
     
     <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
@@ -302,23 +412,57 @@
     </button>
   </header>
 
-  <main role="main">
+  <!-- Main Content -->
+  <main>
     <div class="report-container">
+      <!-- Form Header -->
       <div class="form-header">
         <h1>Report Missing Person Case</h1>
-        <p>Help us find missing individuals by providing detailed information</p>
+        <p>Help us locate missing individuals by providing detailed information about the case.</p>
       </div>
 
       <!-- Progress Bar -->
       <div class="progress-container">
         <div class="progress-bar">
-          <div class="progress-fill" id="progressFill" style="width: 25%;"></div>
+          <div class="progress-fill" id="progressFill"></div>
         </div>
-        <div class="progress-text">Step 1 of 4</div>
+        <div class="progress-text">Step <span id="currentStep">1</span> of <span id="totalSteps">11</span></div>
+      </div>
+
+      <!-- Step 0: Runner Search -->
+      <div class="form-step active" id="step0">
+        <h2>Search for Existing Runner</h2>
+        <p>First, let's check if this person is already in our system. You can search by name, runner ID, or location.</p>
+        
+        <div class="form-group">
+          <label for="runnerSearch">Search for Runner</label>
+          <div class="search-container">
+            <input type="text" id="runnerSearch" name="runnerSearch" placeholder="Enter name, runner ID, city, or state..." class="search-input">
+            <button type="button" id="searchButton" class="btn btn-primary search-btn">Search</button>
+          </div>
+        </div>
+
+        <!-- Search Results -->
+        <div id="searchResults" class="search-results" style="display: none;">
+          <h3>Search Results</h3>
+          <div id="searchResultsList" class="search-results-list">
+            <!-- Results will be populated here -->
+          </div>
+        </div>
+
+        <!-- No Results Message -->
+        <div id="noResults" class="no-results" style="display: none;">
+          <p>No existing runners found. You can proceed to create a new case.</p>
+        </div>
+
+        <div class="form-navigation">
+          <div></div>
+          <button type="button" class="btn btn-primary" onclick="nextStep()">Continue to Case Details</button>
+        </div>
       </div>
 
       <!-- Step 1: Basic Information -->
-      <div class="form-step active" id="step1">
+      <div class="form-step" id="step1">
         <h2>Basic Information</h2>
         <p>Please provide the basic information about the missing person.</p>
         
@@ -926,7 +1070,7 @@
       <div id="successMessage" class="success-message" style="display: none;">
         <h3>✅ Case Submitted Successfully!</h3>
         <p>Your missing person case has been submitted and is being reviewed by our team. You will receive updates via email.</p>
-        <a href="dashboard.html" class="btn btn-primary">Return to Dashboard</a>
+        <a href="https://241runnersawareness.org/dashboard.html" class="btn btn-primary">Return to Dashboard</a>
       </div>
     </div>
   </main>
@@ -941,15 +1085,184 @@
         ? 'http://localhost:5113/api' 
         : 'https://241runnersawareness-api.azurewebsites.net/api';
     
-    let currentStep = 1;
-    const totalSteps = 10;
+    let currentStep = 0; // Start at step 0 (runner search)
+    const totalSteps = 11; // Updated total steps
+    let selectedRunner = null; // Store selected runner data
 
     // Check authentication
     function checkAuth() {
       const user = localStorage.getItem('user');
       if (!user) {
-        window.location.href = 'login.html';
+        window.location.href = 'https://241runnersawareness.org/login.html';
         return;
+      }
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      // Set up event listeners
+      setupEventListeners();
+      
+      // Show first step
+      showStep(currentStep);
+      
+      // Check if we're editing an existing runner
+      const urlParams = new URLSearchParams(window.location.search);
+      const runnerId = urlParams.get('id');
+      if (runnerId) {
+        // Load existing runner data
+        loadExistingRunner(runnerId);
+      }
+    });
+
+    function setupEventListeners() {
+      // Search button click
+      const searchButton = document.getElementById('searchButton');
+      if (searchButton) {
+        searchButton.addEventListener('click', performRunnerSearch);
+      }
+
+      // Search input enter key
+      const searchInput = document.getElementById('runnerSearch');
+      if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            performRunnerSearch();
+          }
+        });
+      }
+    }
+
+    async function performRunnerSearch() {
+      const searchQuery = document.getElementById('runnerSearch').value.trim();
+      if (!searchQuery) {
+        showMessage('Please enter a search term.', 'error');
+        return;
+      }
+
+      try {
+        // Show loading state
+        const searchButton = document.getElementById('searchButton');
+        const originalText = searchButton.textContent;
+        searchButton.textContent = 'Searching...';
+        searchButton.disabled = true;
+
+        // Perform search
+        const response = await fetch(`${API_BASE_URL}/runners/search?query=${encodeURIComponent(searchQuery)}&limit=10`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const results = await response.json();
+        displaySearchResults(results);
+
+      } catch (error) {
+        console.error('Search error:', error);
+        showMessage('Error performing search. Please try again.', 'error');
+      } finally {
+        // Reset button state
+        const searchButton = document.getElementById('searchButton');
+        searchButton.textContent = originalText;
+        searchButton.disabled = false;
+      }
+    }
+
+    function displaySearchResults(results) {
+      const resultsContainer = document.getElementById('searchResults');
+      const resultsList = document.getElementById('searchResultsList');
+      const noResults = document.getElementById('noResults');
+
+      if (results.length === 0) {
+        resultsContainer.style.display = 'none';
+        noResults.style.display = 'block';
+        return;
+      }
+
+      // Show results
+      resultsContainer.style.display = 'block';
+      noResults.style.display = 'none';
+
+      // Clear previous results
+      resultsList.innerHTML = '';
+
+      // Add each result
+      results.forEach(runner => {
+        const resultItem = document.createElement('div');
+        resultItem.className = 'search-result-item';
+        resultItem.onclick = () => selectRunner(runner);
+
+        const initials = `${runner.firstName.charAt(0)}${runner.lastName.charAt(0)}`;
+        const statusClass = runner.status.toLowerCase();
+        
+        resultItem.innerHTML = `
+          <div class="search-result-avatar">${initials}</div>
+          <div class="search-result-info">
+            <div class="search-result-name">${runner.firstName} ${runner.lastName}</div>
+            <div class="search-result-details">
+              ${runner.age} years old • ${runner.city}, ${runner.state} • ID: ${runner.runnerId}
+            </div>
+          </div>
+          <span class="search-result-status ${statusClass}">${runner.status}</span>
+        `;
+
+        resultsList.appendChild(resultItem);
+      });
+    }
+
+    function selectRunner(runner) {
+      // Remove previous selection
+      document.querySelectorAll('.search-result-item').forEach(item => {
+        item.classList.remove('selected');
+      });
+
+      // Select current item
+      event.currentTarget.classList.add('selected');
+      
+      // Store selected runner
+      selectedRunner = runner;
+      
+      // Show confirmation message
+      showMessage(`Selected: ${runner.firstName} ${runner.lastName} (${runner.runnerId})`, 'success');
+      
+      // Update form fields with runner data
+      populateFormWithRunnerData(runner);
+    }
+
+    function populateFormWithRunnerData(runner) {
+      // Populate form fields with existing runner data
+      if (document.getElementById('firstName')) document.getElementById('firstName').value = runner.firstName || '';
+      if (document.getElementById('lastName')) document.getElementById('lastName').value = runner.lastName || '';
+      if (document.getElementById('dateOfBirth')) document.getElementById('dateOfBirth').value = runner.dateOfBirth ? runner.dateOfBirth.split('T')[0] : '';
+      if (document.getElementById('gender')) document.getElementById('gender').value = runner.gender || '';
+      if (document.getElementById('city')) document.getElementById('city').value = runner.city || '';
+      if (document.getElementById('state')) document.getElementById('state').value = runner.state || '';
+      if (document.getElementById('height')) document.getElementById('height').value = runner.height || '';
+      if (document.getElementById('weight')) document.getElementById('weight').value = runner.weight || '';
+      if (document.getElementById('hairColor')) document.getElementById('hairColor').value = runner.hairColor || '';
+      if (document.getElementById('eyeColor')) document.getElementById('eyeColor').value = runner.eyeColor || '';
+      if (document.getElementById('distinguishingFeatures')) document.getElementById('distinguishingFeatures').value = runner.identifyingMarks || '';
+    }
+
+    async function loadExistingRunner(runnerId) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/runners/${runnerId}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const runner = await response.json();
+        selectedRunner = runner;
+        
+        // Populate form with existing data
+        populateFormWithRunnerData(runner);
+        
+        // Show success message
+        showMessage(`Loaded existing runner: ${runner.firstName} ${runner.lastName}`, 'success');
+        
+      } catch (error) {
+        console.error('Error loading runner:', error);
+        showMessage('Error loading existing runner data.', 'error');
       }
     }
 
@@ -959,7 +1272,7 @@
       const percentage = (currentStep / totalSteps) * 100;
       
       progressFill.style.width = percentage + '%';
-      progressText.textContent = `Step ${currentStep} of ${totalSteps}`;
+      progressText.textContent = `Step ${currentStep + 1} of ${totalSteps}`;
     }
 
     function showStep(step) {
@@ -974,7 +1287,7 @@
 
     function nextStep() {
       if (validateStep(currentStep)) {
-        if (currentStep < totalSteps) {
+        if (currentStep < totalSteps - 1) {
           currentStep++;
           showStep(currentStep);
         }
@@ -982,13 +1295,18 @@
     }
 
     function prevStep() {
-      if (currentStep > 1) {
+      if (currentStep > 0) {
         currentStep--;
         showStep(currentStep);
       }
     }
 
     function validateStep(step) {
+      // Skip validation for step 0 (runner search)
+      if (step === 0) {
+        return true;
+      }
+
       const currentStepElement = document.getElementById(`step${step}`);
       const requiredFields = currentStepElement.querySelectorAll('[required]');
       
@@ -1107,6 +1425,24 @@
       try {
         const formData = collectFormData();
         
+        // If we have a selected runner, update the form data
+        if (selectedRunner) {
+          formData.existingRunnerId = selectedRunner.id;
+          formData.runnerId = selectedRunner.runnerId;
+          // Update other fields to match the existing runner
+          formData.firstName = selectedRunner.firstName;
+          formData.lastName = selectedRunner.lastName;
+          formData.dateOfBirth = selectedRunner.dateOfBirth;
+          formData.gender = selectedRunner.gender;
+          formData.city = selectedRunner.city;
+          formData.state = selectedRunner.state;
+          formData.height = selectedRunner.height;
+          formData.weight = selectedRunner.weight;
+          formData.hairColor = selectedRunner.hairColor;
+          formData.eyeColor = selectedRunner.eyeColor;
+          formData.distinguishingFeatures = selectedRunner.identifyingMarks;
+        }
+        
         // Get auth token
         const user = JSON.parse(localStorage.getItem('user'));
         const token = user?.token || user?.accessToken;
@@ -1127,11 +1463,15 @@
 
         if (response.ok) {
           const result = await response.json();
-          showMessage('Case submitted successfully! Case number: ' + result.caseNumber, 'success');
+          const message = selectedRunner 
+            ? `Case submitted successfully for existing runner ${selectedRunner.firstName} ${selectedRunner.lastName}! Case number: ${result.caseNumber}`
+            : `Case submitted successfully! Case number: ${result.caseNumber}`;
+          
+          showMessage(message, 'success');
           
           // Redirect to dashboard after a short delay
           setTimeout(() => {
-            window.location.href = '/dashboard.html';
+            window.location.href = 'https://241runnersawareness.org/admin/index.html';
           }, 2000);
         } else {
           const error = await response.json();
@@ -1148,26 +1488,22 @@
 
     function showMessage(message, type) {
       const messageDiv = document.createElement('div');
-      messageDiv.className = `message ${type}-message`;
+      messageDiv.className = `message message-${type}`;
       messageDiv.textContent = message;
       
-      const container = document.querySelector('.report-container');
-      container.insertBefore(messageDiv, container.firstChild);
+      // Remove existing messages
+      document.querySelectorAll('.message').forEach(msg => msg.remove());
       
+      // Add new message
+      document.body.appendChild(messageDiv);
+      
+      // Auto-remove after 5 seconds
       setTimeout(() => {
-        messageDiv.remove();
+        if (messageDiv.parentNode) {
+          messageDiv.parentNode.removeChild(messageDiv);
+        }
       }, 5000);
     }
-
-    // Initialize form
-    document.addEventListener('DOMContentLoaded', function() {
-      checkAuth();
-      updateStepDisplay();
-      
-      // Set default date to today
-      const today = new Date().toISOString().slice(0, 16);
-      document.getElementById('lastSeenDate').value = today;
-    });
 
     // Sticky navbar scroll effect
     window.addEventListener('scroll', function() {

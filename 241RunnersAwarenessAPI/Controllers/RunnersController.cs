@@ -68,7 +68,7 @@ namespace _241RunnersAwarenessAPI.Controllers
                     FullName = $"{r.FirstName} {r.LastName}",
                     RunnerId = r.RunnerId,
                     Age = r.Age,
-                    CalculatedAge = r.Age,
+                    CalculatedAge = r.CalculatedAge,
                     Gender = r.Gender,
                     Status = r.Status,
                     City = r.City,
@@ -104,6 +104,78 @@ namespace _241RunnersAwarenessAPI.Controllers
             }
         }
 
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<RunnerSearchDto>>> SearchRunners(
+            [FromQuery] string? query,
+            [FromQuery] string? status,
+            [FromQuery] string? state,
+            [FromQuery] int? limit = 20)
+        {
+            try
+            {
+                var runnersQuery = _context.Runners.Where(r => r.IsActive);
+
+                // Apply status filter if provided
+                if (!string.IsNullOrEmpty(status))
+                    runnersQuery = runnersQuery.Where(r => r.Status == status);
+
+                // Apply state filter if provided
+                if (!string.IsNullOrEmpty(state))
+                    runnersQuery = runnersQuery.Where(r => r.State == state);
+
+                // Apply search query if provided
+                if (!string.IsNullOrEmpty(query))
+                {
+                    var searchTerm = query.ToLower();
+                    runnersQuery = runnersQuery.Where(r =>
+                        r.FirstName.ToLower().Contains(searchTerm) ||
+                        r.LastName.ToLower().Contains(searchTerm) ||
+                        r.RunnerId.ToLower().Contains(searchTerm) ||
+                        r.City.ToLower().Contains(searchTerm) ||
+                        r.State.ToLower().Contains(searchTerm) ||
+                        (r.Tags != null && r.Tags.ToLower().Contains(searchTerm))
+                    );
+                }
+
+                var runners = await runnersQuery
+                    .OrderByDescending(r => r.IsUrgent)
+                    .ThenByDescending(r => r.DateReported)
+                    .Take(limit.Value)
+                    .ToListAsync();
+
+                var searchResults = runners.Select(r => new RunnerSearchDto
+                {
+                    Id = r.Id,
+                    FirstName = r.FirstName,
+                    LastName = r.LastName,
+                    FullName = $"{r.FirstName} {r.LastName}",
+                    RunnerId = r.RunnerId,
+                    Age = r.Age,
+                    CalculatedAge = r.CalculatedAge,
+                    Gender = r.Gender,
+                    Status = r.Status,
+                    City = r.City,
+                    State = r.State,
+                    Description = r.Description,
+                    DateReported = r.DateReported,
+                    LastSeen = r.LastSeen,
+                    IsUrgent = r.IsUrgent,
+                    Height = r.Height,
+                    Weight = r.Weight,
+                    HairColor = r.HairColor,
+                    EyeColor = r.EyeColor,
+                    IdentifyingMarks = r.IdentifyingMarks
+                });
+
+                return Ok(searchResults);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error searching runners");
+                return StatusCode(500, new { message = "An error occurred while searching runners" });
+            }
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<RunnerDto>> GetRunner(int id)
         {
@@ -123,7 +195,7 @@ namespace _241RunnersAwarenessAPI.Controllers
                     FullName = $"{runner.FirstName} {runner.LastName}",
                     RunnerId = runner.RunnerId,
                     Age = runner.Age,
-                    CalculatedAge = runner.Age,
+                    CalculatedAge = runner.CalculatedAge,
                     Gender = runner.Gender,
                     Status = runner.Status,
                     City = runner.City,

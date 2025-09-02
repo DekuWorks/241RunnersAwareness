@@ -1,34 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- 
-    ============================================2
-    LNJ;K
-    241 RUNNERS AWARENESS - MAIN LANDING PAGE
-    ============================================
-    
-    This is the primary entry point for the 241 Runners Awareness website.
-    The page serves as a landing page with navigation to all major sections
-    including cases, DNA tracking, and authentication.
-    
-    Key Features:
-    - Progressive Web App (PWA) support
-    - Dark mode toggle
-    - Responsive navigation
-    - Google OAuth integration
-    - Cache busting for deployment
-  -->
-  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>241 Runners Awareness</title>
   
-  <!-- 
-    PWA Configuration
-    - manifest.json: Defines app behavior, icons, and display properties
-    - theme-color: Sets the browser UI color theme
-    - apple-mobile-web-app-*: iOS-specific PWA settings
-  -->
+  <!-- PWA Configuration -->
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#dc2626">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,56 +13,40 @@
   <meta name="apple-mobile-web-app-title" content="241Runners">
   <link rel="apple-touch-icon" href="/241-logo.jpg">
   
-  <!-- 
-    Google OAuth Integration
-    - Loads Google Sign-In API for authentication
-    - Enables social login functionality
-  -->
+  <!-- Google OAuth Integration -->
   <script src="https://accounts.google.com/gsi/client" async defer crossorigin="anonymous"></script>
   
-  <!-- 
-    Cache Control Headers
-    - Prevents browser caching during development
-    - Forces fresh content loading
-    - Cache busting version parameter for deployment
-  -->
+  <!-- Cache Control Headers -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
+  
   <!-- Critical CSS for above-the-fold content -->
   <style>
     /* Critical CSS for above-the-fold content */
     *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.6;color:#333;background:#fff}header{background:#dc2626;color:#fff;padding:1rem 0;position:sticky;top:0;z-index:1000;box-shadow:0 2px 4px rgba(0,0,0,0.1)}.header-container{max-width:1200px;margin:0 auto;padding:0 2rem;display:flex;justify-content:space-between;align-items:center}.logo{display:flex;align-items:center;gap:1rem;text-decoration:none;color:#fff}.logo img{width:40px;height:40px;border-radius:50%}.logo h1{font-size:1.5rem;font-weight:700}.nav-menu{display:flex;list-style:none;gap:2rem;align-items:center}.nav-menu a{color:#fff;text-decoration:none;font-weight:600;transition:opacity 0.3s}.nav-menu a:hover{opacity:0.8}.hero{background:linear-gradient(135deg,#dc2626 0%,#b91c1c 100%);color:#fff;padding:4rem 0;text-align:center}.hero-content{max-width:800px;margin:0 auto;padding:0 2rem}.hero h2{font-size:3rem;font-weight:800;margin-bottom:1rem}.hero p{font-size:1.2rem;margin-bottom:2rem;opacity:0.9}.btn{display:inline-block;padding:1rem 2rem;background:#fff;color:#dc2626;text-decoration:none;border-radius:8px;font-weight:700;transition:all 0.3s}.btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.2)}.hamburger{display:none;flex-direction:column;cursor:pointer;padding:0.5rem}.hamburger span{width:25px;height:3px;background:#fff;margin:2px 0;transition:0.3s}@media (max-width:768px){.nav-menu{display:none}.hamburger{display:flex}.hero h2{font-size:2rem}}
   </style>
   
-  <!-- CACHE-BUST VERSION: 20250128c - PERFORMANCE OPTIMIZATION -->
-  <link rel="stylesheet" href="styles.css?v=20250128c" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="styles.css?v=20250128c"></noscript>
+  <!-- CACHE-BUST VERSION: 20250128d - PERFORMANCE OPTIMIZATION -->
+  <link rel="stylesheet" href="https://241runnersawareness.org/styles.css?v=20250128d" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://241runnersawareness.org/styles.css?v=20250128d"></noscript>
   
   <!-- Preload critical resources -->
-  <link rel="preload" href="auth-utils.js" as="script">
-  <link rel="preload" href="js/auth.js" as="script">
-  <link rel="preload" href="241-logo.jpg" as="image" type="image/jpeg">
+  <link rel="preload" href="https://241runnersawareness.org/auth-utils.js" as="script">
+  <link rel="preload" href="https://241runnersawareness.org/js/auth.js" as="script">
+  <link rel="preload" href="https://241runnersawareness.org/241-logo.jpg" as="image" type="image/jpeg">
   
   <!-- DNS prefetch for external resources -->
   <link rel="dns-prefetch" href="//accounts.google.com">
   <link rel="dns-prefetch" href="//browser.sentry-cdn.com">
   
-  <!-- 
-    Authentication Utilities
-    - Provides logout functionality and navigation state management
-    - Handles user authentication across all pages
-  -->
-  <script src="auth-utils.js" defer></script>
+  <!-- Authentication Utilities -->
+  <script src="https://241runnersawareness.org/auth-utils.js" defer></script>
   
   <!-- Performance Optimization -->
-  <script src="performance.js" defer></script>
+  <script src="https://241runnersawareness.org/performance.js" defer></script>
   
-  <!-- 
-    Sentry Error Monitoring
-    - Provides error tracking and performance monitoring
-    - Captures JavaScript errors and user interactions
-  -->
+  <!-- Sentry Error Monitoring -->
   <script
     src="https://browser.sentry-cdn.com/7.101.1/bundle.min.js"
     integrity="sha384-7QzQfTcZJGpSA80s0l6PlvsktzX9acns6T3q8vXID3zXrNvnzKqHxE7qJxYzXz"
@@ -93,7 +54,7 @@
   ></script>
   <script>
     Sentry.init({
-      dsn: "https://your-sentry-dsn@your-sentry-instance.ingest.sentry.io/your-project-id", // Replace with actual Sentry DSN
+      dsn: "https://your-sentry-dsn@your-sentry-instance.ingest.sentry.io/your-project-id",
       environment: "production",
       release: "241runners-awareness@1.0.0",
       tracesSampleRate: 1.0,
@@ -104,7 +65,7 @@
     // Register optimized service worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw-optimized.js')
+        navigator.serviceWorker.register('https://241runnersawareness.org/sw-optimized.js')
           .then(function(registration) {
             console.log('Service Worker registered successfully:', registration.scope);
           })
@@ -116,62 +77,36 @@
   </script>
 </head>
 <body>
-  <!-- 
-    ============================================
-    HEADER SECTION
-    ============================================
-    
-    Contains the main navigation and branding elements.
-    Features responsive design with hamburger menu for mobile.
-  -->
+  <!-- Header Section -->
   <header role="banner">
-    <!-- 
-      Header Bar
-      - Contains logo and main title
-      - Sticky positioning for better UX
-    -->
+    <!-- Header Bar -->
     <div class="header-bar">
-              <img src="241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
+      <img src="https://241runnersawareness.org/241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
       <h1>241 Runners Awareness</h1>
     </div>
 
-    <!-- 
-      Main Navigation
-      - Primary navigation links to all major sections
-      - Includes external links for donations and social media
-      - Dynamic authentication links (signup/login/logout/dashboard)
-    -->
+    <!-- Main Navigation -->
     <nav role="navigation" aria-label="Main navigation">
-      <a href="index.html" aria-current="page">Home</a>
-      <a href="aboutus.html">About Us</a>
-      <a href="cases.html">Cases</a>
-      <a href="map.html">🗺️ Map</a>
-      <a href="dna-tracking.html">🧬 DNA</a>
-      <a href="profile.html" id="profileLink" style="display: none;">Profile</a>
-      <a href="signup.html" id="signupLink">Sign Up</a>
-      <a href="login.html" id="loginLink">Login</a>
-      <a href="admin/index.html" id="dashboardLink" style="display: none;">📊 Dashboard</a>
+      <a href="https://241runnersawareness.org" aria-current="page">Home</a>
+      <a href="https://241runnersawareness.org/aboutus.html">About Us</a>
+      <a href="https://241runnersawareness.org/cases.html">Cases</a>
+      <a href="https://241runnersawareness.org/map.html">🗺️ Map</a>
+      <a href="https://241runnersawareness.org/dna-tracking.html">🧬 DNA</a>
+      <a href="https://241runnersawareness.org/profile.html" id="profileLink" style="display: none;">Profile</a>
+      <a href="https://241runnersawareness.org/signup.html" id="signupLink">Sign Up</a>
+      <a href="https://241runnersawareness.org/login.html" id="loginLink">Login</a>
+      <a href="https://241runnersawareness.org/admin/index.html" id="dashboardLink" style="display: none;">📊 Dashboard</a>
       <button id="logoutBtn" style="display: none;" class="logout-btn">Logout</button>
       <a href="https://usatriathlonfoundation.salsalabs.org/241RunnersAwareness/index.html" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
       <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
     </nav>
     
-    <!-- 
-      Theme Toggle Button
-      - Allows users to switch between light and dark modes
-      - Persists preference in localStorage
-      - Accessible with proper ARIA labels
-    -->
+    <!-- Theme Toggle Button -->
     <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
       ☀️
     </button>
     
-    <!-- 
-      Hamburger Menu Button
-      - Mobile navigation toggle
-      - Three-line icon for menu indication
-      - Accessible with proper ARIA attributes
-    -->
+    <!-- Hamburger Menu Button -->
     <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-navigation">
       <span></span>
       <span></span>
@@ -179,110 +114,62 @@
     </button>
   </header>
 
-  <!-- 
-    ============================================
-    MAIN CONTENT AREA
-    ============================================
-    
-    Contains the primary content sections including welcome message
-    and feature highlights for new functionality.
-  -->
+  <!-- Main Content Area -->
   <main role="main">
-    <!-- 
-      Welcome Section
-      - Introduces the organization and mission
-      - Clear value proposition for visitors
-    -->
+    <!-- Welcome Section -->
     <section aria-labelledby="welcome-heading">
       <h2 id="welcome-heading">Welcome to 241 Runners Awareness</h2>
       <p>241 Runners Awareness is a specialized platform dedicated to protecting and locating missing individuals with special needs and disabilities. Our comprehensive system provides real-time alerts, GPS tracking, and rapid response capabilities specifically designed for the unique challenges faced by vulnerable populations.</p>
     </section>
 
-    <!-- 
-      Features Section
-      - Highlights new and important features
-      - DNA tracking capabilities
-      - Real-time alert system for special needs individuals
-    -->
+    <!-- Features Section -->
     <section aria-labelledby="features-heading" class="features-section">
       <h2 id="features-heading">Real-Time Alert System</h2>
       <div class="features-grid">
-        <!-- 
-          DNA Tracking Feature Card
-          - Showcases advanced DNA technology
-          - Explains the identification process
-        -->
+        <!-- DNA Tracking Feature Card -->
         <div class="feature-card">
           <div class="feature-icon">🧬</div>
           <h3>DNA Tracking & Identification</h3>
           <p>Advanced DNA technology for missing persons cases. Secure sample collection, analysis, and national database integration.</p>
-          <a href="dna-tracking.html" class="feature-btn">Learn More</a>
+          <a href="https://241runnersawareness.org/dna-tracking.html" class="feature-btn">Learn More</a>
         </div>
 
-        <!-- 
-          Real-Time Alerts Feature Card
-          - Showcases immediate alert system
-          - Explains rapid response capabilities
-        -->
+        <!-- Real-Time Alerts Feature Card -->
         <div class="feature-card">
           <div class="feature-icon">🚨</div>
           <h3>Real-Time Emergency Alerts</h3>
           <p>Instant notifications for missing individuals with special needs. GPS tracking, wandering alerts, and immediate community response system.</p>
-          <a href="cases.html" class="feature-btn">View Active Cases</a>
+          <a href="https://241runnersawareness.org/cases.html" class="feature-btn">View Active Cases</a>
         </div>
 
-        <!-- 
-          Special Needs Support Feature Card
-          - Showcases specialized support
-          - Explains disability-specific features
-        -->
+        <!-- Special Needs Support Feature Card -->
         <div class="feature-card">
           <div class="feature-icon">🤝</div>
           <h3>Special Needs Support Network</h3>
           <p>Comprehensive support for individuals with disabilities, autism, and special needs. Caregiver alerts, medical emergency notifications, and specialized search protocols.</p>
-          <a href="aboutus.html" class="feature-btn">Learn About Our Mission</a>
+          <a href="https://241runnersawareness.org/aboutus.html" class="feature-btn">Learn About Our Mission</a>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- 
-    ============================================
-    FOOTER SECTION
-    ============================================
-    
-    Contains copyright information and legal links.
-    Maintains consistent branding and navigation.
-  -->
+  <!-- Footer Section -->
   <footer role="contentinfo">
     <div class="footer-content">
       <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
       <div class="footer-links">
-        <a href="privacy.html">Privacy Policy</a>
-        <a href="docs/privacy-policy.pdf" target="_blank" rel="noopener">Privacy Policy (PDF)</a>
-        <a href="terms.html">Terms of Use</a>
-        <a href="docs/terms-of-use.pdf" target="_blank" rel="noopener">Terms of Use (PDF)</a>
-        <a href="aboutus.html">About Us</a>
+        <a href="https://241runnersawareness.org/privacy.html">Privacy Policy</a>
+        <a href="https://241runnersawareness.org/docs/privacy-policy.pdf" target="_blank" rel="noopener">Privacy Policy (PDF)</a>
+        <a href="https://241runnersawareness.org/terms.html">Terms of Use</a>
+        <a href="https://241runnersawareness.org/docs/terms-of-use.pdf" target="_blank" rel="noopener">Terms of Use (PDF)</a>
+        <a href="https://241runnersawareness.org/aboutus.html">About Us</a>
       </div>
     </div>
   </footer>
 
-  <!-- 
-    ============================================
-    JAVASCRIPT FUNCTIONALITY
-    ============================================
-    
-    All interactive features including navigation, theme switching,
-    authentication state management, and service worker registration.
-  -->
+  <!-- JavaScript Functionality -->
   <script>
-    // 
-    // ============================================
-    // NAVIGATION AND UI INTERACTIONS
-    // ============================================
-    
-    // Sticky navbar scroll effect
-    // Adds visual feedback when user scrolls down the page
+    // Navigation and UI Interactions
     window.addEventListener('scroll', function() {
       const header = document.querySelector('header');
       if (window.scrollY > 50) {
@@ -292,16 +179,10 @@
       }
     });
 
-    // 
-    // ============================================
-    // HAMBURGER MENU FUNCTIONALITY
-    // ============================================
-    
-    // Mobile navigation toggle system
+    // Hamburger Menu Functionality
     const hamburger = document.querySelector('.hamburger');
     const nav = document.querySelector('nav');
     
-    // Toggle menu visibility and update ARIA attributes
     hamburger.addEventListener('click', function() {
       const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
       hamburger.setAttribute('aria-expanded', !isExpanded);
@@ -309,8 +190,6 @@
       nav.classList.toggle('active');
     });
     
-    // Close menu when clicking on navigation links
-    // Improves mobile UX by auto-closing menu after selection
     document.querySelectorAll('nav a').forEach(link => {
       link.addEventListener('click', () => {
         hamburger.classList.remove('active');
@@ -318,8 +197,6 @@
       });
     });
     
-    // Close menu when clicking outside navigation area
-    // Prevents menu from staying open when clicking elsewhere
     document.addEventListener('click', function(e) {
       if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
         hamburger.classList.remove('active');
@@ -327,16 +204,10 @@
       }
     });
 
-    // 
-    // ============================================
-    // DARK MODE THEME TOGGLE
-    // ============================================
-    
-    // Theme management system with localStorage persistence
+    // Dark Mode Theme Toggle
     const themeToggle = document.getElementById('theme-toggle');
     const body = document.body;
     
-    // Initialize theme from saved preference or default to light mode
     const currentTheme = localStorage.getItem('theme') || 'light';
     if (currentTheme === 'dark') {
       body.classList.add('dark-mode');
@@ -344,8 +215,6 @@
       themeToggle.setAttribute('aria-pressed', 'true');
     }
     
-    // Theme toggle click handler
-    // Switches between light and dark modes with visual feedback
     themeToggle.addEventListener('click', function() {
       body.classList.toggle('dark-mode');
       
@@ -360,36 +229,17 @@
       }
     });
 
-    // 
-    // ============================================
-    // AUTHENTICATION STATE MANAGEMENT
-    // ============================================
-    
-    // Authentication functionality is now handled by auth-utils.js
-    // The auth-utils.js file provides:
-    // - updateNavigation() function for managing navigation state
-    // - handleLogout() function for user logout
-    // - showNotification() function for user feedback
-    // - Auto-initialization on page load
-
-    // 
-    // ============================================
-    // SERVICE WORKER REGISTRATION
-    // ============================================
-    
-    // Progressive Web App functionality for offline support and caching
+    // Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=20250127d')
+        navigator.serviceWorker.register('https://241runnersawareness.org/sw.js?v=20250127d')
           .then((registration) => {
             console.log('Service Worker registered successfully:', registration);
             
-            // Force update if there's a new version available
             registration.addEventListener('updatefound', () => {
               const newWorker = registration.installing;
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  // New service worker is available - reload to activate
                   console.log('New service worker available');
                   window.location.reload();
                 }

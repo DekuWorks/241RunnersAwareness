@@ -310,4 +310,28 @@ namespace _241RunnersAwarenessAPI.Models
         [StringLength(500, ErrorMessage = "Emergency contacts cannot exceed 500 characters")]
         public string? EmergencyContacts { get; set; }
     }
+
+    public class RunnerSearchDto
+    {
+        public int Id { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string FullName { get; set; } = string.Empty;
+        public string RunnerId { get; set; } = string.Empty;
+        public int Age { get; set; }
+        public int? CalculatedAge { get; set; }
+        public string Gender { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+        public string State { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public DateTime DateReported { get; set; }
+        public DateTime? LastSeen { get; set; }
+        public bool IsUrgent { get; set; }
+        public string Height { get; set; } = string.Empty;
+        public string Weight { get; set; } = string.Empty;
+        public string HairColor { get; set; } = string.Empty;
+        public string EyeColor { get; set; } = string.Empty;
+        public string IdentifyingMarks { get; set; } = string.Empty;
+    }
 } 

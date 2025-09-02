@@ -332,8 +332,8 @@ class CasesPage {
                 </div>
                 
                 <div class="case-actions">
-                    <a href="runner.html?id=${caseItem.id}" class="btn-primary">View Details</a>
-                    <a href="map.html?case=${caseItem.id}" class="btn-secondary">View on Map</a>
+                    <a href="https://241runnersawareness.org/runner.html?id=${caseItem.id}" class="btn-primary">View Details</a>
+                    <a href="https://241runnersawareness.org/map.html?case=${caseItem.id}" class="btn-secondary">View on Map</a>
                 </div>
             </div>
         `;
