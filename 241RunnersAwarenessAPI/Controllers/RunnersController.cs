@@ -140,7 +140,7 @@ namespace _241RunnersAwarenessAPI.Controllers
                 var runners = await runnersQuery
                     .OrderByDescending(r => r.IsUrgent)
                     .ThenByDescending(r => r.DateReported)
-                    .Take(limit.Value)
+                    .Take(limit ?? 20)
                     .ToListAsync();
 
                 var searchResults = runners.Select(r => new RunnerSearchDto
