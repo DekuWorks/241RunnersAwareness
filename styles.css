@@ -3119,6 +3119,9 @@ body.dark-mode .form-textarea::placeholder {
     flex-wrap: wrap;
     gap: 1rem;
     padding: 1rem 0;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .cases-header h2 {
@@ -4395,11 +4398,12 @@ body:has(.my-cases-hero) {
 .cases-hero .stat-item,
 .my-cases-hero .stat-item {
     text-align: center;
-    background: rgba(255, 255, 255, 0.1);
+    background: white !important;
     padding: 1.5rem;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    border: 2px solid #e5e7eb;
     min-width: 120px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .cases-hero .stat-number,
@@ -4407,15 +4411,15 @@ body:has(.my-cases-hero) {
     font-size: 2.5rem;
     font-weight: bold;
     margin-bottom: 0.5rem;
-    color: white;
+    color: #dc2626 !important;
 }
 
 .cases-hero .stat-label,
 .my-cases-hero .stat-label {
     font-size: 0.9rem;
-    opacity: 0.9;
-    color: white;
-    font-weight: 500;
+    opacity: 1;
+    color: #374151 !important;
+    font-weight: 600;
 }
 
 /* Enhanced Filters Section */
@@ -4424,9 +4428,34 @@ body:has(.my-cases-hero) {
     background: #fff;
     padding: 2rem;
     border-radius: 16px;
-    margin: 2rem;
+    margin: 2rem auto;
+    max-width: 1200px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     border: none;
+}
+
+/* Ensure cases page header is black like other sites */
+.cases-hero ~ header,
+body:has(.cases-hero) header {
+    background: #000 !important;
+}
+
+.cases-hero ~ header .header-bar,
+body:has(.cases-hero) header .header-bar {
+    background: #000 !important;
+}
+
+.cases-hero ~ header nav,
+body:has(.cases-hero) header nav {
+    background: #000 !important;
+}
+
+/* Center all sections properly */
+.cases-hero ~ .cases-section,
+.cases-hero ~ .cta-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
 }
 
 .cases-hero ~ .filters-section .container,
