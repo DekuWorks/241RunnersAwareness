@@ -281,6 +281,79 @@
 
   
 
+  <style>
+    /* Restricted message styling */
+    .restricted-message {
+      text-align: center;
+      padding: 2rem;
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border: 2px solid #f59e0b;
+      border-radius: 12px;
+      margin: 1rem 0;
+    }
+
+    .restricted-message p {
+      color: #92400e;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .restricted-message .btn {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background-color: #dc2626;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+
+    .restricted-message .btn:hover {
+      background-color: #b91c1c;
+    }
+
+    /* Loading and error states */
+    .loading-state, .error-state {
+      text-align: center;
+      padding: 3rem 1rem;
+    }
+
+    .loading-spinner-large {
+      width: 60px;
+      height: 60px;
+      border: 6px solid #f3f4f6;
+      border-top: 6px solid #dc2626;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .error-title {
+      color: #dc2626;
+      margin-bottom: 1rem;
+    }
+
+    .error-actions {
+      margin-top: 2rem;
+    }
+
+    .error-actions .btn {
+      margin: 0 0.5rem;
+    }
+  </style>
+
   <script>
   // Load header and footer
   document.addEventListener('DOMContentLoaded', function() {
@@ -339,9 +412,9 @@
       document.getElementById('casesSection').style.display = 'none';
       document.getElementById('editRunnerLink').style.display = 'none';
       
-      // Show message for restricted sections
-      document.getElementById('casesContainer').innerHTML = '<p style="text-align: center; color: var(--color-text-secondary); padding: var(--spacing-lg);">You must be logged in to view cases and medical information.</p>';
-      document.getElementById('photosContainer').innerHTML = '<p style="text-align: center; color: var(--color-text-secondary); padding: var(--spacing-lg);">You must be logged in to view photos.</p>';
+      // Show helpful messages for restricted sections
+      document.getElementById('casesContainer').innerHTML = '<div class="restricted-message"><p>🔒 You must be logged in to view cases and medical information.</p><a href="https://241runnersawareness.org/login.html" class="btn btn-primary">Login to View</a></div>';
+      document.getElementById('photosContainer').innerHTML = '<div class="restricted-message"><p>🔒 You must be logged in to view photos.</p><a href="https://241runnersawareness.org/login.html" class="btn btn-primary">Login to View</a></div>';
     }
   }
 
@@ -353,69 +426,29 @@
       document.getElementById('profileContent').classList.add('hidden');
 
       console.log('Loading runner data for ID:', runnerId);
-      console.log('API Base URL:', window.APP_CONFIG?.API_BASE_URL);
 
-      // Try to load from API first
-      let runnerData;
-      try {
-        const apiUrl = `${window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api'}/runners/${runnerId}`;
-        console.log('Fetching from API:', apiUrl);
-        
-        const response = await fetch(apiUrl);
-        console.log('API Response status:', response.status);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        
-        runnerData = await response.json();
-        console.log('Loaded runner data from API:', runnerData);
-        
-        // Validate that we got actual data
-        if (!runnerData || !runnerData.id) {
-          throw new Error('Invalid runner data received from API');
-        }
-        
-      } catch (apiError) {
-        console.error('API Error:', apiError);
-        
-        // Only show error for 404 (not found), otherwise use mock data
-        if (apiError.message.includes('404')) {
+      // Load from API
+      const apiUrl = `https://241runners-api.azurewebsites.net/api/runners/${runnerId}`;
+      console.log('Fetching from API:', apiUrl);
+      
+      const response = await fetch(apiUrl);
+      console.log('API Response status:', response.status);
+      
+      if (!response.ok) {
+        if (response.status === 404) {
           showError(`Runner with ID ${runnerId} not found.`);
           return;
+        } else {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
-        console.log('API not available, using mock data for development');
-        // Fallback to mock data for development
-        runnerData = {
-          id: runnerId,
-          firstName: 'John',
-          lastName: 'Smith',
-          fullName: 'John Smith',
-          runnerId: 'RUN-2024-001',
-          age: 25,
-          calculatedAge: 25,
-          gender: 'Male',
-          status: 'missing',
-          city: 'Austin',
-          state: 'TX',
-          address: '123 Main St, Austin, TX 78701',
-          description: 'Last seen running at Zilker Park',
-          contactInfo: '555-123-4567',
-          dateReported: new Date().toISOString(),
-          lastSeen: new Date(Date.now() - 86400000).toISOString(),
-          height: '5\'10"',
-          weight: '160 lbs',
-          hairColor: 'Brown',
-          eyeColor: 'Blue',
-          identifyingMarks: 'Tattoo on left forearm',
-          medicalConditions: 'None',
-          medications: 'None',
-          allergies: 'None',
-          emergencyContacts: 'Jane Smith (555-987-6543)',
-          tags: ['runner', 'missing', 'urgent'],
-          isUrgent: true
-        };
+      }
+      
+      const runnerData = await response.json();
+      console.log('Loaded runner data from API:', runnerData);
+      
+      // Validate that we got actual data
+      if (!runnerData || !runnerData.id) {
+        throw new Error('Invalid runner data received from API');
       }
 
       // Update UI with runner data
@@ -453,23 +486,34 @@
     document.getElementById('dateReported').textContent = runner.dateReported ? new Date(runner.dateReported).toLocaleDateString() : 'Not provided';
 
     // Update contact information (only if authenticated)
-    if (document.getElementById('email')) {
-      document.getElementById('email').textContent = runner.email || 'Not provided';
+    const emailElement = document.getElementById('email');
+    if (emailElement) {
+      emailElement.textContent = runner.email || 'Not provided';
     }
-    if (document.getElementById('phoneNumber')) {
-      document.getElementById('phoneNumber').textContent = runner.contactInfo || 'Not provided';
+    
+    const phoneElement = document.getElementById('phoneNumber');
+    if (phoneElement) {
+      phoneElement.textContent = runner.contactInfo || 'Not provided';
     }
-    if (document.getElementById('address')) {
-      document.getElementById('address').textContent = runner.address || 'Not provided';
+    
+    const addressElement = document.getElementById('address');
+    if (addressElement) {
+      addressElement.textContent = runner.address || 'Not provided';
     }
-    if (document.getElementById('city')) {
-      document.getElementById('city').textContent = runner.city || 'Not provided';
+    
+    const cityElement = document.getElementById('city');
+    if (cityElement) {
+      cityElement.textContent = runner.city || 'Not provided';
     }
-    if (document.getElementById('state')) {
-      document.getElementById('state').textContent = runner.state || 'Not provided';
+    
+    const stateElement = document.getElementById('state');
+    if (stateElement) {
+      stateElement.textContent = runner.state || 'Not provided';
     }
-    if (document.getElementById('zipCode')) {
-      document.getElementById('zipCode').textContent = runner.zipCode || 'Not provided';
+    
+    const zipElement = document.getElementById('zipCode');
+    if (zipElement) {
+      zipElement.textContent = runner.zipCode || 'Not provided';
     }
 
     // Update public location information
@@ -485,27 +529,36 @@
     document.getElementById('identifyingMarks').textContent = runner.identifyingMarks || 'Not provided';
 
     // Update medical information (only if authenticated)
-    if (document.getElementById('medicalConditions')) {
-      document.getElementById('medicalConditions').textContent = runner.medicalConditions || 'Not provided';
+    const medicalElement = document.getElementById('medicalConditions');
+    if (medicalElement) {
+      medicalElement.textContent = runner.medicalConditions || 'Not provided';
     }
-    if (document.getElementById('medications')) {
-      document.getElementById('medications').textContent = runner.medications || 'Not provided';
+    
+    const medsElement = document.getElementById('medications');
+    if (medsElement) {
+      medsElement.textContent = runner.medications || 'Not provided';
     }
-    if (document.getElementById('allergies')) {
-      document.getElementById('allergies').textContent = runner.allergies || 'Not provided';
+    
+    const allergiesElement = document.getElementById('allergies');
+    if (allergiesElement) {
+      allergiesElement.textContent = runner.allergies || 'Not provided';
     }
-    if (document.getElementById('emergencyContacts')) {
-      document.getElementById('emergencyContacts').textContent = runner.emergencyContacts || 'Not provided';
+    
+    const emergencyElement = document.getElementById('emergencyContacts');
+    if (emergencyElement) {
+      emergencyElement.textContent = runner.emergencyContacts || 'Not provided';
     }
 
     // Update description if available
-    if (document.getElementById('description')) {
-      document.getElementById('description').textContent = runner.description || 'No description available';
+    const descElement = document.getElementById('description');
+    if (descElement) {
+      descElement.textContent = runner.description || 'No description available';
     }
 
     // Update date reported if available
-    if (document.getElementById('dateReported')) {
-      document.getElementById('dateReported').textContent = runner.dateReported ? new Date(runner.dateReported).toLocaleDateString() : 'Not provided';
+    const dateElement = document.getElementById('dateReported');
+    if (dateElement) {
+      dateElement.textContent = runner.dateReported ? new Date(runner.dateReported).toLocaleDateString() : 'Not provided';
     }
 
     // Update edit link for authenticated users
