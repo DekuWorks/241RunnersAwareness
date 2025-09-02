@@ -503,8 +503,10 @@ body.dark-mode footer {
 
 /* ===== Back Button ===== */
 .back-button {
-  text-align: left;
+  text-align: center;
   margin: 10px 0;
+  display: flex;
+  justify-content: center;
 }
 
 .back-button a {
