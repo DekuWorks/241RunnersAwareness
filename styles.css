@@ -5352,6 +5352,39 @@ footer .footer-bottom p {
     .my-cases-hero ~ .cta-content p {
         font-size: 1rem;
     }
+    
+    /* Hero responsive */
+    .hero {
+        padding: 3rem 0;
+    }
+    
+    .hero h2 {
+        font-size: 2.5rem;
+    }
+    
+    .hero p {
+        font-size: 1.125rem;
+    }
+    
+    .hero-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .hero-actions .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    /* Features responsive */
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .feature-card {
+        padding: 1.5rem;
+    }
 }
 
 /* ============================================
@@ -5705,6 +5738,167 @@ footer .footer-bottom p {
 
 .cta-buttons .btn {
   min-width: 200px;
+}
+
+/* ============================================
+ * HERO SECTION STYLES
+ * ============================================
+ */
+
+/* Hero Section */
+.hero {
+  background: linear-gradient(135deg, var(--red-urgent) 0%, var(--red-medium) 100%);
+  color: white;
+  padding: 6rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.3;
+}
+
+.hero-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.hero h2 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin: 0 0 1.5rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  line-height: 1.2;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  margin: 0 0 2.5rem 0;
+  opacity: 0.95;
+  line-height: 1.6;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.hero-actions .btn {
+  min-width: 180px;
+  font-size: 1.1rem;
+  padding: 1rem 2rem;
+}
+
+/* Welcome Section */
+.welcome-section {
+  padding: 4rem 0;
+  background: white;
+}
+
+.welcome-section .container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  text-align: center;
+}
+
+.welcome-section h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0 0 1.5rem 0;
+}
+
+.welcome-section p {
+  font-size: 1.125rem;
+  color: var(--gray-700);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ============================================
+ * FEATURES SECTION STYLES
+ * ============================================
+ */
+
+.features-section {
+  padding: 4rem 0;
+  background: var(--gray-50);
+}
+
+.features-section .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.features-section h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  text-align: center;
+  margin: 0 0 3rem 0;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.feature-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--gray-200);
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+.feature-card h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0 0 1rem 0;
+}
+
+.feature-card p {
+  color: var(--gray-700);
+  line-height: 1.6;
+  margin: 0 0 1.5rem 0;
+}
+
+.feature-card .btn {
+  display: inline-block;
+  text-decoration: none;
 }
 
 /* ============================================

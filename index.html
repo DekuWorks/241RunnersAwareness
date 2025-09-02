@@ -21,15 +21,15 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   
-  <!-- Critical CSS for above-the-fold content -->
-  <style>
-    /* Critical CSS for above-the-fold content */
-    *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.6;color:#333;background:#fff}header{background:#dc2626;color:#fff;padding:1rem 0;position:sticky;top:0;z-index:1000;box-shadow:0 2px 4px rgba(0,0,0,0.1)}.header-container{max-width:1200px;margin:0 auto;padding:0 2rem;display:flex;justify-content:space-between;align-items:center}.logo{display:flex;align-items:center;gap:1rem;text-decoration:none;color:#fff}.logo img{width:40px;height:40px;border-radius:50%}.logo h1{font-size:1.5rem;font-weight:700}.nav-menu{display:flex;list-style:none;gap:2rem;align-items:center}.nav-menu a{color:#fff;text-decoration:none;font-weight:600;transition:opacity 0.3s}.nav-menu a:hover{opacity:0.8}.hero{background:linear-gradient(135deg,#dc2626 0%,#b91c1c 100%);color:#fff;padding:4rem 0;text-align:center}.hero-content{max-width:800px;margin:0 auto;padding:0 2rem}.hero h2{font-size:3rem;font-weight:800;margin-bottom:1rem}.hero p{font-size:1.2rem;margin-bottom:2rem;opacity:0.9}.btn{display:inline-block;padding:1rem 2rem;background:#fff;color:#dc2626;text-decoration:none;border-radius:8px;font-weight:700;transition:all 0.3s}.btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.2)}.hamburger{display:none;flex-direction:column;cursor:pointer;padding:0.5rem}.hamburger span{width:25px;height:3px;background:#fff;margin:2px 0;transition:0.3s}@media (max-width:768px){.nav-menu{display:none}.hamburger{display:flex}.hero h2{font-size:2rem}}
-  </style>
+
   
   <!-- CACHE-BUST VERSION: 20250128f - UNIFIED TRAFFIC LIGHT THEME -->
   <link rel="stylesheet" href="https://241runnersawareness.org/styles.css?v=20250128f" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="https://241runnersawareness.org/styles.css?v=20250128f"></noscript>
+  <link rel="stylesheet" href="https://241runnersawareness.org/forms.css?v=20250128f" media="print" onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet" href="https://241runnersawareness.org/styles.css?v=20250128f">
+    <link rel="stylesheet" href="https://241runnersawareness.org/forms.css?v=20250128f">
+  </noscript>
   
   <!-- Preload critical resources -->
   <link rel="preload" href="https://241runnersawareness.org/auth-utils.js" as="script">
@@ -116,38 +116,54 @@
 
   <!-- Main Content Area -->
   <main role="main">
+    <!-- Hero Section -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="hero-content">
+        <h2 id="hero-heading">Protecting Vulnerable Individuals</h2>
+        <p>241 Runners Awareness is a specialized platform dedicated to protecting and locating missing individuals with special needs and disabilities. Our comprehensive system provides real-time alerts, GPS tracking, and rapid response capabilities specifically designed for the unique challenges faced by vulnerable populations.</p>
+        <div class="hero-actions">
+          <a href="https://241runnersawareness.org/report-case.html" class="btn btn-primary">Report a Case</a>
+          <a href="https://241runnersawareness.org/cases.html" class="btn btn-secondary">View Active Cases</a>
+        </div>
+      </div>
+    </section>
+
     <!-- Welcome Section -->
-    <section aria-labelledby="welcome-heading">
-      <h2 id="welcome-heading">Welcome to 241 Runners Awareness</h2>
-      <p>241 Runners Awareness is a specialized platform dedicated to protecting and locating missing individuals with special needs and disabilities. Our comprehensive system provides real-time alerts, GPS tracking, and rapid response capabilities specifically designed for the unique challenges faced by vulnerable populations.</p>
+    <section class="welcome-section" aria-labelledby="welcome-heading">
+      <div class="container">
+        <h2 id="welcome-heading">Our Mission</h2>
+        <p>241 Runners Awareness is a specialized platform dedicated to protecting and locating missing individuals with special needs and disabilities. Our comprehensive system provides real-time alerts, GPS tracking, and rapid response capabilities specifically designed for the unique challenges faced by vulnerable populations.</p>
+      </div>
     </section>
 
     <!-- Features Section -->
-    <section aria-labelledby="features-heading" class="features-section">
-      <h2 id="features-heading">Real-Time Alert System</h2>
-      <div class="features-grid">
-        <!-- DNA Tracking Feature Card -->
-        <div class="feature-card">
-          <div class="feature-icon">🧬</div>
-          <h3>DNA Tracking & Identification</h3>
-          <p>Advanced DNA technology for missing persons cases. Secure sample collection, analysis, and national database integration.</p>
-          <a href="https://241runnersawareness.org/dna-tracking.html" class="feature-btn">Learn More</a>
-        </div>
+    <section class="features-section" aria-labelledby="features-heading">
+      <div class="container">
+        <h2 id="features-heading">Our Services</h2>
+        <div class="features-grid">
+          <!-- DNA Tracking Feature Card -->
+          <div class="feature-card">
+            <div class="feature-icon">🧬</div>
+            <h3>DNA Tracking & Identification</h3>
+            <p>Advanced DNA technology for missing persons cases. Secure sample collection, analysis, and national database integration.</p>
+            <a href="https://241runnersawareness.org/dna-tracking.html" class="btn btn-outline">Learn More</a>
+          </div>
 
-        <!-- Real-Time Alerts Feature Card -->
-        <div class="feature-card">
-          <div class="feature-icon">🚨</div>
-          <h3>Real-Time Emergency Alerts</h3>
-          <p>Instant notifications for missing individuals with special needs. GPS tracking, wandering alerts, and immediate community response system.</p>
-          <a href="https://241runnersawareness.org/cases.html" class="feature-btn">View Active Cases</a>
-        </div>
+          <!-- Real-Time Alerts Feature Card -->
+          <div class="feature-card">
+            <div class="feature-icon">🚨</div>
+            <h3>Real-Time Emergency Alerts</h3>
+            <p>Instant notifications for missing individuals with special needs. GPS tracking, wandering alerts, and immediate community response system.</p>
+            <a href="https://241runnersawareness.org/cases.html" class="btn btn-primary">View Active Cases</a>
+          </div>
 
-        <!-- Special Needs Support Feature Card -->
-        <div class="feature-card">
-          <div class="feature-icon">🤝</div>
-          <h3>Special Needs Support Network</h3>
-          <p>Comprehensive support for individuals with disabilities, autism, and special needs. Caregiver alerts, medical emergency notifications, and specialized search protocols.</p>
-          <a href="https://241runnersawareness.org/aboutus.html" class="feature-btn">Learn About Our Mission</a>
+          <!-- Special Needs Support Feature Card -->
+          <div class="feature-card">
+            <div class="feature-icon">🤝</div>
+            <h3>Special Needs Support Network</h3>
+            <p>Comprehensive support for individuals with disabilities, autism, and special needs. Caregiver alerts, medical emergency notifications, and specialized search protocols.</p>
+            <a href="https://241runnersawareness.org/aboutus.html" class="btn btn-outline">Learn About Our Mission</a>
+          </div>
         </div>
       </div>
     </section>
