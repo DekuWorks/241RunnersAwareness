@@ -266,6 +266,32 @@
       }
     }
 
+    /* Authentication Notice */
+    .auth-notice {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border: 2px solid #f59e0b;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .auth-notice-content p {
+      margin: 0;
+      color: #92400e;
+      font-weight: 500;
+    }
+
+    .auth-notice-content a {
+      color: #dc2626;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .auth-notice-content a:hover {
+      text-decoration: underline;
+    }
+
     /* Responsive design */
     @media (max-width: 768px) {
       .form-row {
@@ -329,6 +355,13 @@
       <div class="form-header">
         <h1>Report Missing Person Case</h1>
         <p>Quick and easy reporting for missing persons. Choose your reporting method below.</p>
+      </div>
+
+      <!-- Authentication Notice -->
+      <div id="authNotice" class="auth-notice" style="display: none;">
+        <div class="auth-notice-content">
+          <p>⚠️ You need to be logged in to submit a case. Please <a href="https://241runnersawareness.org/login.html">login</a> or <a href="https://241runnersawareness.org/signup.html">sign up</a> to continue.</p>
+        </div>
       </div>
 
       <!-- Quick Access Buttons -->
@@ -604,17 +637,27 @@
       // Show initial form
       showForm(currentForm);
       
-      // Check authentication
+      // Check authentication (but don't block access)
       checkAuth();
     });
 
-    // Check authentication
+    // Check authentication (but don't redirect immediately)
     function checkAuth() {
       const user = localStorage.getItem('user');
       if (!user) {
-        // Redirect to login if not authenticated
-        window.location.href = 'https://241runnersawareness.org/login.html';
-        return;
+        // Show login prompt instead of redirecting
+        showLoginPrompt();
+        return false;
+      }
+      return true;
+    }
+
+    // Show login prompt when user tries to access protected features
+    function showLoginPrompt() {
+      // Show authentication notice banner
+      const authNotice = document.getElementById('authNotice');
+      if (authNotice) {
+        authNotice.style.display = 'block';
       }
     }
 
@@ -713,6 +756,12 @@
         return;
       }
 
+      // Check authentication before submission
+      if (!checkAuth()) {
+        showMessage('Please log in to submit a case.', 'error');
+        return;
+      }
+
       const submitButton = document.querySelector('#quickReport .btn-success');
       const originalText = submitButton.textContent;
       submitButton.textContent = 'Submitting...';
@@ -781,6 +830,12 @@
     async function submitDetailedReport() {
       if (!validateForm('detailedReport')) {
         showMessage('Please fill in all required fields.', 'error');
+        return;
+      }
+
+      // Check authentication before submission
+      if (!checkAuth()) {
+        showMessage('Please log in to submit a case.', 'error');
         return;
       }
 
@@ -854,6 +909,12 @@
     async function submitRunnerUpdate() {
       if (!validateForm('existingRunner')) {
         showMessage('Please fill in all required fields.', 'error');
+        return;
+      }
+
+      // Check authentication before submission
+      if (!checkAuth()) {
+        showMessage('Please log in to submit a case.', 'error');
         return;
       }
 
