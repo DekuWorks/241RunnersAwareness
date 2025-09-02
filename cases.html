@@ -11,8 +11,121 @@
     
     <!-- CSS -->
     <link rel="stylesheet" href="https://241runnersawareness.org/styles.css">
-    <link rel="stylesheet" href="https://241runnersawareness.org/critical.css">
     <link rel="stylesheet" href="https://241runnersawareness.org/forms.css">
+    
+    <!-- Custom CSS for Cases Page -->
+    <style>
+        /* Center the entire cases section */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        
+        /* Center the hero section content */
+        .cases-hero {
+            text-align: center;
+            width: 100%;
+        }
+        
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Make active cases number cards white */
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            background: white;
+            color: #333;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            min-width: 120px;
+            border: 2px solid #f0f0f0;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #dc2626;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Center the filters section */
+        .filters-section {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .filter-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        /* Center the cases section */
+        .cases-section {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .cases-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        /* Center the CTA section */
+        .cta-section {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .cta-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        /* Responsive design for mobile */
+        @media (max-width: 768px) {
+            .hero-stats {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+            
+            .stat-item {
+                min-width: 200px;
+            }
+            
+            .hero-content {
+                padding: 0 15px;
+            }
+        }
+    </style>
     
     <!-- Preload critical resources -->
     <link rel="preload" href="https://241runnersawareness.org/241-logo.jpg" as="image">
@@ -179,7 +292,6 @@
     <!-- Scripts -->
     <script src="https://241runnersawareness.org/assets/js/config.js"></script>
     <script src="https://241runnersawareness.org/js/cases.js"></script>
-    <script src="https://241runnersawareness.org/performance.js"></script>
     <script>
         // Theme toggle functionality
         const themeToggle = document.getElementById('themeToggle');
