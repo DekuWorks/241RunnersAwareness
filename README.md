@@ -8,15 +8,22 @@ A comprehensive platform for tracking and managing missing runners, built with A
 - **API**: ✅ Live at `https://241runners-api.azurewebsites.net`
 - **Database**: ✅ Connected and operational
 - **Authentication**: ✅ JWT system working
-- **Frontend**: ✅ Ready for deployment
-- **Admin Dashboard**: ✅ Fully functional
+- **Frontend**: ✅ Live at `https://241runnersawareness.org`
+- **Admin Dashboard**: ✅ Fully functional at `/admin/`
 
 ### 📊 **Current System Metrics**
 - **Database**: Azure SQL Database (`241RunnersAwarenessDB`)
-- **Users**: 8 registered users
-- **Runners**: 3 sample runners in database
+- **Users**: 6 registered users (4 admin, 2 regular)
+- **Runners**: 3 active cases in database
 - **API Health**: Healthy and responding
 - **Uptime**: 100% operational
+- **Response Time**: < 400ms average
+
+### 📚 **Documentation**
+- **Complete Documentation**: Available in [`docs/`](./docs/) folder
+- **Deployment Guide**: [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md)
+- **Status Reports**: [`docs/AZURE_DEPLOYMENT_STATUS.md`](./docs/AZURE_DEPLOYMENT_STATUS.md)
+- **Bug Reports**: [`docs/BUG_REPORT.md`](./docs/BUG_REPORT.md)
 
 ## 🏗️ **Architecture Overview**
 
