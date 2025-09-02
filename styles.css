@@ -299,25 +299,56 @@ body.dark-mode nav {
   background: #333 !important;
 }
 
+/* Global header override - ensure black header on all pages */
+* header,
+* .header-bar,
+* nav {
+  background: #000 !important;
+  background-color: #000 !important;
+}
+
+/* Specific override for any page that might have red header */
+body:has(header),
+html:has(header) {
+  --header-bg: #000 !important;
+}
+
+header {
+  --header-bg: #000 !important;
+  background: var(--header-bg) !important;
+}
+
 /* Override any critical CSS that might make header red */
 header,
 .header-bar,
-nav {
+nav,
+body header,
+body .header-bar,
+body nav,
+html header,
+html .header-bar,
+html nav {
   background: #000 !important;
   background-color: #000 !important;
   -webkit-background: #000 !important;
   -moz-background: #000 !important;
   -ms-background: #000 !important;
+  background-image: none !important;
 }
 
 /* Ensure header covers full width */
-header {
-  min-width: 100vw;
-  width: 100vw;
-  left: 0;
-  right: 0;
-  margin-left: 0;
-  margin-right: 0;
+header,
+body header,
+html header {
+  min-width: 100vw !important;
+  width: 100vw !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
 }
 
 /* Hamburger menu button */
