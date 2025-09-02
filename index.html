@@ -248,19 +248,9 @@
     // Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('https://241runnersawareness.org/sw.js?v=20250127d')
+        navigator.serviceWorker.register('https://241runnersawareness.org/sw-optimized.js')
           .then((registration) => {
             console.log('Service Worker registered successfully:', registration);
-            
-            registration.addEventListener('updatefound', () => {
-              const newWorker = registration.installing;
-              newWorker.addEventListener('statechange', () => {
-                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  console.log('New service worker available');
-                  window.location.reload();
-                }
-              });
-            });
           })
           .catch((error) => {
             console.error('Service Worker registration failed:', error);
