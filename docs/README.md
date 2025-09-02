@@ -15,6 +15,7 @@ This folder contains comprehensive documentation for the 241RunnersAwareness pro
 ### 🧹 **Project Management**
 - **[CLEANUP_SUMMARY.md](./CLEANUP_SUMMARY.md)** - Project cleanup summary and file optimization results
 - **[NEXT_STEPS_SUMMARY.md](./NEXT_STEPS_SUMMARY.md)** - Comprehensive roadmap and action items for future development
+- **[ORGANIZATION_SUMMARY.md](./ORGANIZATION_SUMMARY.md)** - Repository organization and structure improvements
 
 ### 🐛 **Quality Assurance**
 - **[BUG_REPORT.md](./BUG_REPORT.md)** - Bug analysis, fixes applied, and code quality assessment
