@@ -23,9 +23,9 @@ const adminUsers = [
     role: 'admin',
     phoneNumber: '5553456789',
     organization: '241 Runners Awareness',
-    title: 'Co-Founder',
-    credentials: 'Co-Founder',
-    specialization: 'Operations',
+    title: 'Lead Front End Developer',
+    credentials: 'Lead Developer',
+    specialization: 'Front End Development',
     yearsOfExperience: '3+'
   },
   {
@@ -36,9 +36,9 @@ const adminUsers = [
     role: 'admin',
     phoneNumber: '5552345678',
     organization: '241 Runners Awareness',
-    title: 'Co-Founder',
-    credentials: 'Co-Founder',
-    specialization: 'Technology',
+    title: 'Full Stack Developer',
+    credentials: 'Full Stack Developer',
+    specialization: 'Full Stack Development',
     yearsOfExperience: '4+'
   },
   {
