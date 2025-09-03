@@ -2032,7 +2032,7 @@
                 <h3>Total Runners</h3>
                 <p class="stat-number" id="totalRunners">-</p>
             </div>
-            <div class="stat-card clickable" onclick="openAdminsModal()" style="cursor: pointer;">
+            <div class="stat-card clickable" onclick="try { document.getElementById('adminsModal').style.display='block'; if(typeof loadAdminsTable === 'function') loadAdminsTable(); } catch(e) { console.error('Modal error:', e); }" style="cursor: pointer;">
                 <h3>Active Admins</h3>
                 <p class="stat-number" id="activeAdmins">-</p>
                 <small style="color: #6b7280; font-size: 0.9rem;">👆 Click to view all admins</small>
