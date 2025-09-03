@@ -1,27 +1,26 @@
 /**
- * ============================================
- * 241 RUNNERS AWARENESS - AUTHENTICATION UTILITIES
- * ============================================
- *
- * This file contains reusable authentication functions for the static HTML pages.
- * It provides consistent logout functionality and navigation state management
- * across all pages of the website.
- *
- * Features:
- * - Universal logout functionality
- * - Navigation state management
- * - Google OAuth session cleanup
- * - User feedback and notifications
- * - Backend API integration with fallback to mock authentication
- *
- * Usage:
- * Include this file in all HTML pages and call updateNavigation() on page load.
+ * 241 Runners Awareness - Authentication Utilities
+ * 
+ * This file contains authentication functions for the frontend application.
+ * All authentication now goes through the Azure backend API.
  */
 
 // API Configuration
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-  ? 'http://localhost:5113/api' 
-  : 'https://241runners-api-2025.azurewebsites.net/api';
+let API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+
+// Load API configuration
+async function loadConfig() {
+    try {
+        const response = await fetch('/config.json');
+        const config = await response.json();
+        API_BASE_URL = config.API_BASE_URL;
+    } catch (error) {
+        console.warn('Failed to load config.json, using default API URL');
+    }
+}
+
+// Initialize config on load
+loadConfig();
 
 /**
  * ============================================
@@ -76,502 +75,138 @@ function updateNavigation() {
 
 /**
  * ============================================
- * LOGOUT FUNCTIONALITY
- * ============================================
- *
- * Handles user logout across all pages with proper cleanup.
- */
-
-function handleLogout() {
-  // Clear all authentication data
-  localStorage.removeItem('user');
-  localStorage.removeItem('google_access_token');
-  localStorage.removeItem('userToken');
-
-  // Revoke Google session if available
-  if (window.google && window.google.accounts) {
-    try {
-      window.google.accounts.oauth2.revoke(localStorage.getItem('google_access_token'));
-    } catch (error) {
-      console.log('Google session revocation failed:', error);
-    }
-  }
-
-  // Update navigation to show login/signup links
-  updateNavigation();
-
-  // Show logout confirmation message
-  showNotification('You have been successfully logged out.', 'success');
-
-  // Redirect to home page if not already there
-  if (window.location.pathname !== '/' && window.location.pathname !== '/index.html') {
-    setTimeout(() => {
-      window.location.href = 'index.html';
-    }, 1500);
-  }
-}
-
-/**
- * ============================================
  * BACKEND API INTEGRATION
  * ============================================
  *
- * Functions to interact with the .NET backend API
- * with fallback to mock authentication if backend is unavailable.
+ * Functions to interact with the Azure backend API
  */
 
 async function handleLogin(email, password) {
-  try {
-    // Try to connect to the backend API
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      
-      // Store user data and tokens
-      const userData = {
-        email: email,
-        role: 'admin', // Backend will provide actual role
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken
-      };
-      
-      localStorage.setItem('user', JSON.stringify(userData));
-      localStorage.setItem('userToken', data.accessToken);
-      
-      showNotification('Login successful!', 'success');
-      
-      // Redirect based on role
-      if (userData.role === 'admin') {
-        window.location.href = 'admin/index.html';
-      } else {
-        window.location.href = 'index.html';
-      }
-      
-      return true;
-    } else {
-      throw new Error('Login failed');
-    }
-  } catch (error) {
-    console.log('Backend login failed, using mock authentication:', error);
-    
-    // Fallback to mock authentication
-    return handleMockLogin(email, password);
-  }
-}
-
-async function handleRegister(email, password, fullName) {
-  try {
-    // Try to connect to the backend API
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ 
-        email, 
-        password, 
-        displayName: fullName 
-      }),
-    });
-
-    if (response.ok) {
-      showNotification('Registration successful! Please log in.', 'success');
-      return true;
-    } else {
-      throw new Error('Registration failed');
-    }
-  } catch (error) {
-    console.log('Backend registration failed, using mock authentication:', error);
-    
-    // Fallback to mock registration
-    return handleMockRegister(email, password, fullName);
-  }
-}
-
-/**
- * ============================================
- * MOCK AUTHENTICATION (FALLBACK)
- * ============================================
- *
- * Mock authentication functions used when backend is unavailable.
- */
-
-function handleMockLogin(email, password) {
-  // Demo credentials for testing
-  const demoCredentials = {
-    'admin@example.com': { password: 'ChangeMe123!', role: 'admin', name: 'System Admin' },
-    'test@example.com': { password: 'password123', role: 'user', name: 'Test User' },
-    'dekuworks1@gmail.com': { password: 'marcus2025', role: 'admin', name: 'Marcus Brown' },
-    'danielcarey9770@gmail.com': { password: 'daniel2025', role: 'admin', name: 'Daniel Carey' }
-  };
-
-  const userCreds = demoCredentials[email];
-  
-  if (userCreds && userCreds.password === password) {
-    const userData = {
-      email: email,
-      role: userCreds.role,
-      name: userCreds.name
-    };
-    
-    localStorage.setItem('user', JSON.stringify(userData));
-    showNotification('Login successful!', 'success');
-    
-    // Redirect based on role
-    if (userData.role === 'admin') {
-      window.location.href = 'admin/index.html';
-    } else {
-      window.location.href = 'index.html';
-    }
-    
-    return true;
-  } else {
-    showNotification('Invalid email or password.', 'error');
-    return false;
-  }
-}
-
-function handleMockRegister(email, password, fullName) {
-  // For mock registration, just show success and redirect to login
-  showNotification('Registration successful! Please log in.', 'success');
-  setTimeout(() => {
-    window.location.href = 'login.html';
-  }, 1500);
-  return true;
-}
-
-/**
- * ============================================
- * MOCK AUTHENTICATION SYSTEM
- * ============================================
- *
- * Provides mock authentication for development and testing
- * when the backend is not available.
- */
-
-// Mock user database for development
-const mockUsers = [
-  {
-    email: 'admin@example.com',
-    password: 'ChangeMe123!',
-    fullName: 'System Admin',
-    role: 'admin',
-    phoneNumber: '(555) 123-4567',
-    organization: '241 Runners Awareness',
-    credentials: 'System Administrator',
-    specialization: 'Platform Management',
-    yearsOfExperience: '5+'
-  },
-  {
-    email: 'test@example.com',
-    password: 'password123',
-    fullName: 'Test User',
-    role: 'user',
-    phoneNumber: '(555) 234-5678'
-  },
-  {
-    email: 'dekuworks1@gmail.com',
-    password: 'marcus2025',
-    fullName: 'Marcus Brown',
-    role: 'admin',
-    phoneNumber: '(555) 345-6789',
-    organization: '241 Runners Awareness',
-    credentials: 'Co-Founder',
-    specialization: 'Operations',
-    yearsOfExperience: '3+'
-  },
-  {
-    email: 'danielcarey9770@gmail.com',
-    password: 'daniel2025',
-    fullName: 'Daniel Carey',
-    role: 'admin',
-    phoneNumber: '(555) 456-7890',
-    organization: '241 Runners Awareness',
-    credentials: 'Co-Founder',
-    specialization: 'Technology',
-    yearsOfExperience: '4+'
-  }
-];
-
-/**
- * Mock login function
- * @param {string} email - User email
- * @param {string} password - User password
- * @returns {Promise<Object>} - Login result
- */
-async function mockLogin(email, password) {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
-  const user = mockUsers.find(u => u.email === email && u.password === password);
-
-  if (user) {
-    return {
-      success: true,
-      message: 'Login successful!',
-      user: {
-        id: Date.now(),
-        email: user.email,
-        fullName: user.fullName,
-        role: user.role,
-        token: 'mock-jwt-token-' + Date.now()
-      }
-    };
-  } else {
-    throw new Error('Invalid email or password');
-  }
-}
-
-/**
- * Mock registration function
- * @param {Object} userData - User registration data
- * @returns {Promise<Object>} - Registration result
- */
-async function mockRegister(userData) {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
-  // Check if user already exists
-  const existingUser = mockUsers.find(u => u.email === userData.email);
-  if (existingUser) {
-    throw new Error('User with this email already exists');
-  }
-
-  // Validate password match
-  if (userData.password !== userData.confirmPassword) {
-    throw new Error('Passwords do not match');
-  }
-
-  // Validate role - prevent admin role creation through regular registration
-  const allowedRoles = ['user', 'parent', 'caregiver', 'aba_therapist', 'adoptive_parent'];
-  const userRole = userData.role || 'user';
-  
-  if (!allowedRoles.includes(userRole.toLowerCase())) {
-    throw new Error('Invalid role selected. Admin roles cannot be created through regular registration.');
-  }
-
-  // Add user to mock database
-  const newUser = {
-    email: userData.email,
-    password: userData.password,
-    fullName: userData.fullName,
-    role: userRole.toLowerCase()
-  };
-
-  mockUsers.push(newUser);
-
-  return {
-    success: true,
-    message: 'Registration successful!',
-    user: {
-      id: Date.now(),
-      email: newUser.email,
-      fullName: newUser.fullName,
-      role: newUser.role,
-      token: 'mock-jwt-token-' + Date.now()
-    }
-  };
-}
-
-/**
- * ============================================
- * UNIVERSAL AUTHENTICATION HANDLERS
- * ============================================
- *
- * Functions that can be called from any page to handle authentication.
- */
-
-/**
- * Handle login with fallback to mock authentication
- * @param {string} email - User email
- * @param {string} password - User password
- */
-async function handleLogin(email, password) {
-  try {
-    // Try to connect to the backend API first
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      
-      // Store user data and tokens
-      const userData = {
-        email: data.user.email,
-        role: data.user.role,
-        fullName: data.user.fullName,
-        token: data.token,
-        userId: data.user.userId
-      };
-      
-      localStorage.setItem('user', JSON.stringify(userData));
-      localStorage.setItem('userToken', data.token);
-      
-      showNotification('Login successful!', 'success');
-      
-      // Redirect based on role
-      if (userData.role === 'admin') {
-        window.location.href = 'admin/index.html';
-      } else {
-        window.location.href = 'dashboard.html';
-      }
-      
-      return true;
-    } else {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Login failed');
-    }
-  } catch (error) {
-    console.log('Backend login failed, using mock authentication:', error);
-    
-    // Fallback to mock authentication
     try {
-      const result = await mockLogin(email, password);
-      localStorage.setItem('user', JSON.stringify(result.user));
-      showNotification('Login successful! Redirecting...', 'success');
-      setTimeout(() => {
-        // Redirect admin users to admin dashboard, others to user dashboard
-        if (result.user.role === 'admin') {
-          window.location.href = 'admin/index.html';
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            
+            // Store user data and tokens
+            const userData = {
+                email: data.user.email,
+                role: data.user.role,
+                fullName: data.user.fullName,
+                token: data.token,
+                userId: data.user.id
+            };
+            
+            localStorage.setItem('user', JSON.stringify(userData));
+            localStorage.setItem('userToken', data.token);
+            
+            showNotification('Login successful!', 'success');
+            
+            // Redirect based on role
+            if (userData.role === 'admin') {
+                window.location.href = 'admin/index.html';
+            } else {
+                window.location.href = 'dashboard.html';
+            }
+            
+            return true;
         } else {
-          window.location.href = 'dashboard.html';
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Login failed');
         }
-      }, 1500);
-      return true;
-    } catch (mockError) {
-      showNotification(mockError.message || 'Login failed', 'error');
-      return false;
+    } catch (error) {
+        console.error('Login error:', error);
+        showNotification(error.message || 'Login failed. Please try again.', 'error');
+        return false;
     }
-  }
 }
 
-/**
- * Handle registration with fallback to mock authentication
- * @param {Object} userData - User registration data
- */
 async function handleRegister(userData) {
-  console.log('=== REGISTRATION DEBUG ===');
-  console.log('API URL:', `${API_BASE_URL}/auth/register`);
-  console.log('User data being sent:', userData);
-  
-  // Validate role - prevent admin role creation through regular registration
-  const allowedRoles = ['user', 'parent', 'caregiver', 'aba_therapist', 'adoptive_parent'];
-  const userRole = userData.role || 'user';
-  
-  if (!allowedRoles.includes(userRole.toLowerCase())) {
-    throw new Error('Invalid role selected. Admin roles cannot be created through regular registration.');
-  }
-  
-  // For now, use mock authentication since backend is having issues
-  console.log('Using mock authentication for immediate functionality');
-  
-  // Skip backend attempt and go straight to mock authentication
-  try {
-    // Try to connect to the backend API first
-    console.log('Attempting to connect to backend...');
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: userData.email,
-        password: userData.password,
-        firstName: userData.firstName || userData.fullName?.split(' ')[0] || '',
-        lastName: userData.lastName || userData.fullName?.split(' ').slice(1).join(' ') || '',
-        fullName: userData.fullName,
-        phoneNumber: userData.phoneNumber || '',
-        role: userRole.toLowerCase(),
-        // Role-specific fields
-        relationshipToRunner: userData.relationshipToRunner,
-        licenseNumber: userData.licenseNumber,
-        organization: userData.organization,
-        credentials: userData.credentials,
-        specialization: userData.specialization,
-        yearsOfExperience: userData.yearsOfExperience,
-        // Common fields
-        address: userData.address,
-        city: userData.city,
-        state: userData.state,
-        zipCode: userData.zipCode,
-        emergencyContactName: userData.emergencyContactName,
-        emergencyContactPhone: userData.emergencyContactPhone,
-        emergencyContactRelationship: userData.emergencyContactRelationship
-      }),
-    });
-
-    console.log('Response status:', response.status);
-    console.log('Response ok:', response.ok);
-    
-    if (response.ok) {
-      const data = await response.json();
-      console.log('Registration successful! Response:', data);
-      showNotification('Registration successful! Please check your email and phone for verification.', 'success');
-      setTimeout(() => {
-        window.location.href = 'login.html';
-      }, 2000);
-      return true;
-    } else {
-      const errorData = await response.json();
-      console.log('Registration failed. Error:', errorData);
-      throw new Error(errorData.message || 'Registration failed');
-    }
-  } catch (error) {
-    console.log('Backend registration failed, using mock authentication:', error);
-    console.log('Error details:', error.message);
-    console.log('Full error object:', error);
-    
-    // Fallback to mock registration
     try {
-      const result = await mockRegister(userData);
-      showNotification('Registration successful! You can now log in with your credentials.', 'success');
-      setTimeout(() => {
-        window.location.href = 'login.html';
-      }, 2000);
-      return true;
-    } catch (mockError) {
-      showNotification(mockError.message || 'Registration failed', 'error');
-      return false;
+        const response = await fetch(`${API_BASE_URL}/auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData),
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification('Registration successful! Please log in.', 'success');
+            return true;
+        } else {
+            throw new Error(result.message || 'Registration failed');
+        }
+    } catch (error) {
+        console.error('Registration error:', error);
+        showNotification(error.message || 'Registration failed. Please try again.', 'error');
+        return false;
     }
-  }
-  
-  // Force mock authentication for immediate functionality
-  console.log('Forcing mock authentication for immediate functionality');
-  try {
-    const result = await mockRegister(userData);
-    showNotification('Registration successful! You can now log in with your credentials.', 'success');
-    setTimeout(() => {
-      window.location.href = 'login.html';
-    }, 2000);
-    return true;
-  } catch (mockError) {
-    showNotification(mockError.message || 'Registration failed', 'error');
-    return false;
-  }
 }
 
 /**
- * ============================================
- * NOTIFICATION SYSTEM
- * ============================================
- *
- * Provides user feedback for authentication actions.
+ * Handle logout
  */
+function handleLogout() {
+    // Clear all stored data
+    localStorage.removeItem('user');
+    localStorage.removeItem('userToken');
+    
+    // Redirect to login page
+    window.location.href = '/login.html';
+}
 
+/**
+ * Check if user is authenticated
+ * @returns {boolean} - True if user is authenticated
+ */
+function isAuthenticated() {
+    const user = localStorage.getItem('user');
+    const token = localStorage.getItem('userToken');
+    return !!(user && token);
+}
+
+/**
+ * Get current user data
+ * @returns {Object|null} - Current user data or null if not authenticated
+ */
+function getCurrentUser() {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+}
+
+/**
+ * Get current user token
+ * @returns {string|null} - Current user token or null if not authenticated
+ */
+function getUserToken() {
+    return localStorage.getItem('userToken');
+}
+
+/**
+ * Check if current user is admin
+ * @returns {boolean} - True if current user is admin
+ */
+function isAdmin() {
+    const user = getCurrentUser();
+    return user && user.role === 'admin';
+}
+
+/**
+ * Show notification message
+ * @param {string} message - Message to display
+ * @param {string} type - Type of notification (success, error, warning, info)
+ */
 function showNotification(message, type = 'info') {
-  // Remove any existing notifications
+    // Remove any existing notifications
   const existingNotifications = document.querySelectorAll('.auth-notification');
   existingNotifications.forEach(notification => {
     if (notification.parentNode) {

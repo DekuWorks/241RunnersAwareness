@@ -35,6 +35,10 @@ namespace _241RunnersAwarenessAPI.Data
                 entity.Property(e => e.ZipCode).HasMaxLength(20);
                 entity.Property(e => e.Organization).HasMaxLength(200);
                 entity.Property(e => e.Title).HasMaxLength(100);
+                // Additional admin-specific fields
+                entity.Property(e => e.Credentials).HasMaxLength(200);
+                entity.Property(e => e.Specialization).HasMaxLength(200);
+                entity.Property(e => e.YearsOfExperience).HasMaxLength(50);
             });
         }
     }

@@ -339,40 +339,33 @@
             return isValid;
         }
         
-
-        
-        // Clear any existing authentication data on page load
+        // Clear existing authentication data
         function clearExistingAuth() {
-            // Clear any existing admin tokens to prevent conflicts
             localStorage.removeItem(tokenKey);
             localStorage.removeItem(roleKey);
             localStorage.removeItem(userKey);
-            
-            // Also clear any regular user tokens that might conflict
-            localStorage.removeItem('ra_token');
-            localStorage.removeItem('ra_role');
-            localStorage.removeItem('ra_user');
         }
         
-        // Handle page visibility changes (back button, refresh, etc.)
-        document.addEventListener('visibilitychange', function() {
-            if (!document.hidden) {
-                // Page became visible again (back button, refresh, etc.)
-                clearExistingAuth();
+        // Check if user is already authenticated
+        function checkExistingAuth() {
+            const token = localStorage.getItem(tokenKey);
+            const role = localStorage.getItem(roleKey);
+            
+            if (token && role === 'admin') {
+                // Redirect to admin dashboard if already authenticated
+                window.location.href = '/admin/admindash.html';
+                return true;
             }
-        });
-        
-        // Handle page load events
-        window.addEventListener('pageshow', function(event) {
-            // This fires when page is loaded from cache (back button)
-            if (event.persisted) {
-                clearExistingAuth();
-                console.log('Page loaded from cache, cleared auth data');
-            }
-        });
+            return false;
+        }
         
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            // Check if already authenticated
+            if (checkExistingAuth()) {
+                return;
+            }
+            
             // Clear existing auth data to prevent conflicts
             clearExistingAuth();
             

@@ -736,10 +736,22 @@
       } catch (error) {
         console.error('❌ Error loading runner data:', error);
         
-        // Fallback to mock data for demonstration
-        console.log('🔄 Using fallback data for demonstration');
-        const fallbackData = createFallbackData();
-        updateRunnerDisplay(fallbackData);
+        // Show error message to user
+        const errorMessage = document.createElement('div');
+        errorMessage.className = 'error-message text-center py-8';
+        errorMessage.innerHTML = `
+          <div class="text-red-600 text-xl font-semibold mb-4">Failed to load runner data</div>
+          <div class="text-gray-600 mb-4">Unable to retrieve runner information. Please try again later.</div>
+          <button onclick="location.reload()" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors">
+            Retry
+          </button>
+        `;
+        
+        const profileContent = document.getElementById('profileContent');
+        if (profileContent) {
+          profileContent.innerHTML = '';
+          profileContent.appendChild(errorMessage);
+        }
         
       } finally {
         // Hide loading, show content
@@ -753,37 +765,7 @@
       }
     }
 
-    // Create fallback data for demonstration
-    function createFallbackData() {
-      return {
-        id: runnerId,
-        firstName: 'John',
-        lastName: 'Doe',
-        fullName: 'John Doe',
-        runnerId: `RUN-2025-${runnerId.padStart(3, '0')}`,
-        age: 25,
-        gender: 'Male',
-        status: 'Missing',
-        dateReported: new Date().toISOString(),
-        lastSeen: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-        lastSeenLocation: 'Downtown Area',
-        city: 'Anytown',
-        state: 'CA',
-        height: '5\'10"',
-        weight: '170 lbs',
-        hairColor: 'Brown',
-        eyeColor: 'Blue',
-        identifyingMarks: 'Tattoo on left forearm',
-        description: 'John is a friendly individual who enjoys outdoor activities. He was last seen wearing a blue jacket and jeans.',
-        email: 'john.doe@example.com',
-        contactInfo: '(555) 123-4567',
-        address: '123 Main Street',
-        medicalConditions: 'None known',
-        medications: 'None',
-        allergies: 'None known',
-        emergencyContacts: 'Jane Doe - (555) 987-6543'
-      };
-    }
+
 
     // Update runner display
     function updateRunnerDisplay(runner) {

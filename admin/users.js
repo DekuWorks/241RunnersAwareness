@@ -106,8 +106,85 @@ export async function loadUsers() {
         console.error('Error loading users:', error);
         showToast('Failed to load users', 'error');
         
-        // Show mock data for development
-        showMockUsers();
+        // Show users data
+        function showUsers(users) {
+            if (!users || users.length === 0) {
+                document.getElementById('usersTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">
+                            <div class="flex flex-col items-center space-y-2">
+                                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                </svg>
+                                <span class="text-lg font-medium">No users found</span>
+                                <span class="text-sm">Users will appear here once they register</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors';
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
+                                    ${user.firstName ? user.firstName.charAt(0).toUpperCase() : 'U'}
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900 dark:text-white">
+                                    ${user.firstName || 'N/A'} ${user.lastName || 'N/A'}
+                                </div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                    ${user.email || 'No email'}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleBadgeClass(user.role)}">
+                            ${user.role || 'user'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        ${user.phoneNumber || 'N/A'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        ${user.organization || 'N/A'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        ${user.title || 'N/A'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        ${formatDate(user.createdAt)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.isActive ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}">
+                            ${user.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button onclick="editUser(${user.id})" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-3">
+                            Edit
+                        </button>
+                        <button onclick="deleteUser(${user.id})" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
+                            Delete
+                        </button>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
     }
 }
 
@@ -410,61 +487,7 @@ export function initUsersPage() {
     loadUsers();
 }
 
-/**
- * Show mock users data for development
- */
-function showMockUsers() {
-    const mockUsers = [
-        {
-            id: '1',
-            firstName: 'John',
-            lastName: 'Doe',
-            email: 'john.doe@example.com',
-            role: 'user',
-            status: 'Active',
-            createdAt: '2025-01-15T10:30:00Z',
-            lastLoginAt: '2025-01-20T14:22:00Z',
-            phoneNumber: '+1234567890'
-        },
-        {
-            id: '2',
-            firstName: 'Jane',
-            lastName: 'Smith',
-            email: 'jane.smith@example.com',
-            role: 'parent',
-            status: 'Active',
-            createdAt: '2025-01-10T09:15:00Z',
-            lastLoginAt: '2025-01-19T16:45:00Z',
-            phoneNumber: '+1234567891'
-        },
-        {
-            id: '3',
-            firstName: 'Admin',
-            lastName: 'User',
-            email: 'admin@241runnersawareness.org',
-            role: 'admin',
-            status: 'Active',
-            createdAt: '2025-01-01T00:00:00Z',
-            lastLoginAt: '2025-01-20T18:30:00Z',
-            phoneNumber: '+1234567892'
-        },
-        {
-            id: '4',
-            firstName: 'Bob',
-            lastName: 'Johnson',
-            email: 'bob.johnson@example.com',
-            role: 'caregiver',
-            status: 'Disabled',
-            createdAt: '2025-01-12T11:20:00Z',
-            lastLoginAt: '2025-01-18T13:10:00Z',
-            phoneNumber: '+1234567893'
-        }
-    ];
-    
-    currentUsers = mockUsers;
-    renderUsersTable();
-    updatePagination(mockUsers.length);
-}
+
 
 // Make functions global for onclick handlers
 window.editUser = editUser;

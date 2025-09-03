@@ -118,7 +118,12 @@ namespace _241RunnersAwarenessAPI.Controllers
                     City = request.City?.Trim(),
                     State = request.State?.Trim(),
                     ZipCode = request.ZipCode?.Trim(),
-                    // Organization and Title will be null for now until we fix the database schema
+                    Organization = request.Organization?.Trim(),
+                    Title = request.Title?.Trim(),
+                    // Additional admin-specific fields
+                    Credentials = request.Credentials?.Trim(),
+                    Specialization = request.Specialization?.Trim(),
+                    YearsOfExperience = request.YearsOfExperience?.Trim(),
                     CreatedAt = DateTime.UtcNow,
                     IsActive = true
                 };
@@ -150,7 +155,11 @@ namespace _241RunnersAwarenessAPI.Controllers
                         State = user.State,
                         ZipCode = user.ZipCode,
                         Organization = user.Organization,
-                        Title = user.Title
+                        Title = user.Title,
+                        // Additional admin-specific fields
+                        Credentials = user.Credentials,
+                        Specialization = user.Specialization,
+                        YearsOfExperience = user.YearsOfExperience
                     }
                 });
             }
@@ -244,7 +253,11 @@ namespace _241RunnersAwarenessAPI.Controllers
                         State = user.State,
                         ZipCode = user.ZipCode,
                         Organization = user.Organization,
-                        Title = user.Title
+                        Title = user.Title,
+                        // Additional admin-specific fields
+                        Credentials = user.Credentials,
+                        Specialization = user.Specialization,
+                        YearsOfExperience = user.YearsOfExperience
                     }
                 });
             }

@@ -118,18 +118,7 @@ class CasesPage {
             
         } catch (error) {
             console.error('Error loading cases:', error);
-            
-            // Show sample data when API fails (for development/demo purposes)
-            if (window.APP_CONFIG?.ENVIRONMENT === 'development') {
-                console.log('Showing sample data due to API failure');
-                this.cases = this.getSampleData();
-                this.filteredCases = [...this.cases];
-                this.hideLoading();
-                this.renderCases();
-                this.updateStats();
-            } else {
-                this.showError();
-            }
+            this.showError();
         }
     }
     

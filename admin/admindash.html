@@ -2203,7 +2203,7 @@
             const ctx = document.getElementById('demographicsChart');
             if (!ctx) return;
             
-            const data = generateDemographicsData();
+            const data = { ageGroups: [], maleData: [], femaleData: [] };
             
             if (analyticsCharts.demographics) {
                 analyticsCharts.demographics.destroy();
@@ -2344,29 +2344,7 @@
             };
         }
         
-        // Generate demographics data
-        function generateDemographicsData() {
-            const ageGroups = ['0-17', '18-25', '26-40', '41-60', '61+'];
-            const maleData = [0, 0, 0, 0, 0];
-            const femaleData = [0, 0, 0, 0, 0];
-            
-            dashboardData.runners.forEach(runner => {
-                let ageGroupIndex = 0;
-                if (runner.age <= 17) ageGroupIndex = 0;
-                else if (runner.age <= 25) ageGroupIndex = 1;
-                else if (runner.age <= 40) ageGroupIndex = 2;
-                else if (runner.age <= 60) ageGroupIndex = 3;
-                else ageGroupIndex = 4;
-                
-                if (runner.gender === 'Male') {
-                    maleData[ageGroupIndex]++;
-                } else if (runner.gender === 'Female') {
-                    femaleData[ageGroupIndex]++;
-                }
-            });
-            
-            return { ageGroups, maleData, femaleData };
-        }
+
         
         // Generate status data
         function generateStatusData() {
@@ -2550,7 +2528,7 @@
             
             notificationInterval = setInterval(() => {
                 if (notificationsEnabled) {
-                    generateRandomNotification();
+        
                 }
             }, 15000); // Generate notification every 15 seconds
         }
@@ -2563,44 +2541,7 @@
             }
         }
         
-        // Generate random notification for demo purposes
-        function generateRandomNotification() {
-            const notifications = [
-                {
-                    title: 'New Case Reported',
-                    message: 'A new missing person case has been reported in your area',
-                    type: 'info',
-                    icon: '🚨'
-                },
-                {
-                    title: 'Case Status Updated',
-                    message: 'Case RUN-2025-001 status changed to "Found"',
-                    type: 'success',
-                    icon: '✅'
-                },
-                {
-                    title: 'Urgent Case Alert',
-                    message: 'Urgent case requires immediate attention',
-                    type: 'urgent',
-                    icon: '🚨'
-                },
-                {
-                    title: 'New User Registration',
-                    message: 'A new community member has joined',
-                    type: 'info',
-                    icon: '👤'
-                },
-                {
-                    title: 'System Maintenance',
-                    message: 'Scheduled maintenance completed successfully',
-                    type: 'success',
-                    icon: '🔧'
-                }
-            ];
-            
-            const randomNotification = notifications[Math.floor(Math.random() * notifications.length)];
-            showNotification(randomNotification.title, randomNotification.message, randomNotification.type, randomNotification.icon);
-        }
+
         
         // Show notification in the panel
         function showNotification(title, message, type = 'info', icon = null) {

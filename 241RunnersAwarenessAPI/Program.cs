@@ -61,6 +61,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // Add Authorization
 builder.Services.AddAuthorization();
 
+// Register AdminSeedService
+builder.Services.AddScoped<AdminSeedService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -111,16 +114,15 @@ try
     using (var scope = app.Services.CreateScope())
     {
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var jwtService = scope.ServiceProvider.GetRequiredService<JwtService>();
+        var adminSeedService = scope.ServiceProvider.GetRequiredService<AdminSeedService>();
         
-        // Ensure database is created
+        // Ensure database is created and migrations are applied
         context.Database.EnsureCreated();
         
         // Seed admin users if they don't exist
-        if (!context.Users.Any())
-        {
-            Console.WriteLine("No users found in database. Please create admin users through the admin dashboard.");
-        }
+        await adminSeedService.SeedAdminUsersAsync();
+        
+        Console.WriteLine("Database initialization and admin user seeding completed successfully");
     }
 }
 catch (Exception ex)

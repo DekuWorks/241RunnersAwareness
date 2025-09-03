@@ -19,21 +19,65 @@ const ADMIN_USERS = [
         password: 'marcus2025',
         firstName: 'Marcus',
         lastName: 'Brown',
-        role: 'admin'
-    },
-    {
-        email: 'danielcarey9770@gmail.com',
-        password: 'daniel2025',
-        firstName: 'Daniel',
-        lastName: 'Carey',
-        role: 'admin'
+        role: 'admin',
+        phoneNumber: '(555) 345-6789',
+        organization: '241 Runners Awareness',
+        title: 'Co-Founder',
+        credentials: 'Co-Founder',
+        specialization: 'Operations',
+        yearsOfExperience: '3+'
     },
     {
         email: 'danielcarey9770@yahoo.com',
         password: 'daniel2025',
         firstName: 'Daniel',
         lastName: 'Carey',
-        role: 'admin'
+        role: 'admin',
+        phoneNumber: '(555) 456-7890',
+        organization: '241 Runners Awareness',
+        title: 'Co-Founder',
+        credentials: 'Co-Founder',
+        specialization: 'Technology',
+        yearsOfExperience: '4+'
+    },
+    {
+        email: 'lthomas3350@gmail.com',
+        password: 'lisa2025',
+        firstName: 'Lisa',
+        lastName: 'Thomas',
+        role: 'admin',
+        phoneNumber: '(555) 567-8901',
+        organization: '241 Runners Awareness',
+        title: 'Founder',
+        credentials: 'Founder',
+        specialization: 'Leadership & Strategy',
+        yearsOfExperience: '5+'
+    },
+    {
+        email: 'tinaleggins@yahoo.com',
+        password: 'tina2025',
+        firstName: 'Tina',
+        lastName: 'Matthews',
+        role: 'admin',
+        phoneNumber: '(555) 678-9012',
+        organization: '241 Runners Awareness',
+        title: 'Program Director',
+        credentials: 'Program Director',
+        specialization: 'Program Management',
+        yearsOfExperience: '4+'
+    },
+    {
+        email: 'mmelasky@iplawconsulting.com',
+        password: 'mark2025',
+        firstName: 'Mark',
+        lastName: 'Melasky',
+        role: 'admin',
+        phoneNumber: '(555) 789-0123',
+        organization: 'IP Law Consulting',
+        title: 'Intellectual Property Lawyer',
+        credentials: 'Attorney at Law',
+        specialization: 'Intellectual Property Law',
+        yearsOfExperience: '10+'
     }
 ];
 
