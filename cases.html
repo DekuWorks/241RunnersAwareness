@@ -15,27 +15,27 @@
     
     <!-- Custom CSS for Cases Page -->
     <style>
-        /* Global responsive container */
+        /* Global responsive container - Full width stretch */
         .main-content {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: stretch;
             width: 100%;
             overflow-x: hidden;
         }
         
-        /* Hero section with improved responsiveness */
+        /* Hero section with full width stretch */
         .cases-hero {
             text-align: center;
             width: 100%;
             padding: 2rem 0;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
         }
         
         .hero-content {
-            max-width: 1200px;
             width: 100%;
-            margin: 0 auto;
-            padding: 0 20px;
+            margin: 0;
+            padding: 0 40px;
             box-sizing: border-box;
         }
         
@@ -81,7 +81,7 @@
             letter-spacing: 0.5px;
         }
         
-        /* Filters section with improved layout */
+        /* Filters section with full width stretch */
         .filters-section {
             width: 100%;
             display: flex;
@@ -91,17 +91,16 @@
         }
         
         .filter-wrapper {
-            max-width: 1200px;
             width: 100%;
-            margin: 0 auto;
-            padding: 0 20px;
+            margin: 0;
+            padding: 0 40px;
             box-sizing: border-box;
         }
         
         .filters-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
             width: 100%;
         }
         
@@ -141,10 +140,9 @@
         }
         
         .cases-wrapper {
-            max-width: 1200px;
             width: 100%;
-            margin: 0 auto;
-            padding: 0 20px;
+            margin: 0;
+            padding: 0 40px;
             box-sizing: border-box;
         }
         
@@ -177,9 +175,9 @@
         }
         
         .search-features .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+            width: 100%;
+            margin: 0;
+            padding: 0 40px;
             box-sizing: border-box;
         }
         
@@ -371,10 +369,9 @@
         }
         
         .cta-wrapper {
-            max-width: 1200px;
             width: 100%;
-            margin: 0 auto;
-            padding: 0 20px;
+            margin: 0;
+            padding: 0 40px;
             box-sizing: border-box;
         }
         
@@ -437,8 +434,8 @@
         
         /* Responsive design improvements */
         @media (max-width: 1200px) {
-            .hero-content, .filter-wrapper, .cases-wrapper, .cta-wrapper {
-                padding: 0 15px;
+            .hero-content, .filter-wrapper, .cases-wrapper, .cta-wrapper, .search-features .container {
+                padding: 0 30px;
             }
             
             .hero-stats {
@@ -461,8 +458,8 @@
                 padding: 1rem;
             }
             
-            .hero-content {
-                padding: 0 15px;
+            .hero-content, .filter-wrapper, .cases-wrapper, .cta-wrapper, .search-features .container {
+                padding: 0 20px;
             }
             
             .search-features-grid {
@@ -502,8 +499,8 @@
         }
         
         @media (max-width: 480px) {
-            .hero-content, .filter-wrapper, .cases-wrapper, .cta-wrapper {
-                padding: 0 10px;
+            .hero-content, .filter-wrapper, .cases-wrapper, .cta-wrapper, .search-features .container {
+                padding: 0 15px;
             }
             
             .hero-stats {
