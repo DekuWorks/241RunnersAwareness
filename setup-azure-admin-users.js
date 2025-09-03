@@ -12,7 +12,7 @@
 const https = require('https');
 
 // Configuration
-const API_BASE_URL = 'https://241runnersawareness-api.azurewebsites.net';
+const API_BASE_URL = 'https://241runners-api.azurewebsites.net';
 // Admin users to create
 const adminUsers = [
   {
@@ -101,7 +101,7 @@ const adminUsers = [
 function makeRequest(path, method = 'GET', data = null) {
     return new Promise((resolve, reject) => {
         const options = {
-            hostname: '241runnersawareness-api.azurewebsites.net',
+            hostname: '241runners-api.azurewebsites.net',
             port: 443,
             path: path,
             method: method,

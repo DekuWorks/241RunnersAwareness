@@ -6,7 +6,7 @@
 class AdminDashboardTester {
     constructor() {
         this.testResults = [];
-        this.apiBaseUrl = 'https://241runnersawareness-api.azurewebsites.net/api';
+        this.apiBaseUrl = 'https://241runners-api.azurewebsites.net/api';
         this.currentToken = null;
     }
 

@@ -23,7 +23,7 @@ jobs:
     - name: Test API Health
       run: |
         echo "Testing API health endpoint..."
-        response=$(curl -s -o /dev/null -w "%{http_code}" https://241runnersawareness-api.azurewebsites.net/api/auth/health)
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://241runners-api.azurewebsites.net/api/auth/health)
         if [ "$response" = "200" ]; then
           echo "✅ API health check passed"
         else
@@ -34,7 +34,7 @@ jobs:
     - name: Test Admin Login
       run: |
         echo "Testing admin login..."
-        response=$(curl -s -X POST "https://241runnersawareness-api.azurewebsites.net/api/auth/login" \
+        response=$(curl -s -X POST "https://241runners-api.azurewebsites.net/api/auth/login" \
           -H "Content-Type: application/json" \
           -d '{"email":"dekuworks1@gmail.com","password":"NewAdmin123!@"}' \
           -o /dev/null -w "%{http_code}")
@@ -48,7 +48,7 @@ jobs:
     - name: Test Static Site
       run: |
         echo "Testing static site..."
-        response=$(curl -s -o /dev/null -w "%{http_code}" https://dekuworks.github.io/241RunnersAwareness/)
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://241runnersawareness.org/)
         if [ "$response" = "200" ]; then
           echo "✅ Static site test passed"
         else
@@ -59,7 +59,7 @@ jobs:
     - name: Test Admin Dashboard
       run: |
         echo "Testing admin dashboard..."
-        response=$(curl -s -o /dev/null -w "%{http_code}" https://dekuworks.github.io/241RunnersAwareness/admin/login.html)
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://241runnersawareness.org/admin/login.html)
         if [ "$response" = "200" ]; then
           echo "✅ Admin dashboard test passed"
         else
@@ -70,7 +70,7 @@ jobs:
     - name: Test Cases Page
       run: |
         echo "Testing cases page..."
-        response=$(curl -s -o /dev/null -w "%{http_code}" https://dekuworks.github.io/241RunnersAwareness/cases.html)
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://241runnersawareness.org/cases.html)
         if [ "$response" = "200" ]; then
           echo "✅ Cases page test passed"
         else
@@ -81,7 +81,7 @@ jobs:
     - name: Deployment Summary
       run: |
         echo "🎉 All deployment tests passed!"
-        echo "✅ API: https://241runnersawareness-api.azurewebsites.net"
-        echo "✅ Static Site: https://dekuworks.github.io/241RunnersAwareness"
-        echo "✅ Admin Dashboard: https://dekuworks.github.io/241RunnersAwareness/admin/"
-        echo "✅ Cases Page: https://dekuworks.github.io/241RunnersAwareness/cases.html" 
+        echo "✅ API: https://241runners-api.azurewebsites.net"
+        echo "✅ Static Site: https://241runnersawareness.org"
+        echo "✅ Admin Dashboard: https://241runnersawareness.org/admin/"
+        echo "✅ Cases Page: https://241runnersawareness.org/cases.html" 

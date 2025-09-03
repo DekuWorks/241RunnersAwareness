@@ -5,7 +5,7 @@
 
 class APIEndpointTester {
     constructor() {
-        this.apiBaseUrl = 'https://241runnersawareness-api.azurewebsites.net/api';
+        this.apiBaseUrl = 'https://241runners-api.azurewebsites.net/api';
         this.testResults = [];
         this.authToken = null;
         this.testData = {
