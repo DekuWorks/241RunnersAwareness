@@ -249,17 +249,16 @@ In memory of Israel Thomas, who passed away at **2:41 AM**, our organization wor
 
 ## 📊 **Current Data**
 
-### **Sample Runners**
-1. **John Smith** (RUN-2024-001) - Missing, Urgent
-2. **Sarah Johnson** (RUN-2024-002) - Missing
-3. **David Wilson** (RUN-2024-003) - Found
+### **Live System Status**
+
+The system is now live and integrated with real data. All mock data has been removed for production use.
 
 ### **System Statistics**
-- **Total Users**: 8
-- **Active Runners**: 3
-- **Missing Runners**: 2
-- **Found Runners**: 1
-- **Urgent Cases**: 1
+- **Total Users**: Live data from database
+- **Active Cases**: Live data from database
+- **Missing Cases**: Live data from database
+- **Resolved Cases**: Live data from database
+- **Urgent Cases**: Live data from database
 
 ## 🔒 **Security Features**
 

@@ -892,7 +892,7 @@
         function startRealtimeUpdates() {
             realtimeInterval = setInterval(() => {
                 // Simulate new data every 30 seconds
-                if (Math.random() > 0.7) { // 30% chance of new data
+                // Removed random data generation for live site
                     loadRunnersData();
                 }
             }, 30000);

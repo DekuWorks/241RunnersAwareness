@@ -4605,6 +4605,29 @@ body:has(.cases-hero) header nav {
     background: #f3f4f6;
 }
 
+/* Source badges for NamUs vs Local cases */
+.source-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.namus-badge {
+    background: #3b82f6;
+    color: white;
+}
+
+.local-badge {
+    background: #10b981;
+    color: white;
+}
+
 .urgent-badge {
     color: white !important;
     background: #dc2626;
@@ -5709,6 +5732,29 @@ footer .footer-bottom p {
 
 .case-status.deceased {
   background: var(--gray-600);
+  color: white;
+}
+
+/* Source badges for NamUs vs Local cases */
+.source-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.namus-badge {
+  background: #3b82f6;
+  color: white;
+}
+
+.local-badge {
+  background: #10b981;
   color: white;
 }
 

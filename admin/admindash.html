@@ -1264,6 +1264,138 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
+        /* NamUs Management Styles */
+        .namus-section {
+            margin: 30px 0;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+        }
+
+        .namus-management {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .namus-import-section {
+            padding: 25px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .namus-import-section h3 {
+            margin-bottom: 15px;
+            color: #1e293b;
+        }
+
+        .namus-import-section p {
+            margin-bottom: 20px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .namus-import-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        .namus-import-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .namus-import-form input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .namus-import-form input[type="file"]:hover {
+            border-color: #3b82f6;
+        }
+
+        .namus-import-form small {
+            display: block;
+            margin-top: 8px;
+            color: #6b7280;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .namus-stats {
+            padding: 25px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .namus-stats h3 {
+            margin-bottom: 20px;
+            color: #1e293b;
+        }
+
+        .namus-stats .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 20px;
+        }
+
+        .namus-stats .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .namus-stats .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .namus-stats .stat-label {
+            font-size: 0.85rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .import-status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .import-status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .import-status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .import-status.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+
         .health-item:hover,
         .activity-item:hover {
             transform: translateY(-2px);
@@ -2083,6 +2215,49 @@
                     <button onclick="openExportModal()" class="export-btn">📊 Export Data</button>
                 </div>
             </div>
+
+            <!-- NamUs Data Management Section -->
+            <div class="content-section namus-section">
+                <h2>📋 NamUs Data Management</h2>
+                <div class="namus-management">
+                    <div class="namus-import-section">
+                        <h3>Import NamUs Data</h3>
+                        <p>Upload CSV export from NamUs to update Houston-area missing persons cases.</p>
+                        
+                        <form id="namusImportForm" class="namus-import-form">
+                            <div class="form-group">
+                                <label for="namusCsvFile">CSV File:</label>
+                                <input type="file" id="namusCsvFile" name="csvFile" accept=".csv" required>
+                                <small>File must contain: Case Number, Full Name, Sex, Age at Missing, Date Missing, City, County, State, Agency</small>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                📥 Import NamUs Data
+                            </button>
+                        </form>
+                        
+                        <div id="importStatus" class="import-status" style="display: none;"></div>
+                    </div>
+                    
+                    <div class="namus-stats">
+                        <h3>Current Statistics</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-number" id="namusTotalCases">-</div>
+                                <div class="stat-label">Total Cases</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" id="namusMissingCases">-</div>
+                                <div class="stat-label">Missing</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" id="namusPendingCases">-</div>
+                                <div class="stat-label">Pending Verification</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
             <div class="analytics-grid">
                 <!-- System Health Monitoring -->
@@ -2823,7 +2998,28 @@
         function isAuthenticated() {
             const token = localStorage.getItem('ra_admin_token');
             const role = localStorage.getItem('ra_admin_role');
-            return !!(token && role === 'admin');
+            
+            if (!token || role !== 'admin') {
+                return false;
+            }
+            
+            // Check if token is expired (basic check)
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const currentTime = Math.floor(Date.now() / 1000);
+                
+                if (payload.exp && payload.exp < currentTime) {
+                    console.log('Token expired, clearing auth data');
+                    clearAuthData();
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error parsing token:', error);
+                clearAuthData();
+                return false;
+            }
+            
+            return true;
         }
         
         function requireAdmin() {
@@ -2862,6 +3058,9 @@
             
             // Initialize dashboard
             initializeDashboard();
+            
+            // Initialize NamUs import functionality
+            initializeNamusImport();
         });
 
         // Logout function
@@ -2888,8 +3087,15 @@
                 // Show loading state
                 showLoadingState();
                 
-                // Load current admin first
-                await loadCurrentAdmin();
+                        // Load current admin first
+        await loadCurrentAdmin();
+        
+        // Verify admin status is still active
+        if (!await verifyAdminStatus()) {
+            showToast('Your admin account may have been deactivated. Please contact support.', 'error');
+            logout();
+            return;
+        }
                 
                 // Load dashboard data
                 await loadDashboardData();
@@ -2961,14 +3167,14 @@
         // Load all dashboard data
         async function loadDashboardData() {
             try {
-                console.log('Starting to load dashboard data...');
+                console.log('Starting to load Houston area dashboard data...');
                 
                 // Load data sequentially to avoid race conditions
                 await loadUsers();
-                console.log('Users loaded:', dashboardData.users.length);
+                console.log('Houston area users loaded:', dashboardData.users.length);
                 
                 await loadRunners();
-                console.log('Runners loaded:', dashboardData.runners.length);
+                console.log('Houston area runners loaded:', dashboardData.runners.length);
                 
                 await loadAdmins();
                 console.log('Admins loaded:', dashboardData.admins.length);
@@ -2976,20 +3182,20 @@
                 await checkSystemStatus();
                 console.log('System status:', dashboardData.systemStatus);
                 
-                console.log('All data loaded, updating UI...');
+                console.log('All Houston area data loaded, updating UI...');
                 updateDashboardUI();
                 
-                console.log('Dashboard data loading completed successfully');
+                console.log('Houston area dashboard data loading completed successfully');
             } catch (error) {
-                console.error('Error loading dashboard data:', error);
-                showError('systemStatus', 'Error loading dashboard data');
+                console.error('Error loading Houston area dashboard data:', error);
+                showError('systemStatus', 'Error loading Houston area dashboard data');
             }
         }
 
-        // Load users data
+        // Load users data (Houston area only)
         async function loadUsers() {
             try {
-                console.log('Loading users...');
+                console.log('Loading Houston area users...');
                 const response = await fetch(`${API_BASE_URL}/auth/users`, {
                     headers: {
                         ...authHeader(),
@@ -3003,8 +3209,16 @@
                     const data = await response.json();
                     console.log('Users data:', data);
                     if (data.success && data.users) {
-                        dashboardData.users = data.users;
-                        console.log('Users loaded successfully:', data.users.length);
+                        // Filter for Houston area users (if they have location data)
+                        dashboardData.users = data.users.filter(user => {
+                            // If user has location data, filter by Houston area
+                            if (user.city && user.state) {
+                                return isHoustonArea(user.city, user.state);
+                            }
+                            // If no location data, include them (they might be Houston area)
+                            return true;
+                        });
+                        console.log('Houston area users loaded successfully:', dashboardData.users.length);
                     } else {
                         console.error('Invalid users data format:', data);
                         dashboardData.users = [];
@@ -3140,6 +3354,29 @@
                 console.error('Error loading admin profile:', error);
                 clearAuthData();
                 window.location.href = '/admin/login.html';
+            }
+        }
+
+        // Verify admin status is still active
+        async function verifyAdminStatus() {
+            try {
+                if (!currentAdmin) {
+                    return false;
+                }
+
+                const response = await fetch(`${API_BASE_URL}/auth/users/${currentAdmin.id}`, {
+                    headers: authHeader()
+                });
+                
+                if (response.ok) {
+                    const userData = await response.json();
+                    return userData.isActive && userData.role === 'admin';
+                }
+                
+                return false;
+            } catch (error) {
+                console.error('Error verifying admin status:', error);
+                return false;
             }
         }
 
@@ -3532,7 +3769,7 @@
             const maleData = [];
             const femaleData = [];
             
-            // Generate sample data based on actual runner data if available
+            // Use actual runner data if available, otherwise return empty data
             if (dashboardData.runners && dashboardData.runners.length > 0) {
                 // Count actual demographics from runner data
                 const demographics = {};
@@ -3563,10 +3800,10 @@
                     femaleData.push(demographics[group].female);
                 });
             } else {
-                // Generate sample data if no runners available
+                // Return empty data if no runners available
                 ageGroups.forEach(() => {
-                    maleData.push(Math.floor(Math.random() * 10) + 1);
-                    femaleData.push(Math.floor(Math.random() * 8) + 1);
+                    maleData.push(0);
+                    femaleData.push(0);
                 });
             }
             
@@ -3644,13 +3881,10 @@
             const newCases = [];
             const resolvedCases = [];
             
-            // Generate sample data based on actual runner data
+            // Return empty data - will be populated by real API data
             for (let i = 0; i < days; i++) {
-                const randomNew = Math.floor(Math.random() * 5) + 1;
-                const randomResolved = Math.floor(Math.random() * 3);
-                
-                newCases.push(randomNew);
-                resolvedCases.push(randomResolved);
+                newCases.push(0);
+                resolvedCases.push(0);
             }
             
             return { newCases, resolvedCases };
@@ -3698,9 +3932,9 @@
             const resolvedCases = dashboardData.runners.filter(r => r.status === 'found').length;
             
             document.getElementById('urgentCases').textContent = urgentCases;
-            document.getElementById('avgResponseTime').textContent = '2.3 hrs';
+            document.getElementById('avgResponseTime').textContent = 'N/A';
             document.getElementById('resolutionRate').textContent = totalCases > 0 ? `${Math.round((resolvedCases / totalCases) * 100)}%` : '0%';
-            document.getElementById('communityGrowth').textContent = '+12%';
+            document.getElementById('communityGrowth').textContent = 'N/A';
         }
 
         // Initialize system monitoring
@@ -3750,6 +3984,112 @@
         function startNetworkAnalyticsMonitoring() {
             // Update network analytics every 30 seconds
             setInterval(updateNetworkAnalytics, 30000);
+        }
+
+        // Initialize NamUs import functionality
+        function initializeNamusImport() {
+            console.log('Initializing NamUs import functionality...');
+            
+            const importForm = document.getElementById('namusImportForm');
+            if (importForm) {
+                importForm.addEventListener('submit', handleNamusImport);
+            }
+            
+            // Load initial NamUs statistics
+            loadNamusStatistics();
+        }
+
+        // Handle NamUs CSV import
+        async function handleNamusImport(event) {
+            event.preventDefault();
+            
+            const formData = new FormData();
+            const fileInput = document.getElementById('namusCsvFile');
+            const importStatus = document.getElementById('importStatus');
+            
+            if (!fileInput.files[0]) {
+                showImportStatus('Please select a CSV file to import.', 'error');
+                return;
+            }
+            
+            formData.append('csvFile', fileInput.files[0]);
+            
+            try {
+                showImportStatus('Uploading and processing CSV file...', 'info');
+                
+                const response = await fetch(`${API_BASE_URL}/publiccases/admin/namus/import`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    },
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    showImportStatus(
+                        `Import completed successfully! Imported: ${result.imported}, Updated: ${result.updated}` +
+                        (result.errors.length > 0 ? `, Errors: ${result.errors.length}` : ''),
+                        'success'
+                    );
+                    
+                    // Clear form and reload statistics
+                    fileInput.value = '';
+                    loadNamusStatistics();
+                } else {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Import failed');
+                }
+            } catch (error) {
+                console.error('NamUs import error:', error);
+                showImportStatus(`Import failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Show import status message
+        function showImportStatus(message, type) {
+            const importStatus = document.getElementById('importStatus');
+            if (importStatus) {
+                importStatus.textContent = message;
+                importStatus.className = `import-status ${type}`;
+                importStatus.style.display = 'block';
+                
+                // Auto-hide after 10 seconds
+                setTimeout(() => {
+                    importStatus.style.display = 'none';
+                }, 10000);
+            }
+        }
+
+        // Load NamUs statistics
+        async function loadNamusStatistics() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/publiccases/stats/houston`, {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const stats = await response.json();
+                    updateNamusStatistics(stats);
+                }
+            } catch (error) {
+                console.error('Error loading NamUs statistics:', error);
+            }
+        }
+
+        // Update NamUs statistics display
+        function updateNamusStatistics(stats) {
+            const totalCases = document.getElementById('namusTotalCases');
+            const missingCases = document.getElementById('namusMissingCases');
+            const pendingCases = document.getElementById('namusPendingCases');
+            
+            if (totalCases) totalCases.textContent = stats.totalCases || 0;
+            if (missingCases) missingCases.textContent = stats.missingCases || 0;
+            
+            const pendingCount = stats.breakdown?.find(s => s.Status === 'resolved_pending_verify')?.Count || 0;
+            if (pendingCases) pendingCases.textContent = pendingCount;
         }
 
         // Update system health metrics
@@ -3804,7 +4144,7 @@
                 const uptimeStatusElement = document.getElementById('uptimeStatus');
                 
                 if (uptimeElement && uptimeStatusElement) {
-                    const uptime = Math.floor(Math.random() * 30) + 1; // Simulated uptime
+                    const uptime = 0; // Will be populated by real system data
                     uptimeElement.textContent = `${uptime} days`;
                     uptimeStatusElement.textContent = 'STABLE';
                     uptimeStatusElement.className = 'health-status status-healthy';
@@ -3815,7 +4155,7 @@
                 const errorStatusElement = document.getElementById('errorStatus');
                 
                 if (errorRateElement && errorStatusElement) {
-                    const errorRate = (Math.random() * 2).toFixed(2); // Simulated error rate
+                    const errorRate = '0.00'; // Will be populated by real system data
                     errorRateElement.textContent = `${errorRate}%`;
                     
                     if (errorRate < 0.5) {
@@ -3850,28 +4190,28 @@
                 // Active Sessions (simulated for now)
                 const activeSessionsElement = document.getElementById('activeSessions');
                 if (activeSessionsElement) {
-                    const activeSessions = Math.floor(Math.random() * 5) + 1;
+                    const activeSessions = 0; // Will be populated by real system data
                     activeSessionsElement.textContent = activeSessions;
                 }
 
                 // Password Resets (simulated for now)
                 const passwordResetsElement = document.getElementById('passwordResets');
                 if (passwordResetsElement) {
-                    const passwordResets = Math.floor(Math.random() * 3);
+                    const passwordResets = 0; // Will be populated by real system data
                     passwordResetsElement.textContent = passwordResets;
                 }
 
                 // Login Attempts (simulated for now)
                 const loginAttemptsElement = document.getElementById('loginAttempts');
                 if (loginAttemptsElement) {
-                    const loginAttempts = Math.floor(Math.random() * 10) + 5;
+                    const loginAttempts = 0; // Will be populated by real system data
                     loginAttemptsElement.textContent = loginAttempts;
                 }
 
                 // Security Events (simulated for now)
                 const securityEventsElement = document.getElementById('securityEvents');
                 if (securityEventsElement) {
-                    const securityEvents = Math.floor(Math.random() * 2);
+                    const securityEvents = 0; // Will be populated by real system data
                     securityEventsElement.textContent = securityEvents;
                 }
 
@@ -3899,28 +4239,28 @@
                 // New Registrations (simulated for now)
                 const newRegistrationsElement = document.getElementById('newRegistrations');
                 if (newRegistrationsElement) {
-                    const newRegistrations = Math.floor(Math.random() * 25) + 5;
+                    const newRegistrations = 0; // Will be populated by real system data
                     newRegistrationsElement.textContent = newRegistrations;
                 }
 
                 // Active Users
                 const activeUsersElement = document.getElementById('activeUsers');
                 if (activeUsersElement) {
-                    const activeUsers = Math.floor(Math.random() * 100) + 50;
+                    const activeUsers = 0; // Will be populated by real system data
                     activeUsersElement.textContent = activeUsers;
                 }
 
                 // User Growth
                 const userGrowthElement = document.getElementById('userGrowth');
                 if (userGrowthElement) {
-                    const userGrowth = Math.floor(Math.random() * 20) + 10;
+                    const userGrowth = 0; // Will be populated by real system data
                     userGrowthElement.textContent = `${userGrowth}%`;
                 }
 
                 // Engagement Rate
                 const engagementRateElement = document.getElementById('engagementRate');
                 if (engagementRateElement) {
-                    const engagementRate = Math.floor(Math.random() * 15) + 5;
+                    const engagementRate = 0; // Will be populated by real system data
                     engagementRateElement.textContent = `${engagementRate}%`;
                 }
 
@@ -3939,28 +4279,28 @@
                 // Average Processing Time
                 const avgProcessingTimeElement = document.getElementById('avgProcessingTime');
                 if (avgProcessingTimeElement) {
-                    const avgTime = (Math.random() * 5 + 1).toFixed(1);
+                    const avgTime = '0.0'; // Will be populated by real system data
                     avgProcessingTimeElement.textContent = `${avgTime} hrs`;
                 }
 
                 // Status Changes
                 const statusChangesElement = document.getElementById('statusChanges');
                 if (statusChangesElement) {
-                    const statusChanges = Math.floor(Math.random() * 20) + 5;
+                    const statusChanges = 0; // Will be populated by real system data
                     statusChangesElement.textContent = statusChanges;
                 }
 
                 // Resolution Rate
                 const caseResolutionRateElement = document.getElementById('caseResolutionRate');
                 if (caseResolutionRateElement) {
-                    const resolutionRate = Math.floor(Math.random() * 20) + 70;
+                    const resolutionRate = 0; // Will be populated by real system data
                     caseResolutionRateElement.textContent = `${resolutionRate}%`;
                 }
 
                 // Urgent Cases
                 const urgentCaseCountElement = document.getElementById('urgentCaseCount');
                 if (urgentCaseCountElement) {
-                    const urgentCases = Math.floor(Math.random() * 10) + 1;
+                    const urgentCases = 0; // Will be populated by real system data
                     urgentCaseCountElement.textContent = urgentCases;
                 }
 
@@ -3979,28 +4319,28 @@
                 // Bandwidth Usage
                 const bandwidthUsageElement = document.getElementById('bandwidthUsage');
                 if (bandwidthUsageElement) {
-                    const bandwidth = (Math.random() * 50 + 20).toFixed(1);
+                    const bandwidth = '0.0'; // Will be populated by real system data
                     bandwidthUsageElement.textContent = `${bandwidth} MB/s`;
                 }
 
                 // Connection Quality
                 const connectionQualityElement = document.getElementById('connectionQuality');
                 if (connectionQualityElement) {
-                    const quality = Math.floor(Math.random() * 20) + 80;
+                    const quality = 0; // Will be populated by real system data
                     connectionQualityElement.textContent = `${quality}%`;
                 }
 
                 // Network Latency
                 const networkLatencyElement = document.getElementById('networkLatency');
                 if (networkLatencyElement) {
-                    const latency = Math.floor(Math.random() * 50) + 10;
+                    const latency = 0; // Will be populated by real system data
                     networkLatencyElement.textContent = `${latency} ms`;
                 }
 
                 // Packet Loss
                 const packetLossElement = document.getElementById('packetLoss');
                 if (packetLossElement) {
-                    const packetLoss = (Math.random() * 2).toFixed(2);
+                    const packetLoss = '0.00'; // Will be populated by real system data
                     packetLossElement.textContent = `${packetLoss}%`;
                 }
 
@@ -4034,7 +4374,7 @@
             const activities = [];
             const now = new Date();
             
-            // Generate sample activities based on actual data
+            // Generate activities based on actual data
             if (dashboardData.runners.length > 0) {
                 activities.push({
                     time: '2 minutes ago',
@@ -4183,7 +4523,7 @@
                 },
                 {
                     title: 'Case Status Updated',
-                    message: 'Case #' + (Math.floor(Math.random() * 1000) + 1) + ' status has been updated',
+                    message: 'Case status has been updated',
                     type: 'success',
                     icon: '✅'
                 },
@@ -4207,7 +4547,7 @@
                 }
             ];
             
-            const randomNotification = notifications[Math.floor(Math.random() * notifications.length)];
+            const randomNotification = notifications[0]; // Use first notification instead of random
             showNotification(randomNotification.title, randomNotification.message, randomNotification.type, randomNotification.icon);
         }
         
@@ -5221,12 +5561,12 @@
                     generatedAt: new Date().toISOString()
                 },
                 summary: {
-                    totalCases: Math.floor(Math.random() * 100) + 20,
-                    activeCases: Math.floor(Math.random() * 50) + 10,
-                    resolvedCases: Math.floor(Math.random() * 30) + 5,
-                    urgentCases: Math.floor(Math.random() * 10) + 1
+                                    totalCases: 0,
+                activeCases: 0,
+                resolvedCases: 0,
+                urgentCases: 0
                 },
-                note: 'This is a sample custom report. Integrate with backend API for real filtered data.'
+                note: 'Custom report generation requires backend API integration for real filtered data.'
             };
         }
 

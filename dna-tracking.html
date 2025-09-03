@@ -334,8 +334,8 @@
         return;
       }
 
-      // Mock submission
-      showNotification('DNA sample submitted successfully!', 'success');
+      // Remove mock submission - replace with real API call
+      showNotification('DNA sample submission requires API integration', 'info');
       
       // Clear form
       document.getElementById('individualId').value = '';
@@ -353,41 +353,19 @@
         return;
       }
 
-      // Mock report generation
+      // Remove mock report generation - replace with real API call
       const report = `DNA Analysis Report
 ==================
 
 Individual ID: ${individualId}
 Report Date: ${new Date().toLocaleString()}
-Sample Type: Buccal Swab
-Lab Reference: LAB-${individualId.padStart(6, '0')}
-Sample Date: ${new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toLocaleDateString()}
+Status: API Integration Required
 
-DNA Sequence Analysis:
-- Sequence Length: 1,247 base pairs
-- GC Content: 42.3%
-- Sequence Quality: High
-
-Genetic Markers Identified:
-- STR Markers: D3S1358, vWA, FGA, D8S1179, D21S11, D18S51, D5S818, D13S317, D7S820, D16S539, TH01, TPOX, CSF1PO
-- SNP Markers: rs53576, rs1815739, rs1800497, rs1801133
-- Haplotype: H1a1a
-
-Comparison Results:
-- NAMUS Database: No matches found
-- CODIS Database: No matches found
-- Local Database: No matches found
-
-Recommendations:
-- Submit to NAMUS database for national comparison
-- Submit to CODIS database for criminal database comparison
-- Schedule follow-up testing in 6 months
-- Consider additional family member sampling
-
-This report is generated for law enforcement and missing persons investigation purposes.`;
+This feature requires backend API integration to generate real DNA reports.
+Please contact the development team to implement this functionality.`;
 
       document.getElementById('reportPreview').textContent = report;
-      showNotification('DNA report generated successfully!', 'success');
+      showNotification('DNA report generation requires API integration', 'info');
     }
 
     function showNotification(message, type = 'info') {

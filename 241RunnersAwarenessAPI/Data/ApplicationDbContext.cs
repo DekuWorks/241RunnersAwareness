@@ -12,6 +12,7 @@ namespace _241RunnersAwarenessAPI.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Runner> Runners { get; set; }
+        public DbSet<PublicCase> PublicCases { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -102,14 +102,37 @@ class CasesPage {
             
             // Use the configured API base URL
             const apiUrl = window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
-            const response = await fetch(`${apiUrl}/runners`);
             
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            // Load existing cases (if any)
+            let existingCases = [];
+            try {
+                const existingResponse = await fetch(`${apiUrl}/runners`);
+                if (existingResponse.ok) {
+                    existingCases = await existingResponse.json() || [];
+                }
+            } catch (error) {
+                console.log('No existing cases found, continuing with NamUs data only');
             }
-            
-            const data = await response.json();
-            this.cases = data;
+
+            // Load NamUs public cases for Houston area
+            let namusCases = [];
+            try {
+                const params = new URLSearchParams({
+                    region: 'houston',
+                    page: 1,
+                    pageSize: 100 // Get more cases to combine
+                });
+
+                const namusResponse = await fetch(`${apiUrl}/publiccases?${params}`);
+                if (namusResponse.ok) {
+                    namusCases = await namusResponse.json() || [];
+                }
+            } catch (error) {
+                console.log('No NamUs cases found, continuing with existing cases only');
+            }
+
+            // Combine and normalize all cases
+            this.cases = this.combineAndNormalizeCases(existingCases, namusCases);
             this.filteredCases = [...this.cases];
             
             this.hideLoading();
@@ -219,6 +242,95 @@ class CasesPage {
         return date1.getFullYear() === date2.getFullYear() &&
                date1.getMonth() === date2.getMonth() &&
                date1.getDate() === date2.getDate();
+    }
+
+    // Combine existing cases with NamUs cases and normalize the data
+    combineAndNormalizeCases(existingCases, namusCases) {
+        const combined = [];
+
+        // Add existing cases (convert to standard format)
+        existingCases.forEach(caseItem => {
+            combined.push({
+                id: caseItem.id || `existing-${Date.now()}-${Math.random()}`,
+                source: 'existing',
+                runnerId: caseItem.runnerId || 'N/A',
+                firstName: caseItem.firstName || '',
+                lastName: caseItem.lastName || '',
+                fullName: caseItem.firstName && caseItem.lastName ? 
+                    `${caseItem.firstName} ${caseItem.lastName}` : 
+                    (caseItem.firstName || caseItem.lastName || 'Unknown'),
+                age: caseItem.age || null,
+                gender: caseItem.gender || 'Unknown',
+                height: caseItem.height || 'Unknown',
+                weight: caseItem.weight || 'Unknown',
+                eyeColor: caseItem.eyeColor || 'Unknown',
+                hairColor: caseItem.hairColor || 'Unknown',
+                city: caseItem.city || 'Unknown',
+                state: caseItem.state || 'TX',
+                status: caseItem.status || 'Missing',
+                isUrgent: caseItem.isUrgent || false,
+                dateReported: caseItem.dateReported || new Date().toISOString(),
+                description: caseItem.description || 'No description available',
+                identifyingMarks: caseItem.identifyingMarks || 'None',
+                medicalConditions: caseItem.medicalConditions || 'None',
+                photoUrl: null,
+                agency: 'Local Report',
+                namusCaseNumber: null
+            });
+        });
+
+        // Add NamUs cases (convert to standard format)
+        namusCases.forEach(caseItem => {
+            combined.push({
+                id: caseItem.id || `namus-${Date.now()}-${Math.random()}`,
+                source: 'namus',
+                runnerId: caseItem.namusCaseNumber || 'N/A',
+                firstName: '',
+                lastName: '',
+                fullName: caseItem.fullName || 'Unknown',
+                age: caseItem.ageAtMissing || null,
+                gender: caseItem.sex || 'Unknown',
+                height: 'Unknown',
+                weight: 'Unknown',
+                eyeColor: 'Unknown',
+                hairColor: 'Unknown',
+                city: caseItem.city || 'Houston',
+                state: caseItem.state || 'TX',
+                status: this.mapNamusStatus(caseItem.status),
+                isUrgent: caseItem.status === 'missing',
+                dateReported: caseItem.dateMissing ? 
+                    new Date(caseItem.dateMissing).toISOString() : 
+                    new Date().toISOString(),
+                description: caseItem.statusNote || 'Case from NamUs database',
+                identifyingMarks: 'See NamUs for details',
+                medicalConditions: 'See NamUs for details',
+                photoUrl: caseItem.photoUrl,
+                agency: caseItem.agency || 'NamUs',
+                namusCaseNumber: caseItem.namusCaseNumber,
+                namusSourceUrl: caseItem.sourceUrl
+            });
+        });
+
+        // Sort by date reported (most recent first)
+        return combined.sort((a, b) => new Date(b.dateReported) - new Date(a.dateReported));
+    }
+
+    // Map NamUs status to our standard status
+    mapNamusStatus(namusStatus) {
+        switch (namusStatus) {
+            case 'missing':
+                return 'Missing';
+            case 'found':
+                return 'Found';
+            case 'safe':
+                return 'Safe';
+            case 'deceased':
+                return 'Deceased';
+            case 'resolved_pending_verify':
+                return 'Pending Verification';
+            default:
+                return 'Unknown';
+        }
     }
     
     clearFilters() {
@@ -495,68 +607,7 @@ class CasesPage {
     }
     
     getSampleData() {
-        return [
-            {
-                id: 1,
-                runnerId: "RUN001",
-                firstName: "Sarah",
-                lastName: "Johnson",
-                age: 28,
-                gender: "Female",
-                height: "5'6\"",
-                weight: "140 lbs",
-                eyeColor: "Blue",
-                hairColor: "Brown",
-                city: "Austin",
-                state: "TX",
-                status: "Missing",
-                isUrgent: true,
-                dateReported: "2025-01-15",
-                description: "Sarah was last seen leaving her apartment complex on the morning of January 15th. She was wearing a blue jacket and carrying a black backpack.",
-                identifyingMarks: "Small birthmark on left wrist",
-                medicalConditions: "Asthma"
-            },
-            {
-                id: 2,
-                runnerId: "RUN002",
-                firstName: "Michael",
-                lastName: "Chen",
-                age: 34,
-                gender: "Male",
-                height: "6'0\"",
-                weight: "180 lbs",
-                eyeColor: "Brown",
-                hairColor: "Black",
-                city: "Houston",
-                state: "TX",
-                status: "Missing",
-                isUrgent: false,
-                dateReported: "2025-01-10",
-                description: "Michael was last seen at his workplace. He didn't return home after his shift ended.",
-                identifyingMarks: "Tattoo on right forearm",
-                medicalConditions: "None"
-            },
-            {
-                id: 3,
-                runnerId: "RUN003",
-                firstName: "Emily",
-                lastName: "Rodriguez",
-                age: 22,
-                gender: "Female",
-                height: "5'4\"",
-                weight: "120 lbs",
-                eyeColor: "Green",
-                hairColor: "Blonde",
-                city: "Dallas",
-                state: "TX",
-                status: "Missing",
-                isUrgent: true,
-                dateReported: "2025-01-12",
-                description: "Emily was last seen at a local coffee shop. She left her phone and wallet behind.",
-                identifyingMarks: "Piercing in left eyebrow",
-                medicalConditions: "Diabetes"
-            }
-        ];
+        return []; // Return empty array - no mock data for live site
     }
     
     renderCases() {
@@ -592,7 +643,11 @@ class CasesPage {
             <div class="case-card ${caseItem.isUrgent ? 'urgent' : ''}">
                 <div class="case-header">
                     <div class="case-id">${caseItem.runnerId}</div>
-                    <div class="case-status ${caseItem.status.toLowerCase()}">${caseItem.status}</div>
+                    <div class="case-status ${caseItem.status.toLowerCase().replace(' ', '-')}">${caseItem.status}</div>
+                    ${caseItem.source === 'namus' ? 
+                        '<span class="source-badge namus-badge">NamUs</span>' : 
+                        '<span class="source-badge local-badge">Local</span>'
+                    }
                 </div>
                 
                 <div class="case-content">
@@ -668,68 +723,7 @@ class CasesPage {
     }
     
     getSampleData() {
-        return [
-            {
-                id: 1,
-                runnerId: "RUN001",
-                firstName: "Sarah",
-                lastName: "Johnson",
-                age: 28,
-                gender: "Female",
-                height: "5'6\"",
-                weight: "140 lbs",
-                eyeColor: "Blue",
-                hairColor: "Brown",
-                city: "Austin",
-                state: "TX",
-                status: "Missing",
-                isUrgent: true,
-                dateReported: "2025-01-15",
-                description: "Sarah was last seen leaving her apartment complex on the morning of January 15th. She was wearing a blue jacket and carrying a black backpack.",
-                identifyingMarks: "Small birthmark on left wrist",
-                medicalConditions: "Asthma"
-            },
-            {
-                id: 2,
-                runnerId: "RUN002",
-                firstName: "Michael",
-                lastName: "Chen",
-                age: 34,
-                gender: "Male",
-                height: "6'0\"",
-                weight: "180 lbs",
-                eyeColor: "Brown",
-                hairColor: "Black",
-                city: "Houston",
-                state: "TX",
-                status: "Missing",
-                isUrgent: false,
-                dateReported: "2025-01-10",
-                description: "Michael was last seen at his workplace. He didn't show up for his shift and hasn't been in contact with family or friends.",
-                identifyingMarks: "Tattoo of a dragon on right forearm",
-                medicalConditions: "None known"
-            },
-            {
-                id: 3,
-                runnerId: "RUN003",
-                firstName: "Emily",
-                lastName: "Rodriguez",
-                age: 22,
-                gender: "Female",
-                height: "5'4\"",
-                weight: "125 lbs",
-                eyeColor: "Green",
-                hairColor: "Blonde",
-                city: "Dallas",
-                state: "TX",
-                status: "Found",
-                isUrgent: false,
-                dateReported: "2025-01-05",
-                description: "Emily was found safe at a friend's house. She had been staying there without informing her family.",
-                identifyingMarks: "Piercing in left eyebrow",
-                medicalConditions: "None known"
-            }
-        ];
+        return []; // Return empty array - no mock data for live site
     }
     
     renderCases() {
