@@ -2843,6 +2843,18 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Admin Dashboard DOM loaded');
             
+            // Add global error handler
+            window.addEventListener('error', function(event) {
+                console.error('Global error caught:', event.error);
+                showToast('An error occurred. Please check the console for details.', 'error');
+            });
+            
+            // Add unhandled promise rejection handler
+            window.addEventListener('unhandledrejection', function(event) {
+                console.error('Unhandled promise rejection:', event.reason);
+                showToast('A network error occurred. Please check your connection.', 'error');
+            });
+            
             // Check authentication first
             if (!requireAdmin()) {
                 return;
@@ -2902,6 +2914,12 @@
             } catch (error) {
                 console.error('Error initializing dashboard:', error);
                 showError('systemStatus', 'Failed to initialize dashboard');
+                
+                // Show user-friendly error message
+                showToast('Dashboard initialization failed. Please refresh the page.', 'error');
+                
+                // Try to recover by hiding loading state
+                hideLoadingState();
             }
         }
 
@@ -3289,6 +3307,14 @@
                 console.log('Analytics dashboard initialized successfully');
             } catch (error) {
                 console.error('Error initializing analytics:', error);
+                showToast('Analytics initialization failed. Some charts may not display correctly.', 'warning');
+                
+                // Try to create basic charts even if some fail
+                try {
+                    createAnalyticsCharts();
+                } catch (chartError) {
+                    console.error('Error creating basic charts:', chartError);
+                }
             }
         }
         
@@ -3305,153 +3331,182 @@
         
         // Create all analytics charts
         function createAnalyticsCharts() {
-            createCaseTrendsChart();
-            createGeographicChart();
-            createDemographicsChart();
-            createStatusChart();
+            try {
+                console.log('Creating analytics charts...');
+                createCaseTrendsChart();
+                createGeographicChart();
+                createDemographicsChart();
+                createStatusChart();
+                console.log('All analytics charts created successfully');
+            } catch (error) {
+                console.error('Error creating analytics charts:', error);
+                showToast('Error creating analytics charts', 'error');
+            }
         }
         
         // Case Trends Chart
         function createCaseTrendsChart() {
-            const ctx = document.getElementById('caseTrendsChart');
-            if (!ctx) return;
-            
-            const timeRange = parseInt(document.getElementById('timeRange').value);
-            const labels = generateTimeLabels(timeRange);
-            const data = generateCaseTrendsData(timeRange);
-            
-            if (analyticsCharts.caseTrends) {
-                analyticsCharts.caseTrends.destroy();
-            }
-            
-            analyticsCharts.caseTrends = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'New Cases',
-                        data: data.newCases,
-                        borderColor: '#dc2626',
-                        backgroundColor: 'rgba(220, 38, 38, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }, {
-                        label: 'Resolved Cases',
-                        data: data.resolvedCases,
-                        borderColor: '#059669',
-                        backgroundColor: 'rgba(5, 150, 105, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: 'Case Activity Over Time'
-                        }
+            try {
+                const ctx = document.getElementById('caseTrendsChart');
+                if (!ctx) {
+                    console.warn('Case trends chart canvas not found');
+                    return;
+                }
+                
+                const timeRange = parseInt(document.getElementById('timeRange')?.value || '30');
+                const labels = generateTimeLabels(timeRange);
+                const data = generateCaseTrendsData(timeRange);
+                
+                if (analyticsCharts.caseTrends) {
+                    analyticsCharts.caseTrends.destroy();
+                }
+                
+                analyticsCharts.caseTrends = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'New Cases',
+                            data: data.newCases,
+                            borderColor: '#dc2626',
+                            backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }, {
+                            label: 'Resolved Cases',
+                            data: data.resolvedCases,
+                            borderColor: '#059669',
+                            backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Case Activity Over Time'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
                             }
                         }
                     }
-                }
-            });
+                });
+                
+                console.log('Case trends chart created successfully');
+            } catch (error) {
+                console.error('Error creating case trends chart:', error);
+            }
         }
         
         // Geographic Distribution Chart
         function createGeographicChart() {
-            const ctx = document.getElementById('geographicChart');
-            if (!ctx) return;
-            
-            const data = generateGeographicData();
-            
-            if (analyticsCharts.geographic) {
-                analyticsCharts.geographic.destroy();
-            }
-            
-            analyticsCharts.geographic = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: data.labels,
-                    datasets: [{
-                        data: data.values,
-                        backgroundColor: [
-                            '#dc2626',
-                            '#059669',
-                            '#3b82f6',
-                            '#d97706',
-                            '#8b5cf6',
-                            '#ec4899'
-                        ],
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                        },
-                        title: {
-                            display: true,
-                            text: 'Cases by Location'
+            try {
+                const ctx = document.getElementById('geographicChart');
+                if (!ctx) {
+                    console.warn('Geographic chart canvas not found');
+                    return;
+                }
+                
+                const data = generateGeographicData();
+                
+                if (analyticsCharts.geographic) {
+                    analyticsCharts.geographic.destroy();
+                }
+                
+                analyticsCharts.geographic = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            data: data.values,
+                            backgroundColor: [
+                                '#dc2626',
+                                '#059669',
+                                '#3b82f6',
+                                '#d97706',
+                                '#8b5cf6',
+                                '#ec4899'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Cases by Location'
+                            }
                         }
                     }
-                }
-            });
+                });
+                
+                console.log('Geographic chart created successfully');
+            } catch (error) {
+                console.error('Error creating geographic chart:', error);
+            }
         }
         
         // Demographics Chart
         function createDemographicsChart() {
-            const ctx = document.getElementById('demographicsChart');
-            if (!ctx) return;
-            
-            const data = { ageGroups: [], maleData: [], femaleData: [] };
-            
-            if (analyticsCharts.demographics) {
-                analyticsCharts.demographics.destroy();
-            }
-            
-            analyticsCharts.demographics = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: data.ageGroups,
-                    datasets: [{
-                        label: 'Male',
-                        data: data.maleData,
-                        backgroundColor: '#3b82f6',
-                        borderColor: '#2563eb',
-                        borderWidth: 1
-                    }, {
-                        label: 'Female',
-                        data: data.femaleData,
-                        backgroundColor: '#ec4899',
-                        borderColor: '#db2777',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: 'Age & Gender Distribution'
+            try {
+                const ctx = document.getElementById('demographicsChart');
+                if (!ctx) {
+                    console.warn('Demographics chart canvas not found');
+                    return;
+                }
+                
+                const data = generateDemographicsData();
+                
+                if (analyticsCharts.demographics) {
+                    analyticsCharts.demographics.destroy();
+                }
+                
+                analyticsCharts.demographics = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.ageGroups,
+                        datasets: [{
+                            label: 'Male',
+                            data: data.maleData,
+                            backgroundColor: '#3b82f6',
+                            borderColor: '#2563eb',
+                            borderWidth: 1
+                        }, {
+                            label: 'Female',
+                            data: data.femaleData,
+                            backgroundColor: '#ec4899',
+                            borderColor: '#db2777',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Age & Gender Distribution'
                         }
                     },
                     scales: {
@@ -3464,49 +3519,110 @@
                     }
                 }
             });
+                
+                console.log('Demographics chart created successfully');
+            } catch (error) {
+                console.error('Error creating demographics chart:', error);
+            }
+        }
+        
+        // Generate demographics data
+        function generateDemographicsData() {
+            const ageGroups = ['0-17', '18-25', '26-35', '36-45', '46-55', '56+'];
+            const maleData = [];
+            const femaleData = [];
+            
+            // Generate sample data based on actual runner data if available
+            if (dashboardData.runners && dashboardData.runners.length > 0) {
+                // Count actual demographics from runner data
+                const demographics = {};
+                ageGroups.forEach(group => {
+                    demographics[group] = { male: 0, female: 0 };
+                });
+                
+                dashboardData.runners.forEach(runner => {
+                    if (runner.age && runner.gender) {
+                        let group = '';
+                        if (runner.age <= 17) group = '0-17';
+                        else if (runner.age <= 25) group = '18-25';
+                        else if (runner.age <= 35) group = '26-35';
+                        else if (runner.age <= 45) group = '36-45';
+                        else if (runner.age <= 55) group = '46-55';
+                        else group = '56+';
+                        
+                        if (runner.gender.toLowerCase() === 'male') {
+                            demographics[group].male++;
+                        } else if (runner.gender.toLowerCase() === 'female') {
+                            demographics[group].female++;
+                        }
+                    }
+                });
+                
+                ageGroups.forEach(group => {
+                    maleData.push(demographics[group].male);
+                    femaleData.push(demographics[group].female);
+                });
+            } else {
+                // Generate sample data if no runners available
+                ageGroups.forEach(() => {
+                    maleData.push(Math.floor(Math.random() * 10) + 1);
+                    femaleData.push(Math.floor(Math.random() * 8) + 1);
+                });
+            }
+            
+            return { ageGroups, maleData, femaleData };
         }
         
         // Status Distribution Chart
         function createStatusChart() {
-            const ctx = document.getElementById('statusChart');
-            if (!ctx) return;
-            
-            const data = generateStatusData();
-            
-            if (analyticsCharts.status) {
-                analyticsCharts.status.destroy();
-            }
-            
-            analyticsCharts.status = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: data.labels,
-                    datasets: [{
-                        data: data.values,
-                        backgroundColor: [
-                            '#dc2626',
-                            '#059669',
-                            '#3b82f6',
-                            '#d97706'
-                        ],
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                        },
-                        title: {
-                            display: true,
-                            text: 'Case Status Distribution'
+            try {
+                const ctx = document.getElementById('statusChart');
+                if (!ctx) {
+                    console.warn('Status chart canvas not found');
+                    return;
+                }
+                
+                const data = generateStatusData();
+                
+                if (analyticsCharts.status) {
+                    analyticsCharts.status.destroy();
+                }
+                
+                analyticsCharts.status = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            data: data.values,
+                            backgroundColor: [
+                                '#dc2626',
+                                '#059669',
+                                '#3b82f6',
+                                '#d97706'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Case Status Distribution'
+                            }
                         }
                     }
-                }
-            });
+                });
+                
+                console.log('Status chart created successfully');
+            } catch (error) {
+                console.error('Error creating status chart:', error);
+            }
         }
         
         // Generate time labels for charts
@@ -4051,9 +4167,48 @@
             
             notificationInterval = setInterval(() => {
                 if (notificationsEnabled) {
-        
+                    generateRandomNotification();
                 }
             }, 15000); // Generate notification every 15 seconds
+        }
+        
+        // Generate random notification
+        function generateRandomNotification() {
+            const notifications = [
+                {
+                    title: 'New Case Reported',
+                    message: 'A new missing person case has been reported in your area',
+                    type: 'info',
+                    icon: '📋'
+                },
+                {
+                    title: 'Case Status Updated',
+                    message: 'Case #' + (Math.floor(Math.random() * 1000) + 1) + ' status has been updated',
+                    type: 'success',
+                    icon: '✅'
+                },
+                {
+                    title: 'System Maintenance',
+                    message: 'Scheduled maintenance completed successfully',
+                    type: 'info',
+                    icon: '🔧'
+                },
+                {
+                    title: 'New User Registration',
+                    message: 'A new user has registered on the platform',
+                    type: 'info',
+                    icon: '👤'
+                },
+                {
+                    title: 'Database Backup',
+                    message: 'Daily database backup completed successfully',
+                    type: 'success',
+                    icon: '💾'
+                }
+            ];
+            
+            const randomNotification = notifications[Math.floor(Math.random() * notifications.length)];
+            showNotification(randomNotification.title, randomNotification.message, randomNotification.type, randomNotification.icon);
         }
         
         // Stop simulated notifications
@@ -5082,6 +5237,37 @@
 
         function openProfileSettings() {
             showToast('Profile Settings feature coming soon!', 'info');
+        }
+        
+        // Fix missing functions that are referenced in action cards
+        function openUserManagement() {
+            try {
+                const modal = document.getElementById('userManagementModal');
+                if (modal) {
+                    modal.style.display = 'block';
+                    loadUsersTable();
+                } else {
+                    showToast('User management modal not found', 'error');
+                }
+            } catch (error) {
+                console.error('Error opening user management:', error);
+                showToast('Error opening user management', 'error');
+            }
+        }
+        
+        function openRunnerManagement() {
+            try {
+                const modal = document.getElementById('runnerManagementModal');
+                if (modal) {
+                    modal.style.display = 'block';
+                    loadRunnersTable();
+                } else {
+                    showToast('Runner management modal not found', 'error');
+                }
+            } catch (error) {
+                console.error('Error opening runner management:', error);
+                showToast('Error opening runner management', 'error');
+        }
         }
 
         // Password Reset Functions
