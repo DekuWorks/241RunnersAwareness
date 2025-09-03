@@ -8,7 +8,7 @@
  */
 
 // API Configuration
-let API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+let API_BASE_URL = 'https://241runnersawareness-api.azurewebsites.net/api';
 
 // Load API configuration from config.json
 async function loadConfig() {

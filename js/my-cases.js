@@ -35,7 +35,7 @@ class MyCasesPage {
             }
             
             // Verify token is valid
-            const response = await fetch('https://241runners-api.azurewebsites.net/api/auth/verify', {
+            const response = await fetch('https://241runnersawareness-api.azurewebsites.net/api/auth/verify', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -100,7 +100,7 @@ class MyCasesPage {
             this.showLoading();
             
             const token = localStorage.getItem('token');
-            const response = await fetch('https://241runners-api.azurewebsites.net/api/runners/my-cases', {
+            const response = await fetch('https://241runnersawareness-api.azurewebsites.net/api/runners/my-cases', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

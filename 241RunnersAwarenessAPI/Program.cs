@@ -31,9 +31,8 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
                 "https://241runnersawareness.org",
                 "https://www.241runnersawareness.org",
-                "http://localhost:3000",
-                "http://localhost:5173",
-                "http://localhost:8080"
+                "https://dekuworks.github.io",
+                "https://dekuworks.github.io/241RunnersAwareness"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
