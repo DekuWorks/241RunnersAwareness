@@ -90,6 +90,21 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
         }
 
+        .stat-card.clickable {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card.clickable:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        .stat-card.clickable:active {
+            transform: translateY(-2px);
+        }
+
         .stat-card h3 {
             margin: 0 0 10px 0;
             color: #1f2937;
@@ -542,7 +557,8 @@
 
         /* Table Styles */
         .users-table-container,
-        .runners-table-container {
+        .runners-table-container,
+        .admins-table-container {
             max-height: 500px;
             overflow-y: auto;
             border: 1px solid #e5e7eb;
@@ -550,14 +566,16 @@
         }
 
         .users-table,
-        .runners-table {
+        .runners-table,
+        .admins-table {
             width: 100%;
             border-collapse: collapse;
             background: white;
         }
 
         .users-table th,
-        .runners-table th {
+        .runners-table th,
+        .admins-table th {
             background: #f9fafb;
             padding: 15px 12px;
             text-align: left;
@@ -570,14 +588,16 @@
         }
 
         .users-table td,
-        .runners-table td {
+        .runners-table td,
+        .admins-table td {
             padding: 12px;
             border-bottom: 1px solid #f3f4f6;
             vertical-align: middle;
         }
 
         .users-table tr:hover,
-        .runners-table tr:hover {
+        .runners-table tr:hover,
+        .admins-table tr:hover {
             background-color: #f9fafb;
         }
 
@@ -1281,9 +1301,10 @@
                 <h3>Total Runners</h3>
                 <p class="stat-number" id="totalRunners">-</p>
             </div>
-            <div class="stat-card">
+            <div class="stat-card clickable" onclick="openAdminsModal()" style="cursor: pointer;">
                 <h3>Active Admins</h3>
                 <p class="stat-number" id="activeAdmins">-</p>
+                <small style="color: #6b7280; font-size: 0.9rem;">👆 Click to view all admins</small>
             </div>
             <div class="stat-card">
                 <h3>System Status</h3>
@@ -1716,6 +1737,43 @@
                         <button type="button" class="btn-secondary" onclick="closePasswordResetModal()">Cancel</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admins Modal -->
+    <div id="adminsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>👥 Current Admin Team</h2>
+                <span class="close" onclick="closeAdminsModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="search-bar">
+                    <input type="text" id="adminSearchInput" placeholder="Search admins by name, email, or role..." onkeyup="filterAdmins()">
+                    <button onclick="refreshAdmins()" class="refresh-btn">🔄 Refresh</button>
+                </div>
+                
+                <div class="admins-table-container">
+                    <table class="admins-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Title</th>
+                                <th>Organization</th>
+                                <th>Credentials</th>
+                                <th>Specialization</th>
+                                <th>Experience</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminsTableBody">
+                            <!-- Admins will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -2807,6 +2865,16 @@
             document.getElementById('runnerManagementModal').style.display = 'none';
         }
 
+        // Admin Management Functions
+        function openAdminsModal() {
+            document.getElementById('adminsModal').style.display = 'block';
+            loadAdminsTable();
+        }
+
+        function closeAdminsModal() {
+            document.getElementById('adminsModal').style.display = 'none';
+        }
+
         function openAddAdminModal() {
             document.getElementById('addAdminModal').style.display = 'block';
             document.getElementById('addAdminForm').reset();
@@ -2896,6 +2964,79 @@
             `).join('');
 
             tbody.innerHTML = usersHtml;
+        }
+
+        // Load admins table
+        async function loadAdminsTable() {
+            const tbody = document.getElementById('adminsTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '<tr><td colspan="9" class="loading-text">Loading admins...</td></tr>';
+
+            try {
+                await loadAdmins();
+                displayAdminsTable();
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="9" class="no-data">Error loading admins</td></tr>';
+            }
+        }
+
+        // Display admins table
+        function displayAdminsTable() {
+            const tbody = document.getElementById('adminsTableBody');
+            if (!tbody) return;
+
+            if (dashboardData.admins.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" class="no-data">No admins found</td></tr>';
+                return;
+            }
+
+            const adminsHtml = dashboardData.admins.map(admin => `
+                <tr>
+                    <td><strong>${admin.firstName} ${admin.lastName}</strong></td>
+                    <td>${admin.email}</td>
+                    <td><span class="status-badge status-active">${admin.role}</span></td>
+                    <td>${admin.title || 'N/A'}</td>
+                    <td>${admin.organization || 'N/A'}</td>
+                    <td>${admin.credentials || 'N/A'}</td>
+                    <td>${admin.specialization || 'N/A'}</td>
+                    <td>${admin.yearsOfExperience || 'N/A'}</td>
+                    <td>
+                        <button class="action-btn btn-view" onclick="viewAdminDetails(${admin.id})">👁️ View</button>
+                        <button class="action-btn btn-edit" onclick="openEditUserModal(${admin.id})">✏️ Edit</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            tbody.innerHTML = adminsHtml;
+        }
+
+        // Filter admins
+        function filterAdmins() {
+            const searchTerm = document.getElementById('adminSearchInput').value.toLowerCase();
+            const tbody = document.getElementById('adminsTableBody');
+            
+            if (!tbody) return;
+
+            const rows = tbody.querySelectorAll('tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        // Refresh admins
+        function refreshAdmins() {
+            loadAdminsTable();
+        }
+
+        // View admin details
+        function viewAdminDetails(adminId) {
+            const admin = dashboardData.admins.find(a => a.id === adminId);
+            if (admin) {
+                showToast(`Viewing ${admin.firstName} ${admin.lastName} details`, 'info');
+                // Could open a detailed view modal here
+            }
         }
 
         // Load runners table
