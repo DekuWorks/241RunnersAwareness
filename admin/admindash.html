@@ -3478,6 +3478,12 @@
         async function handlePasswordReset(e) {
             e.preventDefault();
             
+            // Check if currentAdmin is available
+            if (!currentAdmin || !currentAdmin.email) {
+                showToast('Admin session not found. Please refresh the page and try again.', 'error');
+                return;
+            }
+            
             const currentPassword = document.getElementById('currentPassword').value;
             const newPassword = document.getElementById('newPassword').value;
             const confirmPassword = document.getElementById('confirmNewPassword').value;
@@ -3510,12 +3516,25 @@
             const btnText = resetBtn.querySelector('.btn-text');
             const spinner = resetBtn.querySelector('.loading-spinner');
             
+            if (!resetBtn || !btnText || !spinner) {
+                showToast('Error: Reset button elements not found', 'error');
+                return;
+            }
+            
             btnText.style.display = 'none';
             spinner.style.display = 'inline-block';
             resetBtn.disabled = true;
             
             try {
+                console.log('Starting password reset process...');
+                
                 // First, verify current password by attempting login
+                console.log('Verifying current password...');
+                
+                // Add timeout to prevent hanging
+                const loginController = new AbortController();
+                const loginTimeout = setTimeout(() => loginController.abort(), 10000); // 10 second timeout
+                
                 const loginResponse = await fetch(`${API_BASE_URL}/auth/login`, {
                     method: 'POST',
                     headers: {
@@ -3524,14 +3543,26 @@
                     body: JSON.stringify({
                         email: currentAdmin.email,
                         password: currentPassword
-                    })
+                    }),
+                    signal: loginController.signal
                 });
                 
+                clearTimeout(loginTimeout);
+                
+                console.log('Login response status:', loginResponse.status);
+                
                 if (!loginResponse.ok) {
+                    const errorData = await loginResponse.text();
+                    console.error('Login verification failed:', errorData);
                     throw new Error('Current password is incorrect');
                 }
                 
+                console.log('Current password verified, proceeding with reset...');
+                
                 // Now reset the password using the admin reset endpoint
+                const resetController = new AbortController();
+                const resetTimeout = setTimeout(() => resetController.abort(), 10000); // 10 second timeout
+                
                 const resetResponse = await fetch(`${API_BASE_URL}/auth/reset-admin-password`, {
                     method: 'POST',
                     headers: {
@@ -3541,11 +3572,17 @@
                     body: JSON.stringify({
                         email: currentAdmin.email,
                         newPassword: newPassword
-                    })
+                    }),
+                    signal: resetController.signal
                 });
+                
+                clearTimeout(resetTimeout);
+                
+                console.log('Reset response status:', resetResponse.status);
                 
                 if (resetResponse.ok) {
                     const result = await resetResponse.json();
+                    console.log('Password reset successful:', result);
                     showToast('Password reset successfully! You will be logged out to apply changes.', 'success');
                     
                     // Close modal and logout after a short delay
@@ -3555,17 +3592,25 @@
                     }, 2000);
                 } else {
                     const error = await resetResponse.json();
+                    console.error('Password reset failed:', error);
                     throw new Error(error.message || 'Failed to reset password');
                 }
                 
             } catch (error) {
                 console.error('Password reset error:', error);
-                showToast(error.message || 'Error resetting password', 'error');
+                
+                if (error.name === 'AbortError') {
+                    showToast('Request timed out. Please check your connection and try again.', 'error');
+                } else {
+                    showToast(error.message || 'Error resetting password', 'error');
+                }
             } finally {
                 // Reset button state
-                btnText.style.display = 'inline-block';
-                spinner.style.display = 'none';
-                resetBtn.disabled = false;
+                if (resetBtn && btnText && spinner) {
+                    btnText.style.display = 'inline-block';
+                    spinner.style.display = 'none';
+                    resetBtn.disabled = false;
+                }
             }
         }
 
