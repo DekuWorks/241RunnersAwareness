@@ -13,72 +13,86 @@ const https = require('https');
 
 // Configuration
 const API_BASE_URL = 'https://241runners-api.azurewebsites.net';
-const ADMIN_USERS = [
-    {
-        email: 'dekuworks1@gmail.com',
-        password: 'marcus2025',
-        firstName: 'Marcus',
-        lastName: 'Brown',
-        role: 'admin',
-        phoneNumber: '(555) 345-6789',
-        organization: '241 Runners Awareness',
-        title: 'Co-Founder',
-        credentials: 'Co-Founder',
-        specialization: 'Operations',
-        yearsOfExperience: '3+'
-    },
-    {
-        email: 'danielcarey9770@yahoo.com',
-        password: 'daniel2025',
-        firstName: 'Daniel',
-        lastName: 'Carey',
-        role: 'admin',
-        phoneNumber: '(555) 456-7890',
-        organization: '241 Runners Awareness',
-        title: 'Co-Founder',
-        credentials: 'Co-Founder',
-        specialization: 'Technology',
-        yearsOfExperience: '4+'
-    },
-    {
-        email: 'lthomas3350@gmail.com',
-        password: 'lisa2025',
-        firstName: 'Lisa',
-        lastName: 'Thomas',
-        role: 'admin',
-        phoneNumber: '(555) 567-8901',
-        organization: '241 Runners Awareness',
-        title: 'Founder',
-        credentials: 'Founder',
-        specialization: 'Leadership & Strategy',
-        yearsOfExperience: '5+'
-    },
-    {
-        email: 'tinaleggins@yahoo.com',
-        password: 'tina2025',
-        firstName: 'Tina',
-        lastName: 'Matthews',
-        role: 'admin',
-        phoneNumber: '(555) 678-9012',
-        organization: '241 Runners Awareness',
-        title: 'Program Director',
-        credentials: 'Program Director',
-        specialization: 'Program Management',
-        yearsOfExperience: '4+'
-    },
-    {
-        email: 'mmelasky@iplawconsulting.com',
-        password: 'mark2025',
-        firstName: 'Mark',
-        lastName: 'Melasky',
-        role: 'admin',
-        phoneNumber: '(555) 789-0123',
-        organization: 'IP Law Consulting',
-        title: 'Intellectual Property Lawyer',
-        credentials: 'Attorney at Law',
-        specialization: 'Intellectual Property Law',
-        yearsOfExperience: '10+'
-    }
+// Admin users to create
+const adminUsers = [
+  {
+    email: 'dekuworks1@gmail.com',
+    password: 'marcus2025',
+    firstName: 'Marcus',
+    lastName: 'Brown',
+    role: 'admin',
+    phoneNumber: '5553456789',
+    organization: '241 Runners Awareness',
+    title: 'Co-Founder',
+    credentials: 'Co-Founder',
+    specialization: 'Operations',
+    yearsOfExperience: '3+'
+  },
+  {
+    email: 'danielcarey9770@yahoo.com',
+    password: 'daniel2025',
+    firstName: 'Daniel',
+    lastName: 'Carey',
+    role: 'admin',
+    phoneNumber: '5552345678',
+    organization: '241 Runners Awareness',
+    title: 'Co-Founder',
+    credentials: 'Co-Founder',
+    specialization: 'Technology',
+    yearsOfExperience: '4+'
+  },
+  {
+    email: 'lthomas3350@gmail.com',
+    password: 'lisa2025',
+    firstName: 'Lisa',
+    lastName: 'Thomas',
+    role: 'admin',
+    phoneNumber: '5555678901',
+    organization: '241 Runners Awareness',
+    title: 'Founder',
+    credentials: 'Founder',
+    specialization: 'Leadership & Strategy',
+    yearsOfExperience: '5+'
+  },
+  {
+    email: 'tinaleggins@yahoo.com',
+    password: 'tina2025',
+    firstName: 'Tina',
+    lastName: 'Matthews',
+    role: 'admin',
+    phoneNumber: '5554567890',
+    organization: '241 Runners Awareness',
+    title: 'Program Director',
+    credentials: 'Program Director',
+    specialization: 'Program Management',
+    yearsOfExperience: '4+'
+  },
+  {
+    email: 'mmelasky@iplawconsulting.com',
+    password: 'mark2025',
+    firstName: 'Mark',
+    lastName: 'Melasky',
+    role: 'admin',
+    phoneNumber: '5557890123',
+    organization: 'IP Law Consulting',
+    title: 'Intellectual Property Lawyer',
+    credentials: 'Attorney at Law',
+    specialization: 'Intellectual Property Law',
+    yearsOfExperience: '10+'
+  },
+  {
+    email: 'ralphfrank900@gmail.com',
+    password: 'ralph2025',
+    firstName: 'Ralph',
+    lastName: 'Frank',
+    role: 'admin',
+    phoneNumber: '5556789012',
+    organization: '241 Runners Awareness',
+    title: 'Event Coordinator',
+    credentials: 'Event Coordinator',
+    specialization: 'Event Planning and Community Outreach',
+    yearsOfExperience: '3+'
+  }
 ];
 
 /**
@@ -207,9 +221,9 @@ async function setupAdminUsers() {
     console.log('\n👥 Setting up admin users...\n');
     
     let successCount = 0;
-    let totalCount = ADMIN_USERS.length;
+    let totalCount = adminUsers.length;
     
-    for (const user of ADMIN_USERS) {
+    for (const user of adminUsers) {
         const success = await createAdminUser(user);
         if (success) successCount++;
         
@@ -225,7 +239,7 @@ async function setupAdminUsers() {
     if (successCount === totalCount) {
         console.log('\n🎉 All admin users created successfully!');
         console.log('\n📋 Admin User Credentials:');
-        ADMIN_USERS.forEach(user => {
+        adminUsers.forEach(user => {
             console.log(`   Email: ${user.email}`);
             console.log(`   Password: ${user.password}`);
             console.log(`   Role: ${user.role}\n`);
