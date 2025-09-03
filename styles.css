@@ -1142,6 +1142,12 @@ body.dark-mode .feature-card p {
     margin: 1rem 0;
   }
   
+  .container {
+    padding: 0 1rem;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  
   /* About Us responsive */
   .about-content {
     padding: 20px;
@@ -1162,6 +1168,37 @@ body.dark-mode .feature-card p {
   .mission-statement,
   .israel-legacy-section {
     padding: 2rem 1rem;
+  }
+  
+  /* Features section mobile responsive */
+  .features-section {
+    padding: 2rem 1rem;
+  }
+  
+  .features-grid {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 0;
+    margin-top: 1.5rem;
+  }
+  
+  .feature-card {
+    min-width: auto;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+  
+  .feature-card h3 {
+    font-size: 1.3rem;
+  }
+  
+  .feature-card p {
+    font-size: 0.95rem;
+  }
+  
+  .feature-icon {
+    font-size: 2.5rem;
   }
 }
 
@@ -1188,6 +1225,32 @@ body.dark-mode .feature-card p {
   .mission-statement h3,
   .israel-legacy-section h3 {
     font-size: 1.5rem;
+  }
+  
+  /* Features section extra small screen responsive */
+  .features-section {
+    padding: 1.5rem 0.5rem;
+  }
+  
+  .features-grid {
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .feature-card {
+    padding: 1rem;
+  }
+  
+  .feature-card h3 {
+    font-size: 1.2rem;
+  }
+  
+  .feature-card p {
+    font-size: 0.9rem;
+  }
+  
+  .feature-icon {
+    font-size: 2rem;
   }
 }
 
@@ -5353,12 +5416,16 @@ footer .footer-bottom p {
     
     /* Features responsive */
     .features-grid {
-        grid-template-columns: 1fr;
+        flex-direction: column;
         gap: 1.5rem;
+        padding: 0 1rem;
     }
     
     .feature-card {
         padding: 1.5rem;
+        min-width: auto;
+        max-width: 100%;
+        margin: 0 auto;
     }
 }
 
