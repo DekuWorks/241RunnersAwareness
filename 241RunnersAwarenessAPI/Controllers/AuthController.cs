@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using BCrypt.Net;
@@ -385,7 +386,9 @@ namespace _241RunnersAwarenessAPI.Controllers
             }
         }
 
+        // Protected endpoint - only existing admins can create new admin users
         [HttpPost("create-admin")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<AuthResponse>> CreateAdmin([FromBody] RegisterRequest request)
         {
             try
@@ -719,7 +722,9 @@ namespace _241RunnersAwarenessAPI.Controllers
             }
         }
 
+        // Protected endpoint - only admins can view all users
         [HttpGet("users")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<object>> GetUsers()
         {
             try
@@ -762,7 +767,9 @@ namespace _241RunnersAwarenessAPI.Controllers
             }
         }
 
+        // Protected endpoint - only admins can update users
         [HttpPut("users/{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<AuthResponse>> UpdateUser(int id, [FromBody] UserUpdateRequest request)
         {
             try
@@ -843,7 +850,9 @@ namespace _241RunnersAwarenessAPI.Controllers
             }
         }
 
+        // Protected endpoint - only admins can delete users
         [HttpDelete("users/{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<AuthResponse>> DeleteUser(int id)
         {
             try
@@ -953,7 +962,9 @@ namespace _241RunnersAwarenessAPI.Controllers
             return true;
         }
 
+        // Protected endpoint - only existing admins can reset admin passwords
         [HttpPost("reset-admin-password")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<AuthResponse>> ResetAdminPassword([FromBody] AdminPasswordResetRequest request)
         {
             try

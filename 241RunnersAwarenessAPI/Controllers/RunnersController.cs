@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using _241RunnersAwarenessAPI.Data;
 using _241RunnersAwarenessAPI.Models;
 
@@ -18,7 +19,9 @@ namespace _241RunnersAwarenessAPI.Controllers
             _logger = logger;
         }
 
+        // Public endpoint - anyone can view missing person cases for community awareness
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<RunnerDto>>> GetRunners(
             [FromQuery] string? id,
             [FromQuery] string? name,
@@ -104,7 +107,9 @@ namespace _241RunnersAwarenessAPI.Controllers
             }
         }
 
+        // Public endpoint - search functionality for community awareness
         [HttpGet("search")]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<RunnerSearchDto>>> SearchRunners(
             [FromQuery] string? query,
             [FromQuery] string? status,
@@ -176,7 +181,9 @@ namespace _241RunnersAwarenessAPI.Controllers
             }
         }
 
+        // Public endpoint - view individual case details for community awareness
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<RunnerDto>> GetRunner(int id)
         {
             try
@@ -231,7 +238,9 @@ namespace _241RunnersAwarenessAPI.Controllers
             }
         }
 
+        // Protected endpoint - only authenticated users can create cases
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<RunnerDto>> CreateRunner([FromBody] CreateRunnerRequest request)
         {
             try
@@ -328,7 +337,9 @@ namespace _241RunnersAwarenessAPI.Controllers
             }
         }
 
+        // Protected endpoint - only authenticated users can update cases
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<ActionResult<RunnerDto>> UpdateRunner(int id, [FromBody] UpdateRunnerRequest request)
         {
             try
@@ -462,7 +473,9 @@ namespace _241RunnersAwarenessAPI.Controllers
             }
         }
 
+        // Protected endpoint - only authenticated users can delete cases
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult> DeleteRunner(int id)
         {
             try
@@ -486,7 +499,9 @@ namespace _241RunnersAwarenessAPI.Controllers
             }
         }
 
+        // Public endpoint - view case statistics for community awareness
         [HttpGet("stats")]
+        [AllowAnonymous]
         public async Task<ActionResult<object>> GetStats()
         {
             try
