@@ -109,6 +109,182 @@
             margin: 0 auto;
         }
         
+        /* Enhanced Search Features */
+        .search-features {
+            background: #f8fafc;
+            padding: 2rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .search-features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .search-history, .saved-searches {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-history h4, .saved-searches h4 {
+            color: #1f2937;
+            margin: 0 0 1rem 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .history-items, .saved-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .history-item, .saved-name {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .history-item:hover, .saved-name:hover {
+            background: #dc2626;
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        .saved-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .saved-delete {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: #dc2626;
+            transition: all 0.2s;
+        }
+        
+        .saved-delete:hover {
+            background: #fecaca;
+            transform: scale(1.1);
+        }
+        
+        .filter-summary {
+            background: #dbeafe;
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .clear-all-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+        
+        .clear-all-btn:hover {
+            background: #b91c1c;
+        }
+        
+        .search-container {
+            position: relative;
+        }
+        
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .suggestion-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #f3f4f6;
+            transition: background-color 0.2s;
+        }
+        
+        .suggestion-item:hover {
+            background: #f3f4f6;
+        }
+        
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .message-success {
+            background: #d1fae5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+        }
+        
+        .message-info {
+            background: #dbeafe;
+            border: 1px solid #93c5fd;
+            color: #1e40af;
+        }
+        
+        .message-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: inherit;
+            padding: 0;
+            margin-left: 1rem;
+        }
+        
         /* Responsive design for mobile */
         @media (max-width: 768px) {
             .hero-stats {
@@ -123,6 +299,19 @@
             
             .hero-content {
                 padding: 0 15px;
+            }
+            
+            .search-features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-actions .btn {
+                width: 100%;
             }
         }
     </style>
@@ -219,12 +408,61 @@
                     </div>
                     
                     <div class="filter-group">
-                        <label for="searchFilter">Search:</label>
-                        <input type="text" id="searchFilter" class="filter-input" placeholder="Search by name, description...">
+                        <label for="ageRangeFilter">Age Range:</label>
+                        <select id="ageRangeFilter" class="filter-select">
+                            <option value="">All Ages</option>
+                            <option value="0-17">0-17 (Child)</option>
+                            <option value="18-25">18-25 (Young Adult)</option>
+                            <option value="26-40">26-40 (Adult)</option>
+                            <option value="41-60">41-60 (Middle Age)</option>
+                            <option value="61-100">61+ (Senior)</option>
+                        </select>
                     </div>
                     
-                    <button id="clearFilters" class="btn btn-secondary">Clear Filters</button>
+                    <div class="filter-group">
+                        <label for="genderFilter">Gender:</label>
+                        <select id="genderFilter" class="filter-select">
+                            <option value="">All Genders</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="dateRangeFilter">Date Reported:</label>
+                        <select id="dateRangeFilter" class="filter-select">
+                            <option value="">All Dates</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group search-group">
+                        <label for="searchFilter">Advanced Search:</label>
+                        <div class="search-container">
+                            <input type="text" id="searchFilter" class="filter-input" placeholder="Search by name, description, location...">
+                            <div id="searchSuggestions" class="search-suggestions"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button id="saveSearch" class="btn btn-primary">💾 Save Search</button>
+                        <button id="clearFilters" class="btn btn-secondary">Clear Filters</button>
+                    </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- Enhanced Search Features -->
+        <section class="search-features">
+            <div class="container">
+                <div class="search-features-grid">
+                    <div id="searchHistory"></div>
+                    <div id="savedSearches"></div>
+                </div>
+                <div id="filterSummary"></div>
+                <div id="messageContainer"></div>
             </div>
         </section>
 
