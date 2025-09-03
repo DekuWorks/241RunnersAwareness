@@ -118,6 +118,22 @@ namespace _241RunnersAwarenessAPI.Services
                         YearsOfExperience = "10+",
                         IsActive = true,
                         CreatedAt = DateTime.UtcNow
+                    },
+                    new User
+                    {
+                        Email = "ralphfrank900@gmail.com",
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("ralph2025"),
+                        FirstName = "Ralph",
+                        LastName = "Frank",
+                        Role = "admin",
+                        PhoneNumber = "(555) 890-1234",
+                        Organization = "241 Runners Awareness",
+                        Title = "Administrator",
+                        Credentials = "System Administrator",
+                        Specialization = "System Administration",
+                        YearsOfExperience = "2+",
+                        IsActive = true,
+                        CreatedAt = DateTime.UtcNow
                     }
                 };
 

@@ -71,44 +71,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-        // Initialize database and apply migrations
-        using (var scope = app.Services.CreateScope())
-        {
-            var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            try
-            {
-                // Apply any pending migrations
-                context.Database.Migrate();
-                Console.WriteLine("Database migrations applied successfully");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Database migration error: {ex.Message}");
-                // Fallback to EnsureCreated if migrations fail
-                try
-                {
-                    context.Database.EnsureCreated();
-                    Console.WriteLine("Database initialized with EnsureCreated");
-                }
-                catch (Exception ex2)
-                {
-                    Console.WriteLine($"Database initialization error: {ex2.Message}");
-                }
-            }
-        }
-
-app.UseHttpsRedirection();
-
-// Use CORS
-app.UseCors("AppCors");
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
-
-// Initialize database and seed admin users
-// Azure deployment trigger - Sat Aug 30 00:42:00 UTC 2025
+// Initialize database, apply migrations, and seed admin users
 try
 {
     using (var scope = app.Services.CreateScope())
@@ -116,8 +79,32 @@ try
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var adminSeedService = scope.ServiceProvider.GetRequiredService<AdminSeedService>();
         
-        // Ensure database is created and migrations are applied
-        context.Database.EnsureCreated();
+        Console.WriteLine("Starting database initialization...");
+        
+        // Apply any pending migrations first
+        try
+        {
+            context.Database.Migrate();
+            Console.WriteLine("Database migrations applied successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Database migration error: {ex.Message}");
+            // Fallback to EnsureCreated if migrations fail
+            try
+            {
+                context.Database.EnsureCreated();
+                Console.WriteLine("Database initialized with EnsureCreated");
+            }
+            catch (Exception ex2)
+            {
+                Console.WriteLine($"Database initialization error: {ex2.Message}");
+                throw; // Re-throw if we can't initialize the database
+            }
+        }
+        
+        // Wait a moment for database to be fully ready
+        await Task.Delay(1000);
         
         // Seed admin users if they don't exist
         await adminSeedService.SeedAdminUsersAsync();
@@ -128,6 +115,18 @@ try
 catch (Exception ex)
 {
     Console.WriteLine($"Database initialization failed: {ex.Message}");
+    // Log the full exception for debugging
+    Console.WriteLine($"Full exception: {ex}");
 }
+
+app.UseHttpsRedirection();
+
+// Use CORS
+app.UseCors("AppCors");
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
 
 app.Run();
