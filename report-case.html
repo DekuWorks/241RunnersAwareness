@@ -9,7 +9,7 @@
   <meta http-equiv="Expires" content="0" />
   <link rel="stylesheet" href="https://241runnersawareness.org/styles.css" />
   <link rel="stylesheet" href="https://241runnersawareness.org/forms.css" />
-  
+
   <!-- Custom CSS for Report Case Form -->
   <style>
     /* Report Case Container */
@@ -310,7 +310,7 @@
       .quick-access {
         flex-direction: column;
         align-items: center;
-      }
+    }
     }
   </style>
 
@@ -369,13 +369,13 @@
         <button type="button" class="quick-btn active" data-form="quickReport">Quick Report</button>
         <button type="button" class="quick-btn" data-form="detailedReport">Detailed Report</button>
         <button type="button" class="quick-btn" data-form="existingRunner">Update Existing</button>
-      </div>
+        </div>
 
       <!-- Quick Report Form (Simplified) -->
       <div class="form-step active" id="quickReport">
         <h2>Quick Report - Essential Information</h2>
         <p>Provide the most critical information for immediate response.</p>
-        
+
         <div class="form-row">
           <div class="form-group">
             <label for="firstName">First Name <span class="required">*</span></label>
@@ -395,30 +395,30 @@
             <input type="number" id="age" name="age" min="0" max="120" required>
             <div class="error-message" id="ageError">Age is required</div>
           </div>
-          <div class="form-group">
-            <label for="gender">Gender</label>
-            <select id="gender" name="gender">
-              <option value="">Select gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
+        <div class="form-group">
+          <label for="gender">Gender</label>
+          <select id="gender" name="gender">
+            <option value="">Select gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
         </div>
-
+      </div>
+        
         <div class="form-group">
           <label for="lastSeenLocation">Last Seen Location <span class="required">*</span></label>
           <input type="text" id="lastSeenLocation" name="lastSeenLocation" placeholder="Address, city, or specific location" required>
           <div class="error-message" id="lastSeenLocationError">Last seen location is required</div>
         </div>
 
-        <div class="form-group">
+          <div class="form-group">
           <label for="lastSeenDate">Date Last Seen <span class="required">*</span></label>
           <input type="datetime-local" id="lastSeenDate" name="lastSeenDate" required>
           <div class="error-message" id="lastSeenDateError">Date last seen is required</div>
         </div>
 
-        <div class="form-group">
+          <div class="form-group">
           <label for="description">Description <span class="required">*</span></label>
           <textarea id="description" name="description" rows="3" placeholder="Physical description, clothing, circumstances..." required></textarea>
           <div class="error-message" id="descriptionError">Description is required</div>
@@ -430,7 +430,7 @@
           <div class="error-message" id="contactPhoneError">Contact phone is required</div>
         </div>
 
-        <div class="form-group">
+          <div class="form-group">
           <label for="urgency">Urgency Level <span class="required">*</span></label>
           <select id="urgency" name="urgency" required>
             <option value="">Select urgency</option>
@@ -438,7 +438,7 @@
             <option value="Medium" selected>Medium - Missing for hours</option>
             <option value="High">High - Missing for days</option>
             <option value="Critical">Critical - Immediate danger</option>
-          </select>
+            </select>
           <div class="error-message" id="urgencyError">Urgency level is required</div>
         </div>
 
@@ -501,7 +501,7 @@
           </select>
         </div>
 
-        <div class="form-group">
+          <div class="form-group">
           <label for="lastSeenLocation">Last Seen Location <span class="required">*</span></label>
           <input type="text" id="lastSeenLocation" name="lastSeenLocation" placeholder="Address, city, or specific location" required>
           <div class="error-message" id="lastSeenLocationError">Last seen location is required</div>
@@ -566,7 +566,7 @@
           <div class="error-message" id="updateDetailsError">Update details are required</div>
         </div>
 
-        <div class="form-group">
+          <div class="form-group">
           <label for="contactPhone">Contact Phone <span class="required">*</span></label>
           <input type="tel" id="contactPhone" name="contactPhone" placeholder="Your phone number for verification" required>
           <div class="error-message" id="contactPhoneError">Contact phone is required</div>
@@ -752,7 +752,7 @@
     // Submit Quick Report
     async function submitQuickReport() {
       if (!validateForm('quickReport')) {
-        showMessage('Please fill in all required fields.', 'error');
+          showMessage('Please fill in all required fields.', 'error');
         return;
       }
 
@@ -769,13 +769,13 @@
 
       try {
         // Collect form data
-        const formData = {
+      const formData = {
           firstName: document.getElementById('firstName').value.trim(),
           lastName: document.getElementById('lastName').value.trim(),
           age: parseInt(document.getElementById('age').value),
           gender: document.getElementById('gender').value,
           lastSeenLocation: document.getElementById('lastSeenLocation').value.trim(),
-          lastSeenDate: document.getElementById('lastSeenDate').value,
+        lastSeenDate: document.getElementById('lastSeenDate').value,
           description: document.getElementById('description').value.trim(),
           contactPhone: document.getElementById('contactPhone').value.trim(),
           urgency: document.getElementById('urgency').value,
@@ -861,7 +861,7 @@
           status: 'Active',
           reportDate: new Date().toISOString()
         };
-
+        
         // Get auth token
         const user = JSON.parse(localStorage.getItem('user'));
         const token = user?.token || user?.accessToken;
@@ -996,28 +996,28 @@
     const nav = document.querySelector('nav');
     
     if (hamburger && nav) {
-      hamburger.addEventListener('click', function() {
-        const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
-        hamburger.setAttribute('aria-expanded', !isExpanded);
-        hamburger.classList.toggle('active');
-        nav.classList.toggle('active');
+    hamburger.addEventListener('click', function() {
+      const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+      hamburger.setAttribute('aria-expanded', !isExpanded);
+      hamburger.classList.toggle('active');
+      nav.classList.toggle('active');
+    });
+    
+    // Close menu when clicking on a link
+    document.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        nav.classList.remove('active');
       });
-      
-      // Close menu when clicking on a link
-      document.querySelectorAll('nav a').forEach(link => {
-        link.addEventListener('click', () => {
-          hamburger.classList.remove('active');
-          nav.classList.remove('active');
-        });
-      });
-      
-      // Close menu when clicking outside
-      document.addEventListener('click', function(e) {
-        if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
-          hamburger.classList.remove('active');
-          nav.classList.remove('active');
-        }
-      });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
+        hamburger.classList.remove('active');
+        nav.classList.remove('active');
+      }
+    });
     }
 
     // Dark mode toggle functionality
@@ -1025,28 +1025,28 @@
     const body = document.body;
     
     if (themeToggle) {
-      // Check for saved theme preference or default to light mode
-      const currentTheme = localStorage.getItem('theme') || 'light';
-      if (currentTheme === 'dark') {
-        body.classList.add('dark-mode');
+    // Check for saved theme preference or default to light mode
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+      body.classList.add('dark-mode');
+      themeToggle.textContent = '🌙';
+      themeToggle.setAttribute('aria-pressed', 'true');
+    }
+    
+    // Theme toggle click handler
+    themeToggle.addEventListener('click', function() {
+      body.classList.toggle('dark-mode');
+      
+      if (body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
         themeToggle.textContent = '🌙';
         themeToggle.setAttribute('aria-pressed', 'true');
+      } else {
+        localStorage.setItem('theme', 'light');
+        themeToggle.textContent = '☀️';
+        themeToggle.setAttribute('aria-pressed', 'false');
       }
-      
-      // Theme toggle click handler
-      themeToggle.addEventListener('click', function() {
-        body.classList.toggle('dark-mode');
-        
-        if (body.classList.contains('dark-mode')) {
-          localStorage.setItem('theme', 'dark');
-          themeToggle.textContent = '🌙';
-          themeToggle.setAttribute('aria-pressed', 'true');
-        } else {
-          localStorage.setItem('theme', 'light');
-          themeToggle.textContent = '☀️';
-          themeToggle.setAttribute('aria-pressed', 'false');
-        }
-      });
+    });
     }
   </script>
 </body>
