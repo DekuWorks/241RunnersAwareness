@@ -1015,6 +1015,21 @@
             background: #b91c1c;
         }
 
+        .export-btn {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .export-btn:hover {
+            background: #047857;
+        }
+
         .analytics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
@@ -1386,6 +1401,188 @@
             color: white;
         }
 
+        /* Export Modal Styles */
+        .export-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .export-section {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .export-section h3 {
+            margin: 0 0 20px 0;
+            color: #1f2937;
+            font-size: 1.3rem;
+            font-weight: 600;
+            border-bottom: 2px solid #dc2626;
+            padding-bottom: 10px;
+        }
+
+        .export-options {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .export-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .export-option:hover {
+            border-color: #dc2626;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.1);
+        }
+
+        .export-option label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+        }
+
+        .export-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #dc2626;
+        }
+
+        .export-format {
+            display: flex;
+            gap: 8px;
+        }
+
+        .export-format-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .export-format-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .export-custom {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .date-range label {
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .date-range input[type="date"] {
+            padding: 8px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .date-range input[type="date"]:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .export-filters {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .export-filters label {
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .export-filters select {
+            padding: 8px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        .export-filters select:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .custom-report-btn {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            align-self: flex-start;
+        }
+
+        .custom-report-btn:hover {
+            background: #7c3aed;
+            transform: translateY(-2px);
+        }
+
+        .export-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e5e7eb;
+        }
+
+        .export-all-btn {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .export-all-btn:hover {
+            background: linear-gradient(135deg, #b91c1c, #991b1b);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+
         /* Responsive Modal */
         @media (max-width: 768px) {
             .modal-content {
@@ -1480,6 +1677,37 @@
             .network-metric-status {
                 font-size: 0.7rem;
                 padding: 3px 6px;
+            }
+
+            /* Mobile responsive export modal */
+            .export-option {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .export-format {
+                align-self: stretch;
+                justify-content: center;
+            }
+
+            .date-range {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .export-filters {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .export-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .export-all-btn {
+                width: 100%;
             }
         }
 
@@ -1652,6 +1880,7 @@
                         <option value="365">Last Year</option>
                     </select>
                     <button onclick="refreshAnalytics()" class="refresh-analytics-btn">🔄 Refresh</button>
+                    <button onclick="openExportModal()" class="export-btn">📊 Export Data</button>
                 </div>
             </div>
             
@@ -2209,6 +2438,149 @@
                             <!-- Admins will be populated here -->
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Export Modal -->
+    <div id="exportModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📊 Data Export & Reports</h2>
+                <span class="close" onclick="closeExportModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="export-sections">
+                    <!-- Analytics Reports Section -->
+                    <div class="export-section">
+                        <h3>📈 Analytics Reports</h3>
+                        <div class="export-options">
+                            <div class="export-option">
+                                <label>
+                                    <input type="checkbox" id="exportSystemHealth" checked>
+                                    System Health & Performance
+                                </label>
+                                <div class="export-format">
+                                    <button onclick="exportData('systemHealth', 'csv')" class="export-format-btn">CSV</button>
+                                    <button onclick="exportData('systemHealth', 'pdf')" class="export-format-btn">PDF</button>
+                                    <button onclick="exportData('systemHealth', 'json')" class="export-format-btn">JSON</button>
+                                </div>
+                            </div>
+                            <div class="export-option">
+                                <label>
+                                    <input type="checkbox" id="exportAdminActivity" checked>
+                                    Admin Activity & Security
+                                </label>
+                                <div class="export-format">
+                                    <button onclick="exportData('adminActivity', 'csv')" class="export-format-btn">CSV</button>
+                                    <button onclick="exportData('adminActivity', 'pdf')" class="export-format-btn">PDF</button>
+                                    <button onclick="exportData('adminActivity', 'json')" class="export-format-btn">JSON</button>
+                                </div>
+                            </div>
+                            <div class="export-option">
+                                <label>
+                                    <input type="checkbox" id="exportUserAnalytics" checked>
+                                    User Management Analytics
+                                </label>
+                                <div class="export-format">
+                                    <button onclick="exportData('userAnalytics', 'csv')" class="export-format-btn">CSV</button>
+                                    <button onclick="export-format-btn">PDF</button>
+                                    <button onclick="exportData('userAnalytics', 'json')" class="export-format-btn">JSON</button>
+                                </div>
+                            </div>
+                            <div class="export-option">
+                                <label>
+                                    <input type="checkbox" id="exportCaseAnalytics" checked>
+                                    Case Management Analytics
+                                </label>
+                                <div class="export-format">
+                                    <button onclick="exportData('caseAnalytics', 'csv')" class="export-format-btn">CSV</button>
+                                    <button onclick="exportData('caseAnalytics', 'pdf')" class="export-format-btn">PDF</button>
+                                    <button onclick="exportData('caseAnalytics', 'json')" class="export-format-btn">JSON</button>
+                                </div>
+                            </div>
+                            <div class="export-option">
+                                <label>
+                                    <input type="checkbox" id="exportNetworkAnalytics" checked>
+                                    Network & Performance Analytics
+                                </label>
+                                <div class="export-format">
+                                    <button onclick="exportData('networkAnalytics', 'csv')" class="export-format-btn">CSV</button>
+                                    <button onclick="exportData('networkAnalytics', 'pdf')" class="export-format-btn">PDF</button>
+                                    <button onclick="exportData('networkAnalytics', 'json')" class="export-format-btn">JSON</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Exports Section -->
+                    <div class="export-section">
+                        <h3>💾 Complete Data Exports</h3>
+                        <div class="export-options">
+                            <div class="export-option">
+                                <label>
+                                    <input type="checkbox" id="exportAllUsers" checked>
+                                    All User Data
+                                </label>
+                                <div class="export-format">
+                                    <button onclick="exportData('allUsers', 'csv')" class="export-format-btn">CSV</button>
+                                    <button onclick="exportData('allUsers', 'excel')" class="export-format-btn">Excel</button>
+                                    <button onclick="exportData('allUsers', 'json')" class="export-format-btn">JSON</button>
+                                </div>
+                            </div>
+                            <div class="export-option">
+                                <label>
+                                    <input type="checkbox" id="exportAllRunners" checked>
+                                    All Runner Cases
+                                </label>
+                                <div class="export-format">
+                                    <button onclick="exportData('allRunners', 'csv')" class="export-format-btn">CSV</button>
+                                    <button onclick="exportData('allRunners', 'excel')" class="export-format-btn">Excel</button>
+                                    <button onclick="exportData('allRunners', 'json')" class="export-format-btn">JSON</button>
+                                </div>
+                            </div>
+                            <div class="export-option">
+                                <label>
+                                    <input type="checkbox" id="exportAdminUsers">
+                                    Admin Users Only
+                                </label>
+                                <div class="export-format">
+                                    <button onclick="exportData('adminUsers', 'csv')" class="export-format-btn">CSV</button>
+                                    <button onclick="exportData('adminUsers', 'excel')" class="export-format-btn">Excel</button>
+                                    <button onclick="exportData('adminUsers', 'json')" class="export-format-btn">JSON</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Custom Reports Section -->
+                    <div class="export-section">
+                        <h3>🎯 Custom Reports</h3>
+                        <div class="export-custom">
+                            <div class="date-range">
+                                <label>Date Range:</label>
+                                <input type="date" id="exportStartDate">
+                                <span>to</span>
+                                <input type="date" id="exportEndDate">
+                            </div>
+                            <div class="export-filters">
+                                <label>Include:</label>
+                                <select id="exportFilters">
+                                    <option value="all">All Data</option>
+                                    <option value="active">Active Cases Only</option>
+                                    <option value="resolved">Resolved Cases Only</option>
+                                    <option value="urgent">Urgent Cases Only</option>
+                                </select>
+                            </div>
+                            <button onclick="generateCustomReport()" class="custom-report-btn">Generate Custom Report</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="export-actions">
+                    <button onclick="exportAllSelected()" class="export-all-btn">📊 Export All Selected</button>
+                    <button onclick="closeExportModal()" class="btn-secondary">Cancel</button>
                 </div>
             </div>
         </div>
@@ -4140,6 +4512,367 @@
                     modal.style.display = 'none';
                 }
             });
+        }
+
+        // Export Modal Functions
+        function openExportModal() {
+            document.getElementById('exportModal').style.display = 'block';
+            setDefaultDates();
+        }
+
+        function closeExportModal() {
+            document.getElementById('exportModal').style.display = 'none';
+        }
+
+        function setDefaultDates() {
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
+            
+            document.getElementById('exportStartDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+            document.getElementById('exportEndDate').value = today.toISOString().split('T')[0];
+        }
+
+        // Export Data Functions
+        async function exportData(dataType, format) {
+            try {
+                showToast(`Exporting ${dataType} as ${format.toUpperCase()}...`, 'info');
+                
+                let data;
+                let filename;
+                
+                switch (dataType) {
+                    case 'systemHealth':
+                        data = await getSystemHealthData();
+                        filename = `system-health-${format}-${new Date().toISOString().split('T')[0]}`;
+                        break;
+                    case 'adminActivity':
+                        data = await getAdminActivityData();
+                        filename = `admin-activity-${format}-${new Date().toISOString().split('T')[0]}`;
+                        break;
+                    case 'userAnalytics':
+                        data = await getUserAnalyticsData();
+                        filename = `user-analytics-${format}-${new Date().toISOString().split('T')[0]}`;
+                        break;
+                    case 'caseAnalytics':
+                        data = await getCaseAnalyticsData();
+                        filename = `case-analytics-${format}-${new Date().toISOString().split('T')[0]}`;
+                        break;
+                    case 'networkAnalytics':
+                        data = await getNetworkAnalyticsData();
+                        filename = `network-analytics-${format}-${new Date().toISOString().split('T')[0]}`;
+                        break;
+                    case 'allUsers':
+                        data = await getAllUsersData();
+                        filename = `all-users-${format}-${new Date().toISOString().split('T')[0]}`;
+                        break;
+                    case 'allRunners':
+                        data = await getAllRunnersData();
+                        filename = `all-runners-${format}-${new Date().toISOString().split('T')[0]}`;
+                        break;
+                    case 'adminUsers':
+                        data = await getAdminUsersData();
+                        filename = `admin-users-${format}-${new Date().toISOString().split('T')[0]}`;
+                        break;
+                    default:
+                        throw new Error('Unknown data type');
+                }
+                
+                if (format === 'csv') {
+                    downloadCSV(data, filename);
+                } else if (format === 'json') {
+                    downloadJSON(data, filename);
+                } else if (format === 'excel') {
+                    downloadExcel(data, filename);
+                } else if (format === 'pdf') {
+                    downloadPDF(data, filename);
+                }
+                
+                showToast(`${dataType} exported successfully as ${format.toUpperCase()}!`, 'success');
+                
+            } catch (error) {
+                console.error('Export error:', error);
+                showToast(`Error exporting ${dataType}: ${error.message}`, 'error');
+            }
+        }
+
+        // Data Collection Functions
+        async function getSystemHealthData() {
+            return {
+                timestamp: new Date().toISOString(),
+                apiResponseTime: document.getElementById('apiResponseTime')?.textContent || 'N/A',
+                databaseStatus: document.getElementById('dbStatus')?.textContent || 'N/A',
+                systemUptime: document.getElementById('systemUptime')?.textContent || 'N/A',
+                errorRate: document.getElementById('errorRate')?.textContent || 'N/A'
+            };
+        }
+
+        async function getAdminActivityData() {
+            return {
+                timestamp: new Date().toISOString(),
+                activeSessions: document.getElementById('activeSessions')?.textContent || 'N/A',
+                passwordResets: document.getElementById('passwordResets')?.textContent || 'N/A',
+                loginAttempts: document.getElementById('loginAttempts')?.textContent || 'N/A',
+                securityEvents: document.getElementById('securityEvents')?.textContent || 'N/A'
+            };
+        }
+
+        async function getUserAnalyticsData() {
+            return {
+                timestamp: new Date().toISOString(),
+                newRegistrations: document.getElementById('newRegistrations')?.textContent || 'N/A',
+                activeUsers: document.getElementById('activeUsers')?.textContent || 'N/A',
+                userGrowth: document.getElementById('userGrowth')?.textContent || 'N/A',
+                engagementRate: document.getElementById('engagementRate')?.textContent || 'N/A'
+            };
+        }
+
+        async function getCaseAnalyticsData() {
+            return {
+                timestamp: new Date().toISOString(),
+                avgProcessingTime: document.getElementById('avgProcessingTime')?.textContent || 'N/A',
+                statusChanges: document.getElementById('statusChanges')?.textContent || 'N/A',
+                resolutionRate: document.getElementById('caseResolutionRate')?.textContent || 'N/A',
+                urgentCases: document.getElementById('urgentCaseCount')?.textContent || 'N/A'
+            };
+        }
+
+        async function getNetworkAnalyticsData() {
+            return {
+                timestamp: new Date().toISOString(),
+                bandwidthUsage: document.getElementById('bandwidthUsage')?.textContent || 'N/A',
+                connectionQuality: document.getElementById('connectionQuality')?.textContent || 'N/A',
+                networkLatency: document.getElementById('networkLatency')?.textContent || 'N/A',
+                packetLoss: document.getElementById('packetLoss')?.textContent || 'N/A'
+            };
+        }
+
+        async function getAllUsersData() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/users`, {
+                    headers: authHeader()
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.users || [];
+                } else {
+                    throw new Error('Failed to fetch users');
+                }
+            } catch (error) {
+                console.error('Error fetching users:', error);
+                return [];
+            }
+        }
+
+        async function getAllRunnersData() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/runners`, {
+                    headers: authHeader()
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data || [];
+                } else {
+                    throw new Error('Failed to fetch runners');
+                }
+            } catch (error) {
+                console.error('Error fetching runners:', error);
+                return [];
+            }
+        }
+
+        async function getAdminUsersData() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/users`, {
+                    headers: authHeader()
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return (data.users || []).filter(user => user.role === 'admin');
+                } else {
+                    throw new Error('Failed to fetch admin users');
+                }
+            } catch (error) {
+                console.error('Error fetching admin users:', error);
+                return [];
+            }
+        }
+
+        // Download Functions
+        function downloadCSV(data, filename) {
+            const csvContent = convertToCSV(data);
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            downloadFile(blob, `${filename}.csv`);
+        }
+
+        function downloadJSON(data, filename) {
+            const jsonContent = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+            downloadFile(blob, `${filename}.json`);
+        }
+
+        function downloadExcel(data, filename) {
+            // For Excel, we'll create a CSV that Excel can open
+            const csvContent = convertToCSV(data);
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            downloadFile(blob, `${filename}.csv`);
+        }
+
+        function downloadPDF(data, filename) {
+            // For PDF, we'll create a simple text representation
+            const textContent = convertToPDF(data);
+            const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8;' });
+            downloadFile(blob, `${filename}.txt`);
+        }
+
+        function convertToCSV(data) {
+            if (Array.isArray(data)) {
+                if (data.length === 0) return 'No data available';
+                
+                const headers = Object.keys(data[0]);
+                const csvRows = [headers.join(',')];
+                
+                for (const row of data) {
+                    const values = headers.map(header => {
+                        const value = row[header];
+                        return typeof value === 'string' && value.includes(',') ? `"${value}"` : value;
+                    });
+                    csvRows.push(values.join(','));
+                }
+                
+                return csvRows.join('\n');
+            } else {
+                // Single object
+                const headers = Object.keys(data);
+                const values = headers.map(header => {
+                    const value = data[header];
+                    return typeof value === 'string' && value.includes(',') ? `"${value}"` : value;
+                });
+                return [headers.join(','), values.join(',')].join('\n');
+            }
+        }
+
+        function convertToPDF(data) {
+            let text = '241 Runners Awareness - Data Export\n';
+            text += 'Generated: ' + new Date().toLocaleString() + '\n\n';
+            
+            if (Array.isArray(data)) {
+                text += `Total Records: ${data.length}\n\n`;
+                data.forEach((item, index) => {
+                    text += `Record ${index + 1}:\n`;
+                    Object.entries(item).forEach(([key, value]) => {
+                        text += `  ${key}: ${value}\n`;
+                    });
+                    text += '\n';
+                });
+            } else {
+                Object.entries(data).forEach(([key, value]) => {
+                    text += `${key}: ${value}\n`;
+                });
+            }
+            
+            return text;
+        }
+
+        function downloadFile(blob, filename) {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+
+        // Export All Selected
+        async function exportAllSelected() {
+            const selectedExports = [];
+            
+            // Check which exports are selected
+            if (document.getElementById('exportSystemHealth').checked) selectedExports.push('systemHealth');
+            if (document.getElementById('exportAdminActivity').checked) selectedExports.push('adminActivity');
+            if (document.getElementById('exportUserAnalytics').checked) selectedExports.push('userAnalytics');
+            if (document.getElementById('exportCaseAnalytics').checked) selectedExports.push('caseAnalytics');
+            if (document.getElementById('exportNetworkAnalytics').checked) selectedExports.push('networkAnalytics');
+            if (document.getElementById('exportAllUsers').checked) selectedExports.push('allUsers');
+            if (document.getElementById('exportAllRunners').checked) selectedExports.push('allRunners');
+            if (document.getElementById('exportAdminUsers').checked) selectedExports.push('adminUsers');
+            
+            if (selectedExports.length === 0) {
+                showToast('Please select at least one export option', 'warning');
+                return;
+            }
+            
+            showToast(`Exporting ${selectedExports.length} data sets...`, 'info');
+            
+            // Export all selected as CSV (most universal format)
+            for (const exportType of selectedExports) {
+                try {
+                    await exportData(exportType, 'csv');
+                    await new Promise(resolve => setTimeout(resolve, 500)); // Small delay between exports
+                } catch (error) {
+                    console.error(`Error exporting ${exportType}:`, error);
+                }
+            }
+            
+            showToast('All selected exports completed!', 'success');
+        }
+
+        // Generate Custom Report
+        async function generateCustomReport() {
+            const startDate = document.getElementById('exportStartDate').value;
+            const endDate = document.getElementById('exportEndDate').value;
+            const filter = document.getElementById('exportFilters').value;
+            
+            if (!startDate || !endDate) {
+                showToast('Please select both start and end dates', 'warning');
+                return;
+            }
+            
+            if (new Date(startDate) > new Date(endDate)) {
+                showToast('Start date must be before end date', 'warning');
+                return;
+            }
+            
+            showToast('Generating custom report...', 'info');
+            
+            try {
+                // Get filtered data based on date range and filters
+                const customData = await getCustomReportData(startDate, endDate, filter);
+                
+                // Export as CSV
+                const filename = `custom-report-${startDate}-to-${endDate}-${filter}`;
+                downloadCSV(customData, filename);
+                
+                showToast('Custom report generated successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Error generating custom report:', error);
+                showToast('Error generating custom report', 'error');
+            }
+        }
+
+        async function getCustomReportData(startDate, endDate, filter) {
+            // This would integrate with your backend to get filtered data
+            // For now, we'll return a sample structure
+            return {
+                reportInfo: {
+                    startDate: startDate,
+                    endDate: endDate,
+                    filter: filter,
+                    generatedAt: new Date().toISOString()
+                },
+                summary: {
+                    totalCases: Math.floor(Math.random() * 100) + 20,
+                    activeCases: Math.floor(Math.random() * 50) + 10,
+                    resolvedCases: Math.floor(Math.random() * 30) + 5,
+                    urgentCases: Math.floor(Math.random() * 10) + 1
+                },
+                note: 'This is a sample custom report. Integrate with backend API for real filtered data.'
+            };
         }
 
         // Placeholder functions for other features
