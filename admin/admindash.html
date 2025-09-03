@@ -1159,6 +1159,91 @@
                 justify-content: center;
             }
         }
+
+        /* Password Strength Indicator */
+        .password-strength {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .strength-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .strength-fill.weak {
+            background: #dc2626;
+            width: 25%;
+        }
+
+        .strength-fill.fair {
+            background: #d97706;
+            width: 50%;
+        }
+
+        .strength-fill.good {
+            background: #3b82f6;
+            width: 75%;
+        }
+
+        .strength-fill.strong {
+            background: #059669;
+            width: 100%;
+        }
+
+        .strength-text {
+            font-size: 0.9rem;
+            color: #6b7280;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .form-help {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.85rem;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        /* Password Reset Modal Specific Styles */
+        #passwordResetModal .form-group {
+            margin-bottom: 25px;
+        }
+
+        #passwordResetModal .form-group input {
+            font-family: monospace;
+            letter-spacing: 2px;
+        }
+
+        #passwordResetModal .btn-primary {
+            min-width: 150px;
+        }
+
+        #passwordResetModal .btn-primary .btn-text,
+        #passwordResetModal .btn-primary .loading-spinner {
+            display: inline-block;
+        }
+
+        #passwordResetModal .btn-primary .loading-spinner {
+            margin-left: 10px;
+        }
+
+        /* Status Indicators */
     </style>
 </head>
 <body>
@@ -1587,6 +1672,48 @@
                         <button type="submit" class="btn-primary">Update Runner</button>
                         <button type="button" class="btn-secondary" onclick="closeEditRunnerModal()">Cancel</button>
                         <button type="button" class="btn-danger" onclick="deleteRunner()">Delete Runner</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Reset Modal -->
+    <div id="passwordResetModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔐 Reset Admin Password</h2>
+                <span class="close" onclick="closePasswordResetModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="passwordResetForm">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password *</label>
+                        <input type="password" id="currentPassword" required>
+                        <small class="form-help">Enter your current password to verify your identity</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password *</label>
+                        <input type="password" id="newPassword" required>
+                        <small class="form-help">Password must be at least 8 characters with uppercase, lowercase, number, and special character</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmNewPassword">Confirm New Password *</label>
+                        <input type="password" id="confirmNewPassword" required>
+                        <small class="form-help">Re-enter your new password to confirm</small>
+                    </div>
+                    <div class="password-strength" id="passwordStrength">
+                        <div class="strength-bar">
+                            <div class="strength-fill" id="strengthFill"></div>
+                        </div>
+                        <div class="strength-text" id="strengthText">Password strength will appear here</div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary" id="resetPasswordBtn">
+                            <span class="btn-text">Reset Password</span>
+                            <span class="loading-spinner" style="display: none;"></span>
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="closePasswordResetModal()">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -2868,6 +2995,12 @@
             if (editRunnerForm) {
                 editRunnerForm.addEventListener('submit', handleEditRunner);
             }
+
+            // Password Reset Form
+            const passwordResetForm = document.getElementById('passwordResetForm');
+            if (passwordResetForm) {
+                passwordResetForm.addEventListener('submit', handlePasswordReset);
+            }
         });
 
         // Handle Add Admin
@@ -3077,8 +3210,222 @@
             showToast('Profile Settings feature coming soon!', 'info');
         }
 
+        // Password Reset Functions
         function openPasswordResetModal() {
-            showToast('Password Reset feature coming soon!', 'info');
+            document.getElementById('passwordResetModal').style.display = 'block';
+            document.getElementById('passwordResetForm').reset();
+            resetPasswordStrength();
+            setupPasswordValidation();
+        }
+
+        function closePasswordResetModal() {
+            document.getElementById('passwordResetModal').style.display = 'none';
+            document.getElementById('passwordResetForm').reset();
+            resetPasswordStrength();
+        }
+
+        function resetPasswordStrength() {
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            
+            if (strengthFill) {
+                strengthFill.className = 'strength-fill';
+                strengthFill.style.width = '0%';
+            }
+            
+            if (strengthText) {
+                strengthText.textContent = 'Password strength will appear here';
+                strengthText.style.color = '#6b7280';
+            }
+        }
+
+        function setupPasswordValidation() {
+            const newPasswordInput = document.getElementById('newPassword');
+            const confirmPasswordInput = document.getElementById('confirmNewPassword');
+            
+            if (newPasswordInput) {
+                newPasswordInput.addEventListener('input', validatePasswordStrength);
+                newPasswordInput.addEventListener('input', validatePasswordMatch);
+            }
+            
+            if (confirmPasswordInput) {
+                confirmPasswordInput.addEventListener('input', validatePasswordMatch);
+            }
+        }
+
+        function validatePasswordStrength() {
+            const password = document.getElementById('newPassword').value;
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            
+            if (!password) {
+                resetPasswordStrength();
+                return;
+            }
+            
+            let score = 0;
+            let feedback = [];
+            
+            // Length check
+            if (password.length >= 8) score += 1;
+            else feedback.push('At least 8 characters');
+            
+            // Uppercase check
+            if (/[A-Z]/.test(password)) score += 1;
+            else feedback.push('Include uppercase letter');
+            
+            // Lowercase check
+            if (/[a-z]/.test(password)) score += 1;
+            else feedback.push('Include lowercase letter');
+            
+            // Number check
+            if (/\d/.test(password)) score += 1;
+            else feedback.push('Include number');
+            
+            // Special character check
+            if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) score += 1;
+            else feedback.push('Include special character');
+            
+            // Update strength indicator
+            let strengthClass = '';
+            let strengthLabel = '';
+            let textColor = '';
+            
+            if (score <= 2) {
+                strengthClass = 'weak';
+                strengthLabel = 'Weak';
+                textColor = '#dc2626';
+            } else if (score === 3) {
+                strengthClass = 'fair';
+                strengthLabel = 'Fair';
+                textColor = '#d97706';
+            } else if (score === 4) {
+                strengthClass = 'good';
+                strengthLabel = 'Good';
+                textColor = '#3b82f6';
+            } else {
+                strengthClass = 'strong';
+                strengthLabel = 'Strong';
+                textColor = '#059669';
+            }
+            
+            if (strengthFill) {
+                strengthFill.className = `strength-fill ${strengthClass}`;
+            }
+            
+            if (strengthText) {
+                strengthText.textContent = `${strengthLabel} - ${feedback.join(', ')}`;
+                strengthText.style.color = textColor;
+            }
+        }
+
+        function validatePasswordMatch() {
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmNewPassword').value;
+            const confirmInput = document.getElementById('confirmNewPassword');
+            
+            if (confirmPassword && newPassword !== confirmPassword) {
+                confirmInput.style.borderColor = '#dc2626';
+                confirmInput.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.1)';
+            } else {
+                confirmInput.style.borderColor = '#e5e7eb';
+                confirmInput.style.boxShadow = 'none';
+            }
+        }
+
+        // Handle Password Reset Form Submission
+        async function handlePasswordReset(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmNewPassword').value;
+            
+            // Validation
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showToast('All fields are required!', 'error');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showToast('New passwords do not match!', 'error');
+                return;
+            }
+            
+            if (newPassword.length < 8) {
+                showToast('New password must be at least 8 characters!', 'error');
+                return;
+            }
+            
+            // Password strength validation
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/;
+            if (!passwordRegex.test(newPassword)) {
+                showToast('Password must contain uppercase, lowercase, number, and special character!', 'error');
+                return;
+            }
+            
+            // Show loading state
+            const resetBtn = document.getElementById('resetPasswordBtn');
+            const btnText = resetBtn.querySelector('.btn-text');
+            const spinner = resetBtn.querySelector('.loading-spinner');
+            
+            btnText.style.display = 'none';
+            spinner.style.display = 'inline-block';
+            resetBtn.disabled = true;
+            
+            try {
+                // First, verify current password by attempting login
+                const loginResponse = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: currentAdmin.email,
+                        password: currentPassword
+                    })
+                });
+                
+                if (!loginResponse.ok) {
+                    throw new Error('Current password is incorrect');
+                }
+                
+                // Now reset the password using the admin reset endpoint
+                const resetResponse = await fetch(`${API_BASE_URL}/auth/reset-admin-password`, {
+                    method: 'POST',
+                    headers: {
+                        ...authHeader(),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: currentAdmin.email,
+                        newPassword: newPassword
+                    })
+                });
+                
+                if (resetResponse.ok) {
+                    const result = await resetResponse.json();
+                    showToast('Password reset successfully! You will be logged out to apply changes.', 'success');
+                    
+                    // Close modal and logout after a short delay
+                    setTimeout(() => {
+                        closePasswordResetModal();
+                        logout();
+                    }, 2000);
+                } else {
+                    const error = await resetResponse.json();
+                    throw new Error(error.message || 'Failed to reset password');
+                }
+                
+            } catch (error) {
+                console.error('Password reset error:', error);
+                showToast(error.message || 'Error resetting password', 'error');
+            } finally {
+                // Reset button state
+                btnText.style.display = 'inline-block';
+                spinner.style.display = 'none';
+                resetBtn.disabled = false;
+            }
         }
 
         // Toast notification function
