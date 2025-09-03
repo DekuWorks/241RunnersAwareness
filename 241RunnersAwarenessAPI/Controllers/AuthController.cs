@@ -399,7 +399,7 @@ namespace _241RunnersAwarenessAPI.Controllers
             }
         }
 
-        // Protected endpoint - only existing admins can create new admin users
+        // Protected endpoint - only admins can create new admin users
         [HttpPost("create-admin")]
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<AuthResponse>> CreateAdmin([FromBody] RegisterRequest request)
@@ -692,7 +692,11 @@ namespace _241RunnersAwarenessAPI.Controllers
                         State = user.State,
                         ZipCode = user.ZipCode,
                         Organization = user.Organization,
-                        Title = user.Title
+                        Title = user.Title,
+                        // Additional admin-specific fields
+                        Credentials = user.Credentials,
+                        Specialization = user.Specialization,
+                        YearsOfExperience = user.YearsOfExperience
                     }
                 });
             }
@@ -757,7 +761,13 @@ namespace _241RunnersAwarenessAPI.Controllers
                         u.Address,
                         u.City,
                         u.State,
-                        u.ZipCode
+                        u.ZipCode,
+                        u.Organization,
+                        u.Title,
+                        // Additional admin-specific fields
+                        u.Credentials,
+                        u.Specialization,
+                        u.YearsOfExperience
                     })
                     .ToListAsync();
                 
@@ -840,6 +850,16 @@ namespace _241RunnersAwarenessAPI.Controllers
                 user.Email = request.Email;
                 user.PhoneNumber = request.PhoneNumber;
                 user.Role = request.Role;
+                user.Address = request.Address;
+                user.City = request.City;
+                user.State = request.State;
+                user.ZipCode = request.ZipCode;
+                user.Organization = request.Organization;
+                user.Title = request.Title;
+                // Additional admin-specific fields
+                user.Credentials = request.Credentials;
+                user.Specialization = request.Specialization;
+                user.YearsOfExperience = request.YearsOfExperience;
                 user.UpdatedAt = DateTime.UtcNow;
 
                 await _context.SaveChangesAsync();

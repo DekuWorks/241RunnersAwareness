@@ -152,6 +152,37 @@ namespace _241RunnersAwarenessAPI.Models
         [RegularExpression("^(user|parent|caregiver|therapist|adoptiveparent|admin)$", 
             ErrorMessage = "Role must be one of: user, parent, caregiver, therapist, adoptiveparent, admin")]
         public string Role { get; set; } = "user";
+
+        [MaxLength(500)]
+        public string? Address { get; set; }
+        
+        [MaxLength(100)]
+        public string? City { get; set; }
+        
+        [MaxLength(50)]
+        public string? State { get; set; }
+        
+        [MaxLength(20)]
+        public string? ZipCode { get; set; }
+        
+        [MaxLength(200)]
+        public string? Organization { get; set; }
+        
+        [MaxLength(100)]
+        public string? Title { get; set; }
+
+        // Additional admin-specific fields
+        [MaxLength(200)]
+        [RegularExpression(@"^[a-zA-Z0-9\s\-'.,&()]+$", ErrorMessage = "Credentials can only contain letters, numbers, spaces, hyphens, apostrophes, commas, periods, ampersands, and parentheses")]
+        public string? Credentials { get; set; }
+        
+        [MaxLength(200)]
+        [RegularExpression(@"^[a-zA-Z0-9\s\-'.,&()]+$", ErrorMessage = "Specialization can only contain letters, numbers, spaces, hyphens, apostrophes, commas, periods, ampersands, and parentheses")]
+        public string? Specialization { get; set; }
+        
+        [MaxLength(50)]
+        [RegularExpression(@"^[\d\s\+\-]+$", ErrorMessage = "Years of experience can only contain numbers, spaces, plus signs, and hyphens")]
+        public string? YearsOfExperience { get; set; }
     }
 
     public class ProfileUpdateRequest
