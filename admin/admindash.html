@@ -2999,7 +2999,13 @@
             const token = localStorage.getItem('ra_admin_token');
             const role = localStorage.getItem('ra_admin_role');
             
+            console.log('🔐 isAuthenticated check:');
+            console.log('  - Token:', token ? 'Present' : 'Missing');
+            console.log('  - Role:', role);
+            console.log('  - Role check:', role === 'admin' ? '✅ Match' : '❌ Mismatch');
+            
             if (!token || role !== 'admin') {
+                console.log('❌ Authentication failed: missing token or wrong role');
                 return false;
             }
             
@@ -3008,25 +3014,34 @@
                 const payload = JSON.parse(atob(token.split('.')[1]));
                 const currentTime = Math.floor(Date.now() / 1000);
                 
+                console.log('🔐 Token expiration check:');
+                console.log('  - Token expires at:', new Date(payload.exp * 1000).toISOString());
+                console.log('  - Current time:', new Date(currentTime * 1000).toISOString());
+                console.log('  - Is expired:', payload.exp && payload.exp < currentTime ? 'Yes' : 'No');
+                
                 if (payload.exp && payload.exp < currentTime) {
-                    console.log('Token expired, clearing auth data');
+                    console.log('❌ Token expired, clearing auth data');
                     clearAuthData();
                     return false;
                 }
             } catch (error) {
-                console.error('Error parsing token:', error);
+                console.error('❌ Error parsing token:', error);
                 clearAuthData();
                 return false;
             }
             
+            console.log('✅ Authentication successful');
             return true;
         }
         
         function requireAdmin() {
+            console.log('🔐 requireAdmin() called');
             if (!isAuthenticated()) {
+                console.log('❌ Authentication failed in requireAdmin, redirecting to login');
                 window.location.href = "/admin/login.html";
                 return false;
             }
+            console.log('✅ requireAdmin() passed, continuing to dashboard');
             return true;
         }
         
@@ -3038,6 +3053,16 @@
         // Load dashboard data on page load
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Admin Dashboard DOM loaded');
+            
+            // Debug authentication state
+            console.log('🔍 Checking authentication state...');
+            const token = localStorage.getItem('ra_admin_token');
+            const role = localStorage.getItem('ra_admin_role');
+            const user = localStorage.getItem('ra_admin_user');
+            
+            console.log('📱 Stored token:', token ? 'Present' : 'Missing');
+            console.log('📱 Stored role:', role);
+            console.log('📱 Stored user:', user ? 'Present' : 'Missing');
             
             // Add global error handler
             window.addEventListener('error', function(event) {
@@ -3052,7 +3077,9 @@
             });
             
             // Check authentication first
+            console.log('🔐 Calling requireAdmin()...');
             if (!requireAdmin()) {
+                console.log('❌ Authentication failed, redirecting to login');
                 return;
             }
             

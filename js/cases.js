@@ -129,13 +129,13 @@ class CasesPage {
                 console.error('❌ Network error fetching NamUs cases:', error.message);
             }
 
-            // Check if API is available
+            // If no cases loaded, show empty state
             if (namusCases.length === 0) {
-                console.log('No cases loaded from API, showing deployment status');
+                console.log('No cases loaded from API, showing empty state');
                 this.cases = [];
                 this.filteredCases = [];
                 this.hideLoading();
-                this.showDeploymentStatus();
+                this.showEmpty();
                 this.updateStats();
                 return;
             }
