@@ -103,20 +103,10 @@ class CasesPage {
             // Use the configured API base URL
             const apiUrl = window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
             
-            // Load existing cases (if any)
-            let existingCases = [];
-            try {
-                const existingResponse = await fetch(`${apiUrl}/runners`);
-                if (existingResponse.ok) {
-                    existingCases = await existingResponse.json() || [];
-                }
-            } catch (error) {
-                console.log('No existing cases found, continuing with NamUs data only');
-            }
-
             // Load NamUs public cases for Houston area
             let namusCases = [];
             try {
+                console.log('🔍 Attempting to fetch NamUs cases from:', `${apiUrl}/publiccases`);
                 const params = new URLSearchParams({
                     region: 'houston',
                     page: 1,
@@ -124,15 +114,34 @@ class CasesPage {
                 });
 
                 const namusResponse = await fetch(`${apiUrl}/publiccases?${params}`);
+                console.log('📡 NamUs API Response Status:', namusResponse.status, namusResponse.statusText);
+                
                 if (namusResponse.ok) {
                     namusCases = await namusResponse.json() || [];
+                    console.log('✅ NamUs cases loaded successfully:', namusCases.length);
+                } else {
+                    console.error('❌ NamUs API failed:', namusResponse.status, namusResponse.statusText);
+                    if (namusResponse.status === 404) {
+                        console.error('🔧 The /publiccases endpoint is not available yet. Backend deployment may still be in progress.');
+                    }
                 }
             } catch (error) {
-                console.log('No NamUs cases found, continuing with existing cases only');
+                console.error('❌ Network error fetching NamUs cases:', error.message);
             }
 
-            // Combine and normalize all cases
-            this.cases = this.combineAndNormalizeCases(existingCases, namusCases);
+            // Check if API is available
+            if (namusCases.length === 0) {
+                console.log('No cases loaded from API, showing deployment status');
+                this.cases = [];
+                this.filteredCases = [];
+                this.hideLoading();
+                this.showDeploymentStatus();
+                this.updateStats();
+                return;
+            }
+
+            // Use NamUs cases directly
+            this.cases = this.normalizeNamusCases(namusCases);
             this.filteredCases = [...this.cases];
             
             this.hideLoading();
@@ -244,75 +253,40 @@ class CasesPage {
                date1.getDate() === date2.getDate();
     }
 
-    // Combine existing cases with NamUs cases and normalize the data
-    combineAndNormalizeCases(existingCases, namusCases) {
-        const combined = [];
+    // Normalize NamUs cases to standard format
+    normalizeNamusCases(namusCases) {
+        if (!namusCases || namusCases.length === 0) {
+            return [];
+        }
 
-        // Add existing cases (convert to standard format)
-        existingCases.forEach(caseItem => {
-            combined.push({
-                id: caseItem.id || `existing-${Date.now()}-${Math.random()}`,
-                source: 'existing',
-                runnerId: caseItem.runnerId || 'N/A',
-                firstName: caseItem.firstName || '',
-                lastName: caseItem.lastName || '',
-                fullName: caseItem.firstName && caseItem.lastName ? 
-                    `${caseItem.firstName} ${caseItem.lastName}` : 
-                    (caseItem.firstName || caseItem.lastName || 'Unknown'),
-                age: caseItem.age || null,
-                gender: caseItem.gender || 'Unknown',
-                height: caseItem.height || 'Unknown',
-                weight: caseItem.weight || 'Unknown',
-                eyeColor: caseItem.eyeColor || 'Unknown',
-                hairColor: caseItem.hairColor || 'Unknown',
-                city: caseItem.city || 'Unknown',
-                state: caseItem.state || 'TX',
-                status: caseItem.status || 'Missing',
-                isUrgent: caseItem.isUrgent || false,
-                dateReported: caseItem.dateReported || new Date().toISOString(),
-                description: caseItem.description || 'No description available',
-                identifyingMarks: caseItem.identifyingMarks || 'None',
-                medicalConditions: caseItem.medicalConditions || 'None',
-                photoUrl: null,
-                agency: 'Local Report',
-                namusCaseNumber: null
-            });
-        });
-
-        // Add NamUs cases (convert to standard format)
-        namusCases.forEach(caseItem => {
-            combined.push({
-                id: caseItem.id || `namus-${Date.now()}-${Math.random()}`,
-                source: 'namus',
-                runnerId: caseItem.namusCaseNumber || 'N/A',
-                firstName: '',
-                lastName: '',
-                fullName: caseItem.fullName || 'Unknown',
-                age: caseItem.ageAtMissing || null,
-                gender: caseItem.sex || 'Unknown',
-                height: 'Unknown',
-                weight: 'Unknown',
-                eyeColor: 'Unknown',
-                hairColor: 'Unknown',
-                city: caseItem.city || 'Houston',
-                state: caseItem.state || 'TX',
-                status: this.mapNamusStatus(caseItem.status),
-                isUrgent: caseItem.status === 'missing',
-                dateReported: caseItem.dateMissing ? 
-                    new Date(caseItem.dateMissing).toISOString() : 
-                    new Date().toISOString(),
-                description: caseItem.statusNote || 'Case from NamUs database',
-                identifyingMarks: 'See NamUs for details',
-                medicalConditions: 'See NamUs for details',
-                photoUrl: caseItem.photoUrl,
-                agency: caseItem.agency || 'NamUs',
-                namusCaseNumber: caseItem.namusCaseNumber,
-                namusSourceUrl: caseItem.sourceUrl
-            });
-        });
-
-        // Sort by date reported (most recent first)
-        return combined.sort((a, b) => new Date(b.dateReported) - new Date(a.dateReported));
+        return namusCases.map(caseItem => ({
+            id: caseItem.id || `namus-${Date.now()}-${Math.random()}`,
+            source: 'namus',
+            runnerId: caseItem.namusCaseNumber || 'N/A',
+            firstName: '',
+            lastName: '',
+            fullName: caseItem.fullName || 'Unknown',
+            age: caseItem.ageAtMissing || null,
+            gender: caseItem.sex || 'Unknown',
+            height: 'Unknown',
+            weight: 'Unknown',
+            eyeColor: 'Unknown',
+            hairColor: 'Unknown',
+            city: caseItem.city || 'Houston',
+            state: caseItem.state || 'TX',
+            status: this.mapNamusStatus(caseItem.status),
+            isUrgent: caseItem.status === 'missing',
+            dateReported: caseItem.dateMissing ? 
+                new Date(caseItem.dateMissing).toISOString() : 
+                new Date().toISOString(),
+            description: caseItem.statusNote || 'Case from NamUs database',
+            identifyingMarks: 'See NamUs for details',
+            medicalConditions: 'See NamUs for details',
+            photoUrl: caseItem.photoUrl,
+            agency: caseItem.agency || 'NamUs',
+            namusCaseNumber: caseItem.namusCaseNumber,
+            namusSourceUrl: caseItem.sourceUrl
+        })).sort((a, b) => new Date(b.dateReported) - new Date(a.dateReported));
     }
 
     // Map NamUs status to our standard status
@@ -881,6 +855,37 @@ class CasesPage {
         document.getElementById('emptyState').style.display = 'flex';
         document.getElementById('casesGrid').style.display = 'none';
         document.getElementById('loadMoreContainer').style.display = 'none';
+    }
+
+    showDeploymentStatus() {
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('errorState').style.display = 'none';
+        document.getElementById('emptyState').style.display = 'none';
+        document.getElementById('casesGrid').style.display = 'none';
+        document.getElementById('loadMoreContainer').style.display = 'none';
+        
+        // Update the empty state to show deployment status
+        const emptyState = document.getElementById('emptyState');
+        if (emptyState) {
+            emptyState.innerHTML = `
+                <div class="deployment-status">
+                    <div class="deployment-icon">🚀</div>
+                    <h3>Backend Deployment in Progress</h3>
+                    <p>The NamUs data integration is being deployed to our servers. This may take a few minutes.</p>
+                    <div class="deployment-info">
+                        <p><strong>Status:</strong> <span class="status-pending">Deploying...</span></p>
+                        <p><strong>What's happening:</strong> Database migrations and API endpoints are being set up</p>
+                    </div>
+                    <button id="checkDeploymentStatus" class="btn btn-primary">Check Status</button>
+                    <p class="deployment-note">You can refresh this page in a few minutes to see the cases.</p>
+                </div>
+            `;
+            
+            // Add event listener for check status button
+            document.getElementById('checkDeploymentStatus').addEventListener('click', () => {
+                this.loadCases();
+            });
+        }
     }
     
     hideEmpty() {
