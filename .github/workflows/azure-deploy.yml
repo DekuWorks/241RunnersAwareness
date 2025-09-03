@@ -11,7 +11,7 @@ on:
       - '241RunnersAwarenessAPI/**'
 
 env:
-  AZURE_WEBAPP_NAME: 241runners-api
+  AZURE_WEBAPP_NAME: 241runnersawareness-api
   AZURE_WEBAPP_PACKAGE_PATH: './241RunnersAwarenessAPI'
   DOTNET_VERSION: '8.0.x'
 
