@@ -2025,19 +2025,40 @@
         // Load admins data
         async function loadAdmins() {
             try {
+                console.log('Loading admins data...');
+                
+                // Add timeout protection to prevent hanging
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+                
                 const response = await fetch(`${API_BASE_URL}/auth/users`, {
-                    headers: authHeader()
+                    headers: authHeader(),
+                    signal: controller.signal
                 });
+                
+                clearTimeout(timeout);
+                
+                console.log('Admins response status:', response.status);
                 
                 if (response.ok) {
                     const data = await response.json();
+                    console.log('Admins data loaded:', data);
                     dashboardData.admins = (data.users || []).filter(user => user.role === 'admin');
+                    console.log('Filtered admins:', dashboardData.admins.length);
                 } else {
-                    throw new Error('Failed to load admins');
+                    const errorText = await response.text();
+                    console.error('Admins API error:', response.status, errorText);
+                    throw new Error(`Failed to load admins: ${response.status}`);
                 }
             } catch (error) {
                 console.error('Error loading admins:', error);
-                dashboardData.admins = [];
+                
+                if (error.name === 'AbortError') {
+                    console.error('Admins API request timed out');
+                    dashboardData.admins = [];
+                } else {
+                    dashboardData.admins = [];
+                }
             }
         }
 
@@ -2867,8 +2888,39 @@
 
         // Admin Management Functions
         function openAdminsModal() {
-            document.getElementById('adminsModal').style.display = 'block';
-            loadAdminsTable();
+            try {
+                console.log('Opening admins modal...');
+                
+                // Check if modal element exists
+                const modal = document.getElementById('adminsModal');
+                if (!modal) {
+                    console.error('Admins modal not found');
+                    showToast('Error: Admins modal not found', 'error');
+                    return;
+                }
+                
+                // Check if dashboard data is available
+                if (!dashboardData || !dashboardData.admins) {
+                    console.log('Dashboard data not ready, initializing...');
+                    // Initialize dashboard data if not ready
+                    loadDashboardData().then(() => {
+                        modal.style.display = 'block';
+                        loadAdminsTable();
+                    }).catch(error => {
+                        console.error('Failed to initialize dashboard data:', error);
+                        showToast('Error loading dashboard data', 'error');
+                    });
+                    return;
+                }
+                
+                // Open modal and load admins
+                modal.style.display = 'block';
+                loadAdminsTable();
+                
+            } catch (error) {
+                console.error('Error opening admins modal:', error);
+                showToast('Error opening admins modal', 'error');
+            }
         }
 
         function closeAdminsModal() {
@@ -2971,13 +3023,16 @@
             const tbody = document.getElementById('adminsTableBody');
             if (!tbody) return;
 
+            console.log('Loading admins table...');
             tbody.innerHTML = '<tr><td colspan="9" class="loading-text">Loading admins...</td></tr>';
 
             try {
                 await loadAdmins();
+                console.log('Admins loaded, displaying table...');
                 displayAdminsTable();
             } catch (error) {
-                tbody.innerHTML = '<tr><td colspan="9" class="no-data">Error loading admins</td></tr>';
+                console.error('Error in loadAdminsTable:', error);
+                tbody.innerHTML = '<tr><td colspan="9" class="no-data">Error loading admins. Please try again.</td></tr>';
             }
         }
 
