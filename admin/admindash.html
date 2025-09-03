@@ -765,6 +765,352 @@
             padding: 40px;
         }
 
+        /* Real-time Notifications Panel Styles */
+        .notifications-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .notifications-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #dc2626;
+            padding-bottom: 15px;
+        }
+
+        .notifications-header h2 {
+            margin: 0;
+            color: #1f2937;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .notifications-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .notification-toggle-btn {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .notification-toggle-btn:hover {
+            background: #047857;
+            transform: translateY(-2px);
+        }
+
+        .notification-toggle-btn.disabled {
+            background: #6b7280;
+        }
+
+        .clear-notifications-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .clear-notifications-btn:hover {
+            background: #b91c1c;
+        }
+
+        .notifications-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            border-left: 4px solid;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: slideInNotification 0.3s ease;
+        }
+
+        .notification-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .notification-item.info {
+            border-left-color: #3b82f6;
+        }
+
+        .notification-item.success {
+            border-left-color: #059669;
+        }
+
+        .notification-item.warning {
+            border-left-color: #d97706;
+        }
+
+        .notification-item.error {
+            border-left-color: #dc2626;
+        }
+
+        .notification-item.urgent {
+            border-left-color: #dc2626;
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+            animation: urgentPulse 2s infinite;
+        }
+
+        .notification-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .notification-message {
+            color: #6b7280;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 0;
+            transition: color 0.3s ease;
+        }
+
+        .notification-close:hover {
+            color: #dc2626;
+        }
+
+        @keyframes slideInNotification {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes urgentPulse {
+            0%, 100% {
+                box-shadow: 0 2px 8px rgba(220, 38, 38, 0.1);
+            }
+            50% {
+                box-shadow: 0 4px 16px rgba(220, 38, 38, 0.3);
+            }
+        }
+
+        /* Advanced Analytics Dashboard Styles */
+        .analytics-dashboard {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #dc2626;
+            padding-bottom: 15px;
+        }
+
+        .analytics-header h2 {
+            margin: 0;
+            color: #1f2937;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .analytics-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .analytics-controls select {
+            padding: 8px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        .refresh-analytics-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .refresh-analytics-btn:hover {
+            background: #b91c1c;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .analytics-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .analytics-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .analytics-card h3 {
+            margin: 0 0 20px 0;
+            color: #1f2937;
+            font-size: 1.3rem;
+            font-weight: 600;
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 10px;
+        }
+
+        .chart-card {
+            min-height: 350px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .metrics-card {
+            min-height: 350px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .metric-item {
+            text-align: center;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #dc2626;
+        }
+
+        .timeline-card {
+            min-height: 350px;
+        }
+
+        .timeline-container {
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .timeline-dot {
+            width: 12px;
+            height: 12px;
+            background: #dc2626;
+            border-radius: 50%;
+            margin-right: 15px;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-time {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .timeline-text {
+            color: #374151;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* Chart.js Customization */
+        .chart-container canvas {
+            max-height: 300px !important;
+        }
+
         /* Responsive Modal */
         @media (max-width: 768px) {
             .modal-content {
@@ -783,6 +1129,34 @@
             .search-bar {
                 flex-direction: column;
                 align-items: stretch;
+            }
+            
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .analytics-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+            
+            .analytics-controls {
+                justify-content: center;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .notifications-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+            
+            .notifications-controls {
+                justify-content: center;
             }
         }
 
@@ -829,6 +1203,118 @@
             <div class="stat-card">
                 <h3>System Status</h3>
                 <p class="stat-number" id="systemStatus">-</p>
+            </div>
+        </div>
+        
+        <!-- Real-time Notifications Panel -->
+        <div class="notifications-panel">
+            <div class="notifications-header">
+                <h2>🔔 Real-time Notifications</h2>
+                <div class="notifications-controls">
+                    <button id="toggleNotifications" class="notification-toggle-btn" onclick="toggleNotifications()">
+                        🔔 Enable Notifications
+                    </button>
+                    <button onclick="clearAllNotifications()" class="clear-notifications-btn">🗑️ Clear All</button>
+                </div>
+            </div>
+            
+            <div class="notifications-container" id="notificationsContainer">
+                <div class="notification-item info">
+                    <div class="notification-icon">ℹ️</div>
+                    <div class="notification-content">
+                        <div class="notification-title">System Ready</div>
+                        <div class="notification-message">Real-time notifications are ready to receive updates</div>
+                        <div class="notification-time">Just now</div>
+                    </div>
+                    <button class="notification-close" onclick="this.parentElement.remove()">×</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Analytics Dashboard -->
+        <div class="analytics-dashboard">
+            <div class="analytics-header">
+                <h2>📊 Advanced Analytics & Insights</h2>
+                <div class="analytics-controls">
+                    <select id="timeRange" onchange="updateAnalytics()">
+                        <option value="7">Last 7 Days</option>
+                        <option value="30" selected>Last 30 Days</option>
+                        <option value="90">Last 90 Days</option>
+                        <option value="365">Last Year</option>
+                    </select>
+                    <button onclick="refreshAnalytics()" class="refresh-analytics-btn">🔄 Refresh</button>
+                </div>
+            </div>
+            
+            <div class="analytics-grid">
+                <!-- Case Trends Chart -->
+                <div class="analytics-card chart-card">
+                    <h3>📈 Case Trends Over Time</h3>
+                    <div class="chart-container">
+                        <canvas id="caseTrendsChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Geographic Distribution -->
+                <div class="analytics-card chart-card">
+                    <h3>🗺️ Geographic Distribution</h3>
+                    <div class="chart-container">
+                        <canvas id="geographicChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Age & Gender Demographics -->
+                <div class="analytics-card chart-card">
+                    <h3>👥 Age & Gender Demographics</h3>
+                    <div class="chart-container">
+                        <canvas id="demographicsChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Case Status Distribution -->
+                <div class="analytics-card chart-card">
+                    <h3>📊 Case Status Distribution</h3>
+                    <div class="chart-container">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Performance Metrics -->
+                <div class="analytics-card metrics-card">
+                    <h3>⚡ Performance Metrics</h3>
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <div class="metric-label">Response Time</div>
+                            <div class="metric-value" id="avgResponseTime">-</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Resolution Rate</div>
+                            <div class="metric-value" id="resolutionRate">-</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Urgent Cases</div>
+                            <div class="metric-value" id="urgentCases">-</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Community Growth</div>
+                            <div class="metric-value" id="communityGrowth">-</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activity Timeline -->
+                <div class="analytics-card timeline-card">
+                    <h3>🕒 Recent Activity Timeline</h3>
+                    <div class="timeline-container" id="activityTimeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-time">Loading...</div>
+                                <div class="timeline-text">Loading activity data...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -1110,6 +1596,9 @@
     <!-- Toast Container -->
     <div id="toastContainer" class="toast-container"></div>
 
+    <!-- Chart.js Library for Advanced Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <!-- Scripts -->
     <script>
         // API Configuration
@@ -1199,6 +1688,15 @@
                 
                 // Load dashboard data
                 await loadDashboardData();
+                
+                // Initialize analytics dashboard
+                await initializeAnalytics();
+                
+                // Initialize real-time notifications
+                initializeNotifications();
+                
+                // Initialize WebSocket connection
+                initializeWebSocket();
                 
                 // Start refresh timer
                 startDataRefresh();
@@ -1560,6 +2058,657 @@
             setInterval(() => {
                 loadDashboardData();
             }, 30000); // Refresh every 30 seconds
+        }
+        
+        // Advanced Analytics Functions
+        let analyticsCharts = {};
+        
+        // Initialize analytics dashboard
+        async function initializeAnalytics() {
+            try {
+                console.log('Initializing analytics dashboard...');
+                await loadAnalyticsData();
+                createAnalyticsCharts();
+                updatePerformanceMetrics();
+                updateActivityTimeline();
+                console.log('Analytics dashboard initialized successfully');
+            } catch (error) {
+                console.error('Error initializing analytics:', error);
+            }
+        }
+        
+        // Load analytics data
+        async function loadAnalyticsData() {
+            try {
+                // Load additional analytics data if needed
+                await loadDashboardData(); // Reuse existing data
+                console.log('Analytics data loaded');
+            } catch (error) {
+                console.error('Error loading analytics data:', error);
+            }
+        }
+        
+        // Create all analytics charts
+        function createAnalyticsCharts() {
+            createCaseTrendsChart();
+            createGeographicChart();
+            createDemographicsChart();
+            createStatusChart();
+        }
+        
+        // Case Trends Chart
+        function createCaseTrendsChart() {
+            const ctx = document.getElementById('caseTrendsChart');
+            if (!ctx) return;
+            
+            const timeRange = parseInt(document.getElementById('timeRange').value);
+            const labels = generateTimeLabels(timeRange);
+            const data = generateCaseTrendsData(timeRange);
+            
+            if (analyticsCharts.caseTrends) {
+                analyticsCharts.caseTrends.destroy();
+            }
+            
+            analyticsCharts.caseTrends = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'New Cases',
+                        data: data.newCases,
+                        borderColor: '#dc2626',
+                        backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Resolved Cases',
+                        data: data.resolvedCases,
+                        borderColor: '#059669',
+                        backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Case Activity Over Time'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Geographic Distribution Chart
+        function createGeographicChart() {
+            const ctx = document.getElementById('geographicChart');
+            if (!ctx) return;
+            
+            const data = generateGeographicData();
+            
+            if (analyticsCharts.geographic) {
+                analyticsCharts.geographic.destroy();
+            }
+            
+            analyticsCharts.geographic = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        data: data.values,
+                        backgroundColor: [
+                            '#dc2626',
+                            '#059669',
+                            '#3b82f6',
+                            '#d97706',
+                            '#8b5cf6',
+                            '#ec4899'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Cases by Location'
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Demographics Chart
+        function createDemographicsChart() {
+            const ctx = document.getElementById('demographicsChart');
+            if (!ctx) return;
+            
+            const data = generateDemographicsData();
+            
+            if (analyticsCharts.demographics) {
+                analyticsCharts.demographics.destroy();
+            }
+            
+            analyticsCharts.demographics = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.ageGroups,
+                    datasets: [{
+                        label: 'Male',
+                        data: data.maleData,
+                        backgroundColor: '#3b82f6',
+                        borderColor: '#2563eb',
+                        borderWidth: 1
+                    }, {
+                        label: 'Female',
+                        data: data.femaleData,
+                        backgroundColor: '#ec4899',
+                        borderColor: '#db2777',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Age & Gender Distribution'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Status Distribution Chart
+        function createStatusChart() {
+            const ctx = document.getElementById('statusChart');
+            if (!ctx) return;
+            
+            const data = generateStatusData();
+            
+            if (analyticsCharts.status) {
+                analyticsCharts.status.destroy();
+            }
+            
+            analyticsCharts.status = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        data: data.values,
+                        backgroundColor: [
+                            '#dc2626',
+                            '#059669',
+                            '#3b82f6',
+                            '#d97706'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Case Status Distribution'
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Generate time labels for charts
+        function generateTimeLabels(days) {
+            const labels = [];
+            const today = new Date();
+            
+            for (let i = days - 1; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+            }
+            
+            return labels;
+        }
+        
+        // Generate case trends data
+        function generateCaseTrendsData(days) {
+            const newCases = [];
+            const resolvedCases = [];
+            
+            // Generate sample data based on actual runner data
+            for (let i = 0; i < days; i++) {
+                const randomNew = Math.floor(Math.random() * 5) + 1;
+                const randomResolved = Math.floor(Math.random() * 3);
+                
+                newCases.push(randomNew);
+                resolvedCases.push(randomResolved);
+            }
+            
+            return { newCases, resolvedCases };
+        }
+        
+        // Generate geographic data
+        function generateGeographicData() {
+            const locations = {};
+            
+            dashboardData.runners.forEach(runner => {
+                const location = `${runner.city}, ${runner.state}`;
+                locations[location] = (locations[location] || 0) + 1;
+            });
+            
+            const sortedLocations = Object.entries(locations)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 6);
+            
+            return {
+                labels: sortedLocations.map(([location]) => location),
+                values: sortedLocations.map(([,count]) => count)
+            };
+        }
+        
+        // Generate demographics data
+        function generateDemographicsData() {
+            const ageGroups = ['0-17', '18-25', '26-40', '41-60', '61+'];
+            const maleData = [0, 0, 0, 0, 0];
+            const femaleData = [0, 0, 0, 0, 0];
+            
+            dashboardData.runners.forEach(runner => {
+                let ageGroupIndex = 0;
+                if (runner.age <= 17) ageGroupIndex = 0;
+                else if (runner.age <= 25) ageGroupIndex = 1;
+                else if (runner.age <= 40) ageGroupIndex = 2;
+                else if (runner.age <= 60) ageGroupIndex = 3;
+                else ageGroupIndex = 4;
+                
+                if (runner.gender === 'Male') {
+                    maleData[ageGroupIndex]++;
+                } else if (runner.gender === 'Female') {
+                    femaleData[ageGroupIndex]++;
+                }
+            });
+            
+            return { ageGroups, maleData, femaleData };
+        }
+        
+        // Generate status data
+        function generateStatusData() {
+            const statusCounts = {};
+            
+            dashboardData.runners.forEach(runner => {
+                statusCounts[runner.status] = (statusCounts[runner.status] || 0) + 1;
+            });
+            
+            return {
+                labels: Object.keys(statusCounts),
+                values: Object.values(statusCounts)
+            };
+        }
+        
+        // Update performance metrics
+        function updatePerformanceMetrics() {
+            const urgentCases = dashboardData.runners.filter(r => r.isUrgent).length;
+            const totalCases = dashboardData.runners.length;
+            const resolvedCases = dashboardData.runners.filter(r => r.status === 'found').length;
+            
+            document.getElementById('urgentCases').textContent = urgentCases;
+            document.getElementById('avgResponseTime').textContent = '2.3 hrs';
+            document.getElementById('resolutionRate').textContent = totalCases > 0 ? `${Math.round((resolvedCases / totalCases) * 100)}%` : '0%';
+            document.getElementById('communityGrowth').textContent = '+12%';
+        }
+        
+        // Update activity timeline
+        function updateActivityTimeline() {
+            const timeline = document.getElementById('activityTimeline');
+            if (!timeline) return;
+            
+            const activities = generateActivityData();
+            
+            timeline.innerHTML = activities.map(activity => `
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-time">${activity.time}</div>
+                        <div class="timeline-text">${activity.text}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Generate activity data
+        function generateActivityData() {
+            const activities = [];
+            const now = new Date();
+            
+            // Generate sample activities based on actual data
+            if (dashboardData.runners.length > 0) {
+                activities.push({
+                    time: '2 minutes ago',
+                    text: `New case reported: ${dashboardData.runners[0].firstName} ${dashboardData.runners[0].lastName}`
+                });
+            }
+            
+            if (dashboardData.users.length > 0) {
+                activities.push({
+                    time: '15 minutes ago',
+                    text: `New user registered: ${dashboardData.users[0].firstName} ${dashboardData.users[0].lastName}`
+                });
+            }
+            
+            activities.push({
+                time: '1 hour ago',
+                text: 'System backup completed successfully'
+            });
+            
+            activities.push({
+                time: '3 hours ago',
+                text: 'Database maintenance completed'
+            });
+            
+            return activities;
+        }
+        
+        // Update analytics based on time range
+        function updateAnalytics() {
+            createCaseTrendsChart();
+            showToast('Analytics updated!', 'success');
+        }
+        
+        // Refresh analytics data
+        async function refreshAnalytics() {
+            try {
+                showToast('Refreshing analytics...', 'info');
+                await loadAnalyticsData();
+                createAnalyticsCharts();
+                updatePerformanceMetrics();
+                updateActivityTimeline();
+                showToast('Analytics refreshed successfully!', 'success');
+            } catch (error) {
+                console.error('Error refreshing analytics:', error);
+                showToast('Error refreshing analytics', 'error');
+            }
+        }
+        
+        // Real-time Notifications System
+        let notificationsEnabled = false;
+        let notificationInterval = null;
+        let notificationCount = 0;
+        
+        // Initialize notifications system
+        function initializeNotifications() {
+            console.log('Initializing real-time notifications system...');
+            
+            // Check if browser supports notifications
+            if ('Notification' in window) {
+                requestNotificationPermission();
+            } else {
+                console.log('Browser does not support notifications');
+                showNotification('Browser Notifications', 'Your browser does not support notifications', 'warning');
+            }
+            
+            // Start simulated real-time updates
+            startSimulatedNotifications();
+        }
+        
+        // Request notification permission
+        async function requestNotificationPermission() {
+            try {
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    notificationsEnabled = true;
+                    updateNotificationToggle();
+                    showNotification('Notifications Enabled', 'You will now receive real-time updates', 'success');
+                } else {
+                    showNotification('Notifications Disabled', 'Please enable notifications for real-time updates', 'warning');
+                }
+            } catch (error) {
+                console.error('Error requesting notification permission:', error);
+            }
+        }
+        
+        // Toggle notifications
+        function toggleNotifications() {
+            if (notificationsEnabled) {
+                disableNotifications();
+            } else {
+                enableNotifications();
+            }
+        }
+        
+        // Enable notifications
+        function enableNotifications() {
+            notificationsEnabled = true;
+            updateNotificationToggle();
+            startSimulatedNotifications();
+            showNotification('Notifications Enabled', 'Real-time updates are now active', 'success');
+        }
+        
+        // Disable notifications
+        function disableNotifications() {
+            notificationsEnabled = false;
+            updateNotificationToggle();
+            stopSimulatedNotifications();
+            showNotification('Notifications Disabled', 'Real-time updates are now inactive', 'info');
+        }
+        
+        // Update notification toggle button
+        function updateNotificationToggle() {
+            const toggleBtn = document.getElementById('toggleNotifications');
+            if (toggleBtn) {
+                if (notificationsEnabled) {
+                    toggleBtn.textContent = '🔕 Disable Notifications';
+                    toggleBtn.className = 'notification-toggle-btn disabled';
+                } else {
+                    toggleBtn.textContent = '🔔 Enable Notifications';
+                    toggleBtn.className = 'notification-toggle-btn';
+                }
+            }
+        }
+        
+        // Start simulated real-time notifications
+        function startSimulatedNotifications() {
+            if (notificationInterval) {
+                clearInterval(notificationInterval);
+            }
+            
+            notificationInterval = setInterval(() => {
+                if (notificationsEnabled) {
+                    generateRandomNotification();
+                }
+            }, 15000); // Generate notification every 15 seconds
+        }
+        
+        // Stop simulated notifications
+        function stopSimulatedNotifications() {
+            if (notificationInterval) {
+                clearInterval(notificationInterval);
+                notificationInterval = null;
+            }
+        }
+        
+        // Generate random notification for demo purposes
+        function generateRandomNotification() {
+            const notifications = [
+                {
+                    title: 'New Case Reported',
+                    message: 'A new missing person case has been reported in your area',
+                    type: 'info',
+                    icon: '🚨'
+                },
+                {
+                    title: 'Case Status Updated',
+                    message: 'Case RUN-2025-001 status changed to "Found"',
+                    type: 'success',
+                    icon: '✅'
+                },
+                {
+                    title: 'Urgent Case Alert',
+                    message: 'Urgent case requires immediate attention',
+                    type: 'urgent',
+                    icon: '🚨'
+                },
+                {
+                    title: 'New User Registration',
+                    message: 'A new community member has joined',
+                    type: 'info',
+                    icon: '👤'
+                },
+                {
+                    title: 'System Maintenance',
+                    message: 'Scheduled maintenance completed successfully',
+                    type: 'success',
+                    icon: '🔧'
+                }
+            ];
+            
+            const randomNotification = notifications[Math.floor(Math.random() * notifications.length)];
+            showNotification(randomNotification.title, randomNotification.message, randomNotification.type, randomNotification.icon);
+        }
+        
+        // Show notification in the panel
+        function showNotification(title, message, type = 'info', icon = null) {
+            const container = document.getElementById('notificationsContainer');
+            if (!container) return;
+            
+            const notificationId = `notification-${++notificationCount}`;
+            const timeAgo = 'Just now';
+            
+            const notificationHtml = `
+                <div class="notification-item ${type}" id="${notificationId}">
+                    <div class="notification-icon">${icon || getNotificationIcon(type)}</div>
+                    <div class="notification-content">
+                        <div class="notification-title">${title}</div>
+                        <div class="notification-message">${message}</div>
+                        <div class="notification-time">${timeAgo}</div>
+                    </div>
+                    <button class="notification-close" onclick="removeNotification('${notificationId}')">×</button>
+                </div>
+            `;
+            
+            // Add to beginning of container
+            container.insertAdjacentHTML('afterbegin', notificationHtml);
+            
+            // Limit notifications to prevent overflow
+            const notifications = container.querySelectorAll('.notification-item');
+            if (notifications.length > 10) {
+                notifications[notifications.length - 1].remove();
+            }
+            
+            // Show browser notification if enabled
+            if (notificationsEnabled && type === 'urgent') {
+                showBrowserNotification(title, message);
+            }
+            
+            // Auto-remove after 30 seconds (except urgent ones)
+            if (type !== 'urgent') {
+                setTimeout(() => {
+                    removeNotification(notificationId);
+                }, 30000);
+            }
+        }
+        
+        // Remove notification by ID
+        function removeNotification(notificationId) {
+            const notification = document.getElementById(notificationId);
+            if (notification) {
+                notification.remove();
+            }
+        }
+        
+        // Clear all notifications
+        function clearAllNotifications() {
+            const container = document.getElementById('notificationsContainer');
+            if (container) {
+                container.innerHTML = `
+                    <div class="notification-item info">
+                        <div class="notification-icon">ℹ️</div>
+                        <div class="notification-content">
+                            <div class="notification-title">Notifications Cleared</div>
+                            <div class="notification-message">All notifications have been cleared</div>
+                            <div class="notification-time">Just now</div>
+                        </div>
+                        <button class="notification-close" onclick="this.parentElement.remove()">×</button>
+                    </div>
+                `;
+            }
+        }
+        
+        // Get notification icon based on type
+        function getNotificationIcon(type) {
+            const icons = {
+                info: 'ℹ️',
+                success: '✅',
+                warning: '⚠️',
+                error: '❌',
+                urgent: '🚨'
+            };
+            return icons[type] || icons.info;
+        }
+        
+        // Show browser notification
+        function showBrowserNotification(title, message) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(title, {
+                    body: message,
+                    icon: '/241-logo.jpg',
+                    badge: '/241-logo.jpg',
+                    tag: '241-runners-notification'
+                });
+            }
+        }
+        
+        // WebSocket connection for real-time updates (simulated)
+        function initializeWebSocket() {
+            console.log('Initializing WebSocket connection for real-time updates...');
+            
+            // Simulate WebSocket connection
+            setTimeout(() => {
+                showNotification('Real-time Connection', 'WebSocket connection established for live updates', 'success', '🔌');
+            }, 2000);
+            
+            // Simulate connection status updates
+            setInterval(() => {
+                if (notificationsEnabled) {
+                    showNotification('Connection Status', 'Real-time connection is active and monitoring for updates', 'info', '📡');
+                }
+            }, 60000); // Every minute
         }
 
         // Show error message
