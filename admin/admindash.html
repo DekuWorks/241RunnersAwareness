@@ -2144,11 +2144,14 @@
                         <div class="live-dot"></div>
                         <span>Live Database Connection</span>
                     </div>
-                    <button id="logoutBtn" class="logout-button" onclick="logout()">
+                    <button id="logoutBtn" class="logout-button" onclick="logout()" style="z-index: 1000; position: relative;">
                         <span>🚪 Logout</span>
                     </button>
                     <button id="refreshBtn" class="logout-button" onclick="refreshDashboard()" style="margin-left: 10px;">
                         <span>🔄 Refresh</span>
+                    </button>
+                    <button id="testLogoutBtn" class="logout-button" onclick="console.log('Test logout clicked'); logout();" style="margin-left: 10px; background: #059669;">
+                        <span>🧪 Test Logout</span>
                     </button>
                 </div>
             </div>
@@ -3092,6 +3095,19 @@
                 return;
             }
             
+            // Add event listener to logout button as backup
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Logout button clicked via event listener');
+                    logout();
+                });
+                console.log('Logout button event listener added');
+            } else {
+                console.warn('Logout button not found');
+            }
+            
             // Initialize dashboard with full data loading
             initializeDashboard();
         });
@@ -3207,9 +3223,37 @@
         
         // Logout function
         function logout() {
-            console.log('Logging out...');
-            clearAuthData();
-            window.location.href = '/admin/login.html';
+            try {
+                console.log('Logging out...');
+                console.log('Before logout - localStorage items:');
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    const value = localStorage.getItem(key);
+                    console.log(`  ${key}:`, value ? (key.includes('token') ? 'Present' : value) : 'Missing');
+                }
+                
+                clearAuthData();
+                
+                console.log('After logout - localStorage items:');
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    const value = localStorage.getItem(key);
+                    console.log(`  ${key}:`, value ? (key.includes('token') ? 'Present' : value) : 'Missing');
+                }
+                
+                console.log('Redirecting to login page...');
+                window.location.href = '/admin/login.html';
+            } catch (error) {
+                console.error('Error during logout:', error);
+                // Fallback: try to redirect anyway
+                try {
+                    window.location.href = '/admin/login.html';
+                } catch (redirectError) {
+                    console.error('Failed to redirect:', redirectError);
+                    // Last resort: show message to user
+                    alert('Logout failed. Please manually navigate to the login page.');
+                }
+            }
         }
 
         // Refresh dashboard function
