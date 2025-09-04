@@ -2126,6 +2126,239 @@
 
         /* Status Indicators */
         
+        /* ===== NAMUS IMPORT MODAL STYLES ===== */
+        
+        /* Import Tabs */
+        .import-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            border: none;
+            background: #f3f4f6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .tab-button.active {
+            background: #dc2626;
+            color: white;
+        }
+
+        .tab-button:hover:not(.active) {
+            background: #e5e7eb;
+        }
+
+        /* Import Tabs Content */
+        .import-tab {
+            display: none;
+        }
+
+        .import-tab.active {
+            display: block;
+        }
+
+        /* Import Sections */
+        .import-section {
+            margin-bottom: 30px;
+        }
+
+        .import-section h3 {
+            color: #1f2937;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .import-section p {
+            color: #6b7280;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        /* File Upload Area */
+        .file-upload-area {
+            margin: 20px 0;
+        }
+
+        .upload-drop-zone {
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .upload-drop-zone:hover {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #6b7280;
+        }
+
+        .upload-drop-zone p {
+            margin: 10px 0;
+            color: #374151;
+            font-size: 1.1rem;
+        }
+
+        .upload-drop-zone small {
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+
+        /* Import Actions */
+        .import-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-primary {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+            transform: translateY(-2px);
+        }
+
+        /* JSON Input */
+        #jsonDataInput {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            resize: vertical;
+            margin-bottom: 20px;
+        }
+
+        #jsonDataInput:focus {
+            outline: none;
+            border-color: #dc2626;
+        }
+
+        /* Sync Info */
+        .sync-info {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .sync-info p {
+            margin: 10px 0;
+            color: #374151;
+        }
+
+        /* Statistics Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #dc2626;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        /* Import Progress */
+        .import-progress {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f3f4f6;
+            border-radius: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #dc2626;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Import Results */
+        .import-results {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f0f9ff;
+            border-radius: 8px;
+            border: 1px solid #0ea5e9;
+        }
+
+        .import-results h3 {
+            color: #0369a1;
+            margin-bottom: 15px;
+        }
+
+        /* ===== END NAMUS IMPORT MODAL STYLES ===== */
+        
         /* ===== END ADMIN DASHBOARD STYLES ===== */
     </style>
 </head>
@@ -2518,6 +2751,11 @@
                 <h3>👤 Profile Settings</h3>
                 <p>Update your personal information, contact details, and account preferences.</p>
                 <button class="action-button">Profile Settings</button>
+            </div>
+            <div class="action-card" onclick="openNamUsImport()">
+                <h3>📊 NamUs Data Import</h3>
+                <p>Import missing persons data from NamUs, CSV files, and manage case synchronization.</p>
+                <button class="action-button">Import Data</button>
             </div>
         </div>
     </div>
@@ -2963,6 +3201,121 @@
                 <div class="export-actions">
                     <button onclick="exportAllSelected()" class="export-all-btn">📊 Export All Selected</button>
                     <button onclick="closeExportModal()" class="btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NamUs Import Modal -->
+    <div id="namusImportModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📊 NamUs Data Import</h2>
+                <span class="close" onclick="closeNamUsImportModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <!-- Import Methods Tabs -->
+                <div class="import-tabs">
+                    <button class="tab-button active" onclick="switchImportTab('csv')">📁 CSV Import</button>
+                    <button class="tab-button" onclick="switchImportTab('json')">📄 JSON Import</button>
+                    <button class="tab-button" onclick="switchImportTab('sync')">🔄 Sync Cases</button>
+                    <button class="tab-button" onclick="switchImportTab('stats')">📈 Statistics</button>
+                </div>
+
+                <!-- CSV Import Tab -->
+                <div id="csvTab" class="import-tab active">
+                    <div class="import-section">
+                        <h3>📁 Import from CSV File</h3>
+                        <p>Upload a CSV file with NamUs case data. The file should include: Case Number, Full Name, Sex, Age at Missing, Date Missing, City, County, State, Agency.</p>
+                        
+                        <div class="file-upload-area">
+                            <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
+                            <div class="upload-drop-zone" onclick="document.getElementById('csvFileInput').click()">
+                                <div class="upload-icon">📁</div>
+                                <p>Click to select CSV file or drag and drop</p>
+                                <small>Maximum file size: 10MB</small>
+                            </div>
+                        </div>
+                        
+                        <div class="import-actions">
+                            <button onclick="downloadCsvTemplate()" class="btn-secondary">📥 Download Template</button>
+                            <button onclick="importCsvData()" class="btn-primary">🚀 Import Data</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JSON Import Tab -->
+                <div id="jsonTab" class="import-tab">
+                    <div class="import-section">
+                        <h3>📄 Import from JSON Data</h3>
+                        <p>Paste JSON data with NamUs case information in the format shown below.</p>
+                        
+                        <textarea id="jsonDataInput" placeholder="Paste JSON data here..." rows="10"></textarea>
+                        
+                        <div class="import-actions">
+                            <button onclick="importJsonData()" class="btn-primary">🚀 Import JSON Data</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sync Cases Tab -->
+                <div id="syncTab" class="import-tab">
+                    <div class="import-section">
+                        <h3>🔄 Sync Existing Cases</h3>
+                        <p>Check for updates to existing NamUs cases and synchronize data.</p>
+                        
+                        <div class="sync-info">
+                            <p><strong>Current Cases:</strong> <span id="currentCasesCount">Loading...</span></p>
+                            <p><strong>Last Sync:</strong> <span id="lastSyncDate">Loading...</span></p>
+                        </div>
+                        
+                        <div class="import-actions">
+                            <button onclick="syncExistingCases()" class="btn-primary">🔄 Sync Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Tab -->
+                <div id="statsTab" class="import-tab">
+                    <div class="import-section">
+                        <h3>📈 Import Statistics</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-number" id="totalCases">-</span>
+                                <span class="stat-label">Total Cases</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" id="activeCases">-</span>
+                                <span class="stat-label">Active Cases</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" id="resolvedCases">-</span>
+                                <span class="stat-label">Resolved Cases</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" id="houstonCases">-</span>
+                                <span class="stat-label">Houston Area</span>
+                            </div>
+                        </div>
+                        
+                        <div class="import-actions">
+                            <button onclick="refreshImportStats()" class="btn-secondary">🔄 Refresh Stats</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Import Progress -->
+                <div id="importProgress" class="import-progress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p id="progressText">Processing...</p>
+                </div>
+
+                <!-- Import Results -->
+                <div id="importResults" class="import-results" style="display: none;">
+                    <h3>Import Results</h3>
+                    <div id="resultsContent"></div>
                 </div>
             </div>
         </div>
@@ -5727,6 +6080,297 @@
             }
             
             showToast('All selected exports completed!', 'success');
+        }
+
+        // ===== NAMUS IMPORT FUNCTIONS =====
+        
+        // Open NamUs Import Modal
+        function openNamUsImport() {
+            document.getElementById('namusImportModal').style.display = 'block';
+            refreshImportStats();
+        }
+
+        // Close NamUs Import Modal
+        function closeNamUsImportModal() {
+            document.getElementById('namusImportModal').style.display = 'none';
+            // Reset form and hide results
+            document.getElementById('importProgress').style.display = 'none';
+            document.getElementById('importResults').style.display = 'none';
+            document.getElementById('csvFileInput').value = '';
+            document.getElementById('jsonDataInput').value = '';
+        }
+
+        // Switch between import tabs
+        function switchImportTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.import-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Download CSV template
+        async function downloadCsvTemplate() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/NamusImport/template`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'namus_import_template.csv';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    showToast('CSV template downloaded successfully!', 'success');
+                } else {
+                    throw new Error('Failed to download template');
+                }
+            } catch (error) {
+                console.error('Error downloading template:', error);
+                showToast('Error downloading template', 'error');
+            }
+        }
+
+        // Import CSV data
+        async function importCsvData() {
+            const fileInput = document.getElementById('csvFileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showToast('Please select a CSV file first', 'warning');
+                return;
+            }
+
+            try {
+                showImportProgress('Uploading CSV file...', 25);
+                
+                const formData = new FormData();
+                formData.append('csvFile', file);
+                
+                const response = await fetch(`${API_BASE_URL}/NamusImport/csv`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showImportProgress('Processing data...', 75);
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    showImportProgress('Import completed!', 100);
+                    
+                    showImportResults(result);
+                    showToast(`CSV import completed! ${result.imported} imported, ${result.updated} updated`, 'success');
+                    
+                    // Refresh stats
+                    refreshImportStats();
+                } else {
+                    throw new Error(result.message || 'Import failed');
+                }
+            } catch (error) {
+                console.error('CSV import error:', error);
+                showToast(`CSV import failed: ${error.message}`, 'error');
+                hideImportProgress();
+            }
+        }
+
+        // Import JSON data
+        async function importJsonData() {
+            const jsonInput = document.getElementById('jsonDataInput');
+            const jsonData = jsonInput.value.trim();
+            
+            if (!jsonData) {
+                showToast('Please enter JSON data first', 'warning');
+                return;
+            }
+
+            try {
+                // Validate JSON
+                JSON.parse(jsonData);
+                
+                showImportProgress('Processing JSON data...', 25);
+                
+                const response = await fetch(`${API_BASE_URL}/NamusImport/json`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: jsonData
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showImportProgress('Importing data...', 75);
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    showImportProgress('Import completed!', 100);
+                    
+                    showImportResults(result);
+                    showToast(`JSON import completed! ${result.imported} imported, ${result.updated} updated`, 'success');
+                    
+                    // Refresh stats
+                    refreshImportStats();
+                } else {
+                    throw new Error(result.message || 'Import failed');
+                }
+            } catch (error) {
+                console.error('JSON import error:', error);
+                if (error.message.includes('JSON')) {
+                    showToast('Invalid JSON format. Please check your data.', 'error');
+                } else {
+                    showToast(`JSON import failed: ${error.message}`, 'error');
+                }
+                hideImportProgress();
+            }
+        }
+
+        // Sync existing cases
+        async function syncExistingCases() {
+            try {
+                showImportProgress('Syncing cases...', 50);
+                
+                const response = await fetch(`${API_BASE_URL}/NamusImport/sync`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showImportProgress('Sync completed!', 100);
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    showImportResults(result);
+                    showToast(`Sync completed! ${result.casesUpdated} cases updated`, 'success');
+                    
+                    // Refresh stats
+                    refreshImportStats();
+                } else {
+                    throw new Error(result.message || 'Sync failed');
+                }
+            } catch (error) {
+                console.error('Sync error:', error);
+                showToast(`Sync failed: ${error.message}`, 'error');
+                hideImportProgress();
+            }
+        }
+
+        // Refresh import statistics
+        async function refreshImportStats() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/NamusImport/stats`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const stats = await response.json();
+                    updateImportStats(stats);
+                } else {
+                    console.error('Failed to fetch import stats');
+                }
+            } catch (error) {
+                console.error('Error fetching import stats:', error);
+            }
+        }
+
+        // Update import statistics display
+        function updateImportStats(stats) {
+            document.getElementById('totalCases').textContent = stats.totalCases || 0;
+            document.getElementById('activeCases').textContent = stats.activeCases || 0;
+            document.getElementById('resolvedCases').textContent = stats.resolvedCases || 0;
+            document.getElementById('houstonCases').textContent = stats.houstonAreaCases || 0;
+            
+            const lastSync = stats.lastSyncDate ? new Date(stats.lastSyncDate).toLocaleDateString() : 'Never';
+            document.getElementById('lastSyncDate').textContent = lastSync;
+            
+            const currentCases = stats.totalCases || 0;
+            document.getElementById('currentCasesCount').textContent = currentCases;
+        }
+
+        // Show import progress
+        function showImportProgress(message, percentage) {
+            const progress = document.getElementById('importProgress');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            progress.style.display = 'block';
+            progressFill.style.width = `${percentage}%`;
+            progressText.textContent = message;
+        }
+
+        // Hide import progress
+        function hideImportProgress() {
+            document.getElementById('importProgress').style.display = 'none';
+        }
+
+        // Show import results
+        function showImportResults(result) {
+            const results = document.getElementById('importResults');
+            const content = document.getElementById('resultsContent');
+            
+            let html = '<div class="results-summary">';
+            html += `<h4>Import Summary</h4>`;
+            html += `<p><strong>Status:</strong> ${result.success ? '✅ Success' : '❌ Failed'}</p>`;
+            html += `<p><strong>Imported:</strong> ${result.imported || 0}</p>`;
+            html += `<p><strong>Updated:</strong> ${result.updated || 0}</p>`;
+            html += `<p><strong>Skipped:</strong> ${result.skipped || 0}</p>`;
+            
+            if (result.errors && result.errors.length > 0) {
+                html += '<div class="results-errors">';
+                html += '<h5>Errors:</h5>';
+                html += '<ul>';
+                result.errors.forEach(error => {
+                    html += `<li>${error}</li>`;
+                });
+                html += '</ul>';
+                html += '</div>';
+            }
+            
+            if (result.warnings && result.warnings.length > 0) {
+                html += '<div class="results-warnings">';
+                html += '<h5>Warnings:</h5>';
+                html += '<ul>';
+                result.warnings.forEach(warning => {
+                    html += `<li>${warning}</li>`;
+                });
+                html += '</ul>';
+                html += '</div>';
+            }
+            
+            html += '</div>';
+            
+            content.innerHTML = html;
+            results.style.display = 'block';
         }
 
         // Generate Custom Report
