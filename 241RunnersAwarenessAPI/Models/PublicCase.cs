@@ -89,11 +89,25 @@ namespace _241RunnersAwarenessAPI.Models
 
     public class PublicCaseSearchDto
     {
+        [StringLength(50, ErrorMessage = "Region must be 50 characters or less")]
         public string? Region { get; set; }
+        
+        [RegularExpression("^(missing|found|safe|deceased|resolved_pending_verify)$", 
+            ErrorMessage = "Status must be one of: missing, found, safe, deceased, resolved_pending_verify")]
         public string? Status { get; set; }
+        
+        [StringLength(100, ErrorMessage = "City must be 100 characters or less")]
+        [RegularExpression(@"^[a-zA-Z\s\-']+$", ErrorMessage = "City can only contain letters, spaces, hyphens, and apostrophes")]
         public string? City { get; set; }
+        
+        [StringLength(100, ErrorMessage = "County must be 100 characters or less")]
+        [RegularExpression(@"^[a-zA-Z\s\-']+$", ErrorMessage = "County can only contain letters, spaces, hyphens, and apostrophes")]
         public string? County { get; set; }
+        
+        [Range(1, int.MaxValue, ErrorMessage = "Page must be greater than 0")]
         public int Page { get; set; } = 1;
+        
+        [Range(1, 100, ErrorMessage = "Page size must be between 1 and 100")]
         public int PageSize { get; set; } = 20;
     }
 
@@ -110,12 +124,16 @@ namespace _241RunnersAwarenessAPI.Models
 
         [Required(ErrorMessage = "Verification source URL is required")]
         [Url(ErrorMessage = "Verification source must be a valid URL")]
+        [StringLength(500, ErrorMessage = "Verification source URL must be 500 characters or less")]
         public string VerificationSource { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "New status is required")]
         [StringLength(50, ErrorMessage = "Status must be 50 characters or less")]
+        [RegularExpression("^(missing|found|safe|deceased|resolved_pending_verify)$", 
+            ErrorMessage = "Status must be one of: missing, found, safe, deceased, resolved_pending_verify")]
         public string NewStatus { get; set; } = string.Empty;
 
+        [StringLength(500, ErrorMessage = "Notes must be 500 characters or less")]
         public string? Notes { get; set; }
     }
 } 

@@ -71,6 +71,17 @@ namespace _241RunnersAwarenessAPI.Controllers
                     }
                 }
 
+                // Validate role is one of the allowed values
+                var allowedRoles = new[] { "user", "parent", "caregiver", "therapist", "adoptiveparent", "admin" };
+                if (!allowedRoles.Contains(request.Role.ToLower()))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = $"Role must be one of: {string.Join(", ", allowedRoles)}"
+                    });
+                }
+
                 // Validate email format more strictly
                 if (!IsValidEmail(request.Email))
                 {
@@ -294,6 +305,17 @@ namespace _241RunnersAwarenessAPI.Controllers
                     });
                 }
 
+                // Validate role is one of the allowed values
+                var allowedRoles = new[] { "user", "parent", "caregiver", "therapist", "adoptiveparent", "admin" };
+                if (!allowedRoles.Contains(request.Role.ToLower()))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = $"Role must be one of: {string.Join(", ", allowedRoles)}"
+                    });
+                }
+
                 // Validate input
                 if (!ModelState.IsValid)
                 {
@@ -449,6 +471,17 @@ namespace _241RunnersAwarenessAPI.Controllers
                     {
                         Success = false,
                         Message = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+                    });
+                }
+
+                // Validate role is one of the allowed values
+                var allowedRoles = new[] { "user", "parent", "caregiver", "therapist", "adoptiveparent", "admin" };
+                if (!allowedRoles.Contains(request.Role.ToLower()))
+                {
+                    return BadRequest(new AuthResponse
+                    {
+                        Success = false,
+                        Message = $"Role must be one of: {string.Join(", ", allowedRoles)}"
                     });
                 }
 

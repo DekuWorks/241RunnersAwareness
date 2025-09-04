@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using System.ComponentModel.DataAnnotations;
 using _241RunnersAwarenessAPI.Data;
 using _241RunnersAwarenessAPI.Models;
 using _241RunnersAwarenessAPI.Services;
@@ -73,6 +74,16 @@ namespace _241RunnersAwarenessAPI.Controllers
         {
             try
             {
+                // Validate ID parameter
+                if (id <= 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "User ID must be greater than 0."
+                    });
+                }
+
                 var user = await _context.Users
                     .Select(u => new
                     {
@@ -124,6 +135,31 @@ namespace _241RunnersAwarenessAPI.Controllers
         {
             try
             {
+                // Validate ID parameter
+                if (id <= 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "User ID must be greater than 0."
+                    });
+                }
+
+                // Validate input
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = $"Validation failed: {string.Join(", ", errors)}"
+                    });
+                }
+
                 var user = await _context.Users.FindAsync(id);
                 if (user == null)
                 {
@@ -184,6 +220,16 @@ namespace _241RunnersAwarenessAPI.Controllers
         {
             try
             {
+                // Validate ID parameter
+                if (id <= 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "User ID must be greater than 0."
+                    });
+                }
+
                 var user = await _context.Users.FindAsync(id);
                 if (user == null)
                 {
@@ -226,6 +272,16 @@ namespace _241RunnersAwarenessAPI.Controllers
         {
             try
             {
+                // Validate ID parameter
+                if (id <= 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "User ID must be greater than 0."
+                    });
+                }
+
                 var user = await _context.Users.FindAsync(id);
                 if (user == null)
                 {
@@ -268,6 +324,16 @@ namespace _241RunnersAwarenessAPI.Controllers
         {
             try
             {
+                // Validate ID parameter
+                if (id <= 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "User ID must be greater than 0."
+                    });
+                }
+
                 var user = await _context.Users.FindAsync(id);
                 if (user == null)
                 {
@@ -359,11 +425,29 @@ namespace _241RunnersAwarenessAPI.Controllers
     /// </summary>
     public class AdminUserUpdateRequest
     {
+        [MaxLength(100)]
+        [RegularExpression(@"^[a-zA-Z\s\-']+$", ErrorMessage = "First name can only contain letters, spaces, hyphens, and apostrophes")]
         public string? FirstName { get; set; }
+        
+        [MaxLength(100)]
+        [RegularExpression(@"^[a-zA-Z\s\-']+$", ErrorMessage = "Last name can only contain letters, spaces, hyphens, and apostrophes")]
         public string? LastName { get; set; }
+        
+        [Phone]
+        [MaxLength(20)]
+        [RegularExpression(@"^[\+]?[1-9][\d]{0,15}$", ErrorMessage = "Please enter a valid phone number")]
         public string? PhoneNumber { get; set; }
+        
+        [MaxLength(200)]
+        [RegularExpression(@"^[a-zA-Z0-9\s\-'\.&]+$", ErrorMessage = "Organization can only contain letters, numbers, spaces, hyphens, apostrophes, periods, and ampersands")]
         public string? Organization { get; set; }
+        
+        [MaxLength(100)]
+        [RegularExpression(@"^[a-zA-Z\s\-'\.]+$", ErrorMessage = "Title can only contain letters, spaces, hyphens, apostrophes, and periods")]
         public string? Title { get; set; }
+        
+        [RegularExpression("^(user|parent|caregiver|therapist|adoptiveparent|admin)$", 
+            ErrorMessage = "Role must be one of: user, parent, caregiver, therapist, adoptiveparent, admin")]
         public string? Role { get; set; }
     }
 } 

@@ -30,6 +30,17 @@ namespace _241RunnersAwarenessAPI.Controllers
         {
             try
             {
+                // Validate search parameters
+                if (search.Page < 1)
+                {
+                    return BadRequest(new { message = "Page number must be greater than 0" });
+                }
+                
+                if (search.PageSize < 1 || search.PageSize > 100)
+                {
+                    return BadRequest(new { message = "Page size must be between 1 and 100" });
+                }
+
                 var query = _context.PublicCases.AsQueryable();
 
                 // Apply region filter (Houston area)
@@ -93,9 +104,9 @@ namespace _241RunnersAwarenessAPI.Controllers
                     })
                     .ToListAsync();
 
-                Response.Headers.Add("X-Total-Count", totalCount.ToString());
-                Response.Headers.Add("X-Page", search.Page.ToString());
-                Response.Headers.Add("X-Page-Size", search.PageSize.ToString());
+                Response.Headers["X-Total-Count"] = totalCount.ToString();
+                Response.Headers["X-Page"] = search.Page.ToString();
+                Response.Headers["X-Page-Size"] = search.PageSize.ToString();
 
                 return Ok(cases);
             }
@@ -114,6 +125,12 @@ namespace _241RunnersAwarenessAPI.Controllers
         {
             try
             {
+                // Validate ID parameter
+                if (id == Guid.Empty)
+                {
+                    return BadRequest(new { message = "Invalid case ID" });
+                }
+
                 var publicCase = await _context.PublicCases
                     .FirstOrDefaultAsync(c => c.Id == id);
 
@@ -166,9 +183,22 @@ namespace _241RunnersAwarenessAPI.Controllers
                     return BadRequest(new { message = "CSV file is required" });
                 }
 
+                // Validate file size (max 10MB)
+                if (request.CsvFile.Length > 10 * 1024 * 1024)
+                {
+                    return BadRequest(new { message = "File size must be less than 10MB" });
+                }
+
                 if (!request.CsvFile.FileName.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
                 {
                     return BadRequest(new { message = "File must be a CSV" });
+                }
+
+                // Validate file content type
+                if (!request.CsvFile.ContentType.Equals("text/csv", StringComparison.OrdinalIgnoreCase) && 
+                    !request.CsvFile.ContentType.Equals("application/csv", StringComparison.OrdinalIgnoreCase))
+                {
+                    return BadRequest(new { message = "File must be a valid CSV file" });
                 }
 
                 var importedCount = 0;
@@ -184,6 +214,10 @@ namespace _241RunnersAwarenessAPI.Controllers
 
                 // Validate required headers
                 var requiredHeaders = new[] { "Case Number", "Full Name", "Sex", "Age at Missing", "Date Missing", "City", "County", "State", "Agency" };
+                if (csv.HeaderRecord == null)
+                {
+                    return BadRequest(new { message = "CSV file has no headers" });
+                }
                 var missingHeaders = requiredHeaders.Where(h => !csv.HeaderRecord.Contains(h)).ToList();
 
                 if (missingHeaders.Any())
@@ -331,6 +365,23 @@ namespace _241RunnersAwarenessAPI.Controllers
         {
             try
             {
+                // Validate input
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    
+                    return BadRequest(new { message = $"Validation failed: {string.Join(", ", errors)}" });
+                }
+
+                // Validate case ID
+                if (request.CaseId == Guid.Empty)
+                {
+                    return BadRequest(new { message = "Invalid case ID" });
+                }
+
                 var publicCase = await _context.PublicCases
                     .FirstOrDefaultAsync(c => c.Id == request.CaseId);
 
