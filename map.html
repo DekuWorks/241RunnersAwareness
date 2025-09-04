@@ -175,7 +175,8 @@
         .status-missing { background: #f59e0b; color: white; }
         .status-found { background: #dc2626; color: white; }
         .status-safe { background: #10b981; color: white; }
-        .status-urgent { background: #ef4444; color: white; animation: pulse 2s infinite; }
+        .status-deceased { background: #6b7280; color: white; }
+        .status-resolved_pending_verify { background: #8b5cf6; color: white; }
         
         @keyframes pulse {
             0%, 100% { opacity: 1; }
@@ -420,10 +421,11 @@
                     <div class="control-group">
                         <select id="statusFilter">
                             <option value="">All Statuses</option>
-                            <option value="Missing">Missing</option>
-                            <option value="Found">Found</option>
-                            <option value="Safe">Safe</option>
-                            <option value="Urgent">Urgent</option>
+                            <option value="missing">Missing</option>
+                            <option value="found">Found</option>
+                            <option value="safe">Safe</option>
+                            <option value="deceased">Deceased</option>
+                            <option value="resolved_pending_verify">Pending Verification</option>
                         </select>
                         
                         <select id="timeFilter">
@@ -496,8 +498,8 @@
                             <div class="stat-label">Recent (30d)</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-number" id="urgentCases">0</div>
-                            <div class="stat-label">Urgent</div>
+                            <div class="stat-number" id="deceasedCases">0</div>
+                            <div class="stat-label">Deceased</div>
                         </div>
                     </div>
                     
@@ -515,8 +517,12 @@
                             <span>Safe</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-color" style="background: #ef4444;"></div>
-                            <span>Urgent</span>
+                            <div class="legend-color" style="background: #6b7280;"></div>
+                            <span>Deceased</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #8b5cf6;"></div>
+                            <span>Pending Verification</span>
                         </div>
                     </div>
                 </div>
@@ -584,14 +590,15 @@
         // Enhanced marker creation with better styling
         function createCustomMarker(lat, lng, status, data) {
             const colors = {
-                'Missing': '#f59e0b',
-                'Found': '#dc2626', 
-                'Safe': '#10b981',
-                'Urgent': '#ef4444'
+                'missing': '#f59e0b',
+                'found': '#dc2626', 
+                'safe': '#10b981',
+                'deceased': '#6b7280',
+                'resolved_pending_verify': '#8b5cf6'
             };
             
             const color = colors[status] || '#666';
-            const radius = status === 'Urgent' ? 15 : 10;
+            const radius = status === 'urgent' ? 15 : 10;
             
             const marker = L.circleMarker([lat, lng], {
                 radius: radius,
@@ -602,8 +609,8 @@
                 fillOpacity: 0.8
             });
 
-            // Add pulse animation for urgent cases - safely
-            if (status === 'Urgent') {
+            // Add pulse animation for missing cases - safely
+            if (status === 'missing') {
                 setTimeout(() => {
                     const element = marker.getElement();
                     if (element) {
@@ -682,6 +689,7 @@
 
         // Enhanced data loading with real-time updates
         async function loadRunnersData() {
+            console.log('Loading runners data...');
             const loadingEl = document.getElementById('loading');
             const errorEl = document.getElementById('error');
             const noDataEl = document.getElementById('noData');
@@ -691,22 +699,22 @@
             noDataEl.style.display = 'none';
 
             try {
-                // Use real API to get runners with location data
-                const cases = await apiHelpers.getWithRetry('/runners');
+                // Use real API to get public cases with location data
+                const cases = await apiHelpers.getWithRetry('/PublicCases');
                 
                 // Convert cases to map format (for now, use default coordinates if not available)
                 currentData = cases.map(caseItem => ({
                     id: caseItem.id,
-                    fullName: caseItem.name,
+                    fullName: caseItem.fullName,
                     currentStatus: caseItem.status,
                     latitude: 29.7604, // Default to Houston coordinates
                     longitude: -95.3698,
                     city: caseItem.city,
                     state: caseItem.state,
-                    dateAdded: caseItem.dateReported,
-                    address: `${caseItem.city}, ${caseItem.state}`,
-                    age: caseItem.age,
-                    gender: 'Not specified',
+                    dateAdded: caseItem.createdAt,
+                    address: `${caseItem.city || 'Unknown'}, ${caseItem.state || 'Unknown'}`,
+                    age: caseItem.ageAtMissing,
+                    gender: caseItem.sex || 'Not specified',
                     dateOfBirth: null
                 }));
 
@@ -715,6 +723,7 @@
                 if (currentData.length === 0) {
                     loadingEl.style.display = 'none';
                     noDataEl.style.display = 'block';
+                    noDataEl.textContent = 'No public cases available at this time. Check back later for updates.';
                     return;
                 }
 
@@ -723,7 +732,7 @@
                 loadingEl.style.display = 'none';
                 
             } catch (error) {
-                showApiError(error, 'Loading map data');
+                console.error('Error loading map data:', error);
                 loadingEl.style.display = 'none';
                 errorEl.style.display = 'block';
                 errorEl.textContent = `Error loading data: ${error.message}`;
@@ -803,10 +812,10 @@
         function updateStatistics(data = currentData) {
             const stats = {
                 total: data.length,
-                missing: data.filter(r => r.currentStatus === 'Missing').length,
-                found: data.filter(r => r.currentStatus === 'Found').length,
-                safe: data.filter(r => r.currentStatus === 'Safe').length,
-                urgent: data.filter(r => r.currentStatus === 'Urgent').length,
+                missing: data.filter(r => r.currentStatus === 'missing').length,
+                found: data.filter(r => r.currentStatus === 'found').length,
+                safe: data.filter(r => r.currentStatus === 'safe').length,
+                deceased: data.filter(r => r.currentStatus === 'deceased').length,
                 recent: data.filter(r => {
                     const daysSince = Math.floor((new Date() - new Date(r.dateAdded)) / (1000 * 60 * 60 * 24));
                     return daysSince <= 30;
@@ -830,7 +839,7 @@
             if (elements.foundCases) elements.foundCases.textContent = stats.found;
             if (elements.safeCases) elements.safeCases.textContent = stats.safe;
             if (elements.recentCases) elements.recentCases.textContent = stats.recent;
-            if (elements.urgentCases) elements.urgentCases.textContent = stats.urgent;
+            if (elements.deceasedCases) elements.deceasedCases.textContent = stats.deceased;
         }
 
         // Enhanced map controls
@@ -865,8 +874,8 @@
                 const heatmapData = currentData.map(runner => ({
                     lat: runner.latitude,
                     lng: runner.longitude,
-                    value: runner.currentStatus === 'Urgent' ? 3 : 
-                           runner.currentStatus === 'Missing' ? 2 : 1
+                    value: runner.currentStatus === 'missing' ? 3 : 
+                           runner.currentStatus === 'found' ? 2 : 1
                 }));
                 
                 // Simple heat map implementation
