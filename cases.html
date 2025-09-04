@@ -19,7 +19,7 @@
         .main-content {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: stretch;
             width: 100%;
             overflow-x: hidden;
         }
@@ -28,9 +28,35 @@
         .container {
             width: 100%;
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 0 auto !important;
             padding: 0 20px;
             box-sizing: border-box;
+            display: block;
+        }
+        
+        /* Override any external CSS that might be interfering */
+        .main-content .container {
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+        
+        /* Debug: Add visual indicator for container boundaries */
+        .container {
+            border-left: 2px solid transparent;
+            border-right: 2px solid transparent;
+        }
+        
+        /* Ensure proper centering on all screen sizes */
+        @media (min-width: 1201px) {
+            .container {
+                margin-left: calc((100vw - 1200px) / 2) !important;
+                margin-right: calc((100vw - 1200px) / 2) !important;
+            }
+        }
+        
+        /* Ensure all sections stretch full width but content is centered */
+        .cases-hero, .filters-section, .search-features, .cases-section, .cta-section {
+            width: 100%;
         }
         
         /* Hero section with full width stretch */
@@ -39,6 +65,11 @@
             width: 100%;
             padding: 2rem 0;
             background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        }
+        
+        /* Hero content centering */
+        .cases-hero .container {
+            text-align: center;
         }
         
         /* Enhanced stats grid with better mobile layout */
