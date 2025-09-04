@@ -2170,6 +2170,10 @@
                 <small style="color: #6b7280; font-size: 0.9rem;">👆 Click to view all admins</small>
             </div>
             <div class="stat-card">
+                <h3>Admin Users</h3>
+                <p class="stat-number" id="adminUsers">-</p>
+            </div>
+            <div class="stat-card">
                 <h3>System Status</h3>
                 <p class="stat-number" id="systemStatus">-</p>
             </div>
@@ -3002,10 +3006,10 @@
             console.log('🔐 isAuthenticated check:');
             console.log('  - Token:', token ? 'Present' : 'Missing');
             console.log('  - Role:', role);
-            console.log('  - Role check:', role === 'admin' ? '✅ Match' : '❌ Mismatch');
+            console.log('  - Role check:', role && role.toLowerCase() === 'admin' ? '✅ Match' : '❌ Mismatch');
             
-            // Simple check - just verify token exists and role is admin
-            if (!token || role !== 'admin') {
+            // Simple check - just verify token exists and role is admin (case-insensitive)
+            if (!token || !role || role.toLowerCase() !== 'admin') {
                 console.log('❌ Authentication failed: missing token or wrong role');
                 return false;
             }
@@ -3037,6 +3041,26 @@
             return token ? { "Authorization": `Bearer ${token}` } : {};
         }
 
+        // API Configuration
+        let API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+        
+        // Load API configuration
+        async function loadConfig() {
+            try {
+                const response = await fetch('/config.json');
+                const config = await response.json();
+                API_BASE_URL = config.API_BASE_URL;
+            } catch (error) {
+                console.warn('Failed to load config.json, using default API URL');
+            }
+        }
+        
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            console.log(`Toast [${type}]: ${message}`);
+            // You can implement a proper toast UI here if needed
+        }
+        
         // Load dashboard data on page load
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Admin Dashboard DOM loaded');
@@ -3086,14 +3110,110 @@
                     return;
                 }
                 
-                // Initialize dashboard
-                initializeDashboard();
-                
-                // Initialize NamUs import functionality
-                initializeNamusImport();
+                // Initialize dashboard with basic data loading
+                loadBasicDashboardData();
             }, 100); // Small delay to ensure localStorage is ready
         });
 
+        // Load basic dashboard data
+        async function loadBasicDashboardData() {
+            try {
+                console.log('Loading basic dashboard data...');
+                
+                const token = localStorage.getItem('ra_admin_token');
+                if (!token) {
+                    throw new Error('No authentication token found');
+                }
+                
+                // Load admin profile - use existing Auth endpoint
+                const profileResponse = await fetch(`${API_BASE_URL}/Auth/users/1`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-Client': '241RA-Admin/1.0'
+                    }
+                });
+                
+                if (profileResponse.ok) {
+                    const profileData = await profileResponse.json();
+                    if (profileData.success) {
+                        console.log('Admin profile loaded:', profileData.admin);
+                        updateAdminInfo(profileData.admin);
+                    }
+                }
+                
+                // Load dashboard statistics - use existing Admin stats endpoint
+                const dashboardResponse = await fetch(`${API_BASE_URL}/Admin/stats`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-Client': '241RA-Admin/1.0'
+                    }
+                });
+                
+                if (dashboardResponse.ok) {
+                    const dashboardData = await dashboardResponse.json();
+                    if (dashboardData.success) {
+                        console.log('Dashboard data loaded:', dashboardData);
+                        updateDashboardStats(dashboardData.statistics);
+                    }
+                }
+                
+                console.log('Basic dashboard data loaded successfully');
+                
+            } catch (error) {
+                console.error('Error loading basic dashboard data:', error);
+                showToast('Failed to load dashboard data. Please refresh the page.', 'error');
+            }
+        }
+        
+        // Update admin info in the header
+        function updateAdminInfo(admin) {
+            const adminNameElement = document.querySelector('.admin-info h1');
+            if (adminNameElement) {
+                adminNameElement.textContent = admin.fullName || `${admin.firstName} ${admin.lastName}`;
+            }
+            
+            const adminRoleElement = document.querySelector('.admin-info p');
+            if (adminRoleElement) {
+                const roleText = `${admin.role} • ${admin.organization || 'No Organization'} • ${admin.title || 'No Title'}`;
+                adminRoleElement.textContent = roleText;
+            }
+            
+            const adminAvatarElement = document.querySelector('.admin-avatar');
+            if (adminAvatarElement && admin.firstName && admin.lastName) {
+                adminAvatarElement.textContent = `${admin.firstName.charAt(0)}${admin.lastName.charAt(0)}`;
+            }
+        }
+        
+        // Update dashboard statistics
+        function updateDashboardStats(statistics) {
+            if (!statistics) return;
+            
+            // Update total users
+            const totalUsersElement = document.getElementById('totalUsers');
+            if (totalUsersElement) {
+                totalUsersElement.textContent = statistics.totalUsers || 0;
+            }
+            
+            // Update active users
+            const activeUsersElement = document.getElementById('activeUsers');
+            if (activeUsersElement) {
+                activeUsersElement.textContent = statistics.activeUsers || 0;
+            }
+            
+            // Update admin users
+            const adminUsersElement = document.getElementById('adminUsers');
+            if (adminUsersElement) {
+                adminUsersElement.textContent = statistics.adminUsers || 0;
+            }
+            
+            // Update system status
+            const systemStatusElement = document.getElementById('systemStatus');
+            if (systemStatusElement) {
+                systemStatusElement.textContent = 'Online';
+                systemStatusElement.className = 'stat-number status-online';
+            }
+        }
+        
         // Logout function
         function logout() {
             console.log('Logging out...');
@@ -5917,6 +6037,168 @@
             setTimeout(() => {
                 toast.remove();
             }, 5000);
+        }
+
+        // Client-side validation functions
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function validatePhoneNumber(phone) {
+            const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+            return phoneRegex.test(phone);
+        }
+
+        function validateName(name) {
+            const nameRegex = /^[a-zA-Z\s\-']+$/;
+            return nameRegex.test(name) && name.length >= 2 && name.length <= 100;
+        }
+
+        function validateZipCode(zip) {
+            const zipRegex = /^[\d\-]+$/;
+            return zipRegex.test(zip) && zip.length >= 5 && zip.length <= 20;
+        }
+
+        function validateState(state) {
+            const stateRegex = /^[a-zA-Z\s\-']+$/;
+            return stateRegex.test(state) && state.length >= 2 && state.length <= 50;
+        }
+
+        function validateCity(city) {
+            const cityRegex = /^[a-zA-Z\s\-']+$/;
+            return cityRegex.test(city) && city.length >= 2 && city.length <= 100;
+        }
+
+        function validateOrganization(org) {
+            const orgRegex = /^[a-zA-Z0-9\s\-'\.&]+$/;
+            return orgRegex.test(org) && org.length <= 200;
+        }
+
+        function validateTitle(title) {
+            const titleRegex = /^[a-zA-Z\s\-'\.]+$/;
+            return titleRegex.test(title) && title.length <= 100;
+        }
+
+        function validateCredentials(creds) {
+            const credsRegex = /^[a-zA-Z0-9\s\-'.,&()]+$/;
+            return credsRegex.test(creds) && creds.length <= 200;
+        }
+
+        function validateSpecialization(spec) {
+            const specRegex = /^[a-zA-Z0-9\s\-'.,&()]+$/;
+            return specRegex.test(spec) && spec.length <= 200;
+        }
+
+        function validateYearsOfExperience(years) {
+            const yearsRegex = /^[\d\s\+\-]+$/;
+            return yearsRegex.test(years) && years.length <= 50;
+        }
+
+        // Form validation function
+        function validateForm(formData) {
+            const errors = [];
+
+            // Validate required fields
+            if (!formData.firstName || !validateName(formData.firstName)) {
+                errors.push('First name is required and must be 2-100 characters (letters, spaces, hyphens, apostrophes only)');
+            }
+
+            if (!formData.lastName || !validateName(formData.lastName)) {
+                errors.push('Last name is required and must be 2-100 characters (letters, spaces, hyphens, apostrophes only)');
+            }
+
+            if (!formData.email || !validateEmail(formData.email)) {
+                errors.push('Valid email address is required');
+            }
+
+            // Validate optional fields if provided
+            if (formData.phoneNumber && !validatePhoneNumber(formData.phoneNumber)) {
+                errors.push('Phone number must be a valid format (e.g., +1234567890)');
+            }
+
+            if (formData.zipCode && !validateZipCode(formData.zipCode)) {
+                errors.push('Zip code can only contain numbers and hyphens (5-20 characters)');
+            }
+
+            if (formData.state && !validateState(formData.state)) {
+                errors.push('State can only contain letters, spaces, hyphens, and apostrophes (2-50 characters)');
+            }
+
+            if (formData.city && !validateCity(formData.city)) {
+                errors.push('City can only contain letters, spaces, hyphens, and apostrophes (2-100 characters)');
+            }
+
+            if (formData.organization && !validateOrganization(formData.organization)) {
+                errors.push('Organization can only contain letters, numbers, spaces, hyphens, apostrophes, periods, and ampersands (max 200 characters)');
+            }
+
+            if (formData.title && !validateTitle(formData.title)) {
+                errors.push('Title can only contain letters, spaces, hyphens, apostrophes, and periods (max 100 characters)');
+            }
+
+            if (formData.credentials && !validateCredentials(formData.credentials)) {
+                errors.push('Credentials can only contain letters, numbers, spaces, hyphens, apostrophes, commas, periods, ampersands, and parentheses (max 200 characters)');
+            }
+
+            if (formData.specialization && !validateSpecialization(formData.specialization)) {
+                errors.push('Specialization can only contain letters, numbers, spaces, hyphens, apostrophes, commas, periods, ampersands, and parentheses (max 200 characters)');
+            }
+
+            if (formData.yearsOfExperience && !validateYearsOfExperience(formData.yearsOfExperience)) {
+                errors.push('Years of experience can only contain numbers, spaces, plus signs, and hyphens (max 50 characters)');
+            }
+
+            return errors;
+        }
+
+        // Sanitize input data
+        function sanitizeInput(input) {
+            if (typeof input !== 'string') return input;
+            return input.trim().replace(/[<>]/g, '');
+        }
+
+        // Sanitize form data
+        function sanitizeFormData(formData) {
+            const sanitized = {};
+            for (const [key, value] of Object.entries(formData)) {
+                sanitized[key] = sanitizeInput(value);
+            }
+            return sanitized;
+        }
+
+        // Show validation errors
+        function showValidationErrors(errors) {
+            if (errors.length === 0) return true;
+            
+            const errorMessage = errors.join('\n• ');
+            showToast(`Validation errors:\n• ${errorMessage}`, 'error');
+            return false;
+        }
+
+        // Enhanced error handling for API calls
+        function handleApiError(error, context = '') {
+            console.error(`API Error in ${context}:`, error);
+            
+            let userMessage = 'An error occurred. Please try again.';
+            
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                userMessage = 'Network error: Unable to connect to the server. Please check your internet connection.';
+            } else if (error.status === 401) {
+                userMessage = 'Authentication expired. Please log in again.';
+                logout();
+                return;
+            } else if (error.status === 403) {
+                userMessage = 'Access denied. You do not have permission to perform this action.';
+            } else if (error.status === 404) {
+                userMessage = 'Resource not found. Please check your request.';
+            } else if (error.status === 422) {
+                userMessage = 'Validation error. Please check your input data.';
+            } else if (error.status >= 500) {
+                userMessage = 'Server error. Please try again later.';
+            }
+            
+            showToast(userMessage, 'error');
         }
     </script>
 
