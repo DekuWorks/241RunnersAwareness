@@ -15,13 +15,22 @@
     
     <!-- Custom CSS for Cases Page -->
     <style>
-        /* Global responsive container - Full width stretch */
+        /* Global responsive container - Full width stretch with centered content */
         .main-content {
             display: flex;
             flex-direction: column;
-            align-items: stretch;
+            align-items: center;
             width: 100%;
             overflow-x: hidden;
+        }
+        
+        /* Container centering */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            box-sizing: border-box;
         }
         
         /* Hero section with full width stretch */
@@ -30,13 +39,6 @@
             width: 100%;
             padding: 2rem 0;
             background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-        }
-        
-        .hero-content {
-            width: 100%;
-            margin: 0;
-            padding: 0 40px;
-            box-sizing: border-box;
         }
         
         /* Enhanced stats grid with better mobile layout */
@@ -90,13 +92,6 @@
             background: #f8fafc;
         }
         
-        .filter-wrapper {
-            width: 100%;
-            margin: 0;
-            padding: 0 40px;
-            box-sizing: border-box;
-        }
-        
         .filters-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -137,13 +132,6 @@
             display: flex;
             justify-content: center;
             padding: 2rem 0;
-        }
-        
-        .cases-wrapper {
-            width: 100%;
-            margin: 0;
-            padding: 0 40px;
-            box-sizing: border-box;
         }
         
         .cases-header {
@@ -368,13 +356,6 @@
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
         }
         
-        .cta-wrapper {
-            width: 100%;
-            margin: 0;
-            padding: 0 40px;
-            box-sizing: border-box;
-        }
-        
         .cta-content {
             text-align: center;
             max-width: 800px;
@@ -436,7 +417,7 @@
         
         /* Responsive design improvements */
         @media (max-width: 1200px) {
-            .hero-content, .filter-wrapper, .cases-wrapper, .cta-wrapper, .search-features .container {
+            .container {
                 padding: 0 30px;
             }
             
@@ -460,7 +441,7 @@
                 padding: 1rem;
             }
             
-            .hero-content, .filter-wrapper, .cases-wrapper, .cta-wrapper, .search-features .container {
+            .container {
                 padding: 0 20px;
             }
             
@@ -501,7 +482,7 @@
         }
         
         @media (max-width: 480px) {
-            .hero-content, .filter-wrapper, .cases-wrapper, .cta-wrapper, .search-features .container {
+            .container {
                 padding: 0 15px;
             }
             
@@ -571,7 +552,7 @@
     <main class="main-content">
         <!-- Hero Section -->
         <section class="cases-hero hero-section">
-            <div class="hero-content">
+            <div class="container">
                 <h1 class="hero-title">Active Cases</h1>
                 <p class="hero-subtitle">Help bring families closure by staying informed about missing persons in our community</p>
                 <div class="hero-stats">
@@ -593,7 +574,7 @@
 
         <!-- Filters Section -->
         <section class="filters-section filter-container">
-            <div class="container filter-wrapper">
+            <div class="container">
                 <div class="filters-container">
                     <div class="filter-group">
                         <label for="statusFilter">Status:</label>
@@ -688,7 +669,7 @@
 
         <!-- Cases Grid -->
         <section class="cases-section cases-container">
-            <div class="container cases-wrapper">
+            <div class="container">
                 <div class="cases-header">
                     <h2>Missing Persons Cases</h2>
                     <div class="cases-count">
@@ -732,7 +713,7 @@
 
         <!-- Call to Action -->
         <section class="cta-section cta-container">
-            <div class="container cta-wrapper">
+            <div class="container">
                 <div class="cta-content">
                     <h2>Help Bring Families Closure</h2>
                     <p>Every piece of information matters. If you have any information about these cases, please contact the authorities or use our reporting system.</p>
