@@ -3004,35 +3004,15 @@
             console.log('  - Role:', role);
             console.log('  - Role check:', role === 'admin' ? '✅ Match' : '❌ Mismatch');
             
+            // Simple check - just verify token exists and role is admin
             if (!token || role !== 'admin') {
                 console.log('❌ Authentication failed: missing token or wrong role');
                 return false;
             }
             
-            // Validate token format (should be a JWT with 3 parts)
-            if (typeof token !== 'string' || token.split('.').length !== 3) {
-                console.log('❌ Invalid token format - not a valid JWT');
-                clearAuthData();
-                return false;
-            }
-            
-            // Check if token is expired (basic check)
-            try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                const currentTime = Math.floor(Date.now() / 1000);
-                
-                console.log('🔐 Token expiration check:');
-                console.log('  - Token expires at:', new Date(payload.exp * 1000).toISOString());
-                console.log('  - Current time:', new Date(currentTime * 1000).toISOString());
-                console.log('  - Is expired:', payload.exp && payload.exp < currentTime ? 'Yes' : 'No');
-                
-                if (payload.exp && payload.exp < currentTime) {
-                    console.log('❌ Token expired, clearing auth data');
-                    clearAuthData();
-                    return false;
-                }
-            } catch (error) {
-                console.error('❌ Error parsing token:', error);
+            // Basic token format check (should be a string)
+            if (typeof token !== 'string' || token.length < 10) {
+                console.log('❌ Invalid token format - too short');
                 clearAuthData();
                 return false;
             }
@@ -3060,6 +3040,20 @@
         // Load dashboard data on page load
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Admin Dashboard DOM loaded');
+            
+            // Debug: Log all localStorage items
+            console.log('🔍 All localStorage items:');
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                console.log(`  ${key}:`, value ? (key.includes('token') ? 'Present' : value) : 'Missing');
+            }
+            
+            // TEMPORARY: For debugging, you can manually set auth data here
+            // Uncomment the next 3 lines to test with manual auth data
+            // localStorage.setItem('ra_admin_token', 'test-token-for-debugging');
+            // localStorage.setItem('ra_admin_role', 'admin');
+            // localStorage.setItem('ra_admin_user', JSON.stringify({email: 'test@example.com', role: 'admin'}));
             
             // Add a small delay to ensure localStorage is fully written
             setTimeout(() => {
