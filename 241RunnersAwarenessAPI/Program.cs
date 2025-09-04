@@ -99,6 +99,9 @@ builder.Services.AddAuthorization();
 // Register AdminSeedService
 builder.Services.AddScoped<AdminSeedService>();
 
+// Register ImageUploadService
+builder.Services.AddScoped<IImageUploadService, ImageUploadService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

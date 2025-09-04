@@ -1169,33 +1169,7 @@
             });
         }
 
-        // Load all dashboard data
-        async function loadDashboardData() {
-            try {
-                console.log('Starting to load dashboard data...');
-                
-                // Load data sequentially to avoid race conditions
-                await loadUsers();
-                console.log('Users loaded:', dashboardData.users.length);
-                
-                await loadRunners();
-                console.log('Runners loaded:', dashboardData.runners.length);
-                
-                await loadAdmins();
-                console.log('Admins loaded:', dashboardData.admins.length);
-                
-                await checkSystemStatus();
-                console.log('System status:', dashboardData.systemStatus);
-                
-                console.log('All data loaded, updating UI...');
-                updateDashboardUI();
-                
-                console.log('Dashboard data loading completed successfully');
-            } catch (error) {
-                console.error('Error loading dashboard data:', error);
-                showError('systemStatus', 'Error loading dashboard data');
-            }
-        }
+
 
         // Load users data
         async function loadUsers() {
@@ -1482,14 +1456,7 @@
             }, 30000); // Refresh every 30 seconds
         }
 
-        // Show error message
-        function showError(elementId, message) {
-            const element = document.getElementById(elementId);
-            if (element) {
-                element.textContent = message;
-                element.className = 'status-error';
-            }
-        }
+
 
         // Action button functions
         function openUserManagement() {

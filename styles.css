@@ -2908,13 +2908,6 @@ body.dark-mode .stat-label {
   color: #9ca3af;
 }
 
-body.dark-mode .map-controls select,
-body.dark-mode .map-controls input {
-  background: #4b5563;
-  border-color: #6b7280;
-  color: #e2e8f0;
-}
-
 body.dark-mode .search-icon {
   color: #9ca3af;
 }

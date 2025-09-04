@@ -80,6 +80,16 @@ namespace _241RunnersAwarenessAPI.Models
         [RegularExpression(@"^[\d\s\+\-]+$", ErrorMessage = "Years of experience can only contain numbers, spaces, plus signs, and hyphens")]
         public string? YearsOfExperience { get; set; }
         
+        // Image and Media Support
+        [MaxLength(500)]
+        public string? ProfileImageUrl { get; set; }
+        
+        [MaxLength(1000)]
+        public string? AdditionalImageUrls { get; set; } // JSON array of image URLs
+        
+        [MaxLength(1000)]
+        public string? DocumentUrls { get; set; } // JSON array of document URLs
+        
         public DateTime? UpdatedAt { get; set; }
     }
 } 

@@ -414,54 +414,7 @@
   transform: none !important;
 }
 
-.btn-primary {
-  background-color: #dc2626;
-  color: white;
-  border-color: #dc2626;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background-color: #b91c1c;
-  border-color: #b91c1c;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
-}
-
-.btn-secondary {
-  background-color: #6b7280;
-  color: white;
-  border-color: #6b7280;
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background-color: #4b5563;
-  border-color: #4b5563;
-  transform: translateY(-2px);
-}
-
-.btn-success {
-  background-color: #10b981;
-  color: white;
-  border-color: #10b981;
-}
-
-.btn-success:hover:not(:disabled) {
-  background-color: #059669;
-  border-color: #059669;
-  transform: translateY(-2px);
-}
-
-.btn-outline {
-  background-color: transparent;
-  color: #dc2626;
-  border-color: #dc2626;
-}
-
-.btn-outline:hover:not(:disabled) {
-  background-color: #dc2626;
-  color: white;
-  transform: translateY(-2px);
-}
+/* Button styles are now defined in styles.css to avoid duplication */
 
 /* ============================================
  * MESSAGE & NOTIFICATION STYLES

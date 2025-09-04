@@ -511,7 +511,7 @@ namespace _241RunnersAwarenessAPI.Controllers
                         DateReported = r.DateReported,
                         DateFound = r.DateFound,
                         LastSeen = r.LastSeen,
-                        DateOfBirth = r.DateOfBirth,
+                        DateOfBirth = r.DateOfLastContact,
                         IsUrgent = r.IsUrgent,
                         CreatedAt = r.CreatedAt,
                         UpdatedAt = r.UpdatedAt,
@@ -572,7 +572,7 @@ namespace _241RunnersAwarenessAPI.Controllers
                         DateReported DATETIME2 NOT NULL,
                         DateFound DATETIME2 NULL,
                         LastSeen DATETIME2 NULL,
-                        DateOfBirth DATETIME2 NULL,
+                        DateOfLastContact DATETIME2 NULL,
                         Tags NVARCHAR(500) NOT NULL,
                         IsActive BIT NOT NULL DEFAULT 1,
                         IsUrgent BIT NOT NULL DEFAULT 0,
@@ -586,7 +586,7 @@ namespace _241RunnersAwarenessAPI.Controllers
                         MedicalConditions NVARCHAR(1000) NOT NULL,
                         Medications NVARCHAR(500) NOT NULL,
                         Allergies NVARCHAR(500) NOT NULL,
-                        EmergencyContacts NVARCHAR(500) NOT NULL,
+                        ContactInfo NVARCHAR(200) NOT NULL,
                         ReportedByUserId INT NULL
                     )";
 
@@ -645,8 +645,7 @@ namespace _241RunnersAwarenessAPI.Controllers
                         IdentifyingMarks = "Tattoo on left forearm",
                         MedicalConditions = "None known",
                         Medications = "None",
-                        Allergies = "None known",
-                        EmergencyContacts = "Family: (555) 123-4567"
+                        Allergies = "None known"
                     },
                     new Runner
                     {
@@ -674,8 +673,7 @@ namespace _241RunnersAwarenessAPI.Controllers
                         IdentifyingMarks = "Birthmark on right cheek",
                         MedicalConditions = "Asthma",
                         Medications = "Inhaler",
-                        Allergies = "Dust, pollen",
-                        EmergencyContacts = "Spouse: (555) 987-6543"
+                        Allergies = "Dust, pollen"
                     },
                     new Runner
                     {
@@ -704,8 +702,7 @@ namespace _241RunnersAwarenessAPI.Controllers
                         IdentifyingMarks = "Scar on left knee",
                         MedicalConditions = "None known",
                         Medications = "None",
-                        Allergies = "None known",
-                        EmergencyContacts = "Parents: (555) 456-7890"
+                        Allergies = "None known"
                     },
                     new Runner
                     {
@@ -733,8 +730,7 @@ namespace _241RunnersAwarenessAPI.Controllers
                         IdentifyingMarks = "Small scar on chin",
                         MedicalConditions = "None known",
                         Medications = "None",
-                        Allergies = "None known",
-                        EmergencyContacts = "Roommate: (555) 234-5678"
+                        Allergies = "None known"
                     },
                     new Runner
                     {
@@ -762,8 +758,7 @@ namespace _241RunnersAwarenessAPI.Controllers
                         IdentifyingMarks = "Tattoo on right shoulder",
                         MedicalConditions = "Diabetes, Heart condition",
                         Medications = "Insulin, Blood pressure medication",
-                        Allergies = "Penicillin",
-                        EmergencyContacts = "Wife: (555) 345-6789"
+                        Allergies = "Penicillin"
                     }
                 };
 
