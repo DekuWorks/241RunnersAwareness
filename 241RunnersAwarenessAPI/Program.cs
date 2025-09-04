@@ -6,6 +6,10 @@ using _241RunnersAwarenessAPI.Data;
 using _241RunnersAwarenessAPI.Services;
 using _241RunnersAwarenessAPI.Models;
 using BCrypt.Net;
+using DotNetEnv;
+
+// Load environment variables from .env file
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -101,7 +105,6 @@ builder.Services.AddScoped<AdminSeedService>();
 
 // Register ImageUploadService
 builder.Services.AddScoped<IImageUploadService, ImageUploadService>();
-
 
 // Register HttpClient for NamUs service
 builder.Services.AddHttpClient();
