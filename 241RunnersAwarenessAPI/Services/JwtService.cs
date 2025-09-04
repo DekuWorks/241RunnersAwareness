@@ -15,9 +15,34 @@ namespace _241RunnersAwarenessAPI.Services
             _configuration = configuration;
         }
 
+        private string GetJwtKey()
+        {
+            // Try configuration first, then environment variables, then fallback
+            return _configuration["Jwt:Key"] 
+                ?? Environment.GetEnvironmentVariable("JWT__Key")
+                ?? Environment.GetEnvironmentVariable("ASPNETCORE_JWT__Key")
+                ?? "your-super-secret-key-with-at-least-32-characters";
+        }
+
+        private string GetJwtIssuer()
+        {
+            return _configuration["Jwt:Issuer"] 
+                ?? Environment.GetEnvironmentVariable("JWT__Issuer")
+                ?? Environment.GetEnvironmentVariable("ASPNETCORE_JWT__Issuer")
+                ?? "241RunnersAwareness";
+        }
+
+        private string GetJwtAudience()
+        {
+            return _configuration["Jwt:Audience"] 
+                ?? Environment.GetEnvironmentVariable("JWT__Audience")
+                ?? Environment.GetEnvironmentVariable("ASPNETCORE_JWT__Audience")
+                ?? "241RunnersAwareness";
+        }
+
         public string GenerateToken(User user)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? "your-super-secret-key-with-at-least-32-characters"));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GetJwtKey()));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
@@ -29,8 +54,8 @@ namespace _241RunnersAwarenessAPI.Services
             };
 
             var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"] ?? "241RunnersAwareness",
-                audience: _configuration["Jwt:Audience"] ?? "241RunnersAwareness",
+                issuer: GetJwtIssuer(),
+                audience: GetJwtAudience(),
                 claims: claims,
                 expires: DateTime.UtcNow.AddHours(24),
                 signingCredentials: credentials
@@ -42,7 +67,7 @@ namespace _241RunnersAwarenessAPI.Services
         public ClaimsPrincipal? ValidateToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? "your-super-secret-key-with-at-least-32-characters");
+            var key = Encoding.UTF8.GetBytes(GetJwtKey());
 
             try
             {
@@ -51,9 +76,9 @@ namespace _241RunnersAwarenessAPI.Services
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = true,
-                    ValidIssuer = _configuration["Jwt:Issuer"] ?? "241RunnersAwareness",
+                    ValidIssuer = GetJwtIssuer(),
                     ValidateAudience = true,
-                    ValidAudience = _configuration["Jwt:Audience"] ?? "241RunnersAwareness",
+                    ValidAudience = GetJwtAudience(),
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero
                 }, out SecurityToken validatedToken);

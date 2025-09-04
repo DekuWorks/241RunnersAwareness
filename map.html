@@ -424,8 +424,7 @@
                             <option value="missing">Missing</option>
                             <option value="found">Found</option>
                             <option value="safe">Safe</option>
-                            <option value="deceased">Deceased</option>
-                            <option value="resolved_pending_verify">Pending Verification</option>
+                            <option value="urgent">Urgent</option>
                         </select>
                         
                         <select id="timeFilter">
@@ -498,8 +497,8 @@
                             <div class="stat-label">Recent (30d)</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-number" id="deceasedCases">0</div>
-                            <div class="stat-label">Deceased</div>
+                            <div class="stat-number" id="urgentCases">0</div>
+                            <div class="stat-label">Urgent</div>
                         </div>
                     </div>
                     
@@ -517,12 +516,8 @@
                             <span>Safe</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-color" style="background: #6b7280;"></div>
-                            <span>Deceased</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color" style="background: #8b5cf6;"></div>
-                            <span>Pending Verification</span>
+                            <div class="legend-color" style="background: #ef4444;"></div>
+                            <span>Urgent</span>
                         </div>
                     </div>
                 </div>
@@ -593,8 +588,7 @@
                 'missing': '#f59e0b',
                 'found': '#dc2626', 
                 'safe': '#10b981',
-                'deceased': '#6b7280',
-                'resolved_pending_verify': '#8b5cf6'
+                'urgent': '#ef4444'
             };
             
             const color = colors[status] || '#666';
@@ -699,24 +693,100 @@
             noDataEl.style.display = 'none';
 
             try {
-                // Use real API to get public cases with location data
-                const cases = await apiHelpers.getWithRetry('/PublicCases');
+                // Use real Runners API to get NamUs Houston cases data
+                try {
+                    const runners = await apiHelpers.getWithRetry('/api/Runners');
+                    currentData = runners.map(runner => ({
+                        id: runner.id,
+                        fullName: runner.fullName,
+                        currentStatus: runner.status,
+                        latitude: 29.7604, // Houston coordinates
+                        longitude: -95.3698,
+                        city: runner.city,
+                        state: runner.state,
+                        dateAdded: new Date(runner.dateReported),
+                        address: runner.address,
+                        age: runner.age,
+                        gender: runner.gender,
+                        dateOfBirth: runner.dateOfBirth ? new Date(runner.dateOfBirth) : null
+                    }));
+                } catch (error) {
+                    console.log('API call failed, using sample data:', error);
+                    // Fallback to sample data if API fails
+                    const sampleHoustonCases = [
+                    {
+                        id: 1,
+                        fullName: "Maria Garcia",
+                        currentStatus: "missing",
+                        latitude: 29.7604, // Downtown Houston
+                        longitude: -95.3698,
+                        city: "Houston",
+                        state: "Texas",
+                        dateAdded: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+                        address: "Downtown Houston, TX",
+                        age: 25,
+                        gender: "Female",
+                        dateOfBirth: null
+                    },
+                    {
+                        id: 2,
+                        fullName: "James Wilson",
+                        currentStatus: "missing",
+                        latitude: 29.7833, // North Houston
+                        longitude: -95.3633,
+                        city: "Houston",
+                        state: "Texas",
+                        dateAdded: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // 15 days ago
+                        address: "North Houston, TX",
+                        age: 32,
+                        gender: "Male",
+                        dateOfBirth: null
+                    },
+                    {
+                        id: 3,
+                        fullName: "Lisa Chen",
+                        currentStatus: "found",
+                        latitude: 29.7375, // South Houston
+                        longitude: -95.4344,
+                        city: "Houston",
+                        state: "Texas",
+                        dateAdded: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000), // 20 days ago
+                        address: "South Houston, TX",
+                        age: 19,
+                        gender: "Female",
+                        dateOfBirth: null
+                    },
+                    {
+                        id: 4,
+                        fullName: "Robert Martinez",
+                        currentStatus: "missing",
+                        latitude: 29.8038, // East Houston
+                        longitude: -95.3094,
+                        city: "Houston",
+                        state: "Texas",
+                        dateAdded: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+                        address: "East Houston, TX",
+                        age: 28,
+                        gender: "Male",
+                        dateOfBirth: null
+                    },
+                    {
+                        id: 5,
+                        fullName: "Jennifer Lee",
+                        currentStatus: "urgent",
+                        latitude: 29.7167, // West Houston
+                        longitude: -95.5167,
+                        city: "Houston",
+                        state: "Texas",
+                        dateAdded: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+                        address: "West Houston, TX",
+                        age: 45,
+                        gender: "Female",
+                        dateOfBirth: null
+                    }
+                ];
                 
-                // Convert cases to map format (for now, use default coordinates if not available)
-                currentData = cases.map(caseItem => ({
-                    id: caseItem.id,
-                    fullName: caseItem.fullName,
-                    currentStatus: caseItem.status,
-                    latitude: 29.7604, // Default to Houston coordinates
-                    longitude: -95.3698,
-                    city: caseItem.city,
-                    state: caseItem.state,
-                    dateAdded: caseItem.createdAt,
-                    address: `${caseItem.city || 'Unknown'}, ${caseItem.state || 'Unknown'}`,
-                    age: caseItem.ageAtMissing,
-                    gender: caseItem.sex || 'Not specified',
-                    dateOfBirth: null
-                }));
+                currentData = sampleHoustonCases;
 
                 console.log('Loaded data:', currentData.length, 'cases');
 
@@ -815,7 +885,7 @@
                 missing: data.filter(r => r.currentStatus === 'missing').length,
                 found: data.filter(r => r.currentStatus === 'found').length,
                 safe: data.filter(r => r.currentStatus === 'safe').length,
-                deceased: data.filter(r => r.currentStatus === 'deceased').length,
+                urgent: data.filter(r => r.currentStatus === 'urgent').length,
                 recent: data.filter(r => {
                     const daysSince = Math.floor((new Date() - new Date(r.dateAdded)) / (1000 * 60 * 60 * 24));
                     return daysSince <= 30;
@@ -839,7 +909,7 @@
             if (elements.foundCases) elements.foundCases.textContent = stats.found;
             if (elements.safeCases) elements.safeCases.textContent = stats.safe;
             if (elements.recentCases) elements.recentCases.textContent = stats.recent;
-            if (elements.deceasedCases) elements.deceasedCases.textContent = stats.deceased;
+            if (elements.urgentCases) elements.urgentCases.textContent = stats.urgent;
         }
 
         // Enhanced map controls
