@@ -688,13 +688,6 @@ class CasesPage {
             </div>
         `;
     }
-        setTimeout(() => {
-            if (messageContainer.firstChild) {
-                messageContainer.firstChild.remove();
-                messageContainer.style.display = 'none';
-            }
-        }, 3000);
-    }
     
     getSampleData() {
         return []; // Return empty array - no mock data for live site

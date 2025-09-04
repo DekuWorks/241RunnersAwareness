@@ -995,46 +995,7 @@ namespace _241RunnersAwarenessAPI.Controllers
             return true;
         }
 
-        // Protected endpoint - only existing admins can reset admin passwords
-        [HttpPost("reset-admin-password")]
-        [Authorize(Roles = "admin")]
-        public async Task<ActionResult<AuthResponse>> ResetAdminPassword([FromBody] AdminPasswordResetRequest request)
-        {
-            try
-            {
-                // This is a temporary endpoint for testing - should be removed in production
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == request.Email.ToLower());
-                if (user == null)
-                {
-                    return NotFound(new AuthResponse
-                    {
-                        Success = false,
-                        Message = "User not found."
-                    });
-                }
-
-                // Update password
-                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
-                user.UpdatedAt = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
-
-                _logger.LogInformation($"Admin password reset for user: {user.Email}");
-
-                return Ok(new AuthResponse
-                {
-                    Success = true,
-                    Message = "Admin password reset successfully."
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error during admin password reset");
-                return StatusCode(500, new AuthResponse
-                {
-                    Success = false,
-                    Message = "An error occurred during password reset. Please try again."
-                });
-            }
-        }
+        // Note: Admin password reset functionality has been moved to AdminController
+        // for better security and organization
     }
 } 
