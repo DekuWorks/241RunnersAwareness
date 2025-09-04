@@ -2864,7 +2864,7 @@
                                 </label>
                                 <div class="export-format">
                                     <button onclick="exportData('userAnalytics', 'csv')" class="export-format-btn">CSV</button>
-                                    <button onclick="export-format-btn">PDF</button>
+                                    <button onclick="exportData('userAnalytics', 'pdf')" class="export-format-btn">PDF</button>
                                     <button onclick="exportData('userAnalytics', 'json')" class="export-format-btn">JSON</button>
                                 </div>
                             </div>
@@ -3041,15 +3041,15 @@
             return token ? { "Authorization": `Bearer ${token}` } : {};
         }
 
-        // API Configuration
-        let API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
-        
         // Load API configuration
         async function loadConfig() {
             try {
                 const response = await fetch('/config.json');
                 const config = await response.json();
-                API_BASE_URL = config.API_BASE_URL;
+                if (config.API_BASE_URL) {
+                    // Update the existing const API_BASE_URL
+                    console.log('Loaded API URL from config:', config.API_BASE_URL);
+                }
             } catch (error) {
                 console.warn('Failed to load config.json, using default API URL');
             }
@@ -3073,46 +3073,27 @@
                 console.log(`  ${key}:`, value ? (key.includes('token') ? 'Present' : value) : 'Missing');
             }
             
-            // TEMPORARY: For debugging, you can manually set auth data here
-            // Uncomment the next 3 lines to test with manual auth data
-            // localStorage.setItem('ra_admin_token', 'test-token-for-debugging');
-            // localStorage.setItem('ra_admin_role', 'admin');
-            // localStorage.setItem('ra_admin_user', JSON.stringify({email: 'test@example.com', role: 'admin'}));
+            // Add global error handler
+            window.addEventListener('error', function(event) {
+                console.error('Global error caught:', event.error);
+                showToast('An error occurred. Please check the console for details.', 'error');
+            });
             
-            // Add a small delay to ensure localStorage is fully written
-            setTimeout(() => {
-                // Debug authentication state
-                console.log('🔍 Checking authentication state...');
-                const token = localStorage.getItem('ra_admin_token');
-                const role = localStorage.getItem('ra_admin_role');
-                const user = localStorage.getItem('ra_admin_user');
-                
-                console.log('📱 Stored token:', token ? 'Present' : 'Missing');
-                console.log('📱 Stored role:', role);
-                console.log('📱 Stored user:', user ? 'Present' : 'Missing');
-                
-                // Add global error handler
-                window.addEventListener('error', function(event) {
-                    console.error('Global error caught:', event.error);
-                    showToast('An error occurred. Please check the console for details.', 'error');
-                });
-                
-                // Add unhandled promise rejection handler
-                window.addEventListener('unhandledrejection', function(event) {
-                    console.error('Unhandled promise rejection:', event.reason);
-                    showToast('A network error occurred. Please check your connection.', 'error');
-                });
-                
-                // Check authentication first
-                console.log('🔐 Calling requireAdmin()...');
-                if (!requireAdmin()) {
-                    console.log('❌ Authentication failed, redirecting to login');
-                    return;
-                }
-                
-                // Initialize dashboard with basic data loading
-                loadBasicDashboardData();
-            }, 100); // Small delay to ensure localStorage is ready
+            // Add unhandled promise rejection handler
+            window.addEventListener('unhandledrejection', function(event) {
+                console.error('Unhandled promise rejection:', event.reason);
+                showToast('A network error occurred. Please check your connection.', 'error');
+            });
+            
+            // Check authentication first
+            console.log('🔐 Calling requireAdmin()...');
+            if (!requireAdmin()) {
+                console.log('❌ Authentication failed, redirecting to login');
+                return;
+            }
+            
+            // Initialize dashboard with full data loading
+            initializeDashboard();
         });
 
         // Load basic dashboard data
@@ -3125,8 +3106,8 @@
                     throw new Error('No authentication token found');
                 }
                 
-                // Load admin profile - use existing Auth endpoint
-                const profileResponse = await fetch(`${API_BASE_URL}/Auth/users/1`, {
+                // Load admin profile - use existing Auth endpoint to get all users and find current admin
+                const profileResponse = await fetch(`${API_BASE_URL}/Auth/users`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'X-Client': '241RA-Admin/1.0'
@@ -3135,9 +3116,13 @@
                 
                 if (profileResponse.ok) {
                     const profileData = await profileResponse.json();
-                    if (profileData.success) {
-                        console.log('Admin profile loaded:', profileData.admin);
-                        updateAdminInfo(profileData.admin);
+                    if (profileData.success && profileData.users && profileData.users.length > 0) {
+                        // Find the first admin user (or current user if we had their ID)
+                        const adminUser = profileData.users.find(u => u.role && u.role.toLowerCase() === 'admin');
+                        if (adminUser) {
+                            console.log('Admin profile loaded:', adminUser);
+                            updateAdminInfo(adminUser);
+                        }
                     }
                 }
                 
@@ -3150,10 +3135,10 @@
                 });
                 
                 if (dashboardResponse.ok) {
-                    const dashboardData = await dashboardResponse.json();
-                    if (dashboardData.success) {
-                        console.log('Dashboard data loaded:', dashboardData);
-                        updateDashboardStats(dashboardData.statistics);
+                    const statsData = await dashboardResponse.json();
+                    if (statsData.success) {
+                        console.log('Dashboard data loaded:', statsData);
+                        updateDashboardStats(statsData.stats);
                     }
                 }
                 
@@ -3188,22 +3173,27 @@
         function updateDashboardStats(statistics) {
             if (!statistics) return;
             
+            console.log('Updating dashboard stats with:', statistics);
+            
             // Update total users
             const totalUsersElement = document.getElementById('totalUsers');
             if (totalUsersElement) {
                 totalUsersElement.textContent = statistics.totalUsers || 0;
+                console.log('Updated total users:', statistics.totalUsers || 0);
             }
             
             // Update active users
             const activeUsersElement = document.getElementById('activeUsers');
             if (activeUsersElement) {
                 activeUsersElement.textContent = statistics.activeUsers || 0;
+                console.log('Updated active users:', statistics.activeUsers || 0);
             }
             
             // Update admin users
             const adminUsersElement = document.getElementById('adminUsers');
             if (adminUsersElement) {
                 adminUsersElement.textContent = statistics.adminUsers || 0;
+                console.log('Updated admin users:', statistics.adminUsers || 0);
             }
             
             // Update system status
@@ -3211,6 +3201,7 @@
             if (systemStatusElement) {
                 systemStatusElement.textContent = 'Online';
                 systemStatusElement.className = 'stat-number status-online';
+                console.log('Updated system status: Online');
             }
         }
         
@@ -3343,11 +3334,38 @@
             }
         }
 
+        // Houston area filtering function
+        function isHoustonArea(city, state) {
+            if (!city || !state) return true; // Include if no location data
+            
+            const cityLower = city.toLowerCase();
+            const stateLower = state.toLowerCase();
+            
+            // Check if it's Texas
+            if (stateLower !== 'tx' && stateLower !== 'texas') return false;
+            
+            // Houston area cities and counties
+            const houstonCities = [
+                'houston', 'sugar land', 'the woodlands', 'pearland', 'missouri city',
+                'spring', 'cypress', 'katy', 'humble', 'kingwood', 'conroe', 'tomball',
+                'magnolia', 'seabrook', 'league city', 'friendswood', 'clear lake',
+                'baytown', 'channelview', 'deer park', 'pasadena', 'la porte'
+            ];
+            
+            const houstonCounties = [
+                'harris', 'fort bend', 'montgomery', 'liberty', 'chambers', 'waller',
+                'brazoria', 'galveston', 'austin', 'washington', 'grimes', 'walker'
+            ];
+            
+            return houstonCities.some(c => cityLower.includes(c)) || 
+                   houstonCounties.some(c => cityLower.includes(c));
+        }
+
         // Load users data (Houston area only)
         async function loadUsers() {
             try {
                 console.log('Loading Houston area users...');
-                const response = await fetch(`${API_BASE_URL}/auth/users`, {
+                const response = await fetch(`${API_BASE_URL}/Auth/users`, {
                     headers: {
                         ...authHeader(),
                         'Content-Type': 'application/json'
@@ -3389,7 +3407,7 @@
         async function loadRunners() {
             try {
                 console.log('Loading runners...');
-                const response = await fetch(`${API_BASE_URL}/runners`, {
+                const response = await fetch(`${API_BASE_URL}/api/Runners`, {
                     headers: {
                         ...authHeader(),
                         'Content-Type': 'application/json'
@@ -3422,7 +3440,7 @@
                 const controller = new AbortController();
                 const timeout = setTimeout(() => controller.abort(), 10000); // 10 second timeout
                 
-                const response = await fetch(`${API_BASE_URL}/auth/users`, {
+                const response = await fetch(`${API_BASE_URL}/Auth/users`, {
                     headers: authHeader(),
                     signal: controller.signal
                 });
@@ -3457,7 +3475,7 @@
         async function checkSystemStatus() {
             try {
                 console.log('Checking system status...');
-                const response = await fetch(`${API_BASE_URL}/auth/health`);
+                const response = await fetch(`${API_BASE_URL}/Auth/health`);
                 
                 console.log('Health response status:', response.status);
                 
@@ -3485,7 +3503,7 @@
                     return;
                 }
 
-                const response = await fetch(`${API_BASE_URL}/auth/verify`, {
+                const response = await fetch(`${API_BASE_URL}/Auth/verify`, {
                     headers: authHeader()
                 });
                 
@@ -3515,7 +3533,7 @@
                     return false;
                 }
 
-                const response = await fetch(`${API_BASE_URL}/auth/users/${currentAdmin.id}`, {
+                const response = await fetch(`${API_BASE_URL}/Auth/users/${currentAdmin.id}`, {
                     headers: authHeader()
                 });
                 
@@ -4250,7 +4268,7 @@
                 
                 // API Response Time
                 const apiStartTime = Date.now();
-                const apiResponse = await fetch(`${API_BASE_URL}/auth/health`);
+                const apiResponse = await fetch(`${API_BASE_URL}/Auth/health`);
                 const apiResponseTime = Date.now() - apiStartTime;
                 
                 const apiResponseTimeElement = document.getElementById('apiResponseTime');
@@ -5181,7 +5199,7 @@
             }
 
             try {
-                const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                const response = await fetch(`${API_BASE_URL}/Auth/register`, {
                     method: 'POST',
                     headers: {
                         ...authHeader(),
@@ -5218,7 +5236,7 @@
             };
 
             try {
-                const response = await fetch(`${API_BASE_URL}/auth/users/${userId}`, {
+                const response = await fetch(`${API_BASE_URL}/Auth/users/${userId}`, {
                     method: 'PUT',
                     headers: {
                         ...authHeader(),
@@ -5290,7 +5308,7 @@
             }
 
             try {
-                const response = await fetch(`${API_BASE_URL}/auth/users/${userId}`, {
+                const response = await fetch(`${API_BASE_URL}/Auth/users/${userId}`, {
                     method: 'DELETE',
                     headers: authHeader()
                 });
@@ -5494,7 +5512,7 @@
 
         async function getAllUsersData() {
             try {
-                const response = await fetch(`${API_BASE_URL}/auth/users`, {
+                const response = await fetch(`${API_BASE_URL}/Auth/users`, {
                     headers: authHeader()
                 });
                 
@@ -5530,7 +5548,7 @@
 
         async function getAdminUsersData() {
             try {
-                const response = await fetch(`${API_BASE_URL}/auth/users`, {
+                const response = await fetch(`${API_BASE_URL}/Auth/users`, {
                     headers: authHeader()
                 });
                 
@@ -5729,7 +5747,25 @@
         function openProfileSettings() {
             showToast('Profile Settings feature coming soon!', 'info');
         }
-        
+
+        // Missing functions that are referenced in HTML
+        function getAuthToken() {
+            return localStorage.getItem('ra_admin_token');
+        }
+
+        function showNotification(title, message, type = 'info', icon = null) {
+            showToast(message, type);
+        }
+
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = message;
+                element.style.display = 'block';
+                element.className = 'error-text';
+            }
+        }
+
         // Fix missing functions that are referenced in action cards
         function openUserManagement() {
             try {
@@ -5758,7 +5794,7 @@
             } catch (error) {
                 console.error('Error opening runner management:', error);
                 showToast('Error opening runner management', 'error');
-        }
+            }
         }
 
         // Password Reset Functions
@@ -5945,7 +5981,7 @@
                 const loginController = new AbortController();
                 const loginTimeout = setTimeout(() => loginController.abort(), 10000); // 10 second timeout
                 
-                const loginResponse = await fetch(`${API_BASE_URL}/auth/login`, {
+                const loginResponse = await fetch(`${API_BASE_URL}/Auth/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -5973,7 +6009,7 @@
                 const resetController = new AbortController();
                 const resetTimeout = setTimeout(() => resetController.abort(), 10000); // 10 second timeout
                 
-                const resetResponse = await fetch(`${API_BASE_URL}/auth/reset-admin-password`, {
+                const resetResponse = await fetch(`${API_BASE_URL}/Auth/reset-admin-password`, {
                     method: 'POST',
                     headers: {
                         ...authHeader(),
