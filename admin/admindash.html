@@ -3009,6 +3009,13 @@
                 return false;
             }
             
+            // Validate token format (should be a JWT with 3 parts)
+            if (typeof token !== 'string' || token.split('.').length !== 3) {
+                console.log('❌ Invalid token format - not a valid JWT');
+                clearAuthData();
+                return false;
+            }
+            
             // Check if token is expired (basic check)
             try {
                 const payload = JSON.parse(atob(token.split('.')[1]));
@@ -3054,40 +3061,43 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Admin Dashboard DOM loaded');
             
-            // Debug authentication state
-            console.log('🔍 Checking authentication state...');
-            const token = localStorage.getItem('ra_admin_token');
-            const role = localStorage.getItem('ra_admin_role');
-            const user = localStorage.getItem('ra_admin_user');
-            
-            console.log('📱 Stored token:', token ? 'Present' : 'Missing');
-            console.log('📱 Stored role:', role);
-            console.log('📱 Stored user:', user ? 'Present' : 'Missing');
-            
-            // Add global error handler
-            window.addEventListener('error', function(event) {
-                console.error('Global error caught:', event.error);
-                showToast('An error occurred. Please check the console for details.', 'error');
-            });
-            
-            // Add unhandled promise rejection handler
-            window.addEventListener('unhandledrejection', function(event) {
-                console.error('Unhandled promise rejection:', event.reason);
-                showToast('A network error occurred. Please check your connection.', 'error');
-            });
-            
-            // Check authentication first
-            console.log('🔐 Calling requireAdmin()...');
-            if (!requireAdmin()) {
-                console.log('❌ Authentication failed, redirecting to login');
-                return;
-            }
-            
-            // Initialize dashboard
-            initializeDashboard();
-            
-            // Initialize NamUs import functionality
-            initializeNamusImport();
+            // Add a small delay to ensure localStorage is fully written
+            setTimeout(() => {
+                // Debug authentication state
+                console.log('🔍 Checking authentication state...');
+                const token = localStorage.getItem('ra_admin_token');
+                const role = localStorage.getItem('ra_admin_role');
+                const user = localStorage.getItem('ra_admin_user');
+                
+                console.log('📱 Stored token:', token ? 'Present' : 'Missing');
+                console.log('📱 Stored role:', role);
+                console.log('📱 Stored user:', user ? 'Present' : 'Missing');
+                
+                // Add global error handler
+                window.addEventListener('error', function(event) {
+                    console.error('Global error caught:', event.error);
+                    showToast('An error occurred. Please check the console for details.', 'error');
+                });
+                
+                // Add unhandled promise rejection handler
+                window.addEventListener('unhandledrejection', function(event) {
+                    console.error('Unhandled promise rejection:', event.reason);
+                    showToast('A network error occurred. Please check your connection.', 'error');
+                });
+                
+                // Check authentication first
+                console.log('🔐 Calling requireAdmin()...');
+                if (!requireAdmin()) {
+                    console.log('❌ Authentication failed, redirecting to login');
+                    return;
+                }
+                
+                // Initialize dashboard
+                initializeDashboard();
+                
+                // Initialize NamUs import functionality
+                initializeNamusImport();
+            }, 100); // Small delay to ensure localStorage is ready
         });
 
         // Logout function

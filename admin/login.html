@@ -409,6 +409,15 @@
                     
                     const data = await response.json();
                     console.log('Login response data:', data);
+                    console.log('🔍 API Response Details:');
+                    console.log('  - Success:', data.success);
+                    console.log('  - Message:', data.message);
+                    console.log('  - Token present:', !!data.token);
+                    console.log('  - User present:', !!data.user);
+                    if (data.user) {
+                        console.log('  - User role:', data.user.role);
+                        console.log('  - User email:', data.user.email);
+                    }
                     
                     if (!response.ok) {
                         throw new Error(data.message || 'Login failed');
@@ -424,13 +433,32 @@
                     console.log('Auth data saved - Token:', data.token ? 'Present' : 'Missing');
                     console.log('Auth data saved - User role:', data.user.role);
                     
+                    // Verify data was saved correctly
+                    const savedToken = localStorage.getItem('ra_admin_token');
+                    const savedRole = localStorage.getItem('ra_admin_role');
+                    console.log('🔍 Verification - Saved token:', savedToken ? 'Present' : 'Missing');
+                    console.log('🔍 Verification - Saved role:', savedRole);
+                    
+                    // Test authentication check
+                    if (savedToken && savedRole === 'admin') {
+                        console.log('✅ Authentication data verified successfully');
+                    } else {
+                        console.log('❌ Authentication data verification failed');
+                    }
+                    
                     showAlert('Login successful! Redirecting to admin dashboard...', 'success');
                     
                     // Redirect to admin dashboard with personalized URL
                     setTimeout(() => {
+                        console.log('🚀 Redirecting to admin dashboard...');
+                        console.log('🔍 Final auth check before redirect:');
+                        console.log('  - Token:', localStorage.getItem('ra_admin_token') ? 'Present' : 'Missing');
+                        console.log('  - Role:', localStorage.getItem('ra_admin_role'));
+                        console.log('  - User:', localStorage.getItem('ra_admin_user') ? 'Present' : 'Missing');
+                        
                         // Redirect to the new admin dashboard
                         window.location.href = '/admin/admindash.html';
-                    }, 1500);
+                    }, 2000); // Increased delay to ensure data is saved
                     
                 } catch (error) {
                     console.error('Admin login error:', error);
