@@ -102,8 +102,6 @@ builder.Services.AddScoped<AdminSeedService>();
 // Register ImageUploadService
 builder.Services.AddScoped<IImageUploadService, ImageUploadService>();
 
-// Register NamUs Data Service
-builder.Services.AddScoped<INamusDataService, NamusDataService>();
 
 // Register HttpClient for NamUs service
 builder.Services.AddHttpClient();

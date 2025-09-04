@@ -2383,9 +2383,7 @@
                     <button id="refreshBtn" class="logout-button" onclick="refreshDashboard()" style="margin-left: 10px;">
                         <span>🔄 Refresh</span>
                     </button>
-                    <button id="testLogoutBtn" class="logout-button" onclick="console.log('Test logout clicked'); logout();" style="margin-left: 10px; background: #059669;">
-                        <span>🧪 Test Logout</span>
-                    </button>
+
                 </div>
             </div>
         </div>
@@ -3342,17 +3340,76 @@
         };
         let refreshInterval = null;
 
+        // Global logout function - can be called from anywhere
+        function globalLogout() {
+            console.log('🌐 Global logout called');
+            logout();
+        }
+        
         // Auth functions
         function saveAuthData(token, user) {
-            localStorage.setItem('ra_admin_token', token);
-            localStorage.setItem('ra_admin_role', user.role);
-            localStorage.setItem('ra_admin_user', JSON.stringify(user));
+            try {
+                console.log('💾 Saving authentication data...');
+                console.log('  Token length:', token ? token.length : 'Missing');
+                console.log('  User role:', user?.role || 'Missing');
+                console.log('  User ID:', user?.id || 'Missing');
+                
+                localStorage.setItem('ra_admin_token', token);
+                localStorage.setItem('ra_admin_role', user.role);
+                localStorage.setItem('ra_admin_user', JSON.stringify(user));
+                
+                console.log('✅ Authentication data saved successfully');
+            } catch (error) {
+                console.error('❌ Error saving authentication data:', error);
+                throw error;
+            }
         }
         
         function clearAuthData() {
-            localStorage.removeItem('ra_admin_token');
-            localStorage.removeItem('ra_admin_role');
-            localStorage.removeItem('ra_admin_user');
+            try {
+                console.log('🧹 Clearing authentication data...');
+                
+                // Remove all authentication-related items
+                const authKeys = [
+                    'ra_admin_token',
+                    'ra_admin_role', 
+                    'ra_admin_user',
+                    'ra_user_token',
+                    'ra_user_role',
+                    'ra_user_data',
+                    'admin_token',
+                    'admin_role',
+                    'admin_user'
+                ];
+                
+                authKeys.forEach(key => {
+                    if (localStorage.getItem(key)) {
+                        localStorage.removeItem(key);
+                        console.log(`  Removed: ${key}`);
+                    }
+                });
+                
+                // Also clear sessionStorage if it exists
+                if (typeof sessionStorage !== 'undefined') {
+                    authKeys.forEach(key => {
+                        if (sessionStorage.getItem(key)) {
+                            sessionStorage.removeItem(key);
+                            console.log(`  Removed from sessionStorage: ${key}`);
+                        }
+                    });
+                }
+                
+                // Clear any cookies that might contain auth data
+                document.cookie.split(";").forEach(function(c) { 
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                });
+                
+                console.log('✅ Authentication data cleared successfully');
+                
+            } catch (error) {
+                console.error('❌ Error clearing authentication data:', error);
+                // Continue with logout even if clearing fails
+            }
         }
         
         function isAuthenticated() {
@@ -3411,11 +3468,7 @@
             }
         }
         
-        // Show toast notification
-        function showToast(message, type = 'info') {
-            console.log(`Toast [${type}]: ${message}`);
-            // You can implement a proper toast UI here if needed
-        }
+        // Show toast notification - placeholder (will be replaced by proper implementation below)
         
         // Load dashboard data on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -3441,24 +3494,37 @@
                 showToast('A network error occurred. Please check your connection.', 'error');
             });
             
-            // Check authentication first
-            console.log('🔐 Calling requireAdmin()...');
-            if (!requireAdmin()) {
-                console.log('❌ Authentication failed, redirecting to login');
-                return;
-            }
+                    // Check authentication first
+        console.log('🔐 Calling requireAdmin()...');
+        if (!requireAdmin()) {
+            console.log('❌ Authentication failed, redirecting to login');
+            return;
+        }
+        
+        // Test logout functionality
+        console.log('🧪 Testing logout functionality...');
+        if (typeof logout === 'function') {
+            console.log('✅ Logout function is defined');
+        } else {
+            console.error('❌ Logout function is not defined');
+        }
+        
+        if (typeof clearAuthData === 'function') {
+            console.log('✅ clearAuthData function is defined');
+        } else {
+            console.error('❌ clearAuthData function is not defined');
+        }
+        
+        // Test API endpoints
+        console.log('🌐 Testing API endpoints...');
+        testApiEndpoints();
             
-            // Add event listener to logout button as backup
+            // Verify logout button exists
             const logoutBtn = document.getElementById('logoutBtn');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('Logout button clicked via event listener');
-                    logout();
-                });
-                console.log('Logout button event listener added');
-            } else {
+            if (!logoutBtn) {
                 console.warn('Logout button not found');
+            } else {
+                console.log('Logout button found and ready');
             }
             
             // Initialize dashboard with full data loading
@@ -3577,16 +3643,20 @@
         // Logout function
         function logout() {
             try {
-                console.log('Logging out...');
-                console.log('Before logout - localStorage items:');
+                console.log('🚪 Logout initiated...');
+                
+                // Log current state for debugging
+                console.log('Current localStorage items:');
                 for (let i = 0; i < localStorage.length; i++) {
                     const key = localStorage.key(i);
                     const value = localStorage.getItem(key);
                     console.log(`  ${key}:`, value ? (key.includes('token') ? 'Present' : value) : 'Missing');
                 }
                 
+                // Clear all authentication data
                 clearAuthData();
                 
+                // Verify data was cleared
                 console.log('After logout - localStorage items:');
                 for (let i = 0; i < localStorage.length; i++) {
                     const key = localStorage.key(i);
@@ -3594,17 +3664,47 @@
                     console.log(`  ${key}:`, value ? (key.includes('token') ? 'Present' : value) : 'Missing');
                 }
                 
-                console.log('Redirecting to login page...');
+                // Stop any ongoing processes
+                if (refreshInterval) {
+                    clearInterval(refreshInterval);
+                    refreshInterval = null;
+                }
+                
+                // Clear any pending notifications
+                if (notificationInterval) {
+                    clearInterval(notificationInterval);
+                    notificationInterval = null;
+                }
+                
+                console.log('✅ Logout completed successfully, redirecting to login page...');
+                
+                // Redirect to login page
                 window.location.href = '/admin/login.html';
+                
             } catch (error) {
-                console.error('Error during logout:', error);
+                console.error('❌ Error during logout:', error);
+                
                 // Fallback: try to redirect anyway
                 try {
+                    console.log('🔄 Attempting fallback redirect...');
                     window.location.href = '/admin/login.html';
                 } catch (redirectError) {
-                    console.error('Failed to redirect:', redirectError);
-                    // Last resort: show message to user
-                    alert('Logout failed. Please manually navigate to the login page.');
+                    console.error('❌ Failed to redirect:', redirectError);
+                    
+                    // Last resort: show message to user and try alternative methods
+                    try {
+                        alert('Logout completed but redirect failed. Please manually navigate to the login page.');
+                        // Try alternative redirect methods
+                        if (window.location.replace) {
+                            window.location.replace('/admin/login.html');
+                        } else if (window.location.assign) {
+                            window.location.assign('/admin/login.html');
+                        }
+                    } catch (finalError) {
+                        console.error('❌ All redirect methods failed:', finalError);
+                        // Ultimate fallback - reload the page
+                        window.location.reload();
+                    }
                 }
             }
         }
@@ -3616,6 +3716,57 @@
             await loadDashboardData();
             hideLoadingState();
             showToast('Dashboard refreshed!', 'success');
+        }
+
+        // Test API endpoints function
+        async function testApiEndpoints() {
+            console.log('🧪 Starting API endpoint tests...');
+            
+            try {
+                // Test 1: Health Check
+                console.log('🔍 Testing Health Check endpoint...');
+                const healthResponse = await fetch(`${API_BASE_URL}/api/Auth/health`);
+                const healthData = await healthResponse.json();
+                console.log('Health Check Result:', healthData);
+                
+                // Test 2: Admin Authentication
+                console.log('🔍 Testing Admin Authentication endpoint...');
+                const authResponse = await fetch(`${API_BASE_URL}/api/Auth/admin-login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: 'test@test.com',
+                        password: 'test123'
+                    })
+                });
+                const authData = await authResponse.json();
+                console.log('Admin Auth Result:', authData);
+                
+                // Test 3: Public Cases
+                console.log('🔍 Testing Public Cases endpoint...');
+                const casesResponse = await fetch(`${API_BASE_URL}/api/PublicCases`);
+                const casesData = await casesResponse.json();
+                console.log('Public Cases Result:', casesData);
+                
+                // Test 4: Runners
+                console.log('🔍 Testing Runners endpoint...');
+                const runnersResponse = await fetch(`${API_BASE_URL}/api/Runners`);
+                const runnersData = await runnersResponse.json();
+                console.log('Runners Result:', runnersData);
+                
+                // Test 5: NamUs Import
+                console.log('🔍 Testing NamUs Import endpoint...');
+                const namusResponse = await fetch(`${API_BASE_URL}/api/NamusImport/stats`);
+                const namusData = await namusResponse.json();
+                console.log('NamUs Import Result:', namusData);
+                
+                console.log('✅ All API endpoint tests completed!');
+                
+            } catch (error) {
+                console.error('❌ Error during API endpoint tests:', error);
+            }
         }
 
         // Initialize dashboard
@@ -5236,14 +5387,7 @@
             }, 60000); // Every minute
         }
 
-        // Show error message
-        function showError(elementId, message) {
-            const element = document.getElementById(elementId);
-            if (element) {
-                element.textContent = message;
-                element.className = 'status-error';
-            }
-        }
+        // Show error message - placeholder (will be replaced by proper implementation below)
 
         // Action button functions
         function openUserManagement() {
