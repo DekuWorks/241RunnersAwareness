@@ -96,7 +96,8 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<AdminSeedService>();
 
 // Register ImageUploadService
-builder.Services.AddScoped<IImageUploadService, ImageUploadService>();
+// Register DatabaseCleanupService
+builder.Services.AddScoped<DatabaseCleanupService>();builder.Services.AddScoped<IImageUploadService, ImageUploadService>();
 
 // Register HttpClient for NamUs service
 builder.Services.AddHttpClient();
