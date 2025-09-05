@@ -114,7 +114,12 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 // Enable Swagger in all environments for API documentation
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "241 Runners Awareness API v1");
+    c.RoutePrefix = "swagger";
+    c.DocumentTitle = "241 Runners Awareness API";
+});
 
 // Initialize database, apply migrations, and seed admin users
 try
