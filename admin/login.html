@@ -367,8 +367,8 @@
                 return;
             }
             
-            // Only clear auth data if not already authenticated
-            // clearExistingAuth(); // Removed - was causing redirect loop
+            // Clear any existing auth data to prevent conflicts
+            clearExistingAuth();
             
             loadConfig();
             

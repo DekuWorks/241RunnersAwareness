@@ -149,6 +149,16 @@
         
         /* Live Indicator */
         .live-indicator {
+            margin-bottom: 10px;
+        }
+        
+        .last-updated {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .live-indicator {
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -1022,6 +1032,7 @@
                     <div class="live-indicator">
                         <div class="live-dot"></div>
                         <span>Live Database Connection</span>
+                    <div class="last-updated">Last Updated: <span id="lastUpdated">Loading...</span></div>
                     </div>
                     <button id="logoutBtn" class="logout-button" onclick="logout()">
                         <span>🚪 Logout</span>
@@ -1726,10 +1737,24 @@
                 }
                 
                 updateDashboardUI();
+                updateLastUpdatedTimestamp();
                 updateHealthIndicators();
                 hideLoadingState();
                 
                 console.log('Dashboard data loading completed');
+        }
+        
+        // ===== UPDATE TIMESTAMP FUNCTION =====
+        
+        function updateLastUpdatedTimestamp() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            const dateString = now.toLocaleDateString();
+            const timestampElement = document.getElementById('lastUpdated');
+            if (timestampElement) {
+                timestampElement.textContent = `${dateString} at ${timeString}`;
+            }
+        }
             } catch (error) {
                 console.error('Error loading dashboard data:', error);
                 showToast('Failed to load dashboard data. Please refresh the page.', 'error');
@@ -2390,7 +2415,7 @@
                 await loadDashboardData();
                 
                 // Start refresh timer
-                refreshInterval = setInterval(loadDashboardData, 30000); // 30 seconds
+                refreshInterval = setInterval(loadDashboardData, 10000); // 10 seconds
                 
                 // Show success message
                 showToast('Dashboard loaded successfully!', 'success', 3000);
