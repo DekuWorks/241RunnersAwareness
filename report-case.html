@@ -781,7 +781,7 @@
         
         console.log('Submitting emergency report:', data);
         
-        const response = await fetch(`${API_BASE_URL}/runners`, {
+        const response = await fetch(`${API_BASE_URL}/Runners`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -830,7 +830,7 @@
         
         console.log('Submitting detailed report:', data);
         
-        const response = await fetch(`${API_BASE_URL}/runners`, {
+        const response = await fetch(`${API_BASE_URL}/Runners`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -878,7 +878,7 @@
         console.log('Submitting update:', data);
         
         // This would need to be implemented in the API
-        const response = await fetch(`${API_BASE_URL}/runners/update`, {
+        const response = await fetch(`${API_BASE_URL}/Runners/update`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

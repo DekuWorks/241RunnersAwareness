@@ -1080,5 +1080,111 @@ namespace _241RunnersAwarenessAPI.Controllers
                 });
             }
         }
+
+        /// <summary>
+        /// Get available user roles for registration
+        /// </summary>
+        [HttpGet("roles")]
+        public ActionResult<object> GetAvailableRoles()
+        {
+            var roles = new[]
+            {
+                new { value = "user", label = "User", description = "General user account" },
+                new { value = "parent", label = "Parent", description = "Parent or guardian" },
+                new { value = "caregiver", label = "Caregiver", description = "Professional caregiver" },
+                new { value = "therapist", label = "Therapist", description = "ABA or other therapist" },
+                new { value = "adoptiveparent", label = "Adoptive Parent", description = "Adoptive parent or guardian" }
+            };
+
+            return Ok(new
+            {
+                success = true,
+                roles = roles,
+                message = "Available roles retrieved successfully"
+            });
+        }
+
+        /// <summary>
+        /// Validate user registration data before submission
+        /// </summary>
+        [HttpPost("validate-registration")]
+        public async Task<ActionResult<object>> ValidateRegistration([FromBody] RegisterRequest request)
+        {
+            try
+            {
+                var errors = new List<string>();
+
+                // Check if email already exists
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == request.Email.ToLower());
+                if (existingUser != null)
+                {
+                    errors.Add("Email address is already registered");
+                }
+
+                // Validate role
+                var allowedRoles = new[] { "user", "parent", "caregiver", "therapist", "adoptiveparent" };
+                if (!allowedRoles.Contains(request.Role.ToLower()))
+                {
+                    errors.Add($"Role must be one of: {string.Join(", ", allowedRoles)}");
+                }
+
+                // Validate email format
+                if (!IsValidEmail(request.Email))
+                {
+                    errors.Add("Invalid email format");
+                }
+
+                // Validate password strength
+                if (string.IsNullOrEmpty(request.Password) || request.Password.Length < 8)
+                {
+                    errors.Add("Password must be at least 8 characters long");
+                }
+
+                var passwordRegex = new System.Text.RegularExpressions.Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])");
+                if (!passwordRegex.IsMatch(request.Password))
+                {
+                    errors.Add("Password must contain uppercase, lowercase, number, and special character");
+                }
+
+                // Validate names
+                var nameRegex = new System.Text.RegularExpressions.Regex(@"^[a-zA-Z\s\-']+$");
+                if (string.IsNullOrEmpty(request.FirstName) || !nameRegex.IsMatch(request.FirstName))
+                {
+                    errors.Add("First name can only contain letters, spaces, hyphens, and apostrophes");
+                }
+
+                if (string.IsNullOrEmpty(request.LastName) || !nameRegex.IsMatch(request.LastName))
+                {
+                    errors.Add("Last name can only contain letters, spaces, hyphens, and apostrophes");
+                }
+
+                // Validate phone number if provided
+                if (!string.IsNullOrEmpty(request.PhoneNumber))
+                {
+                    var phoneRegex = new System.Text.RegularExpressions.Regex(@"^[\+]?[1-9][\d]{0,15}$");
+                    if (!phoneRegex.IsMatch(request.PhoneNumber))
+                    {
+                        errors.Add("Please enter a valid phone number");
+                    }
+                }
+
+                return Ok(new
+                {
+                    success = true,
+                    isValid = errors.Count == 0,
+                    errors = errors,
+                    message = errors.Count == 0 ? "Validation passed" : "Validation failed"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error validating registration data");
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "An error occurred during validation"
+                });
+            }
+        }
     }
 }

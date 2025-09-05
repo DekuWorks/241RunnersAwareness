@@ -6197,3 +6197,28 @@ footer .footer-bottom p {
   transform: translateY(-2px) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
 }
+
+/* Report Runner Button */
+.report-runner-btn {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+    color: white !important;
+    font-weight: bold !important;
+    padding: 12px 20px !important;
+    border-radius: 25px !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3) !important;
+    border: 2px solid transparent !important;
+}
+
+.report-runner-btn:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4) !important;
+    color: white !important;
+}
+
+.report-runner-btn:focus {
+    outline: 3px solid rgba(220, 38, 38, 0.3) !important;
+    outline-offset: 2px !important;
+}

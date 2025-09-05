@@ -364,5 +364,135 @@ namespace _241RunnersAwarenessAPI.Controllers
                 return StatusCode(500, new { message = "An error occurred while creating sample cases" });
             }
         }
+
+        /// <summary>
+        /// Create a new runner (public endpoint - no authentication required)
+        /// </summary>
+        [HttpPost]
+
+        /// <summary>
+        /// Create a new runner (public endpoint - no authentication required)
+        /// </summary>
+        [HttpPost]
+        public async Task<ActionResult<RunnerDto>> CreateRunner([FromBody] CreateRunnerDto createRunnerDto)
+        {
+            try
+            {
+                // Validate required fields
+                if (string.IsNullOrEmpty(createRunnerDto.FirstName) || string.IsNullOrEmpty(createRunnerDto.LastName))
+                {
+                    return BadRequest(new { message = "First name and last name are required" });
+                }
+
+                // Generate a unique RunnerId
+                var runnerId = $"RUN{DateTime.UtcNow:yyyyMMddHHmmss}{new Random().Next(1000, 9999)}";
+
+                // Create new runner
+                var runner = new Runner
+                {
+                    RunnerId = runnerId,
+                    FirstName = createRunnerDto.FirstName,
+                    LastName = createRunnerDto.LastName,
+                    MiddleName = createRunnerDto.MiddleName,
+                    DateOfBirth = createRunnerDto.DateOfBirth,
+                    Age = createRunnerDto.AgeInYears ?? 0,
+                    Gender = createRunnerDto.Gender ?? "Unknown",
+                    Height = createRunnerDto.Height ?? "Unknown",
+                    Weight = createRunnerDto.Weight ?? "Unknown",
+                    HairColor = createRunnerDto.HairColor ?? "Unknown",
+                    EyeColor = createRunnerDto.EyeColor ?? "Unknown",
+                    IdentifyingMarks = createRunnerDto.IdentifyingMarks ?? "None reported",
+                    DistinctiveFeatures = createRunnerDto.DistinctiveFeatures,
+                    City = createRunnerDto.City ?? "Unknown",
+                    State = createRunnerDto.State ?? "Unknown",
+                    County = createRunnerDto.County,
+                    Address = createRunnerDto.Address ?? "Unknown",
+                    DateReported = createRunnerDto.DateReported ?? DateTime.UtcNow,
+                    DateOfLastContact = createRunnerDto.DateOfLastContact,
+                    LastSeen = createRunnerDto.LastSeen,
+                    Description = createRunnerDto.Description ?? "No description provided",
+                    Circumstances = createRunnerDto.Circumstances,
+                    MedicalConditions = createRunnerDto.MedicalConditions ?? "None reported",
+                    Medications = createRunnerDto.Medications ?? "None reported",
+                    Allergies = createRunnerDto.Allergies ?? "None reported",
+                    ContactInfo = createRunnerDto.ContactInfo,
+                    InvestigatingAgency = createRunnerDto.InvestigatingAgency,
+                    AgencyCaseNumber = createRunnerDto.AgencyCaseNumber,
+                    AgencyCity = createRunnerDto.AgencyCity,
+                    AgencyState = createRunnerDto.AgencyState,
+                    ClothingDescription = createRunnerDto.ClothingDescription,
+                    PersonalItems = createRunnerDto.PersonalItems,
+                    VehicleMake = createRunnerDto.VehicleMake,
+                    VehicleModel = createRunnerDto.VehicleModel,
+                    VehicleColor = createRunnerDto.VehicleColor,
+                    VehicleYear = createRunnerDto.VehicleYear,
+                    VehicleVin = createRunnerDto.VehicleVin,
+                    Status = createRunnerDto.Status ?? "missing",
+                    IsActive = true,
+                    IsUrgent = createRunnerDto.IsUrgent ?? false,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    ReportedByUserId = null, // Public report
+                    Tags = createRunnerDto.Tags ?? "public-report"
+                };
+
+                _context.Runners.Add(runner);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("New runner created via public endpoint: {RunnerId} - {FirstName} {LastName}", 
+                    runner.RunnerId, runner.FirstName, runner.LastName);
+
+                // Return the created runner as DTO
+                var runnerDto = new RunnerDto
+                {
+                    RunnerId = runner.RunnerId,
+                    FirstName = runner.FirstName,
+                    LastName = runner.LastName,
+                    MiddleName = runner.MiddleName,
+                    DateOfBirth = runner.DateOfBirth,
+                    AgeInYears = runner.Age,
+                    Gender = runner.Gender,
+                    Height = runner.Height,
+                    Weight = runner.Weight,
+                    HairColor = runner.HairColor,
+                    EyeColor = runner.EyeColor,
+                    IdentifyingMarks = runner.IdentifyingMarks,
+                    DistinctiveFeatures = runner.DistinctiveFeatures,
+                    City = runner.City,
+                    State = runner.State,
+                    County = runner.County,
+                    Address = runner.Address,
+                    DateReported = runner.DateReported,
+                    DateOfLastContact = runner.DateOfLastContact,
+                    LastSeen = runner.LastSeen,
+                    Description = runner.Description,
+                    Circumstances = runner.Circumstances,
+                    MedicalConditions = runner.MedicalConditions,
+                    Medications = runner.Medications,
+                    Allergies = runner.Allergies,
+                    ContactInfo = runner.ContactInfo,
+                    InvestigatingAgency = runner.InvestigatingAgency,
+                    AgencyCaseNumber = runner.AgencyCaseNumber,
+                    AgencyCity = runner.AgencyCity,
+                    AgencyState = runner.AgencyState,
+                    Status = runner.Status,
+                    CurrentStatus = runner.Status,
+                    IsActive = runner.IsActive,
+                    IsUrgent = runner.IsUrgent,
+                    CreatedAt = runner.CreatedAt,
+                    UpdatedAt = runner.UpdatedAt,
+                    DateAdded = runner.DateReported,
+                    ReportedByUserId = runner.ReportedByUserId,
+                    Tags = runner.Tags
+                };
+
+                return CreatedAtAction(nameof(GetRunners), new { id = runner.Id }, runnerDto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating runner via public endpoint");
+                return StatusCode(500, new { message = "An error occurred while creating the runner report" });
+            }
+        }
     }
-} 
+}

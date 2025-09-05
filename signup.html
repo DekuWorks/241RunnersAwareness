@@ -306,8 +306,8 @@
                         <option value="user">User</option>
                         <option value="parent">Parent</option>
                         <option value="caregiver">Caregiver</option>
-                        <option value="aba_therapist">ABA Therapist</option>
-                        <option value="adoptive_parent">Adoptive Parent</option>
+                        <option value="therapist">Therapist</option>
+                        <option value="adoptiveparent">Adoptive Parent</option>
                     </select>
                     <span class="error-text" id="roleError"></span>
                 </div>
@@ -458,7 +458,30 @@
         
         // Setup real-time validation when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            setupRealTimeValidation();
+        
+        // Load available roles from API
+        async function loadAvailableRoles() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/roles`);
+                const result = await response.json();
+                
+                if (result.success && result.roles) {
+                    const roleSelect = document.getElementById("role");
+                    if (roleSelect) {
+                        roleSelect.innerHTML = `<option value="">Select your role</option>`;
+                        result.roles.forEach(role => {
+                            const option = document.createElement("option");
+                            option.value = role.value;
+                            option.textContent = role.label;
+                            option.title = role.description;
+                            roleSelect.appendChild(option);
+                        });
+                    }
+                }
+            } catch (error) {
+                console.warn("Failed to load roles from API, using default options:", error);
+            }
+        }            setupRealTimeValidation();
         });
         
         // Get URL parameters
