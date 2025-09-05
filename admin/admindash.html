@@ -3517,7 +3517,7 @@
         
         // Test API endpoints
         console.log('🌐 Testing API endpoints...');
-        testApiEndpoints();
+        // testApiEndpoints(); // Disabled - causes 401 errors
             
             // Verify logout button exists
             const logoutBtn = document.getElementById('logoutBtn');
@@ -3725,13 +3725,13 @@
             try {
                 // Test 1: Health Check
                 console.log('🔍 Testing Health Check endpoint...');
-                const healthResponse = await fetch(`${API_BASE_URL}/api/Auth/health`);
+                const healthResponse = await fetch(`${API_BASE_URL}/Auth/health`);
                 const healthData = await healthResponse.json();
                 console.log('Health Check Result:', healthData);
                 
                 // Test 2: Admin Authentication
                 console.log('🔍 Testing Admin Authentication endpoint...');
-                const authResponse = await fetch(`${API_BASE_URL}/api/Auth/admin-login`, {
+                const authResponse = await fetch(`${API_BASE_URL}/Auth/admin-login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -3746,19 +3746,19 @@
                 
                 // Test 3: Public Cases
                 console.log('🔍 Testing Public Cases endpoint...');
-                const casesResponse = await fetch(`${API_BASE_URL}/api/PublicCases`);
+                const casesResponse = await fetch(`${API_BASE_URL}/PublicCases`);
                 const casesData = await casesResponse.json();
                 console.log('Public Cases Result:', casesData);
                 
                 // Test 4: Runners
                 console.log('🔍 Testing Runners endpoint...');
-                const runnersResponse = await fetch(`${API_BASE_URL}/api/Runners`);
+                const runnersResponse = await fetch(`${API_BASE_URL}/Runners`);
                 const runnersData = await runnersResponse.json();
                 console.log('Runners Result:', runnersData);
                 
                 // Test 5: NamUs Import
                 console.log('🔍 Testing NamUs Import endpoint...');
-                const namusResponse = await fetch(`${API_BASE_URL}/api/NamusImport/stats`);
+                const namusResponse = await fetch(`${API_BASE_URL}/NamusImport/stats`);
                 const namusData = await namusResponse.json();
                 console.log('NamUs Import Result:', namusData);
                 
@@ -3955,7 +3955,7 @@
         async function loadRunners() {
             try {
                 console.log('Loading runners...');
-                const response = await fetch(`${API_BASE_URL}/api/Runners`, {
+                const response = await fetch(`${API_BASE_URL}/Runners`, {
                     headers: {
                         ...authHeader(),
                         'Content-Type': 'application/json'
