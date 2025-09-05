@@ -264,3 +264,6 @@ namespace _241RunnersAwarenessAPI.Models
         public string NewPassword { get; set; } = string.Empty;
     }
 } 
+    /// <summary>
+    /// Request model for updating user profile
+    /// </summary>

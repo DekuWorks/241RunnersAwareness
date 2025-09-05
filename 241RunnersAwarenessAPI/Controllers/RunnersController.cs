@@ -494,5 +494,99 @@ namespace _241RunnersAwarenessAPI.Controllers
                 return StatusCode(500, new { message = "An error occurred while creating the runner report" });
             }
         }
-    }
+        /// <summary>
+        /// Upload image for a specific runner case
+        /// </summary>
+        [HttpPost("{id}/image")]
+        public async Task<ActionResult<object>> UploadRunnerImage(int id, [FromForm] IFormFile image)
+        {
+            try
+            {
+                if (image == null || image.Length == 0)
+                {
+                    return BadRequest(new { success = false, message = "No image file provided" });
+                }
+
+                // Validate file type
+                var allowedTypes = new[] { "image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp" };
+                if (!allowedTypes.Contains(image.ContentType.ToLower()))
+                {
+                    return BadRequest(new { success = false, message = "Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed." });
+                }
+
+                // Validate file size (max 5MB)
+                if (image.Length > 5 * 1024 * 1024)
+                {
+                    return BadRequest(new { success = false, message = "File size too large. Maximum size is 5MB." });
+                }
+
+                // Find the runner
+                var runner = await _context.Runners.FindAsync(id);
+                if (runner == null)
+                {
+                    return NotFound(new { success = false, message = "Runner case not found" });
+                }
+
+                // Generate unique filename
+                var fileExtension = Path.GetExtension(image.FileName);
+                var fileName = $"runner_{id}_{DateTime.UtcNow:yyyyMMddHHmmss}{fileExtension}";
+                var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "runners");
+                
+                // Create directory if it doesn't exist
+                if (!Directory.Exists(uploadsPath))
+                {
+                    Directory.CreateDirectory(uploadsPath);
+                }
+
+                var filePath = Path.Combine(uploadsPath, fileName);
+
+                // Save the file
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await image.CopyToAsync(stream);
+                }
+
+                // Generate URL for the uploaded image
+                var imageUrl = $"/uploads/runners/{fileName}";
+
+                // Update runner with image URL
+                if (string.IsNullOrEmpty(runner.ProfileImageUrl))
+                {
+                    runner.ProfileImageUrl = imageUrl;
+                }
+                else
+                {
+                    // Add to additional images if profile image already exists
+                    var additionalImages = new List<string>();
+                    if (!string.IsNullOrEmpty(runner.AdditionalImageUrls))
+                    {
+                        try
+                        {
+                            additionalImages = System.Text.Json.JsonSerializer.Deserialize<List<string>>(runner.AdditionalImageUrls) ?? new List<string>();
+                        }
+                        catch
+                        {
+                            additionalImages = new List<string>();
+                        }
+                    }
+                    additionalImages.Add(imageUrl);
+                    runner.AdditionalImageUrls = System.Text.Json.JsonSerializer.Serialize(additionalImages);
+                }
+
+                runner.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Runner image uploaded successfully",
+                    imageUrl = imageUrl
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error uploading runner image");
+                return StatusCode(500, new { success = false, message = "An error occurred while uploading the image" });
+            }
+        }    }
 }
