@@ -224,6 +224,8 @@
                             <div class="spinner"></div>
                         </div>
                     </button>
+                        <span>🧹 Clear Session </button> Try Again</span>
+                    </button>
                 </div>
             </form>
             
@@ -287,6 +289,31 @@
                 element.textContent = '';
                 element.style.display = 'none';
             });
+        
+        // ===== CLEAR ALL SESSIONS FUNCTION =====
+        
+            try {
+                console.log('🧹 Clearing all sessions...');
+                
+                // Clear all localStorage
+                localStorage.clear();
+                
+                // Clear all sessionStorage
+                sessionStorage.clear();
+                
+                // Clear cookies (if possible)
+                document.cookie.split(";").forEach(function(c) {
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                });
+                
+                console.log('✅ All sessions cleared');
+                alert('All sessions cleared! Please try logging in again.');
+                
+                // Reload the page
+                window.location.reload();
+                
+            } catch (error) {
+                console.error('❌ Error clearing sessions:'
         }
         
         // Show alert message
@@ -410,6 +437,31 @@
                         body: JSON.stringify(formData),
                         cache: 'no-store'
                     });
+        
+        // ===== CLEAR ALL SESSIONS FUNCTION =====
+        
+            try {
+                console.log('🧹 Clearing all sessions...');
+                
+                // Clear all localStorage
+                localStorage.clear();
+                
+                // Clear all sessionStorage
+                sessionStorage.clear();
+                
+                // Clear cookies (if possible)
+                document.cookie.split(";").forEach(function(c) {
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                });
+                
+                console.log('✅ All sessions cleared');
+                alert('All sessions cleared! Please try logging in again.');
+                
+                // Reload the page
+                window.location.reload();
+                
+            } catch (error) {
+                console.error('❌ Error clearing sessions:'
                     
                     console.log('Login response status:', response.status);
                     
@@ -486,7 +538,57 @@
                     setLoading(false);
                 }
             });
+        
+        // ===== CLEAR ALL SESSIONS FUNCTION =====
+        
+            try {
+                console.log('🧹 Clearing all sessions...');
+                
+                // Clear all localStorage
+                localStorage.clear();
+                
+                // Clear all sessionStorage
+                sessionStorage.clear();
+                
+                // Clear cookies (if possible)
+                document.cookie.split(";").forEach(function(c) {
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                });
+                
+                console.log('✅ All sessions cleared');
+                alert('All sessions cleared! Please try logging in again.');
+                
+                // Reload the page
+                window.location.reload();
+                
+            } catch (error) {
+                console.error('❌ Error clearing sessions:'
         });
+        
+        // ===== CLEAR ALL SESSIONS FUNCTION =====
+        
+            try {
+                console.log('🧹 Clearing all sessions...');
+                
+                // Clear all localStorage
+                localStorage.clear();
+                
+                // Clear all sessionStorage
+                sessionStorage.clear();
+                
+                // Clear cookies (if possible)
+                document.cookie.split(";").forEach(function(c) {
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                });
+                
+                console.log('✅ All sessions cleared');
+                alert('All sessions cleared! Please try logging in again.');
+                
+                // Reload the page
+                window.location.reload();
+                
+            } catch (error) {
+                console.error('❌ Error clearing sessions:'
     </script>
 </body>
 </html> 
