@@ -1020,7 +1020,7 @@
             get: (key, defaultValue = null) => {
                 try {
                     const value = localStorage.getItem(key);
-                    return value ? safeJsonParse(value, value) : defaultValue;
+                    return value || defaultValue;
                 } catch (e) {
                     console.warn('localStorage get error:', e);
                     return defaultValue;
@@ -1105,7 +1105,9 @@
         }
         
         function isAuthenticated() {
+            console.log("🔍 isAuthenticated() called");
             const token = storage.get('ra_admin_token');
+            console.log("🔍 Retrieved token:", token ? "Present (length: " + token.length + ")" : "Missing");
             const role = storage.get('ra_admin_role');
             
             console.log('🔐 Authentication check:', {
@@ -1129,7 +1131,9 @@
         }
         
         function authHeader() {
+            console.log("🔍 authHeader() called");
             const token = storage.get('ra_admin_token');
+            console.log("🔍 Retrieved token:", token ? "Present (length: " + token.length + ")" : "Missing");
             return token ? { "Authorization": `Bearer ${token}` } : {};
         }
         
@@ -1282,6 +1286,8 @@
                 const data = await apiRequest(`${API_BASE_URL}/Auth/users`, {
                     headers: authHeader()
                 });
+                    headers: authHeader()
+                });
                 
                 if (data.success && data.users) {
                     dashboardData.users = data.users.filter(user => {
@@ -1305,6 +1311,8 @@
                 const data = await apiRequest(`${API_BASE_URL}/Runners`, {
                     headers: authHeader()
                 });
+                    headers: authHeader()
+                });
                 dashboardData.runners = data || [];
             } catch (error) {
                 console.error('Error loading runners:', error);
@@ -1315,6 +1323,8 @@
         async function loadAdmins() {
             try {
                 const data = await apiRequest(`${API_BASE_URL}/Auth/users`, {
+                    headers: authHeader()
+                });
                     headers: authHeader()
                 });
                 
@@ -1397,7 +1407,11 @@
                     return;
                 }
 
+                console.log("🔍 Making API call to verify endpoint");
+                console.log("🔍 API call headers:", authHeader());
                 const data = await apiRequest(`${API_BASE_URL}/Auth/verify`, {
+                    headers: authHeader()
+                });
                     headers: authHeader()
                 });
                 
