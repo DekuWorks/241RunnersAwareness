@@ -6819,7 +6819,8 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        email: currentAdmin.email,
+                        currentPassword: currentPassword,
+                        newPassword: newPassword,
                         password: currentPassword
                     }),
                     signal: loginController.signal
@@ -6841,15 +6842,16 @@
                 const resetController = new AbortController();
                 const resetTimeout = setTimeout(() => resetController.abort(), 10000); // 10 second timeout
                 
-                const resetResponse = await fetch(`${API_BASE_URL}/Auth/reset-admin-password`, {
+                const resetResponse = await fetch(`${API_BASE_URL}/Auth/reset-password`, {
                     method: 'POST',
                     headers: {
                         ...authHeader(),
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        email: currentAdmin.email,
-                        newPassword: newPassword
+                        currentPassword: currentPassword,
+                        newPassword: newPassword,
+                        confirmNewPassword: confirmPassword
                     }),
                     signal: resetController.signal
                 });
