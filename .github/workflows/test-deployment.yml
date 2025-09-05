@@ -20,7 +20,7 @@ jobs:
     - name: Wait for deployment
       run: |
         echo "Waiting for deployment to complete..."
-        sleep 60
+        sleep 90
         
     - name: Test API Health
       run: |
@@ -37,8 +37,8 @@ jobs:
             echo "Attempt $i failed with status: $http_code"
             echo "Response: $(echo "$response" | head -c -4)"
             if [ $i -lt 5 ]; then
-              echo "Retrying in 15 seconds..."
-              sleep 15
+              echo "Retrying in 20 seconds..."
+              sleep 20
             fi
           fi
         done
@@ -69,8 +69,8 @@ jobs:
             echo "Attempt $i failed with status: $http_code"
             echo "Response: $response_body"
             if [ $i -lt 5 ]; then
-              echo "Retrying in 15 seconds..."
-              sleep 15
+              echo "Retrying in 20 seconds..."
+              sleep 20
             fi
           fi
         done
