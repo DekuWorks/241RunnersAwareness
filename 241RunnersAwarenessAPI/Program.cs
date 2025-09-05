@@ -51,28 +51,20 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AppCors", policy =>
     {
-        policy.WithOrigins(
-                "https://241runnersawareness.org",
-                "https://www.241runnersawareness.org",
-                "http://localhost:3000",
-                "http://localhost:5173",
-                "http://localhost:8080"
-            )
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
 
-// Add JWT Authentication
+// Add Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        // Helper function to get JWT configuration from multiple sources
         string GetJwtKey() => builder.Configuration["Jwt:Key"] 
             ?? Environment.GetEnvironmentVariable("JWT__Key")
             ?? Environment.GetEnvironmentVariable("ASPNETCORE_JWT__Key")
-            ?? "your-super-secret-key-with-at-least-32-characters";
+            ?? "241RunnersAwareness2025!SecureJWTKeyForProductionUse-32CharsMin";
             
         string GetJwtIssuer() => builder.Configuration["Jwt:Issuer"] 
             ?? Environment.GetEnvironmentVariable("JWT__Issuer")
@@ -119,7 +111,22 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "241 Runners Awareness API v1");
     c.RoutePrefix = "swagger";
     c.DocumentTitle = "241 Runners Awareness API";
+    c.DisplayRequestDuration();
+    c.EnableDeepLinking();
+    c.EnableFilter();
+    c.ShowExtensions();
+    c.EnableValidator();
 });
+
+app.UseHttpsRedirection();
+
+// Use CORS
+app.UseCors("AppCors");
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
 
 // Initialize database, apply migrations, and seed admin users
 try
@@ -134,25 +141,16 @@ try
         // Test database connection first
         try
         {
-            var canConnect = await context.Database.CanConnectAsync();
-            Console.WriteLine($"Database connection test: {(canConnect ? "SUCCESS" : "FAILED")}");
-            
-            if (!canConnect)
-            {
-                Console.WriteLine("WARNING: Cannot connect to database. App will start but database features will not work.");
-                Console.WriteLine("Please check database connection string and user permissions.");
-                // Continue without database - don't fail the app
-                goto skipDatabaseInit;
-            }
+            context.Database.EnsureCreated();
+            Console.WriteLine("Database connection successful");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"WARNING: Database connection test failed: {ex.Message}");
-            Console.WriteLine("App will start but database features will not work.");
+            Console.WriteLine($"Database connection failed: {ex.Message}");
             goto skipDatabaseInit;
         }
         
-        // Apply any pending migrations first
+        // Apply migrations
         try
         {
             context.Database.Migrate();
@@ -160,21 +158,15 @@ try
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"WARNING: Database migration error: {ex.Message}");
-            Console.WriteLine("This usually means the database user lacks permissions to create/modify tables.");
-            Console.WriteLine("App will start but database features will not work.");
-            // Continue without migrations - don't fail the app
+            Console.WriteLine($"Migration failed: {ex.Message}");
             goto skipDatabaseInit;
         }
         
-        // Wait a moment for database to be fully ready
-        await Task.Delay(1000);
-        
-        // Seed admin users if they don't exist
+        // Seed admin users
         try
         {
             await adminSeedService.SeedAdminUsersAsync();
-            Console.WriteLine("Admin user seeding completed successfully");
+            Console.WriteLine("Admin users seeded successfully");
         }
         catch (Exception ex)
         {
@@ -203,15 +195,5 @@ catch (Exception ex)
     Console.WriteLine("App will continue to start but database features will not work.");
     // Don't throw - let the app start even if database fails
 }
-
-app.UseHttpsRedirection();
-
-// Use CORS
-app.UseCors("AppCors");
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
 
 app.Run();
