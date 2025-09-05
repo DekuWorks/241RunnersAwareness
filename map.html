@@ -606,205 +606,89 @@
             if (noDataEl) noDataEl.style.display = "none";
 
             try {
-                // Use sample data for now since API might not have runners
-                const sampleHoustonCases = [
-                    {
-                        id: 1,
-                        fullName: "Maria Garcia",
-                        currentStatus: "missing",
-                        latitude: 29.7604,
-                        longitude: -95.3698,
-                        city: "Houston",
-                        state: "Texas",
-                        dateAdded: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-                        address: "Downtown Houston, TX",
-                        age: 25,
-                        gender: "Female",
-                        dateOfBirth: null
-                    },
-                    {
-                        id: 2,
-                        fullName: "James Wilson",
-                        currentStatus: "missing",
-                        latitude: 29.7833,
-                        longitude: -95.3633,
-                        city: "Houston",
-                        state: "Texas",
-                        dateAdded: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-                        address: "North Houston, TX",
-                        age: 32,
-                        gender: "Male",
-                        dateOfBirth: null
-                    },
-                    {
-                        id: 3,
-                        fullName: "Lisa Chen",
-                        currentStatus: "found",
-                        latitude: 29.7375,
-                        longitude: -95.4344,
-                        city: "Houston",
-                        state: "Texas",
-                        dateAdded: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
-                        address: "South Houston, TX",
-                        age: 19,
-                        gender: "Female",
-                        dateOfBirth: null
-                    },
-                    {
-                        id: 4,
-                        fullName: "Robert Martinez",
-                        currentStatus: "missing",
-                        latitude: 29.8038,
-                        longitude: -95.3094,
-                        city: "Houston",
-                        state: "Texas",
-                        dateAdded: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-                        address: "East Houston, TX",
-                        age: 28,
-                        gender: "Male",
-                        dateOfBirth: null
-                    },
-                    {
-                        id: 5,
-                        fullName: "Jennifer Lee",
-                        currentStatus: "urgent",
-                        latitude: 29.7167,
-                        longitude: -95.5167,
-                        city: "Houston",
-                        state: "Texas",
-                        dateAdded: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-                        address: "West Houston, TX",
-                        age: 45,
-                        gender: "Female",
-                        dateOfBirth: null
+                // Fetch real data from API
+                // Fetch real data from API
+                let apiData = [];
+                try {
+                    if (window.apiHelpers && window.apiHelpers.getWithRetry) {
+                        const runners = await window.apiHelpers.getWithRetry("/api/Runners");
+                        if (runners && Array.isArray(runners)) {
+                            apiData = runners;
+                        }
                     }
-                ];
+                } catch (apiError) {
+                    console.log("API data not available, using empty dataset:", apiError);
+                }
                 
-                currentData = sampleHoustonCases;
-                console.log("Loaded data:", currentData.length, "cases");
-
-                if (currentData.length === 0) {
-                    if (loadingEl) loadingEl.style.display = "none";
-                    if (noDataEl) {
-                        noDataEl.style.display = "block";
-                        noDataEl.textContent = "No public cases available at this time. Check back later for updates.";
+                // Also try to get public cases data
+                try {
+                    if (window.apiHelpers && window.apiHelpers.getWithRetry) {
+                        const publicCases = await window.apiHelpers.getWithRetry("/api/PublicCases");
+                        if (publicCases && Array.isArray(publicCases)) {
+                            // Convert public cases to runner format if needed
+                            const convertedCases = publicCases.map(case => ({
+                                id: case.id,
+                                fullName: case.fullName || case.name || "Unknown",
+                                currentStatus: case.currentStatus || case.status || "missing",
+                                latitude: case.latitude || case.lat,
+                                longitude: case.longitude || case.lng,
+                                city: case.city,
+                                state: case.state,
+                                dateAdded: case.dateAdded || case.createdAt || new Date(),
+                                address: case.address,
+                                age: case.age,
+                                gender: case.gender,
+                                dateOfBirth: case.dateOfBirth
+                            }));
+                            apiData = [...apiData, ...convertedCases];
+                        }
                     }
-                    return;
+                } catch (publicCasesError) {
+                    console.log("Public cases data not available:", publicCasesError);
                 }
-
-                displayRunners(currentData);
-                updateStatistics();
-                if (loadingEl) loadingEl.style.display = "none";
                 
-            } catch (error) {
-                console.error("Error loading map data:", error);
-                if (loadingEl) loadingEl.style.display = "none";
-                if (errorEl) {
-                    errorEl.style.display = "block";
-                    errorEl.textContent = `Error loading data: ${error.message}`;
+                currentData = apiData;                
+                // Fetch real data from API
+                let apiData = [];
+                try {
+                    if (window.apiHelpers && window.apiHelpers.getWithRetry) {
+                        const runners = await window.apiHelpers.getWithRetry("/api/Runners");
+                        if (runners && Array.isArray(runners)) {
+                            apiData = runners;
+                        }
+                    }
+                } catch (apiError) {
+                    console.log("API data not available, using empty dataset:", apiError);
                 }
-            }
-        }
-
-        // Enhanced marker creation with better styling
-        function createCustomMarker(lat, lng, status, data) {
-            const colors = {
-                "missing": "#f59e0b",
-                "found": "#dc2626", 
-                "safe": "#10b981",
-                "urgent": "#ef4444"
-            };
-            
-            const color = colors[status] || "#666";
-            const radius = status === "urgent" ? 15 : 10;
-            
-            const marker = L.circleMarker([lat, lng], {
-                radius: radius,
-                fillColor: color,
-                color: "#fff",
-                weight: 3,
-                opacity: 1,
-                fillOpacity: 0.8
-            });
-
-            return marker;
-        }
-
-        // Enhanced popup content with more details
-        function createPopupContent(runner) {
-            const statusClass = runner.currentStatus?.toLowerCase().replace(/s+/g, "-") || "unknown";
-            const age = calculateAge(runner.dateOfBirth);
-            const daysSinceAdded = Math.floor((new Date() - new Date(runner.dateAdded)) / (1000 * 60 * 60 * 24));
-            
-            return `
-                <div class="runner-popup">
-                    <h3>${runner.fullName}</h3>
-                    <div class="status-badge status-${statusClass}">${runner.currentStatus || "Unknown"}</div>
-                    
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <div class="info-label">Age</div>
-                            <div class="info-value">${age} years</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Gender</div>
-                            <div class="info-value">${runner.gender || "Not specified"}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Case ID</div>
-                            <div class="info-value">#${runner.id.toString().padStart(4, "0")}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Days Active</div>
-                            <div class="info-value">${daysSinceAdded}</div>
-                        </div>
-                    </div>
-                    
-                    ${runner.address ? `
-                        <div class="info-item">
-                            <div class="info-label">Address</div>
-                            <div class="info-value">${runner.address}</div>
-                        </div>
-                    ` : ""}
-                    
-                    ${runner.city && runner.state ? `
-                        <div class="info-item">
-                            <div class="info-label">Location</div>
-                            <div class="info-value">${runner.city}, ${runner.state}</div>
-                        </div>
-                    ` : ""}
-                    
-                    <div class="info-item">
-                        <div class="info-label">Reported</div>
-                        <div class="info-value">${new Date(runner.dateAdded).toLocaleDateString()}</div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Calculate age from date of birth
-        function calculateAge(dateOfBirth) {
-            if (!dateOfBirth) return "Unknown";
-            const birthDate = new Date(dateOfBirth);
-            const today = new Date();
-            let age = today.getFullYear() - birthDate.getFullYear();
-            const monthDiff = today.getMonth() - birthDate.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
-            return age;
-        }
-
-        // Enhanced display with filtering
-        function displayRunners(runners) {
-            if (!markerClusterGroup) {
-                console.error("Marker cluster group not initialized");
-                return;
-            }
-            
-            markerClusterGroup.clearLayers();
-            markers = [];
-
+                
+                // Also try to get public cases data
+                try {
+                    if (window.apiHelpers && window.apiHelpers.getWithRetry) {
+                        const publicCases = await window.apiHelpers.getWithRetry("/api/PublicCases");
+                        if (publicCases && Array.isArray(publicCases)) {
+                            // Convert public cases to runner format if needed
+                            const convertedCases = publicCases.map(case => ({
+                                id: case.id,
+                                fullName: case.fullName || case.name || "Unknown",
+                                currentStatus: case.currentStatus || case.status || "missing",
+                                latitude: case.latitude || case.lat,
+                                longitude: case.longitude || case.lng,
+                                city: case.city,
+                                state: case.state,
+                                dateAdded: case.dateAdded || case.createdAt || new Date(),
+                                address: case.address,
+                                age: case.age,
+                                gender: case.gender,
+                                dateOfBirth: case.dateOfBirth
+                            }));
+                            apiData = [...apiData, ...convertedCases];
+                        }
+                    }
+                } catch (publicCasesError) {
+                    console.log("Public cases data not available:", publicCasesError);
+                }
+                
+                currentData = apiData;
             runners.forEach(runner => {
                 const marker = createCustomMarker(
                     runner.latitude, 
