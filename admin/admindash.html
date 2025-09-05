@@ -573,36 +573,8 @@
             }
         }
     </style>
-</head>
-<body>
-    <div class="admin-dashboard" id="adminDashboard">
-        <!-- Dashboard Header -->
-        <div class="dashboard-header">
-            <div class="admin-profile">
-                <div class="admin-avatar" id="adminAvatar">
-                    <!-- Will be populated by JavaScript -->
-                </div>
-                <div class="admin-info">
-                    <h1 id="adminName">Admin Dashboard</h1>
-                    <p id="adminEmail">Loading...</p>
-                    <div class="live-indicator">
-                        <div class="live-dot"></div>
-                        <span>Live Database Connection</span>
-                    </div>
-                    <button id="logoutBtn" class="logout-button" onclick="logout()">
-                        <span>🚪 Logout</span>
-                    </button>
-                    <button id="refreshBtn" class="refresh-button" onclick="refreshDashboard()">
-                        <span>🔄 Refresh</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        </div>
-        
         <style>
-        /* Enhanced Admin Features Styles */
+        
         .admin-features {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -1034,8 +1006,33 @@
                 padding: 8px;
             }
         }
+        </style>
     </style>
 </head>
+<body>
+    <div class="admin-dashboard" id="adminDashboard">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="admin-profile">
+                <div class="admin-avatar" id="adminAvatar">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+                <div class="admin-info">
+                    <h1 id="adminName">Admin Dashboard</h1>
+                    <p id="adminEmail">Loading...</p>
+                    <div class="live-indicator">
+                        <div class="live-dot"></div>
+                        <span>Live Database Connection</span>
+                    </div>
+                    <button id="logoutBtn" class="logout-button" onclick="logout()">
+                        <span>🚪 Logout</span>
+                    </button>
+                    <button id="refreshBtn" class="refresh-button" onclick="refreshDashboard()">
+                        <span>🔄 Refresh</span>
+                    </button>
+                </div>
+            </div>
+        </div>
 <body>
     <div class="admin-dashboard" id="adminDashboard">
         <!-- Dashboard Header -->
