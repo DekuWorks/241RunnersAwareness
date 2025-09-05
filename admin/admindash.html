@@ -253,6 +253,225 @@
             margin-top: 5px;
         }
         
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .modal-body {
+            padding: 30px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
+        .modal-footer {
+            padding: 20px 30px;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: #dc2626;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #b91c1c;
+        }
+        
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+        
+        /* Admins List Styles */
+        .admins-list {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .admin-item {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #dc2626;
+            transition: all 0.3s ease;
+        }
+        
+        .admin-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .admin-item-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .admin-avatar-small {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .admin-details h4 {
+            margin: 0 0 5px 0;
+            color: #1f2937;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .admin-details p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        .admin-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        
+        .admin-status.active {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        
+        .admin-status.inactive {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .admin-role {
+            background-color: #dbeafe;
+            color: #1e40af;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 5px;
+            display: inline-block;
+        }
+        
+        /* Loading state for modal */
+        .admins-list.loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+        
+        .admins-list.loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #dc2626;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+        
         /* Toast Notifications */
         .toast-container {
             position: fixed;
@@ -322,6 +541,21 @@
                 grid-template-columns: 1fr;
                 gap: 15px;
             }
+            
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+            
+            .modal-header, .modal-body, .modal-footer {
+                padding: 20px;
+            }
+            
+            .admin-item-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -331,6 +565,11 @@
             
             .stat-number {
                 font-size: 2rem;
+            }
+            
+            .modal-content {
+                width: 98%;
+                margin: 5% auto;
             }
         }
     </style>
@@ -382,6 +621,25 @@
             <div class="stat-card">
                 <h3>System Status</h3>
                 <p class="stat-number" id="systemStatus">-</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admins Modal -->
+    <div id="adminsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>All Admin Users</h2>
+                <button class="modal-close" onclick="closeAdminsModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="adminsList" class="admins-list">
+                    <!-- Admin list will be populated here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAdminsModal()">Close</button>
+                <button class="btn btn-primary" onclick="refreshAdminsList()">Refresh</button>
             </div>
         </div>
     </div>
@@ -494,7 +752,7 @@
             console.log("🔍 Retrieved token:", token ? "Present (length: " + token.length + ")" : "Missing");
             const role = storage.get('ra_admin_role');
             
-            console.log('🔐 Authentication check:', {
+            console.log('�� Authentication check:', {
                 hasToken: !!token,
                 role: role,
                 isValidRole: role && role.toLowerCase() === 'admin'
@@ -812,6 +1070,92 @@
             }
         }
         
+        // ===== MODAL FUNCTIONS =====
+        
+        function openAdminsModal() {
+            console.log('Opening admins modal...');
+            const modal = document.getElementById('adminsModal');
+            if (modal) {
+                modal.style.display = 'block';
+                loadAdminsInModal();
+            }
+        }
+        
+        function closeAdminsModal() {
+            console.log('Closing admins modal...');
+            const modal = document.getElementById('adminsModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        async function loadAdminsInModal() {
+            const adminsList = document.getElementById('adminsList');
+            if (!adminsList) return;
+            
+            try {
+                // Show loading state
+                adminsList.innerHTML = '<div class="loading">Loading admins...</div>';
+                adminsList.classList.add('loading');
+                
+                // Load fresh admin data
+                await loadAdmins();
+                
+                // Clear loading state
+                adminsList.classList.remove('loading');
+                
+                // Render admin list
+                renderAdminsList();
+                
+                showToast('Admin list loaded successfully!', 'success', 3000);
+            } catch (error) {
+                console.error('Error loading admins in modal:', error);
+                adminsList.innerHTML = '<div style="text-align: center; padding: 40px; color: #dc2626;">Failed to load admin list. Please try again.</div>';
+                showToast('Failed to load admin list', 'error');
+            }
+        }
+        
+        function renderAdminsList() {
+            const adminsList = document.getElementById('adminsList');
+            if (!adminsList) return;
+            
+            if (dashboardData.admins.length === 0) {
+                adminsList.innerHTML = '<div style="text-align: center; padding: 40px; color: #6b7280;">No admin users found.</div>';
+                return;
+            }
+            
+            const adminsHTML = dashboardData.admins.map(admin => {
+                const initials = `${admin.firstName.charAt(0)}${admin.lastName.charAt(0)}`;
+                const fullName = `${admin.firstName} ${admin.lastName}`;
+                const isCurrentAdmin = currentAdmin && currentAdmin.email === admin.email;
+                
+                return `
+                    <div class="admin-item ${isCurrentAdmin ? 'current-admin' : ''}">
+                        <div class="admin-item-header">
+                            <div class="admin-avatar-small">${initials}</div>
+                            <div class="admin-details">
+                                <h4>${fullName} ${isCurrentAdmin ? '(You)' : ''}</h4>
+                                <p>${admin.email}</p>
+                                <div class="admin-role">${admin.role}</div>
+                                <div class="admin-status ${admin.isActive !== false ? 'active' : 'inactive'}">
+                                    <span>●</span>
+                                    ${admin.isActive !== false ? 'Active' : 'Inactive'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            adminsList.innerHTML = adminsHTML;
+        }
+        
+        async function refreshAdminsList() {
+            console.log('Refreshing admins list...');
+            showToast('Refreshing admin list...', 'info', 2000);
+            await loadAdminsInModal();
+        }
+        
         // ===== LOGOUT FUNCTION =====
         
         function logout() {
@@ -844,12 +1188,6 @@
             showToast('Refreshing dashboard...', 'info', 2000);
             await loadDashboardData();
             showToast('Dashboard refreshed!', 'success', 3000);
-        }
-        
-        // ===== UTILITY FUNCTIONS =====
-        
-        function openAdminsModal() {
-            showToast('Admin management modal coming soon', 'info', 3000);
         }
         
         // ===== INITIALIZATION =====
@@ -896,6 +1234,21 @@
             window.addEventListener('unhandledrejection', function(event) {
                 console.error('Unhandled promise rejection:', event.reason);
                 showToast('A network error occurred. Please check your connection.', 'error');
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('adminsModal');
+                if (event.target === modal) {
+                    closeAdminsModal();
+                }
+            });
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    closeAdminsModal();
+                }
             });
             
             // Initialize dashboard
