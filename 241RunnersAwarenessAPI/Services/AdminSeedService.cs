@@ -31,7 +31,8 @@ namespace _241RunnersAwarenessAPI.Services
                 
                 if (adminExists)
                 {
-                    _logger.LogInformation("Admin users already exist, skipping seed operation");
+                    _logger.LogInformation("Admin users already exist, updating passwords...");
+                    await UpdateAdminPasswordsAsync();
                     return;
                 }
 
@@ -46,7 +47,7 @@ namespace _241RunnersAwarenessAPI.Services
                         FirstName = "Marcus",
                         LastName = "Brown",
                         Role = "admin",
-                        PhoneNumber = "(555) 345-6789",
+                        PhoneNumber = "5553456789",
                         Organization = "241 Runners Awareness",
                         Title = "Co-Founder",
                         Credentials = "Co-Founder",
@@ -58,11 +59,11 @@ namespace _241RunnersAwarenessAPI.Services
                     new User
                     {
                         Email = "danielcarey9770@yahoo.com",
-                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("daniel2025"),
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("Daniel2025!"),
                         FirstName = "Daniel",
                         LastName = "Carey",
                         Role = "admin",
-                        PhoneNumber = "(555) 456-7890",
+                        PhoneNumber = "5554567890",
                         Organization = "241 Runners Awareness",
                         Title = "Co-Founder",
                         Credentials = "Co-Founder",
@@ -74,15 +75,15 @@ namespace _241RunnersAwarenessAPI.Services
                     new User
                     {
                         Email = "lthomas3350@gmail.com",
-                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("lisa2025"),
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("Lisa2025!"),
                         FirstName = "Lisa",
                         LastName = "Thomas",
                         Role = "admin",
-                        PhoneNumber = "(555) 567-8901",
+                        PhoneNumber = "5555678901",
                         Organization = "241 Runners Awareness",
                         Title = "Founder",
                         Credentials = "Founder",
-                        Specialization = "Leadership & Strategy",
+                        Specialization = "Leadership Strategy",
                         YearsOfExperience = "5+",
                         IsActive = true,
                         CreatedAt = DateTime.UtcNow
@@ -90,11 +91,11 @@ namespace _241RunnersAwarenessAPI.Services
                     new User
                     {
                         Email = "tinaleggins@yahoo.com",
-                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("tina2025"),
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("Tina2025!"),
                         FirstName = "Tina",
                         LastName = "Matthews",
                         Role = "admin",
-                        PhoneNumber = "(555) 678-9012",
+                        PhoneNumber = "5556789012",
                         Organization = "241 Runners Awareness",
                         Title = "Program Director",
                         Credentials = "Program Director",
@@ -106,11 +107,11 @@ namespace _241RunnersAwarenessAPI.Services
                     new User
                     {
                         Email = "mmelasky@iplawconsulting.com",
-                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("mark2025"),
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("Mark2025!"),
                         FirstName = "Mark",
                         LastName = "Melasky",
                         Role = "admin",
-                        PhoneNumber = "(555) 789-0123",
+                        PhoneNumber = "5557890123",
                         Organization = "IP Law Consulting",
                         Title = "Intellectual Property Lawyer",
                         Credentials = "Attorney at Law",
@@ -122,11 +123,11 @@ namespace _241RunnersAwarenessAPI.Services
                     new User
                     {
                         Email = "ralphfrank900@gmail.com",
-                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("ralph2025"),
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("Ralph2025!"),
                         FirstName = "Ralph",
                         LastName = "Frank",
                         Role = "admin",
-                        PhoneNumber = "(555) 890-1234",
+                        PhoneNumber = "5558901234",
                         Organization = "241 Runners Awareness",
                         Title = "Administrator",
                         Credentials = "System Administrator",
@@ -159,6 +160,43 @@ namespace _241RunnersAwarenessAPI.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while seeding admin users");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Updates admin user passwords to the new secure passwords
+        /// </summary>
+        private async Task UpdateAdminPasswordsAsync()
+        {
+            try
+            {
+                var adminPasswordUpdates = new Dictionary<string, string>
+                {
+                    { "danielcarey9770@yahoo.com", "Daniel2025!" },
+                    { "lthomas3350@gmail.com", "Lisa2025!" },
+                    { "tinaleggins@yahoo.com", "Tina2025!" },
+                    { "mmelasky@iplawconsulting.com", "Mark2025!" },
+                    { "ralphfrank900@gmail.com", "Ralph2025!" }
+                };
+
+                foreach (var update in adminPasswordUpdates)
+                {
+                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == update.Key.ToLower());
+                    if (user != null)
+                    {
+                        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(update.Value);
+                        user.UpdatedAt = DateTime.UtcNow;
+                        _logger.LogInformation($"Updated password for admin user: {user.Email}");
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Admin password updates completed successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while updating admin passwords");
                 throw;
             }
         }
