@@ -41,7 +41,8 @@ jobs:
       - name: Check for secrets in code
         uses: trufflesecurity/trufflehog@main
         with:
-          extra_args: --only-verified --fail || echo "Secret scan completed"
+          extra_args: --only-verified --fail
+        continue-on-error: true
           
       - name: Validate HTML
         run: |
