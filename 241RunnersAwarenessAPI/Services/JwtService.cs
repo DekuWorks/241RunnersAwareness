@@ -9,10 +9,12 @@ namespace _241RunnersAwarenessAPI.Services
     public class JwtService
     {
         private readonly IConfiguration _configuration;
+        private readonly ILogger<JwtService> _logger;
 
-        public JwtService(IConfiguration configuration)
+        public JwtService(IConfiguration configuration, ILogger<JwtService> logger)
         {
             _configuration = configuration;
+            _logger = logger;
         }
 
         private string GetJwtKey()
@@ -80,13 +82,14 @@ namespace _241RunnersAwarenessAPI.Services
                     ValidateAudience = true,
                     ValidAudience = GetJwtAudience(),
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
+                    ClockSkew = TimeSpan.FromMinutes(5)
                 }, out SecurityToken validatedToken);
 
                 return principal;
             }
-            catch
+            catch (Exception ex)
             {
+                _logger?.LogError(ex, "JWT token validation failed");
                 return null;
             }
         }
