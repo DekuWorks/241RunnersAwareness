@@ -23,7 +23,7 @@ jobs:
     - name: Test API Health
       run: |
         echo "Testing API health endpoint..."
-        response=$(curl -s -o /dev/null -w "%{http_code}" https://241runners-api.azurewebsites.net/api/auth/health)
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://241runners-api.azurewebsites.net/api/Auth/health)
         if [ "$response" = "200" ]; then
           echo "✅ API health check passed"
         else
@@ -34,9 +34,10 @@ jobs:
     - name: Test Admin Login
       run: |
         echo "Testing admin login..."
-        response=$(curl -s -X POST "https://241runners-api.azurewebsites.net/api/auth/login" \
+        response=$(curl -s -X POST "https://241runners-api.azurewebsites.net/api/Auth/login" \
           -H "Content-Type: application/json" \
-          -d '{"email":"dekuworks1@gmail.com","password":"NewAdmin123!@"}' \
+          -H "X-Client: 241RA-Admin/1.0" \
+          -d '{"email":"dekuworks1@gmail.com","password":"marcus2025"}' \
           -o /dev/null -w "%{http_code}")
         if [ "$response" = "200" ]; then
           echo "✅ Admin login test passed"
@@ -84,4 +85,4 @@ jobs:
         echo "✅ API: https://241runners-api.azurewebsites.net"
         echo "✅ Static Site: https://241runnersawareness.org"
         echo "✅ Admin Dashboard: https://241runnersawareness.org/admin/"
-        echo "✅ Cases Page: https://241runnersawareness.org/cases.html" 
+        echo "✅ Cases Page: https://241runnersawareness.org/cases.html"
