@@ -9,7 +9,7 @@
   <script src="https://241runnersawareness.org/js/auth.js" defer></script>
   <style>
     .profile-container {
-      max-width: 800px;
+      max-width: 1000px;
       margin: 0 auto;
       padding: 2rem;
     }
@@ -47,61 +47,68 @@
     .profile-email {
       font-size: 1.1rem;
       opacity: 0.9;
-      margin: 0;
+      margin: 0 0 0.5rem 0;
     }
 
-    .profile-stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-      margin: 2rem 0;
-    }
-
-    .stat-item {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 1rem;
-      border-radius: 12px;
-      text-align: center;
-      backdrop-filter: blur(10px);
-    }
-
-    .stat-number {
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-bottom: 0.5rem;
-    }
-
-    .stat-label {
-      font-size: 0.9rem;
+    .profile-role {
+      font-size: 1rem;
       opacity: 0.8;
+      margin: 0;
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      display: inline-block;
     }
 
-    .profile-sections {
+    .profile-content {
       display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 2rem;
+      margin-bottom: 3rem;
     }
 
     .profile-section {
       background: white;
-      border-radius: 16px;
       padding: 2rem;
+      border-radius: 16px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      border: 1px solid #e5e7eb;
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 2px solid #f3f4f6;
     }
 
     .section-title {
       font-size: 1.5rem;
-      color: #1f2937;
-      margin: 0;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .info-item:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .info-value {
+      color: #6b7280;
+      text-align: right;
     }
 
     .edit-btn {
@@ -109,432 +116,668 @@
       color: white;
       border: none;
       padding: 0.5rem 1rem;
-      border-radius: 8px;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
       cursor: pointer;
-      font-size: 0.9rem;
-      transition: background-color 0.2s;
+      transition: background-color 0.3s ease;
     }
 
     .edit-btn:hover {
       background: #b91c1c;
     }
 
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
+    .my-cases-section {
+      grid-column: 1 / -1;
     }
 
-    .info-item {
-      display: flex;
-      flex-direction: column;
+    .case-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
     }
 
-    .info-label {
-      font-weight: 600;
-      color: #6b7280;
-      margin-bottom: 0.5rem;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .info-value {
-      color: #1f2937;
-      font-size: 1rem;
-      padding: 0.75rem;
-      background: #f9fafb;
-      border-radius: 8px;
+    .case-item {
+      padding: 1rem;
       border: 1px solid #e5e7eb;
-    }
-
-    .quick-actions {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-
-    .action-card {
-      background: #f8fafc;
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 1.5rem;
-      text-decoration: none;
-      color: inherit;
-      transition: all 0.3s;
-      text-align: center;
-    }
-
-    .action-card:hover {
-      border-color: #dc2626;
-      background: #fef2f2;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(220, 38, 38, 0.15);
-    }
-
-    .action-icon {
-      font-size: 2rem;
+      border-radius: 8px;
       margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .case-item:hover {
+      border-color: #dc2626;
+      box-shadow: 0 2px 8px rgba(220, 38, 38, 0.1);
+    }
+
+    .case-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .case-name {
+      font-weight: 600;
+      color: #111827;
+      font-size: 1.1rem;
+    }
+
+    .case-status {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .status-missing {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status-found {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-investigating {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .case-details {
+      color: #6b7280;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .case-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-small {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary-small {
+      background: #dc2626;
+      color: white;
+    }
+
+    .btn-primary-small:hover {
+      background: #b91c1c;
+    }
+
+    .btn-secondary-small {
+      background: #6b7280;
+      color: white;
+    }
+
+    .btn-secondary-small:hover {
+      background: #4b5563;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #6b7280;
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .empty-state h3 {
+      margin-bottom: 0.5rem;
+      color: #374151;
+    }
+
+    .empty-state p {
+      margin-bottom: 1.5rem;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #6b7280;
+    }
+
+    .error {
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    /* Edit Form Styles */
+    .edit-form {
+      display: none;
+      background: #f9fafb;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+
+    .edit-form.active {
       display: block;
     }
 
-    .action-title {
-      color: #dc2626;
-      margin: 0 0 0.5rem 0;
-      font-weight: 600;
+    .form-group {
+      margin-bottom: 1rem;
     }
 
-    .action-desc {
-      color: #6b7280;
-      margin: 0;
-      font-size: 0.9rem;
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #374151;
     }
 
-    .loading-state {
-      text-align: center;
-      padding: 3rem;
-      color: #6b7280;
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
     }
 
-    .loading-spinner {
-      border: 4px solid #f3f4f6;
-      border-top: 4px solid #dc2626;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 1rem;
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
     }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    .form-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      margin-top: 1rem;
     }
 
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: #dc2626;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #b91c1c;
+    }
+
+    .btn-secondary {
+      background: #6b7280;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #4b5563;
+    }
+
+    /* Responsive Design */
     @media (max-width: 768px) {
       .profile-container {
         padding: 1rem;
       }
-      
+
+      .profile-content {
+        grid-template-columns: 1fr;
+      }
+
       .profile-header {
         padding: 1.5rem;
       }
-      
-      .profile-avatar {
-        width: 100px;
-        height: 100px;
-        font-size: 2.5rem;
-      }
-      
+
       .profile-name {
         font-size: 1.5rem;
-      }
-      
-      .info-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .quick-actions {
-        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
   <!-- Header -->
-  <header>
-    <div class="header-bar">
-      <img src="https://241runnersawareness.org/241-logo.jpg" alt="241 Runners Awareness Logo" class="logo" />
-      <h1>241 Runners Awareness</h1>
-    </div>
-    
-    <nav>
-      <a href="https://241runnersawareness.org">Home</a>
-      <a href="https://241runnersawareness.org/aboutus.html">About Us</a>
-      <a href="https://241runnersawareness.org/cases.html">Cases</a>
-      <a href="https://241runnersawareness.org/map.html">Map</a>
-      <a href="https://241runnersawareness.org/dna-tracking.html">DNA Tracking</a>
-      <a href="https://241runnersawareness.org/report-case.html">Report Case</a>
-      <a href="https://241runnersawareness.org/profile.html" aria-current="page">Profile</a>
-      <a href="https://241runnersawareness.org/dashboard.html">Dashboard</a>
-      <button id="logoutBtn" class="logout-btn">Logout</button>
+  <header class="header">
+    <nav class="nav-container">
+      <div class="nav-brand">
+        <a href="index.html">
+          <img src="241-logo.jpg" alt="241 Runners Awareness" class="logo">
+          <span class="brand-text">241 Runners Awareness</span>
+        </a>
+      </div>
+      
+      <div class="nav-menu" id="navMenu">
+        <a href="index.html">Home</a>
+        <a href="aboutus.html">About</a>
+        <a href="cases.html">Cases</a>
+        <a href="map.html">Map</a>
+        <a href="dna-tracking.html">DNA Tracking</a>
+        <a href="report-case.html">Report Case</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="profile.html" class="active">Profile</a>
+        <a href="my-cases.html">My Cases</a>
+        <a href="#" id="logoutBtn" class="nav-login">Logout</a>
+      </div>
+      
+      <div class="nav-toggle" id="navToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
     </nav>
-    
-    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
-      ☀️
-    </button>
-    
-    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
   </header>
 
   <!-- Main Content -->
-  <main>
-    <div class="profile-container">
-      <!-- Loading State -->
-      <div id="loadingState" class="loading-state">
-        <div class="loading-spinner"></div>
-        <p>Loading your profile...</p>
+  <main class="profile-container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="profile-avatar" id="profileAvatar">
+        👤
+      </div>
+      <h1 class="profile-name" id="profileName">Loading...</h1>
+      <p class="profile-email" id="profileEmail">Loading...</p>
+      <span class="profile-role" id="profileRole">Loading...</span>
+    </div>
+
+    <!-- Profile Content -->
+    <div class="profile-content">
+      <!-- Personal Information -->
+      <div class="profile-section">
+        <h2 class="section-title">
+          <span>👤</span>
+          Personal Information
+          <button class="edit-btn" onclick="toggleEditForm('personalInfo')">Edit</button>
+        </h2>
+        
+        <div class="info-grid" id="personalInfo">
+          <div class="info-item">
+            <span class="info-label">First Name</span>
+            <span class="info-value" id="firstName">Loading...</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Last Name</span>
+            <span class="info-value" id="lastName">Loading...</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Email</span>
+            <span class="info-value" id="email">Loading...</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Phone</span>
+            <span class="info-value" id="phone">Loading...</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Role</span>
+            <span class="info-value" id="role">Loading...</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Member Since</span>
+            <span class="info-value" id="memberSince">Loading...</span>
+          </div>
+        </div>
+
+        <!-- Edit Personal Information Form -->
+        <div class="edit-form" id="personalInfoForm">
+          <form id="updatePersonalForm">
+            <div class="form-group">
+              <label for="editFirstName">First Name</label>
+              <input type="text" id="editFirstName" name="firstName" required>
+            </div>
+            <div class="form-group">
+              <label for="editLastName">Last Name</label>
+              <input type="text" id="editLastName" name="lastName" required>
+            </div>
+            <div class="form-group">
+              <label for="editPhone">Phone Number</label>
+              <input type="tel" id="editPhone" name="phoneNumber">
+            </div>
+            <div class="form-group">
+              <label for="editRole">Role</label>
+              <select id="editRole" name="role" required>
+                <option value="user">User</option>
+                <option value="parent">Parent</option>
+                <option value="caregiver">Caregiver</option>
+                <option value="aba_therapist">ABA Therapist</option>
+                <option value="adoptive_parent">Adoptive Parent</option>
+              </select>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" onclick="toggleEditForm('personalInfo')">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+          </form>
+        </div>
       </div>
 
-      <!-- Profile Content -->
-      <div id="profileContent" style="display: none;">
-        <!-- Profile Header -->
-        <div class="profile-header">
-          <div class="profile-avatar" id="profileAvatar">
-            👤
+      <!-- Account Statistics -->
+      <div class="profile-section">
+        <h2 class="section-title">
+          <span>📊</span>
+          Account Statistics
+        </h2>
+        
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Total Cases Reported</span>
+            <span class="info-value" id="totalCases">-</span>
           </div>
-          <h1 class="profile-name" id="profileName">Loading...</h1>
-          <p class="profile-email" id="profileEmail">loading@example.com</p>
-          
-          <!-- Profile Stats -->
-          <div class="profile-stats">
-            <div class="stat-item">
-              <div class="stat-number" id="totalCases">0</div>
-              <div class="stat-label">Cases Reported</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-number" id="activeCases">0</div>
-              <div class="stat-label">Active Cases</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-number" id="memberSince">0</div>
-              <div class="stat-label">Days Member</div>
-            </div>
+          <div class="info-item">
+            <span class="info-label">Active Cases</span>
+            <span class="info-value" id="activeCases">-</span>
           </div>
-        </div>
-
-        <!-- Personal Information -->
-        <div class="profile-section">
-          <div class="section-header">
-            <h2 class="section-title">Personal Information</h2>
-            <button class="edit-btn" onclick="editPersonalInfo()">Edit</button>
+          <div class="info-item">
+            <span class="info-label">Resolved Cases</span>
+            <span class="info-value" id="resolvedCases">-</span>
           </div>
-          <div class="info-grid">
-            <div class="info-item">
-              <label class="info-label">Full Name</label>
-              <div class="info-value" id="fullName">Loading...</div>
-            </div>
-            <div class="info-item">
-              <label class="info-label">Email</label>
-              <div class="info-value" id="email">Loading...</div>
-            </div>
-            <div class="info-label">Phone</label>
-            <div class="info-value" id="phone">Loading...</div>
-            </div>
-            <div class="info-item">
-              <label class="info-label">Location</label>
-              <div class="info-value" id="location">Loading...</div>
-            </div>
-            <div class="info-item">
-              <label class="info-label">Member Since</label>
-              <div class="info-value" id="memberDate">Loading...</div>
-            </div>
-            <div class="info-item">
-              <label class="info-label">Account Status</label>
-              <div class="info-value" id="accountStatus">Loading...</div>
-            </div>
+          <div class="info-item">
+            <span class="info-label">Cases This Month</span>
+            <span class="info-value" id="monthlyCases">-</span>
           </div>
         </div>
+      </div>
 
-        <!-- Quick Actions -->
-        <div class="profile-section">
-          <div class="section-header">
-            <h2 class="section-title">Quick Actions</h2>
-          </div>
-          <div class="quick-actions">
-            <a href="https://241runnersawareness.org/report-case.html" class="action-card">
-              <span class="action-icon">📝</span>
-              <h3 class="action-title">Report a Case</h3>
-              <p class="action-desc">Report a missing person or update existing case</p>
-            </a>
-            <a href="https://241runnersawareness.org/dashboard.html" class="action-card">
-              <span class="action-icon">📊</span>
-              <h3 class="action-title">View Dashboard</h3>
-              <p class="action-desc">See your cases and activity overview</p>
-            </a>
-            <a href="https://241runnersawareness.org/cases.html" class="action-card">
-              <span class="action-icon">🔍</span>
-              <h3 class="action-title">Browse Cases</h3>
-              <p class="action-desc">View all active missing person cases</p>
-            </a>
-            <a href="https://241runnersawareness.org/map.html" class="action-card">
-              <span class="action-icon">🗺️</span>
-              <h3 class="action-title">View Map</h3>
-              <p class="action-desc">See cases on interactive map</p>
-            </a>
-          </div>
+      <!-- My Cases -->
+      <div class="profile-section my-cases-section">
+        <h2 class="section-title">
+          <span>📋</span>
+          My Recent Cases
+          <a href="my-cases.html" class="btn-small btn-primary-small" style="margin-left: auto;">View All</a>
+        </h2>
+        
+        <div id="myCasesList">
+          <div class="loading">Loading your cases...</div>
         </div>
       </div>
     </div>
   </main>
 
-  <footer role="contentinfo">
-    <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Use</a>
+        <a href="aboutus.html">About Us</a>
+      </div>
+    </div>
   </footer>
 
   <script>
     // API Configuration
-            const API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+    let API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
     
-    // Check authentication on page load
-    document.addEventListener('DOMContentLoaded', function() {
-      checkAuth();
-      loadProfileData();
-      setupEventListeners();
-    });
+    // Load API configuration
+    async function loadConfig() {
+      try {
+        const response = await fetch('/config.json');
+        const config = await response.json();
+        API_BASE_URL = config.API_BASE_URL;
+      } catch (error) {
+        console.warn('Failed to load config.json, using default API URL');
+      }
+    }
 
     // Check authentication
     function checkAuth() {
       const user = localStorage.getItem('user');
       if (!user) {
-        window.location.href = 'https://241runnersawareness.org/login.html';
-        return;
+        window.location.href = 'login.html';
+        return false;
+      }
+      return JSON.parse(user);
+    }
+
+    // Get auth token
+    function getAuthToken() {
+      const user = localStorage.getItem('user');
+      if (user) {
+        const userData = JSON.parse(user);
+        return userData.token;
+      }
+      return null;
+    }
+
+    // Load user profile information
+    function loadUserProfile() {
+      const userData = checkAuth();
+      if (userData) {
+        const user = userData.user;
+        
+        // Update header
+        document.getElementById('profileName').textContent = `${user.firstName} ${user.lastName}`;
+        document.getElementById('profileEmail').textContent = user.email;
+        document.getElementById('profileRole').textContent = user.role;
+        
+        // Update personal information
+        document.getElementById('firstName').textContent = user.firstName;
+        document.getElementById('lastName').textContent = user.lastName;
+        document.getElementById('email').textContent = user.email;
+        document.getElementById('phone').textContent = user.phone || 'Not provided';
+        document.getElementById('role').textContent = user.role;
+        document.getElementById('memberSince').textContent = new Date(user.createdAt).toLocaleDateString();
+        
+        // Update edit form
+        document.getElementById('editFirstName').value = user.firstName;
+        document.getElementById('editLastName').value = user.lastName;
+        document.getElementById('editPhone').value = user.phone || '';
+        document.getElementById('editRole').value = user.role;
       }
     }
 
-    // Set up event listeners
-    function setupEventListeners() {
-      // Logout button
-      const logoutBtn = document.getElementById('logoutBtn');
-      if (logoutBtn) {
-        logoutBtn.addEventListener('click', logout);
-      }
-
-      // Theme toggle
-      const themeToggle = document.getElementById('theme-toggle');
-      if (themeToggle) {
-        themeToggle.addEventListener('click', toggleTheme);
-      }
-
-      // Hamburger menu
-      const hamburger = document.querySelector('.hamburger');
-      const nav = document.querySelector('nav');
-      if (hamburger && nav) {
-        hamburger.addEventListener('click', function() {
-          hamburger.classList.toggle('active');
-          nav.classList.toggle('active');
-        });
-      }
-    }
-
-    // Load profile data
-    async function loadProfileData() {
+    // Load user's cases
+    async function loadUserCases() {
       try {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (!user || !user.token) {
-          throw new Error('No authentication token found');
+        const token = getAuthToken();
+        if (!token) {
+          throw new Error('No authentication token');
         }
 
-        // Load user profile from API
-        const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+        const userData = checkAuth();
+        
+        // Get all runners (this would need to be filtered by user in the API)
+        const response = await fetch(`${API_BASE_URL}/runners`, {
           headers: {
-            'Authorization': `Bearer ${user.token}`,
-            'Content-Type': 'application/json'
+            'Authorization': `Bearer ${token}`
           }
         });
 
         if (!response.ok) {
-          throw new Error('Failed to load profile data');
+          throw new Error('Failed to load cases');
         }
 
-        const profileData = await response.json();
-        updateProfileDisplay(profileData);
+        const cases = await response.json();
+        
+        // Filter cases by current user (this is a client-side filter for now)
+        const userCases = cases.filter(caseItem => 
+          caseItem.reportedByUserId === userData.user.id || 
+          caseItem.contactInfo?.includes(userData.user.email)
+        );
+
+        updateCaseStatistics(userCases);
+        displayUserCases(userCases);
 
       } catch (error) {
-        console.error('Error loading profile:', error);
-        // Use local storage data as fallback
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (user) {
-          updateProfileDisplay({
-            firstName: user.firstName || 'User',
-            lastName: user.lastName || '',
-            email: user.email || 'user@example.com',
-            phone: user.phone || 'Not provided',
-            location: user.location || 'Not provided',
-            memberSince: user.createdAt || new Date().toISOString(),
-            casesReported: 0,
-            activeCases: 0
-          });
+        console.error('Error loading user cases:', error);
+        showError('Failed to load your cases. Please try again.');
+      }
+    }
+
+    // Update case statistics
+    function updateCaseStatistics(cases) {
+      const totalCases = cases.length;
+      const activeCases = cases.filter(c => c.status === 'missing' || c.status === 'investigating').length;
+      const resolvedCases = cases.filter(c => c.status === 'found' || c.status === 'resolved').length;
+      
+      // Cases from this month
+      const thisMonth = new Date();
+      thisMonth.setDate(1);
+      const monthlyCases = cases.filter(c => new Date(c.createdAt) >= thisMonth).length;
+
+      document.getElementById('totalCases').textContent = totalCases;
+      document.getElementById('activeCases').textContent = activeCases;
+      document.getElementById('resolvedCases').textContent = resolvedCases;
+      document.getElementById('monthlyCases').textContent = monthlyCases;
+    }
+
+    // Display user cases
+    function displayUserCases(cases) {
+      const container = document.getElementById('myCasesList');
+      const recentCases = cases.slice(0, 5); // Show last 5 cases
+
+      if (recentCases.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <h3>No cases yet</h3>
+            <p>You haven't reported any cases yet.</p>
+            <a href="report-case.html" class="btn-small btn-primary-small">Report Your First Case</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <ul class="case-list">
+          ${recentCases.map(caseItem => `
+            <li class="case-item">
+              <div class="case-header">
+                <div class="case-name">${caseItem.fullName || `${caseItem.firstName} ${caseItem.lastName}`}</div>
+                <div class="case-status status-${caseItem.status}">${caseItem.status}</div>
+              </div>
+              <div class="case-details">
+                <strong>Age:</strong> ${caseItem.age} | 
+                <strong>Location:</strong> ${caseItem.city}, ${caseItem.state} | 
+                <strong>Reported:</strong> ${new Date(caseItem.createdAt).toLocaleDateString()}
+              </div>
+              <div class="case-actions">
+                <a href="my-cases.html?id=${caseItem.id}" class="btn-small btn-primary-small">View Details</a>
+                <a href="report-case.html?update=${caseItem.id}" class="btn-small btn-secondary-small">Update</a>
+              </div>
+            </li>
+          `).join('')}
+        </ul>
+      `;
+    }
+
+    // Toggle edit form
+    function toggleEditForm(section) {
+      const form = document.getElementById(section + 'Form');
+      if (form) {
+        form.classList.toggle('active');
+      }
+    }
+
+    // Update personal information
+    document.getElementById('updatePersonalForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData.entries());
+      
+      try {
+        const token = getAuthToken();
+        const userData = checkAuth();
+        
+        const response = await fetch(`${API_BASE_URL}/admin/users/${userData.user.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+          // Update local storage
+          const updatedUser = { ...userData.user, ...data };
+          const updatedUserData = { ...userData, user: updatedUser };
+          localStorage.setItem('user', JSON.stringify(updatedUserData));
+          
+          // Reload profile
+          loadUserProfile();
+          toggleEditForm('personalInfo');
+          
+          showMessage('success', 'Profile updated successfully!');
+        } else {
+          const result = await response.json();
+          showMessage('error', result.message || 'Failed to update profile');
         }
-      } finally {
-        // Hide loading, show content
-        document.getElementById('loadingState').style.display = 'none';
-        document.getElementById('profileContent').style.display = 'block';
+        
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        showMessage('error', 'Network error. Please try again.');
       }
-    }
+    });
 
-    // Update profile display
-    function updateProfileDisplay(data) {
-      // Update header
-      const fullName = `${data.firstName || ''} ${data.lastName || ''}`.trim() || 'User';
-      const initials = fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+    // Show message
+    function showMessage(type, message) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${type}`;
+      messageDiv.textContent = message;
       
-      document.getElementById('profileAvatar').textContent = initials || '👤';
-      document.getElementById('profileName').textContent = fullName;
-      document.getElementById('profileEmail').textContent = data.email || 'No email';
-
-      // Update stats
-      document.getElementById('totalCases').textContent = data.casesReported || 0;
-      document.getElementById('activeCases').textContent = data.activeCases || 0;
+      const container = document.querySelector('.profile-container');
+      container.insertBefore(messageDiv, container.firstChild);
       
-      const memberDate = new Date(data.memberSince);
-      const daysSince = Math.floor((new Date() - memberDate) / (1000 * 60 * 60 * 24));
-      document.getElementById('memberSince').textContent = daysSince;
-
-      // Update personal info
-      document.getElementById('fullName').textContent = fullName;
-      document.getElementById('email').textContent = data.email || 'Not provided';
-      document.getElementById('phone').textContent = data.phone || 'Not provided';
-      document.getElementById('location').textContent = data.location || 'Not provided';
-      document.getElementById('memberDate').textContent = memberDate.toLocaleDateString();
-      document.getElementById('accountStatus').textContent = 'Active';
+      setTimeout(() => {
+        messageDiv.remove();
+      }, 5000);
     }
 
-    // Edit personal information
-    function editPersonalInfo() {
-      // For now, redirect to a settings page or show edit modal
-      alert('Edit functionality coming soon! This will allow you to update your profile information.');
+    // Show error message
+    function showError(message) {
+      showMessage('error', message);
     }
 
-    // Logout function
-    function logout() {
-      localStorage.removeItem('user');
-      window.location.href = 'https://241runnersawareness.org/login.html';
+    // Navigation functionality
+    const navToggle = document.getElementById('navToggle');
+    const navMenu = document.getElementById('navMenu');
+    
+    navToggle.addEventListener('click', function() {
+      navMenu.classList.toggle('active');
+      navToggle.classList.toggle('active');
+    });
+
+    // Logout functionality
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        localStorage.removeItem('user');
+        window.location.href = 'index.html';
+      });
     }
 
-    // Theme toggle
-    function toggleTheme() {
-      const body = document.body;
-      const themeToggle = document.getElementById('theme-toggle');
-      
-      body.classList.toggle('dark-mode');
-      
-      if (body.classList.contains('dark-mode')) {
-        localStorage.setItem('theme', 'dark');
-        themeToggle.textContent = '🌙';
-        themeToggle.setAttribute('aria-pressed', 'true');
-      } else {
-        localStorage.setItem('theme', 'light');
-        themeToggle.textContent = '☀️';
-        themeToggle.setAttribute('aria-pressed', 'false');
-      }
-    }
-
-    // Check for saved theme preference
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    if (currentTheme === 'dark') {
-      document.body.classList.add('dark-mode');
-      const themeToggle = document.getElementById('theme-toggle');
-      if (themeToggle) {
-        themeToggle.textContent = '🌙';
-        themeToggle.setAttribute('aria-pressed', 'true');
-      }
-    }
+    // Initialize profile
+    document.addEventListener('DOMContentLoaded', async function() {
+      await loadConfig();
+      loadUserProfile();
+      await loadUserCases();
+    });
   </script>
 </body>
 </html>
