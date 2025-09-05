@@ -227,7 +227,16 @@
     </style>
 </head>
 <body>
-    <div class="auth-container">
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <div class="loading-text">Creating your account...</div>
+        </div>
+    </div>    <div class="auth-container">
         <div class="auth-form">
             <h2>Sign Up</h2>
             
@@ -456,6 +465,51 @@
         // Initialize config
         loadConfig();
         
+        // Toast notification functions
+        function showToast(type, title, message, duration = 5000) {
+            const toastContainer = document.getElementById("toastContainer");
+            const toast = document.createElement("div");
+            toast.className = `toast ${type}`;
+            
+            const icon = type === "success" ? "✅" : type === "error" ? "❌" : type === "warning" ? "⚠️" : "ℹ️";
+            
+            toast.innerHTML = `
+                <div class="toast-icon">${icon}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="removeToast(this.parentElement)">&times;</button>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Trigger animation
+            setTimeout(() => toast.classList.add("show"), 100);
+            
+            // Auto remove
+            if (duration > 0) {
+                setTimeout(() => removeToast(toast), duration);
+            }
+        }
+        
+        function removeToast(toast) {
+            toast.classList.remove("show");
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.parentElement.removeChild(toast);
+                }
+            }, 300);
+        }
+        
+        function showLoadingOverlay(show = true) {
+            const overlay = document.getElementById("loadingOverlay");
+            if (show) {
+                overlay.classList.add("show");
+            } else {
+                overlay.classList.remove("show");
+            }
+        }        
         // Setup real-time validation when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
         
@@ -482,7 +536,7 @@
                 console.warn("Failed to load roles from API, using default options:", error);
             }
         }            setupRealTimeValidation();
-        });
+            loadAvailableRoles();        });
         
         // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
@@ -503,14 +557,15 @@
             });
         }
         
-        // Show error message
+        // Show error message (legacy - now uses toast)
         function showError(message) {
-            alertContainer.innerHTML = `<div class="error-message">${message}</div>`;
+            showToast("error", "Error", message);
         }
         
-        // Show success message
+        // Show success message (legacy - now uses toast)
         function showSuccess(message) {
-            alertContainer.innerHTML = `<div class="error-message" style="background: #efe; border-color: #cec; color: #3c3;">${message}</div>`;
+            showToast("success", "Success", message);
+        }            alertContainer.innerHTML = `<div class="error-message" style="background: #efe; border-color: #cec; color: #3c3;">${message}</div>`;
         }
         
         // Validate form
@@ -565,41 +620,84 @@
         }
         
         // Handle form submission
-        signupForm.addEventListener('submit', async function(e) {
+        signupForm.addEventListener("submit", async function(e) {
             e.preventDefault();
             
             if (!validateForm()) {
+                showToast("error", "Validation Error", "Please fix the errors above and try again.");
                 return;
             }
             
             // Show loading state
+            showLoadingOverlay(true);
             signupBtn.disabled = true;
-            signupBtnText.style.display = 'none';
-            signupBtnSpinner.style.display = 'inline';
+            signupBtnText.style.display = "none";
+            signupBtnSpinner.style.display = "inline";
             
-                            try {
-                    const formData = {
-                        email: document.getElementById('email').value.trim(),
-                        password: document.getElementById('password').value,
-                        firstName: document.getElementById('firstName').value.trim(),
-                        lastName: document.getElementById('lastName').value.trim(),
-                        role: document.getElementById('role').value,
-                        phoneNumber: document.getElementById('phoneNumber').value.trim() || null,
-                        organization: null,
-                        title: null
+            try {
+                const formData = {
+                    email: document.getElementById("email").value.trim(),
+                    password: document.getElementById("password").value,
+                    firstName: document.getElementById("firstName").value.trim(),
+                    lastName: document.getElementById("lastName").value.trim(),
+                    role: document.getElementById("role").value,
+                    phoneNumber: document.getElementById("phoneNumber").value.trim() || null,
+                    organization: null,
+                    title: null
+                };
+                
+                console.log("Sending registration data:", formData);
+                
+                const response = await fetch("https://241runners-api.azurewebsites.net/api/Auth/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                console.log("Response status:", response.status);
+                const result = await response.json();
+                console.log("Registration result:", result);
+                
+                if (result.success) {
+                    showToast("success", "Account Created!", "Welcome to 241 Runners Awareness! Redirecting to your profile...", 3000);
+                    
+                    // Store user data and token
+                    const userData = {
+                        token: result.token,
+                        user: {
+                            email: formData.email,
+                            firstName: formData.firstName,
+                            lastName: formData.lastName,
+                            role: formData.role,
+                            phone: formData.phoneNumber,
+                            createdAt: new Date().toISOString()
+                        }
                     };
                     
-                    console.log('Sending registration data:', formData);
+                    localStorage.setItem("user", JSON.stringify(userData));
                     
-                    // Use the full API URL for registration
-                    const response = await fetch('https://241runners-api.azurewebsites.net/api/auth/register', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(formData)
-                    });
-
+                    // Redirect to profile page after showing success message
+                    setTimeout(() => {
+                        window.location.href = "profile.html";
+                    }, 2000);
+                    
+                } else {
+                    showToast("error", "Registration Failed", result.message || "An error occurred during registration. Please try again.");
+                }
+                
+            } catch (error) {
+                console.error("Signup error:", error);
+                showToast("error", "Network Error", "Unable to connect to the server. Please check your internet connection and try again.");
+            } finally {
+                // Reset loading state
+                showLoadingOverlay(false);
+                signupBtn.disabled = false;
+                signupBtnText.style.display = "inline";
+                signupBtnSpinner.style.display = "none";
+            }
+        });
                     console.log('Response status:', response.status);
                     const result = await response.json();
                     console.log('Registration result:', result);
@@ -644,3 +742,142 @@
     </script>
 </body>
 </html>
+        
+        /* Toast Notification Styles */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            max-width: 400px;
+        }
+        
+        .toast {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-bottom: 10px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            border-left: 4px solid #dc2626;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast.success {
+            border-left-color: #10b981;
+        }
+        
+        .toast.error {
+            border-left-color: #ef4444;
+        }
+        
+        .toast.warning {
+            border-left-color: #f59e0b;
+        }
+        
+        .toast-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .toast.success .toast-icon {
+            color: #10b981;
+        }
+        
+        .toast.error .toast-icon {
+            color: #ef4444;
+        }
+        
+        .toast.warning .toast-icon {
+            color: #f59e0b;
+        }
+        
+        .toast-content {
+            flex: 1;
+        }
+        
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #1f2937;
+        }
+        
+        .toast-message {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .toast-close:hover {
+            color: #6b7280;
+        }
+        
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .loading-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .loading-spinner {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #dc2626;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            color: #374151;
+            font-weight: 500;
+        }
