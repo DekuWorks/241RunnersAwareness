@@ -1412,8 +1412,6 @@
                 const data = await apiRequest(`${API_BASE_URL}/Auth/verify`, {
                     headers: authHeader()
                 });
-                    headers: authHeader()
-                });
                 
                 currentAdmin = data.user;
                 updateAdminProfile();
@@ -1422,8 +1420,7 @@
                 clearAuthData();
                 window.location.href = '/admin/login.html';
             }
-        }
-        
+        }        
         function updateAdminProfile() {
             if (!currentAdmin) return;
 
