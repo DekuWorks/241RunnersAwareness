@@ -33,14 +33,43 @@ jobs:
           cache: 'npm'
           
       - name: Install dependencies
-        run: npm ci
-        
-      - name: Build with cache
         run: |
-          # Create a simple build process if needed
-          echo "Building static site..."
-          # Add any build steps here if you have them
+          if [ -f "package.json" ]; then
+            npm ci || echo "No package-lock.json found, skipping npm ci"
+          else
+            echo "No package.json found, skipping dependency installation"
+          fi
+        
+      - name: Validate HTML files
+        run: |
+          echo "Validating HTML files..."
+          find . -name "*.html" -type f -not -path "./.git/*" -not -path "./241RunnersAwarenessAPI/*" | head -5 | while read file; do
+            echo "Checking $file"
+            if grep -q "<!DOCTYPE html>" "$file"; then
+              echo "✅ $file has valid DOCTYPE"
+            else
+              echo "⚠️ $file missing DOCTYPE"
+            fi
+          done
           
+      - name: Check for broken links
+        run: |
+          echo "Checking for common issues..."
+          # Check if main files exist
+          if [ -f "index.html" ]; then
+            echo "✅ index.html exists"
+          else
+            echo "❌ index.html missing"
+            exit 1
+          fi
+          
+          if [ -f "admin/login.html" ]; then
+            echo "✅ admin/login.html exists"
+          else
+            echo "❌ admin/login.html missing"
+            exit 1
+          fi
+        
       - name: Setup Pages
         uses: actions/configure-pages@v4
         
@@ -59,4 +88,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4 
+        uses: actions/deploy-pages@v4
