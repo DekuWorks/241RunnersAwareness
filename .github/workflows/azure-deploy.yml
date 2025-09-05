@@ -55,21 +55,21 @@ jobs:
         echo "Waiting for Azure deployment to complete..."
         sleep 60
         
-    - name: Test health endpoint
+    - name: Test API endpoints
       run: |
-        echo "Testing API health endpoint..."
-        for i in {1..5}; do
-          if curl -f https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/api/Auth/health; then
-            echo "✅ Health endpoint working"
+        echo "Testing API endpoints..."
+        for i in {1..3}; do
+          if curl -f --max-time 30 https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/api/Auth/roles; then
+            echo "✅ Auth/roles endpoint working"
             break
           else
             echo "Attempt $i failed, retrying in 10 seconds..."
-            sleep 10
+            sleep 15
           fi
         done
         
-    - name: Test database cleanup endpoint
+    - name: Test runners endpoint
       run: |
-        echo "Testing database cleanup endpoint..."
-        curl -f https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/api/DatabaseCleanup/stats || echo "Database cleanup endpoint not accessible"
+        echo "Testing runners endpoint..."
+        curl -f --max-time 30 https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/api/Runners || echo "Runners endpoint not accessible"
         echo "✅ API deployment successful"
