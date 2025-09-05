@@ -1,229 +1,55 @@
 /**
  * ============================================
- * 241 RUNNERS AWARENESS - UNIFIED STYLESHEET
+ * 241 RUNNERS AWARENESS - SIMPLIFIED STYLESHEET
  * ============================================
  * 
- * This stylesheet contains ALL styles for the 241 Runners Awareness website.
- * It provides a comprehensive design system for the missing persons awareness platform.
+ * Clean, focused design with:
+ * - Black header and navbar
+ * - Red background/cover
+ * - White content containers
+ * - Proper centering and readability
  * 
- * Design Philosophy:
- * - Accessibility-first approach with high contrast and readable fonts
- * - Mobile-responsive design that works on all devices
- * - Dark mode support for user preference and reduced eye strain
- * - Brand consistency with red (#ff0000) as primary color
- * - Performance optimized with efficient CSS selectors
- * 
- * Features:
- * - Responsive navigation with hamburger menu
- * - Dark/light theme toggle with smooth transitions
- * - Cross-browser compatibility with vendor prefixes
- * - Progressive enhancement for modern browsers
- * - Optimized for missing persons awareness content
- * 
- * Version: 20250128g - Enhanced Traffic Light Theme with Proper Centering
+ * Version: 20250128h - Simplified Design
  * Last Updated: January 2025
- * 
- * This stylesheet now contains ALL styles for the entire 241 Runners Awareness website.
- * All inline CSS has been extracted from HTML files and consolidated here.
- * The traffic light theme is consistently applied throughout all components.
- * All containers and cards are properly centered for optimal user experience.
  */
 
-/* 
- * ============================================
- * TRAFFIC LIGHT THEME COLORS
- * ============================================
- * 
- * Defines the traffic light color system used throughout the site.
- * Each color represents a different level of urgency and importance.
- */
-
-:root {
-  /* Traffic Light Color System */
-  --red-urgent: #ff0000;        /* Bright Red - Most Urgent */
-  --red-medium: #dc2626;        /* Medium Red - High Priority */
-  --red-dark: #b91c1c;          /* Dark Red - Important */
-  --yellow-bright: #ffcc00;     /* Bright Yellow - Caution */
-  --yellow-medium: #f4c430;     /* Medium Yellow - Warning */
-  --yellow-light: #ffdd57;      /* Light Yellow - Notice */
-  --green-bright: #33cc33;      /* Bright Green - Safe/Found */
-  --green-medium: #28a745;      /* Medium Green - Stable */
-  --green-light: #20c997;       /* Light Green - Good */
-  
-  /* Brand Colors */
-  --primary-red: #ff0000;
-  --primary-dark: #000000;
-  --primary-white: #ffffff;
-  
-  /* Semantic Colors */
-  --success: var(--green-bright);
-  --warning: var(--yellow-bright);
-  --danger: var(--red-urgent);
-  --info: #3b82f6;
-  
-  /* Neutral Colors */
-  --gray-50: #f9fafb;
-  --gray-100: #f3f4f6;
-  --gray-200: #e5e7eb;
-  --gray-300: #d1d5db;
-  --gray-400: #9ca3af;
-  --gray-500: #6b7280;
-  --gray-600: #4b5563;
-  --gray-700: #374151;
-  --gray-800: #1f2937;
-  --gray-900: #111827;
-}
-
-/* 
- * ============================================
- * CSS RESET & BASE STYLES
- * ============================================
- * 
- * Normalizes browser defaults and establishes consistent base styling.
- * Ensures predictable rendering across different browsers and devices.
- */
-
-/* Universal box-sizing reset for consistent sizing */
+/* CSS Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* 
- * ============================================
- * BODY STYLING & LAYOUT FOUNDATION
- * ============================================
- * 
- * Sets up the main document structure with flexbox layout.
- * Establishes brand colors and responsive behavior.
- */
+/* Root Variables */
+:root {
+  --primary-red: #ff0000;
+  --primary-black: #000000;
+  --primary-white: #ffffff;
+  --gray-light: #f5f5f5;
+  --gray-medium: #666666;
+  --gray-dark: #333333;
+}
+
+/* Body Styling */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
-  color: var(--primary-dark);
+  color: var(--primary-black);
   background-color: var(--primary-white);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease;
 }
 
-/* 
- * ============================================
- * CONTAINER SYSTEM - PROPERLY CENTERED
- * ============================================
- * 
- * Establishes a consistent container system with proper centering.
- * All containers use max-width and auto margins for perfect centering.
- */
-
-.container,
-.main-content,
-.hero-content,
-.dna-container,
-.dashboard-container,
-.admin-dashboard,
-.auth-container,
-.login-container,
-.admin-login-container,
-.admin-auth-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  width: 100%;
-}
-
-/* Specific container adjustments for different sections */
-.container {
-  padding: 0 20px;
-}
-
-.main-content {
-  flex: 1;
-  padding: 40px 20px;
-}
-
-/* 
- * ============================================
- * SECTION STYLING - TRAFFIC LIGHT THEME
- * ============================================
- * 
- * All sections use the traffic light theme with proper spacing and centering.
- */
-section,
-.hero,
-.cases-hero,
-.dna-hero-section,
-.welcome-section,
-.features-section,
-.about-content,
-.mission-statement,
-.technology-section,
-.get-involved-section,
-.dna-stats-section,
-.dna-content-section,
-.dna-form-section,
-.database-section,
-.labs-section,
-.report-section {
-  padding: 60px 0;
-  text-align: center;
-  background: var(--primary-white);
-  position: relative;
-}
-
-/* Hero sections with traffic light theme */
-.hero,
-.cases-hero,
-.dna-hero-section {
-  background: linear-gradient(135deg, var(--red-urgent) 0%, var(--red-dark) 100%);
-  color: var(--primary-white);
-  padding: 80px 0;
-  text-align: center;
-}
-
-.hero-content,
-.cases-hero .hero-content,
-.dna-hero-section {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.hero h1,
-.hero h2,
-.cases-hero .hero-title,
-.dna-hero-section h1 {
-  font-size: 3rem;
-  font-weight: bold;
-  margin-bottom: 20px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.hero p,
-.cases-hero .hero-subtitle,
-.dna-hero-section p {
-  font-size: 1.2rem;
-  margin-bottom: 30px;
-  opacity: 0.9;
-}
-
-/* 
- * ============================================
- * HEADER & NAVIGATION - TRAFFIC LIGHT THEME
- * ============================================
- * 
- * Header uses red background with proper contrast and accessibility.
- */
+/* Header - Black Background */
 header {
-  background: var(--red-urgent);
+  background: var(--primary-black);
   color: var(--primary-white);
   padding: 0;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .header-bar {
@@ -248,12 +74,16 @@ header {
   margin: 0;
 }
 
-/* Navigation styling */
+/* Navigation - Black Background */
 nav {
   display: flex;
   align-items: center;
   gap: 20px;
   flex-wrap: wrap;
+  background: var(--primary-black);
+  padding: 0 20px 15px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 nav a {
@@ -266,14 +96,14 @@ nav a {
 }
 
 nav a:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--primary-red);
   transform: translateY(-2px);
 }
 
-/* Theme toggle button */
+/* Theme Toggle */
 .theme-toggle {
   background: var(--primary-white);
-  color: var(--red-urgent);
+  color: var(--primary-black);
   border: none;
   padding: 10px 15px;
   border-radius: 50%;
@@ -284,30 +114,83 @@ nav a:hover {
 }
 
 .theme-toggle:hover {
-  background: var(--yellow-bright);
+  background: var(--primary-red);
+  color: var(--primary-white);
   transform: scale(1.1);
 }
 
-/* 
- * ============================================
- * CARD SYSTEM - PROPERLY CENTERED
- * ============================================
- * 
- * All cards use consistent styling with proper centering and traffic light theme.
- */
-.card,
-.feature-card,
-.case-card,
-.dna-stat-card,
-.dna-feature-card,
-.database-card,
-.lab-card,
-.stat-card,
-.team-card,
-.action-card,
-.profile-card {
+/* Main Content Container - Centered */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  width: 100%;
+}
+
+/* Hero Section - Red Background */
+.hero {
+  background: var(--primary-red);
+  color: var(--primary-white);
+  padding: 80px 0;
+  text-align: center;
+  width: 100%;
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  opacity: 0.9;
+}
+
+/* White Content Container */
+.content-container {
   background: var(--primary-white);
-  border: 2px solid var(--red-medium);
+  padding: 60px 0;
+  width: 100%;
+  text-align: center;
+}
+
+.content-container h2 {
+  color: var(--primary-black);
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.content-container p {
+  color: var(--gray-dark);
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Cards - White Background with Red Border */
+.card {
+  background: var(--primary-white);
+  border: 2px solid var(--primary-red);
   border-radius: 12px;
   padding: 30px;
   margin: 20px auto;
@@ -315,73 +198,30 @@ nav a:hover {
   text-align: center;
   box-shadow: 0 4px 15px rgba(255, 0, 0, 0.1);
   transition: all 0.3s ease;
-  position: relative;
 }
 
-.card:hover,
-.feature-card:hover,
-.case-card:hover,
-.dna-stat-card:hover,
-.dna-feature-card:hover,
-.database-card:hover,
-.lab-card:hover,
-.stat-card:hover,
-.team-card:hover,
-.action-card:hover,
-.profile-card:hover {
+.card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(255, 0, 0, 0.2);
-  border-color: var(--red-urgent);
+  border-color: var(--primary-red);
 }
 
-/* Card content styling */
-.card h3,
-.feature-card h3,
-.case-card h3,
-.dna-feature-card h3,
-.database-card h3,
-.lab-card h3,
-.stat-card h3,
-.team-card h3,
-.action-card h3,
-.profile-card h3 {
-  color: var(--red-urgent);
+.card h3 {
+  color: var(--primary-red);
   font-size: 1.5rem;
   margin-bottom: 15px;
   font-weight: bold;
 }
 
-.card p,
-.feature-card p,
-.case-card p,
-.dna-feature-card p,
-.database-card p,
-.lab-card p,
-.stat-card p,
-.team-card p,
-.action-card p,
-.profile-card p {
-  color: var(--gray-700);
+.card p {
+  color: var(--gray-dark);
   line-height: 1.6;
   margin-bottom: 20px;
 }
 
-/* 
- * ============================================
- * GRID SYSTEMS - PROPERLY CENTERED
- * ============================================
- * 
- * All grid systems use CSS Grid with proper centering and responsive behavior.
- */
+/* Grid System - Centered */
 .features-grid,
-.cases-grid,
-.dna-stats-grid,
-.dna-features-grid,
-.database-grid,
-.labs-grid,
-.stats-grid,
-.team-grid,
-.quick-actions {
+.cases-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 30px;
@@ -391,21 +231,9 @@ nav a:hover {
   justify-items: center;
 }
 
-/* 
- * ============================================
- * BUTTON SYSTEM - TRAFFIC LIGHT THEME
- * ============================================
- * 
- * All buttons use the traffic light color system with consistent styling.
- */
-.btn,
-.feature-btn,
-.submit-btn,
-.admin-submit-btn,
-.cta-buttons .btn,
-.hero-actions .btn,
-.case-actions .btn {
-  background: var(--red-urgent);
+/* Buttons - Red Background */
+.btn {
+  background: var(--primary-red);
   color: var(--primary-white);
   border: none;
   padding: 15px 30px;
@@ -420,71 +248,40 @@ nav a:hover {
   margin: 10px;
 }
 
-.btn:hover,
-.feature-btn:hover,
-.submit-btn:hover,
-.admin-submit-btn:hover,
-.cta-buttons .btn:hover,
-.hero-actions .btn:hover,
-.case-actions .btn:hover {
-  background: var(--red-dark);
+.btn:hover {
+  background: var(--primary-black);
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
-/* Secondary buttons */
-.btn-secondary,
-.cta-buttons .btn-secondary,
-.case-actions .btn-secondary {
-  background: var(--yellow-bright);
-  color: var(--primary-dark);
-}
-
-.btn-secondary:hover,
-.cta-buttons .btn-secondary:hover,
-.case-actions .btn-secondary:hover {
-  background: var(--yellow-medium);
-  color: var(--primary-dark);
-}
-
-/* Success buttons */
-.btn-success {
-  background: var(--green-bright);
+.btn-secondary {
+  background: var(--gray-medium);
   color: var(--primary-white);
 }
 
-.btn-success:hover {
-  background: var(--green-medium);
+.btn-secondary:hover {
+  background: var(--primary-black);
 }
 
-/* 
- * ============================================
- * FORM STYLING - TRAFFIC LIGHT THEME
- * ============================================
- * 
- * All forms use consistent styling with traffic light theme.
- */
+/* Forms */
 .form-group {
   margin-bottom: 25px;
   text-align: left;
 }
 
-.form-group label,
-.form-label {
+.form-group label {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: var(--red-urgent);
+  color: var(--primary-red);
   font-size: 1rem;
 }
 
 .form-group input,
-.form-group textarea,
-.form-input,
-.form-textarea {
+.form-group textarea {
   width: 100%;
   padding: 15px;
-  border: 2px solid var(--gray-300);
+  border: 2px solid var(--gray-light);
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
@@ -492,23 +289,15 @@ nav a:hover {
 }
 
 .form-group input:focus,
-.form-group textarea:focus,
-.form-input:focus,
-.form-textarea:focus {
+.form-group textarea:focus {
   outline: none;
-  border-color: var(--red-urgent);
+  border-color: var(--primary-red);
   box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
 }
 
-/* 
- * ============================================
- * FOOTER - TRAFFIC LIGHT THEME
- * ============================================
- * 
- * Footer uses red background with proper contrast.
- */
+/* Footer - Black Background */
 footer {
-  background: var(--red-urgent);
+  background: var(--primary-black);
   color: var(--primary-white);
   padding: 40px 0;
   text-align: center;
@@ -536,114 +325,163 @@ footer {
 }
 
 .footer-links a:hover {
-  color: var(--yellow-bright);
+  color: var(--primary-red);
   text-decoration: underline;
 }
 
-/* 
- * ============================================
- * DARK MODE SUPPORT
- * ============================================
- * 
- * Dark mode maintains the traffic light theme with proper contrast.
- */
-body.dark-mode {
-  background: var(--gray-900);
+/* Cases Page Specific Styling */
+.cases-hero {
+  background: var(--primary-red);
   color: var(--primary-white);
+  padding: 80px 0;
+  text-align: center;
+  width: 100%;
 }
 
-body.dark-mode .card,
-body.dark-mode .feature-card,
-body.dark-mode .case-card,
-body.dark-mode .dna-stat-card,
-body.dark-mode .dna-feature-card,
-body.dark-mode .database-card,
-body.dark-mode .lab-card,
-body.dark-mode .stat-card,
-body.dark-mode .team-card,
-body.dark-mode .action-card,
-body.dark-mode .profile-card {
-  background: var(--gray-800);
-  border-color: var(--red-medium);
-  color: var(--primary-white);
+.cases-hero h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-body.dark-mode .form-group input,
-body.dark-mode .form-group textarea,
-body.dark-mode .form-input,
-body.dark-mode .form-textarea {
-  background: var(--gray-700);
-  border-color: var(--gray-500);
-  color: var(--primary-white);
+.cases-hero p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  opacity: 0.9;
 }
 
-body.dark-mode .form-group input:focus,
-body.dark-mode .form-group textarea:focus,
-body.dark-mode .form-input:focus,
-body.dark-mode .form-textarea:focus {
-  border-color: var(--red-urgent);
-  background: var(--gray-600);
+.cases-section {
+  background: var(--primary-white);
+  padding: 60px 0;
+  width: 100%;
 }
 
-/* 
- * ============================================
- * RESPONSIVE DESIGN
- * ============================================
- * 
- * Ensures proper centering and layout on all device sizes.
- */
+.cases-section .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.cases-section h2 {
+  color: var(--primary-black);
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.cases-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  justify-items: center;
+}
+
+.case-card {
+  background: var(--primary-white);
+  border: 2px solid var(--primary-red);
+  border-radius: 12px;
+  padding: 30px;
+  margin: 20px auto;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(255, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.case-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(255, 0, 0, 0.2);
+  border-color: var(--primary-red);
+}
+
+.case-card h3 {
+  color: var(--primary-red);
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.case-card p {
+  color: var(--gray-dark);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+/* Filters Section */
+.filters-section {
+  background: var(--gray-light);
+  padding: 40px 0;
+  width: 100%;
+}
+
+.filters-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-group label {
+  font-weight: 600;
+  color: var(--primary-black);
+  font-size: 0.9rem;
+}
+
+.filter-select,
+.filter-input {
+  padding: 12px;
+  border: 2px solid var(--gray-light);
+  border-radius: 8px;
+  font-size: 1rem;
+  background: var(--primary-white);
+  transition: border-color 0.3s;
+}
+
+.filter-select:focus,
+.filter-input:focus {
+  outline: none;
+  border-color: var(--primary-red);
+  box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-  .container,
-  .main-content,
-  .hero-content,
-  .dna-container,
-  .dashboard-container,
-  .admin-dashboard,
-  .auth-container,
-  .login-container,
-  .admin-login-container,
-  .admin-auth-container {
+  .container {
     padding: 0 15px;
   }
 
   .hero h1,
-  .hero h2,
-  .cases-hero .hero-title,
-  .dna-hero-section h1 {
+  .cases-hero h1 {
     font-size: 2.2rem;
   }
 
   .hero p,
-  .cases-hero .hero-subtitle,
-  .dna-hero-section p {
+  .cases-hero p {
     font-size: 1.1rem;
   }
 
   .features-grid,
-  .cases-grid,
-  .dna-stats-grid,
-  .dna-features-grid,
-  .database-grid,
-  .labs-grid,
-  .stats-grid,
-  .team-grid,
-  .quick-actions {
+  .cases-grid {
     grid-template-columns: 1fr;
     gap: 20px;
     padding: 0 15px;
   }
 
   .card,
-  .feature-card,
-  .case-card,
-  .dna-stat-card,
-  .dna-feature-card,
-  .database-card,
-  .lab-card,
-  .stat-card,
-  .team-card,
-  .action-card,
-  .profile-card {
+  .case-card {
     margin: 15px auto;
     padding: 20px;
     max-width: 100%;
@@ -659,364 +497,36 @@ body.dark-mode .form-textarea:focus {
     gap: 15px;
     text-align: center;
   }
+
+  .filters-container {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
 }
 
 @media (max-width: 480px) {
-  .container,
-  .main-content,
-  .hero-content,
-  .dna-container,
-  .dashboard-container,
-  .admin-dashboard,
-  .auth-container,
-  .login-container,
-  .admin-login-container,
-  .admin-auth-container {
+  .container {
     padding: 0 10px;
   }
 
   .hero h1,
-  .hero h2,
-  .cases-hero .hero-title,
-  .dna-hero-section h1 {
+  .cases-hero h1 {
     font-size: 1.8rem;
   }
 
   .card,
-  .feature-card,
-  .case-card,
-  .dna-stat-card,
-  .dna-feature-card,
-  .database-card,
-  .lab-card,
-  .stat-card,
-  .team-card,
-  .action-card,
-  .profile-card {
+  .case-card {
     padding: 15px;
     margin: 10px auto;
   }
 
-  .btn,
-  .feature-btn,
-  .submit-btn,
-  .admin-submit-btn,
-  .cta-buttons .btn,
-  .hero-actions .btn,
-  .case-actions .btn {
+  .btn {
     padding: 12px 20px;
     font-size: 0.9rem;
   }
 }
 
-/* 
- * ============================================
- * ACCESSIBILITY ENHANCEMENTS
- * ============================================
- * 
- * Ensures proper accessibility with high contrast and focus indicators.
- */
-*:focus {
-  outline: 2px solid var(--red-urgent);
-  outline-offset: 2px;
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  .card,
-  .feature-card,
-  .case-card,
-  .dna-stat-card,
-  .dna-feature-card,
-  .database-card,
-  .lab-card,
-  .stat-card,
-  .team-card,
-  .action-card,
-  .profile-card {
-    border-width: 3px;
-  }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* 
- * ============================================
- * UTILITY CLASSES
- * ============================================
- * 
- * Common utility classes for consistent styling.
- */
-.text-center {
-  text-align: center;
-}
-
-.text-left {
-  text-align: left;
-}
-
-.text-right {
-  text-align: right;
-}
-
-.mb-20 {
-  margin-bottom: 20px;
-}
-
-.mb-30 {
-  margin-bottom: 30px;
-}
-
-.mb-40 {
-  margin-bottom: 40px;
-}
-
-.mt-20 {
-  margin-top: 20px;
-}
-
-.mt-30 {
-  margin-top: 30px;
-}
-
-.mt-40 {
-  margin-top: 40px;
-}
-
-.hidden {
-  display: none;
-}
-
-.visible {
-  display: block;
-}
-
-/* Status indicators using traffic light colors */
-.status-urgent {
-  background: var(--red-urgent);
-  color: var(--primary-white);
-}
-
-.status-warning {
-  background: var(--yellow-bright);
-  color: var(--primary-dark);
-}
-
-.status-safe {
-  background: var(--green-bright);
-  color: var(--primary-white);
-}
-
-.status-missing {
-  background: var(--red-medium);
-  color: var(--primary-white);
-}
-
-.status-found {
-  background: var(--green-medium);
-  color: var(--primary-white);
-}
-
-/* Loading and error states */
-.loading-spinner {
-  border: 3px solid var(--gray-300);
-  border-top: 3px solid var(--red-urgent);
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  animation: spin 1s linear infinite;
-  margin: 20px auto;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.error-message {
-  background: var(--red-urgent);
-  color: var(--primary-white);
-  padding: 15px;
-  border-radius: 8px;
-  margin: 20px auto;
-  text-align: center;
-  max-width: 400px;
-}
-
-.success-message {
-  background: var(--green-bright);
-  color: var(--primary-white);
-  padding: 15px;
-  border-radius: 8px;
-  margin: 20px auto;
-  text-align: center;
-  max-width: 400px;
-}
-
-/* 
- * ============================================
- * LEGACY SUPPORT
- * ============================================
- * 
- * Maintains compatibility with existing class names while applying new styling.
- */
-
-/* Legacy class mappings */
-.about-content,
-.mission-statement,
-.technology-section,
-.get-involved-section {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.team-member,
-.who-we-are-images img {
-  max-width: 200px;
-  margin: 0 auto;
-  display: block;
-}
-
-/* Admin specific styling */
-.admin-dashboard,
-.admin-login-container,
-.admin-auth-container {
-  background: var(--primary-white);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.admin-form,
-.auth-form {
-  background: var(--primary-white);
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 8px 25px rgba(255, 0, 0, 0.1);
-  border: 2px solid var(--red-medium);
-  max-width: 500px;
-  width: 100%;
-  margin: 0 auto;
-}
-
-/* DNA tracking specific styling */
-.dna-page-wrapper {
-  background: var(--primary-white);
-  min-height: 100vh;
-}
-
-.dna-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.dna-hero-section {
-  background: linear-gradient(135deg, var(--red-urgent) 0%, var(--red-dark) 100%);
-  color: var(--primary-white);
-  padding: 80px 0;
-  text-align: center;
-}
-
-.dna-stats-grid,
-.dna-features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 30px;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  justify-items: center;
-}
-
-/* Cases page specific styling */
-.cases-hero {
-  background: linear-gradient(135deg, var(--red-urgent) 0%, var(--red-dark) 100%);
-  color: var(--primary-white);
-  padding: 80px 0;
-  text-align: center;
-}
-
-.cases-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 30px;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  justify-items: center;
-}
-
-/* Map page specific styling */
-.map-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  text-align: center;
-}
-
-.dashboard-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-/* Form grid layout */
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-/* Database and lab sections */
-.database-section,
-.labs-section {
-  background: var(--gray-50);
-  padding: 60px 0;
-}
-
-.database-grid,
-.labs-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  justify-items: center;
-}
-
-/* Report section */
-.report-section {
-  background: var(--primary-white);
-  padding: 60px 0;
-}
-
-.report-preview {
-  background: var(--gray-100);
-  border: 2px solid var(--red-medium);
-  border-radius: 8px;
-  padding: 20px;
-  margin: 20px auto;
-  max-width: 600px;
-  text-align: left;
-  font-family: monospace;
-  white-space: pre-wrap;
-}
-
-/* Hamburger menu for mobile */
+/* Hamburger Menu */
 .hamburger {
   display: none;
   flex-direction: column;
@@ -1043,10 +553,10 @@ body.dark-mode .form-textarea:focus {
     top: 100%;
     left: 0;
     right: 0;
-    background: var(--red-urgent);
+    background: var(--primary-black);
     flex-direction: column;
     padding: 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   }
   
   nav.active {
@@ -1059,49 +569,60 @@ body.dark-mode .form-textarea:focus {
   }
 }
 
-/* Additional responsive adjustments */
-@media (max-width: 480px) {
-  .dna-stats-grid,
-  .dna-features-grid,
-  .database-grid,
-  .labs-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  
-  .form-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  
-  .admin-form,
-  .auth-form {
-    padding: 30px 20px;
-    margin: 20px;
-  }
+/* Utility Classes */
+.text-center {
+  text-align: center;
 }
 
-/* Print styles */
-@media print {
-  .hamburger,
-  .theme-toggle,
-  nav,
-  .btn,
-  .feature-btn,
-  .submit-btn {
-    display: none;
-  }
-  
-  .card,
-  .feature-card,
-  .case-card {
-    break-inside: avoid;
-    box-shadow: none;
-    border: 1px solid var(--gray-300);
-  }
-  
-  body {
-    background: white;
-    color: black;
-  }
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.hidden {
+  display: none;
+}
+
+.visible {
+  display: block;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  border: 3px solid var(--gray-light);
+  border-top: 3px solid var(--primary-red);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Error and Success Messages */
+.error-message {
+  background: var(--primary-red);
+  color: var(--primary-white);
+  padding: 15px;
+  border-radius: 8px;
+  margin: 20px auto;
+  text-align: center;
+  max-width: 400px;
+}
+
+.success-message {
+  background: #28a745;
+  color: var(--primary-white);
+  padding: 15px;
+  border-radius: 8px;
+  margin: 20px auto;
+  text-align: center;
+  max-width: 400px;
 }
