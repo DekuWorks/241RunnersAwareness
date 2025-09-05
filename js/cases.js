@@ -106,7 +106,6 @@ class CasesPage {
             // Load NamUs public cases for Houston area
             let namusCases = [];
             try {
-                console.log('🔍 Attempting to fetch NamUs cases from:', `${apiUrl}/publiccases`);
                 const params = new URLSearchParams({
                     region: 'houston',
                     page: 1,
@@ -114,11 +113,9 @@ class CasesPage {
                 });
 
                 const namusResponse = await fetch(`${apiUrl}/publiccases?${params}`);
-                console.log('📡 NamUs API Response Status:', namusResponse.status, namusResponse.statusText);
                 
                 if (namusResponse.ok) {
                     namusCases = await namusResponse.json() || [];
-                    console.log('✅ NamUs cases loaded successfully:', namusCases.length);
                 } else {
                     console.error('❌ NamUs API failed:', namusResponse.status, namusResponse.statusText);
                     if (namusResponse.status === 404) {
@@ -131,7 +128,6 @@ class CasesPage {
 
             // If no cases loaded, show empty state
             if (namusCases.length === 0) {
-                console.log('No cases loaded from API, showing empty state');
                 this.cases = [];
                 this.filteredCases = [];
                 this.hideLoading();

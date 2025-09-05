@@ -14,7 +14,6 @@ class AdminDashboardSecurity {
         this.setupSecurityHeaders();
         this.setupCSRFProtection();
         this.setupRateLimiting();
-        console.log('🔒 Admin Dashboard Security initialized');
     }
 
     // Enhanced form validation
@@ -597,7 +596,6 @@ class AdminDashboardSecurity {
 
     // Security audit
     performSecurityAudit() {
-        console.log('🔒 Performing Security Audit...');
         
         const issues = [];
         
