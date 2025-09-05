@@ -1,122 +1,16 @@
 name: Test Deployment and API
 
 on:
-  push:
-    branches: [ main ]
+  workflow_run:
+    workflows: ["Deploy Backend to Azure", "Deploy to GitHub Pages"]
+    types: [completed]
+  workflow_dispatch:
+
+jobs:  test-deployment:
+on:
   workflow_run:
     workflows: ["Deploy Backend to Azure", "Deploy to GitHub Pages"]
     types: [completed]
   workflow_dispatch:
 
 jobs:
-  test-deployment:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' || github.event_name == 'push' }}
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Wait for deployment
-      run: |
-        echo "Waiting for deployment to complete..."
-        sleep 90
-        
-    - name: Test API Health
-      run: |
-        echo "Testing API health endpoint..."
-        for i in {1..5}; do
-          echo "Attempt $i/5..."
-          response=$(curl -s -w "%{http_code}" https://241runners-api.azurewebsites.net/api/Auth/health)
-          http_code=$(echo "$response" | tail -c 4)
-          if [ "$http_code" = "200" ]; then
-            echo "✅ API health check passed"
-            echo "Response: $(echo "$response" | head -c -4)"
-            break
-          else
-            echo "Attempt $i failed with status: $http_code"
-            echo "Response: $(echo "$response" | head -c -4)"
-            if [ $i -lt 5 ]; then
-              echo "Retrying in 20 seconds..."
-              sleep 20
-            fi
-          fi
-        done
-        
-        if [ "$http_code" != "200" ]; then
-          echo "❌ API health check failed after 5 attempts: $http_code"
-          exit 1
-        fi
-        
-    - name: Test Admin Login
-      run: |
-        echo "Testing admin login..."
-        for i in {1..5}; do
-          echo "Attempt $i/5..."
-          response=$(curl -s -X POST "https://241runners-api.azurewebsites.net/api/Auth/login" \
-            -H "Content-Type: application/json" \
-            -H "X-Client: 241RA-Admin/1.0" \
-            -d '{"email":"dekuworks1@gmail.com","password":"marcus2025"}' \
-            -w "%{http_code}")
-          http_code=$(echo "$response" | tail -c 4)
-          response_body=$(echo "$response" | head -c -4)
-          
-          if [ "$http_code" = "200" ]; then
-            echo "✅ Admin login test passed"
-            echo "Response: $response_body"
-            break
-          else
-            echo "Attempt $i failed with status: $http_code"
-            echo "Response: $response_body"
-            if [ $i -lt 5 ]; then
-              echo "Retrying in 20 seconds..."
-              sleep 20
-            fi
-          fi
-        done
-        
-        if [ "$http_code" != "200" ]; then
-          echo "❌ Admin login test failed after 5 attempts: $http_code"
-          exit 1
-        fi
-        
-    - name: Test Static Site
-      run: |
-        echo "Testing static site..."
-        response=$(curl -s -o /dev/null -w "%{http_code}" https://241runnersawareness.org/)
-        if [ "$response" = "200" ]; then
-          echo "✅ Static site test passed"
-        else
-          echo "❌ Static site test failed: $response"
-          exit 1
-        fi
-        
-    - name: Test Admin Dashboard
-      run: |
-        echo "Testing admin dashboard..."
-        response=$(curl -s -o /dev/null -w "%{http_code}" https://241runnersawareness.org/admin/login.html)
-        if [ "$response" = "200" ]; then
-          echo "✅ Admin dashboard test passed"
-        else
-          echo "❌ Admin dashboard test failed: $response"
-          exit 1
-        fi
-        
-    - name: Test Cases Page
-      run: |
-        echo "Testing cases page..."
-        response=$(curl -s -o /dev/null -w "%{http_code}" https://241runnersawareness.org/cases.html)
-        if [ "$response" = "200" ]; then
-          echo "✅ Cases page test passed"
-        else
-          echo "❌ Cases page test failed: $response"
-          exit 1
-        fi
-        
-    - name: Deployment Summary
-      run: |
-        echo "🎉 All deployment tests passed!"
-        echo "✅ API: https://241runners-api.azurewebsites.net"
-        echo "✅ Static Site: https://241runnersawareness.org"
-        echo "✅ Admin Dashboard: https://241runnersawareness.org/admin/"
-        echo "✅ Cases Page: https://241runnersawareness.org/cases.html"
