@@ -1028,7 +1028,57 @@ namespace _241RunnersAwarenessAPI.Controllers
             return true;
         }
 
-        // Note: Admin password reset functionality has been moved to AdminController
-        // for better security and organization
+
+        /// <summary>
+        /// Reset admin passwords to default values (for development/testing)
+        /// </summary>
+        [HttpPost("reset-admin-passwords")]
+        public async Task<ActionResult<object>> ResetAdminPasswords()
+        {
+            try
+            {
+                var adminPasswordUpdates = new Dictionary<string, string>
+                {
+                    { "dekuworks1@gmail.com", "marcus2025" },
+                    { "danielcarey9770@yahoo.com", "Daniel2025!" },
+                    { "lthomas3350@gmail.com", "Lisa2025!" },
+                    { "tinaleggins@yahoo.com", "Tina2025!" },
+                    { "mmelasky@iplawconsulting.com", "Mark2025!" },
+                    { "ralphfrank900@gmail.com", "Ralph2025!" }
+                };
+
+                var updatedCount = 0;
+                foreach (var update in adminPasswordUpdates)
+                {
+                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == update.Key.ToLower());
+                    if (user != null)
+                    {
+                        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(update.Value);
+                        user.UpdatedAt = DateTime.UtcNow;
+                        updatedCount++;
+                        _logger.LogInformation($"Reset password for admin user: {user.Email}");
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                _logger.LogInformation($"Admin password reset completed. Updated {updatedCount} users.");
+
+                return Ok(new
+                {
+                    success = true,
+                    message = $"Successfully reset passwords for {updatedCount} admin users.",
+                    updatedCount = updatedCount
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while resetting admin passwords");
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "An error occurred while resetting admin passwords."
+                });
+            }
+        }
     }
-} 
+}
