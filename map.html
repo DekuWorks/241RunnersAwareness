@@ -545,87 +545,201 @@
 
         // Initialize map with enhanced features
         function initMap() {
-            console.log('Initializing map...');
-            console.log('Map container:', document.getElementById('map'));
+            console.log("Initializing map...");
+            const mapContainer = document.getElementById("map");
+            console.log("Map container:", mapContainer);
             
-            map = L.map('map').setView([HOUSTON_LAT, HOUSTON_LNG], 10);
-            console.log('Map created:', map);
+            if (!mapContainer) {
+                console.error("Map container not found!");
+                return;
+            }
             
-            // Enhanced tile layer with better styling
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors',
-                maxZoom: 18
-            }).addTo(map);
+            try {
+                map = L.map("map").setView([HOUSTON_LAT, HOUSTON_LNG], 10);
+                console.log("Map created:", map);
+                
+                // Enhanced tile layer with better styling
+                L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                    attribution: "© OpenStreetMap contributors",
+                    maxZoom: 18
+                }).addTo(map);
 
-            // Initialize marker clustering
-            markerClusterGroup = L.markerClusterGroup({
-                chunkedLoading: true,
-                maxClusterRadius: 50,
-                spiderfyOnMaxZoom: true,
-                showCoverageOnHover: true,
-                zoomToBoundsOnClick: true
-            });
-            map.addLayer(markerClusterGroup);
+                // Initialize marker clustering
+                markerClusterGroup = L.markerClusterGroup({
+                    chunkedLoading: true,
+                    maxClusterRadius: 50,
+                    spiderfyOnMaxZoom: true,
+                    showCoverageOnHover: true,
+                    zoomToBoundsOnClick: true
+                });
+                map.addLayer(markerClusterGroup);
 
-            // Add Houston area boundary
-            const houstonCircle = L.circle([HOUSTON_LAT, HOUSTON_LNG], {
-                color: '#dc2626',
-                fillColor: '#dc2626',
-                fillOpacity: 0.05,
-                radius: HOUSTON_RADIUS_MILES * 1609.34,
-                weight: 2
-            }).addTo(map);
+                // Add Houston area boundary
+                const houstonCircle = L.circle([HOUSTON_LAT, HOUSTON_LNG], {
+                    color: "#dc2626",
+                    fillColor: "#dc2626",
+                    fillOpacity: 0.05,
+                    radius: HOUSTON_RADIUS_MILES * 1609.34,
+                    weight: 2
+                }).addTo(map);
 
-            // Add area label
-            L.marker([HOUSTON_LAT, HOUSTON_LNG]).addTo(map)
-                .bindPopup('<strong>Houston Metropolitan Area</strong><br>64.4-mile radius coverage')
-                .openPopup();
+                // Add area label
+                L.marker([HOUSTON_LAT, HOUSTON_LNG]).addTo(map)
+                    .bindPopup("<strong>Houston Metropolitan Area</strong><br>64.4-mile radius coverage")
+                    .openPopup();
+                    
+                console.log("Map initialization completed successfully");
+            } catch (error) {
+                console.error("Error initializing map:", error);
+            }
+        }
+
+        // Enhanced data loading with real-time updates
+        async function loadRunnersData() {
+            console.log("Loading runners data...");
+            const loadingEl = document.getElementById("loading");
+            const errorEl = document.getElementById("error");
+            const noDataEl = document.getElementById("noData");
+            
+            if (loadingEl) loadingEl.style.display = "block";
+            if (errorEl) errorEl.style.display = "none";
+            if (noDataEl) noDataEl.style.display = "none";
+
+            try {
+                // Use sample data for now since API might not have runners
+                const sampleHoustonCases = [
+                    {
+                        id: 1,
+                        fullName: "Maria Garcia",
+                        currentStatus: "missing",
+                        latitude: 29.7604,
+                        longitude: -95.3698,
+                        city: "Houston",
+                        state: "Texas",
+                        dateAdded: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+                        address: "Downtown Houston, TX",
+                        age: 25,
+                        gender: "Female",
+                        dateOfBirth: null
+                    },
+                    {
+                        id: 2,
+                        fullName: "James Wilson",
+                        currentStatus: "missing",
+                        latitude: 29.7833,
+                        longitude: -95.3633,
+                        city: "Houston",
+                        state: "Texas",
+                        dateAdded: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
+                        address: "North Houston, TX",
+                        age: 32,
+                        gender: "Male",
+                        dateOfBirth: null
+                    },
+                    {
+                        id: 3,
+                        fullName: "Lisa Chen",
+                        currentStatus: "found",
+                        latitude: 29.7375,
+                        longitude: -95.4344,
+                        city: "Houston",
+                        state: "Texas",
+                        dateAdded: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
+                        address: "South Houston, TX",
+                        age: 19,
+                        gender: "Female",
+                        dateOfBirth: null
+                    },
+                    {
+                        id: 4,
+                        fullName: "Robert Martinez",
+                        currentStatus: "missing",
+                        latitude: 29.8038,
+                        longitude: -95.3094,
+                        city: "Houston",
+                        state: "Texas",
+                        dateAdded: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+                        address: "East Houston, TX",
+                        age: 28,
+                        gender: "Male",
+                        dateOfBirth: null
+                    },
+                    {
+                        id: 5,
+                        fullName: "Jennifer Lee",
+                        currentStatus: "urgent",
+                        latitude: 29.7167,
+                        longitude: -95.5167,
+                        city: "Houston",
+                        state: "Texas",
+                        dateAdded: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+                        address: "West Houston, TX",
+                        age: 45,
+                        gender: "Female",
+                        dateOfBirth: null
+                    }
+                ];
+                
+                currentData = sampleHoustonCases;
+                console.log("Loaded data:", currentData.length, "cases");
+
+                if (currentData.length === 0) {
+                    if (loadingEl) loadingEl.style.display = "none";
+                    if (noDataEl) {
+                        noDataEl.style.display = "block";
+                        noDataEl.textContent = "No public cases available at this time. Check back later for updates.";
+                    }
+                    return;
+                }
+
+                displayRunners(currentData);
+                updateStatistics();
+                if (loadingEl) loadingEl.style.display = "none";
+                
+            } catch (error) {
+                console.error("Error loading map data:", error);
+                if (loadingEl) loadingEl.style.display = "none";
+                if (errorEl) {
+                    errorEl.style.display = "block";
+                    errorEl.textContent = `Error loading data: ${error.message}`;
+                }
+            }
         }
 
         // Enhanced marker creation with better styling
         function createCustomMarker(lat, lng, status, data) {
             const colors = {
-                'missing': '#f59e0b',
-                'found': '#dc2626', 
-                'safe': '#10b981',
-                'urgent': '#ef4444'
+                "missing": "#f59e0b",
+                "found": "#dc2626", 
+                "safe": "#10b981",
+                "urgent": "#ef4444"
             };
             
-            const color = colors[status] || '#666';
-            const radius = status === 'urgent' ? 15 : 10;
+            const color = colors[status] || "#666";
+            const radius = status === "urgent" ? 15 : 10;
             
             const marker = L.circleMarker([lat, lng], {
                 radius: radius,
                 fillColor: color,
-                color: '#fff',
+                color: "#fff",
                 weight: 3,
                 opacity: 1,
                 fillOpacity: 0.8
             });
-
-            // Add pulse animation for missing cases - safely
-            if (status === 'missing') {
-                setTimeout(() => {
-                    const element = marker.getElement();
-                    if (element) {
-                        element.style.animation = 'pulse 2s infinite';
-                    }
-                }, 100);
-            }
 
             return marker;
         }
 
         // Enhanced popup content with more details
         function createPopupContent(runner) {
-            const statusClass = runner.currentStatus?.toLowerCase().replace(/\s+/g, '-') || 'unknown';
+            const statusClass = runner.currentStatus?.toLowerCase().replace(/s+/g, "-") || "unknown";
             const age = calculateAge(runner.dateOfBirth);
             const daysSinceAdded = Math.floor((new Date() - new Date(runner.dateAdded)) / (1000 * 60 * 60 * 24));
             
             return `
                 <div class="runner-popup">
                     <h3>${runner.fullName}</h3>
-                    <div class="status-badge status-${statusClass}">${runner.currentStatus || 'Unknown'}</div>
+                    <div class="status-badge status-${statusClass}">${runner.currentStatus || "Unknown"}</div>
                     
                     <div class="info-grid">
                         <div class="info-item">
@@ -634,11 +748,11 @@
                         </div>
                         <div class="info-item">
                             <div class="info-label">Gender</div>
-                            <div class="info-value">${runner.gender || 'Not specified'}</div>
+                            <div class="info-value">${runner.gender || "Not specified"}</div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">Case ID</div>
-                            <div class="info-value">#${runner.id.toString().padStart(4, '0')}</div>
+                            <div class="info-value">#${runner.id.toString().padStart(4, "0")}</div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">Days Active</div>
@@ -651,14 +765,14 @@
                             <div class="info-label">Address</div>
                             <div class="info-value">${runner.address}</div>
                         </div>
-                    ` : ''}
+                    ` : ""}
                     
                     ${runner.city && runner.state ? `
                         <div class="info-item">
                             <div class="info-label">Location</div>
                             <div class="info-value">${runner.city}, ${runner.state}</div>
                         </div>
-                    ` : ''}
+                    ` : ""}
                     
                     <div class="info-item">
                         <div class="info-label">Reported</div>
@@ -670,7 +784,7 @@
 
         // Calculate age from date of birth
         function calculateAge(dateOfBirth) {
-            if (!dateOfBirth) return 'Unknown';
+            if (!dateOfBirth) return "Unknown";
             const birthDate = new Date(dateOfBirth);
             const today = new Date();
             let age = today.getFullYear() - birthDate.getFullYear();
@@ -681,136 +795,13 @@
             return age;
         }
 
-        // Enhanced data loading with real-time updates
-        async function loadRunnersData() {
-            console.log('Loading runners data...');
-            const loadingEl = document.getElementById('loading');
-            const errorEl = document.getElementById('error');
-            const noDataEl = document.getElementById('noData');
-            
-            loadingEl.style.display = 'block';
-            errorEl.style.display = 'none';
-            noDataEl.style.display = 'none';
-
-            try {
-                // Use real Runners API to get NamUs Houston cases data
-                try {
-                    const runners = await apiHelpers.getWithRetry('/api/Runners');
-                    currentData = runners.map(runner => ({
-                        id: runner.id,
-                        fullName: runner.fullName,
-                        currentStatus: runner.status,
-                        latitude: 29.7604, // Houston coordinates
-                        longitude: -95.3698,
-                        city: runner.city,
-                        state: runner.state,
-                        dateAdded: new Date(runner.dateReported),
-                        address: runner.address,
-                        age: runner.age,
-                        gender: runner.gender,
-                        dateOfBirth: runner.dateOfBirth ? new Date(runner.dateOfBirth) : null
-                    }));
-                } catch (error) {
-                    console.log('API call failed, using sample data:', error);
-                    // Fallback to sample data if API fails
-                    const sampleHoustonCases = [
-                    {
-                        id: 1,
-                        fullName: "Maria Garcia",
-                        currentStatus: "missing",
-                        latitude: 29.7604, // Downtown Houston
-                        longitude: -95.3698,
-                        city: "Houston",
-                        state: "Texas",
-                        dateAdded: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
-                        address: "Downtown Houston, TX",
-                        age: 25,
-                        gender: "Female",
-                        dateOfBirth: null
-                    },
-                    {
-                        id: 2,
-                        fullName: "James Wilson",
-                        currentStatus: "missing",
-                        latitude: 29.7833, // North Houston
-                        longitude: -95.3633,
-                        city: "Houston",
-                        state: "Texas",
-                        dateAdded: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // 15 days ago
-                        address: "North Houston, TX",
-                        age: 32,
-                        gender: "Male",
-                        dateOfBirth: null
-                    },
-                    {
-                        id: 3,
-                        fullName: "Lisa Chen",
-                        currentStatus: "found",
-                        latitude: 29.7375, // South Houston
-                        longitude: -95.4344,
-                        city: "Houston",
-                        state: "Texas",
-                        dateAdded: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000), // 20 days ago
-                        address: "South Houston, TX",
-                        age: 19,
-                        gender: "Female",
-                        dateOfBirth: null
-                    },
-                    {
-                        id: 4,
-                        fullName: "Robert Martinez",
-                        currentStatus: "missing",
-                        latitude: 29.8038, // East Houston
-                        longitude: -95.3094,
-                        city: "Houston",
-                        state: "Texas",
-                        dateAdded: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
-                        address: "East Houston, TX",
-                        age: 28,
-                        gender: "Male",
-                        dateOfBirth: null
-                    },
-                    {
-                        id: 5,
-                        fullName: "Jennifer Lee",
-                        currentStatus: "urgent",
-                        latitude: 29.7167, // West Houston
-                        longitude: -95.5167,
-                        city: "Houston",
-                        state: "Texas",
-                        dateAdded: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
-                        address: "West Houston, TX",
-                        age: 45,
-                        gender: "Female",
-                        dateOfBirth: null
-                    }
-                ];
-                
-                currentData = sampleHoustonCases;
-
-                console.log('Loaded data:', currentData.length, 'cases');
-
-                if (currentData.length === 0) {
-                    loadingEl.style.display = 'none';
-                    noDataEl.style.display = 'block';
-                    noDataEl.textContent = 'No public cases available at this time. Check back later for updates.';
-                    return;
-                }
-
-                displayRunners(currentData);
-                updateStatistics();
-                loadingEl.style.display = 'none';
-                
-            } catch (error) {
-                console.error('Error loading map data:', error);
-                loadingEl.style.display = 'none';
-                errorEl.style.display = 'block';
-                errorEl.textContent = `Error loading data: ${error.message}`;
-            }
-        }
-
         // Enhanced display with filtering
         function displayRunners(runners) {
+            if (!markerClusterGroup) {
+                console.error("Marker cluster group not initialized");
+                return;
+            }
+            
             markerClusterGroup.clearLayers();
             markers = [];
 
@@ -830,78 +821,30 @@
             });
         }
 
-        // Advanced filtering system
-        function filterRunners() {
-            const statusFilter = document.getElementById('statusFilter').value;
-            const timeFilter = document.getElementById('timeFilter').value;
-            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
-            
-            let filteredData = currentData;
-            
-            // Status filter
-            if (statusFilter) {
-                filteredData = filteredData.filter(runner => 
-                    runner.currentStatus === statusFilter
-                );
-            }
-            
-            // Time filter
-            if (timeFilter) {
-                const now = new Date();
-                const filterDays = {
-                    '24h': 1,
-                    '7d': 7,
-                    '30d': 30,
-                    '90d': 90
-                };
-                
-                const days = filterDays[timeFilter];
-                if (days) {
-                    const cutoffDate = new Date(now.getTime() - (days * 24 * 60 * 60 * 1000));
-                    filteredData = filteredData.filter(runner => 
-                        new Date(runner.dateAdded) >= cutoffDate
-                    );
-                }
-            }
-            
-            // Search filter
-            if (searchTerm) {
-                filteredData = filteredData.filter(runner => 
-                    runner.fullName.toLowerCase().includes(searchTerm) ||
-                    (runner.city && runner.city.toLowerCase().includes(searchTerm)) ||
-                    (runner.address && runner.address.toLowerCase().includes(searchTerm)) ||
-                    runner.id.toString().includes(searchTerm)
-                );
-            }
-            
-            displayRunners(filteredData);
-            updateStatistics(filteredData);
-        }
-
         // Update statistics display
         function updateStatistics(data = currentData) {
             const stats = {
                 total: data.length,
-                missing: data.filter(r => r.currentStatus === 'missing').length,
-                found: data.filter(r => r.currentStatus === 'found').length,
-                safe: data.filter(r => r.currentStatus === 'safe').length,
-                urgent: data.filter(r => r.currentStatus === 'urgent').length,
+                missing: data.filter(r => r.currentStatus === "missing").length,
+                found: data.filter(r => r.currentStatus === "found").length,
+                safe: data.filter(r => r.currentStatus === "safe").length,
+                urgent: data.filter(r => r.currentStatus === "urgent").length,
                 recent: data.filter(r => {
                     const daysSince = Math.floor((new Date() - new Date(r.dateAdded)) / (1000 * 60 * 60 * 24));
                     return daysSince <= 30;
                 }).length
             };
 
-            console.log('Updating statistics:', stats);
+            console.log("Updating statistics:", stats);
 
             // Safely update statistics with error handling
             const elements = {
-                totalCases: document.getElementById('totalCases'),
-                missingCases: document.getElementById('missingCases'),
-                foundCases: document.getElementById('foundCases'),
-                safeCases: document.getElementById('safeCases'),
-                recentCases: document.getElementById('recentCases'),
-                urgentCases: document.getElementById('urgentCases')
+                totalCases: document.getElementById("totalCases"),
+                missingCases: document.getElementById("missingCases"),
+                foundCases: document.getElementById("foundCases"),
+                safeCases: document.getElementById("safeCases"),
+                recentCases: document.getElementById("recentCases"),
+                urgentCases: document.getElementById("urgentCases")
             };
 
             if (elements.totalCases) elements.totalCases.textContent = stats.total;
@@ -939,13 +882,13 @@
             if (heatmapLayer) {
                 map.removeLayer(heatmapLayer);
                 heatmapLayer = null;
-                document.getElementById('heatmapBtn').textContent = '🔥 Heat Map';
+                document.getElementById("heatmapBtn").textContent = "🔥 Heat Map";
             } else {
                 const heatmapData = currentData.map(runner => ({
                     lat: runner.latitude,
                     lng: runner.longitude,
-                    value: runner.currentStatus === 'missing' ? 3 : 
-                           runner.currentStatus === 'found' ? 2 : 1
+                    value: runner.currentStatus === "missing" ? 3 : 
+                           runner.currentStatus === "found" ? 2 : 1
                 }));
                 
                 // Simple heat map implementation
@@ -953,8 +896,8 @@
                 heatmapData.forEach(point => {
                     const circle = L.circle([point.lat, point.lng], {
                         radius: point.value * 1000,
-                        fillColor: '#ff4444',
-                        color: '#ff0000',
+                        fillColor: "#ff4444",
+                        color: "#ff0000",
                         weight: 1,
                         opacity: 0.3,
                         fillOpacity: 0.1
@@ -963,17 +906,62 @@
                 });
                 
                 map.addLayer(heatmapLayer);
-                document.getElementById('heatmapBtn').textContent = '🗺️ Normal Map';
+                document.getElementById("heatmapBtn").textContent = "🗺️ Normal Map";
             }
+        }
+
+        // Advanced filtering system
+        function filterRunners() {
+            const statusFilter = document.getElementById("statusFilter").value;
+            const timeFilter = document.getElementById("timeFilter").value;
+            const searchTerm = document.getElementById("searchBox").value.toLowerCase();
+            
+            let filteredData = currentData;
+            
+            // Status filter
+            if (statusFilter) {
+                filteredData = filteredData.filter(runner => 
+                    runner.currentStatus === statusFilter
+                );
+            }
+            
+            // Time filter
+            if (timeFilter) {
+                const now = new Date();
+                const filterDays = {
+                    "24h": 1,
+                    "7d": 7,
+                    "30d": 30,
+                    "90d": 90
+                };
+                
+                const days = filterDays[timeFilter];
+                if (days) {
+                    const cutoffDate = new Date(now.getTime() - (days * 24 * 60 * 60 * 1000));
+                    filteredData = filteredData.filter(runner => 
+                        new Date(runner.dateAdded) >= cutoffDate
+                    );
+                }
+            }
+            
+            // Search filter
+            if (searchTerm) {
+                filteredData = filteredData.filter(runner => 
+                    runner.fullName.toLowerCase().includes(searchTerm) ||
+                    (runner.city && runner.city.toLowerCase().includes(searchTerm)) ||
+                    (runner.address && runner.address.toLowerCase().includes(searchTerm)) ||
+                    runner.id.toString().includes(searchTerm)
+                );
+            }
+            
+            displayRunners(filteredData);
+            updateStatistics(filteredData);
         }
 
         // Real-time updates simulation
         function startRealtimeUpdates() {
             realtimeInterval = setInterval(() => {
-                // Simulate new data every 30 seconds
-                // Removed random data generation for live site
-                    loadRunnersData();
-                }
+                loadRunnersData();
             }, 30000);
         }
 
@@ -985,88 +973,106 @@
         }
 
         // Event listeners
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM Content Loaded - Starting map initialization...');
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log("DOM Content Loaded - Starting map initialization...");
+            
+            // Wait for Leaflet to load
+            if (typeof L === "undefined") {
+                console.error("Leaflet library not loaded!");
+                return;
+            }
             
             initMap();
             loadRunnersData();
             startRealtimeUpdates();
 
             // Control event listeners
-            document.getElementById('refreshBtn').addEventListener('click', loadRunnersData);
-            document.getElementById('houstonBtn').addEventListener('click', focusHouston);
-            document.getElementById('statusFilter').addEventListener('change', filterRunners);
-            document.getElementById('timeFilter').addEventListener('change', filterRunners);
-            document.getElementById('searchBox').addEventListener('input', filterRunners);
-            document.getElementById('centerMapBtn').addEventListener('click', centerMap);
-            document.getElementById('toggleClustersBtn').addEventListener('click', toggleClusters);
-            document.getElementById('heatmapBtn').addEventListener('click', toggleHeatmap);
+            const refreshBtn = document.getElementById("refreshBtn");
+            const houstonBtn = document.getElementById("houstonBtn");
+            const statusFilter = document.getElementById("statusFilter");
+            const timeFilter = document.getElementById("timeFilter");
+            const searchBox = document.getElementById("searchBox");
+            const centerMapBtn = document.getElementById("centerMapBtn");
+            const toggleClustersBtn = document.getElementById("toggleClustersBtn");
+            const heatmapBtn = document.getElementById("heatmapBtn");
+
+            if (refreshBtn) refreshBtn.addEventListener("click", loadRunnersData);
+            if (houstonBtn) houstonBtn.addEventListener("click", focusHouston);
+            if (statusFilter) statusFilter.addEventListener("change", filterRunners);
+            if (timeFilter) timeFilter.addEventListener("change", filterRunners);
+            if (searchBox) searchBox.addEventListener("input", filterRunners);
+            if (centerMapBtn) centerMapBtn.addEventListener("click", centerMap);
+            if (toggleClustersBtn) toggleClustersBtn.addEventListener("click", toggleClusters);
+            if (heatmapBtn) heatmapBtn.addEventListener("click", toggleHeatmap);
 
             // Theme toggle functionality
-            const themeToggle = document.getElementById('theme-toggle');
+            const themeToggle = document.getElementById("theme-toggle");
             const body = document.body;
             
-            const currentTheme = localStorage.getItem('theme') || 'light';
-            if (currentTheme === 'dark') {
-                body.classList.add('dark-mode');
-                themeToggle.textContent = '🌙';
-                themeToggle.setAttribute('aria-pressed', 'true');
+            const currentTheme = localStorage.getItem("theme") || "light";
+            if (currentTheme === "dark") {
+                body.classList.add("dark-mode");
+                themeToggle.textContent = "🌙";
+                themeToggle.setAttribute("aria-pressed", "true");
             }
             
-            themeToggle.addEventListener('click', function() {
-                body.classList.toggle('dark-mode');
-                
-                if (body.classList.contains('dark-mode')) {
-                    localStorage.setItem('theme', 'dark');
-                    themeToggle.textContent = '🌙';
-                    themeToggle.setAttribute('aria-pressed', 'true');
-                } else {
-                    localStorage.setItem('theme', 'light');
-                    themeToggle.textContent = '☀️';
-                    themeToggle.setAttribute('aria-pressed', 'false');
-                }
-            });
+            if (themeToggle) {
+                themeToggle.addEventListener("click", function() {
+                    body.classList.toggle("dark-mode");
+                    
+                    if (body.classList.contains("dark-mode")) {
+                        localStorage.setItem("theme", "dark");
+                        themeToggle.textContent = "🌙";
+                        themeToggle.setAttribute("aria-pressed", "true");
+                    } else {
+                        localStorage.setItem("theme", "light");
+                        themeToggle.textContent = "☀️";
+                        themeToggle.setAttribute("aria-pressed", "false");
+                    }
+                });
+            }
 
             // Sticky navbar scroll effect
-            window.addEventListener('scroll', function() {
-                const header = document.querySelector('header');
+            window.addEventListener("scroll", function() {
+                const header = document.querySelector("header");
                 if (window.scrollY > 50) {
-                    header.classList.add('scrolled');
+                    header.classList.add("scrolled");
                 } else {
-                    header.classList.remove('scrolled');
+                    header.classList.remove("scrolled");
                 }
             });
 
             // Hamburger menu functionality
-            const hamburger = document.querySelector('.hamburger');
-            const nav = document.querySelector('nav');
+            const hamburger = document.querySelector(".hamburger");
+            const nav = document.querySelector("nav");
             
-            hamburger.addEventListener('click', function() {
-                const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
-                hamburger.setAttribute('aria-expanded', !isExpanded);
-                hamburger.classList.toggle('active');
-                nav.classList.toggle('active');
-            });
-            
-            document.querySelectorAll('nav a').forEach(link => {
-                link.addEventListener('click', () => {
-                    hamburger.classList.remove('active');
-                    nav.classList.remove('active');
+            if (hamburger && nav) {
+                hamburger.addEventListener("click", function() {
+                    const isExpanded = hamburger.getAttribute("aria-expanded") === "true";
+                    hamburger.setAttribute("aria-expanded", !isExpanded);
+                    hamburger.classList.toggle("active");
+                    nav.classList.toggle("active");
                 });
-            });
-            
-            document.addEventListener('click', function(e) {
-                if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
-                    hamburger.classList.remove('active');
-                    nav.classList.remove('active');
-                }
-            });
+                
+                document.querySelectorAll("nav a").forEach(link => {
+                    link.addEventListener("click", () => {
+                        hamburger.classList.remove("active");
+                        nav.classList.remove("active");
+                    });
+                });
+                
+                document.addEventListener("click", function(e) {
+                    if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
+                        hamburger.classList.remove("active");
+                        nav.classList.remove("active");
+                    }
+                });
+            }
         });
 
         // Cleanup on page unload
-        window.addEventListener('beforeunload', function() {
+        window.addEventListener("beforeunload", function() {
             stopRealtimeUpdates();
         });
-    </script>
-</body>
+    </script></body>
 </html> 
