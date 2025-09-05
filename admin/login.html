@@ -253,7 +253,7 @@
                 const config = await response.json();
                 API_BASE_URL = config.API_BASE_URL;
             } catch (error) {
-                console.warn('Failed to load config.json, using default API URL');
+                console.warn('Failed to load config.json, using default API URL', error);
             }
         }
         
@@ -391,7 +391,10 @@
                     console.log('Attempting login with API URL:', API_BASE_URL);
                     
                     // Attempt login
+                    console.log('About to make fetch request to:'
                     console.log('Sending login request...');
+                    console.log('About to make fetch request to:'
+                    console.log('About to make fetch request to:'
                     const response = await fetch(`${API_BASE_URL}/Auth/login`, {
                         method: 'POST',
                         headers: {
