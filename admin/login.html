@@ -249,7 +249,8 @@
         // Load API configuration
         async function loadConfig() {
             try {
-                const response = await fetch('/config.json');
+                console.log('Form data being sent:');
+                    console.log(formData);('/config.json');
                 const config = await response.json();
                 API_BASE_URL = config.API_BASE_URL;
             } catch (error) {
@@ -391,10 +392,12 @@
                     console.log('Attempting login with API URL:', API_BASE_URL);
                     
                     // Attempt login
-                    console.log('About to make fetch request to:'
+                    // console.log('About to make fetch request to:'
                     console.log('Sending login request...');
-                    console.log('About to make fetch request to:'
-                    console.log('About to make fetch request to:'
+                    console.log('Form data being sent:');
+                    console.log(formData);
+                    // console.log('About to make fetch request to:'
+                    // console.log('About to make fetch request to:'
                     const response = await fetch(`${API_BASE_URL}/Auth/login`, {
                         method: 'POST',
                         headers: {
