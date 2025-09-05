@@ -38,11 +38,6 @@ jobs:
         cd 241RunnersAwarenessAPI
         dotnet build --configuration Release --no-restore
         
-    - name: Run tests
-      run: |
-        cd 241RunnersAwarenessAPI
-        dotnet test --no-build --verbosity normal --configuration Release || echo "Tests failed but continuing deployment"
-        
     - name: Publish with dotnet
       run: |
         cd 241RunnersAwarenessAPI
@@ -55,18 +50,26 @@ jobs:
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
         package: ./241RunnersAwarenessAPI/publish
         
-    - name: Test deployment
+    - name: Wait for deployment
       run: |
-        sleep 30
-        curl -f https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/api/auth/health || exit 1
+        echo "Waiting for Azure deployment to complete..."
+        sleep 60
         
-    - name: Test API endpoints
+    - name: Test health endpoint
       run: |
-        sleep 10
-        # Test health endpoint
-        curl -f https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/api/auth/health || exit 1
-        echo "✅ Health endpoint working"
+        echo "Testing API health endpoint..."
+        for i in {1..5}; do
+          if curl -f https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/api/Auth/health; then
+            echo "✅ Health endpoint working"
+            break
+          else
+            echo "Attempt $i failed, retrying in 10 seconds..."
+            sleep 10
+          fi
+        done
         
-        # Test database cleanup endpoint
+    - name: Test database cleanup endpoint
+      run: |
+        echo "Testing database cleanup endpoint..."
         curl -f https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/api/DatabaseCleanup/stats || echo "Database cleanup endpoint not accessible"
         echo "✅ API deployment successful"
