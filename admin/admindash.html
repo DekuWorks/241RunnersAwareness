@@ -2408,12 +2408,11 @@
                 console.log('Initializing dashboard...');
                 
                 // Check authentication
-                if (!window.adminAuth.requireAdmin()) {
+                if (!requireAdmin()) {
                     return;
                 }
                 
-                // Load admin profile
-                await loadCurrentAdmin();
+                // Load admin profile                await loadCurrentAdmin();
                 
                 // Load dashboard data
                 await loadDashboardData();
