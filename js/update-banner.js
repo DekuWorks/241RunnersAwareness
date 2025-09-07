@@ -46,7 +46,7 @@ async function checkForUpdates() {
         }
         
         const versionData = await response.json();
-        const newVersion = versionData.build;
+        const newVersion = versionData.version;
         
         if (!updateState.currentVersion) {
             updateState.currentVersion = newVersion;
@@ -316,7 +316,7 @@ async function registerServiceWorker() {
     try {
         console.log('🔄 Registering service worker...');
         
-        const registration = await navigator.serviceWorker.register('/sw.js');
+        const registration = await navigator.serviceWorker.register('/sw-optimized.js');
         
         console.log('✅ Service Worker registered:', registration.scope);
         

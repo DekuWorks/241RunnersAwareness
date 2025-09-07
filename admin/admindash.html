@@ -20,6 +20,9 @@
     <link rel="stylesheet" href="/forms.css?v=20250107">
     <link rel="stylesheet" href="/admin/assets/css/admin-dashboard-fixes.css?v=20250107">
     
+    <!-- SignalR Client Library -->
+    <script src="https://unpkg.com/@microsoft/signalr@latest/dist/browser/signalr.min.js"></script>
+    
     <!-- Inline Critical CSS for immediate rendering -->
     <style>
         /* ===== CRITICAL CSS - LOADED FIRST ===== */
@@ -731,6 +734,11 @@
         <span id="connectionText">Connecting...</span>
     </div>
     
+    <!-- Admin Authentication and Real-time Scripts -->
+    <script src="/admin/assets/js/admin-auth.js?v=20250107"></script>
+    <script src="/admin/assets/js/admin-realtime.js?v=20250107"></script>
+    <script src="/js/error-tracking.js?v=20250107"></script>
+    
     <!-- Enhanced JavaScript with All Admin Functions -->
     <script>
         // ===== CONFIGURATION & INITIALIZATION =====
@@ -1256,6 +1264,11 @@
             try {
                 console.log('🚪 Logout initiated...');
                 
+                // Disconnect real-time system
+                if (typeof AdminRealtime !== 'undefined') {
+                    AdminRealtime.disconnect();
+                }
+                
                 // Clear authentication data
                 clearAuthData();
                 
@@ -1293,19 +1306,91 @@
                 if ('caches' in window) {
                     const cacheNames = await caches.keys();
                     await Promise.all(cacheNames.map(name => caches.delete(name)));
+                    console.log('✅ Cleared caches:', cacheNames);
                 }
                 
-                // Clear localStorage
+                // Clear localStorage (but preserve auth data)
+                const authKeys = ['ra_admin_token', 'ra_admin_role', 'ra_admin_user'];
+                const preservedData = {};
+                authKeys.forEach(key => {
+                    const value = localStorage.getItem(key);
+                    if (value) preservedData[key] = value;
+                });
+                
                 localStorage.clear();
                 
-                // Reload page
-                window.location.reload();
+                // Restore auth data
+                Object.entries(preservedData).forEach(([key, value]) => {
+                    localStorage.setItem(key, value);
+                });
+                
+                // Clear sessionStorage
+                sessionStorage.clear();
+                
+                // Unregister service worker
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    await Promise.all(registrations.map(registration => registration.unregister()));
+                    console.log('✅ Unregistered service workers');
+                }
+                
+                // Force reload with cache bypass
+                window.location.reload(true);
                 
             } catch (error) {
                 console.error('Hard refresh failed:', error);
                 showToast('Hard refresh failed, reloading page...', 'error');
                 window.location.reload();
             }
+        }
+        
+        // ===== REAL-TIME EVENT HANDLERS =====
+        
+        function handleUserChanged(data) {
+            console.log('Real-time user change:', data);
+            showToast(`User ${data.operation} by ${data.changedBy}`, 'info', 3000);
+            
+            // Refresh users data
+            loadUsers().then(() => {
+                updateDashboardUI();
+            });
+        }
+        
+        function handleRunnerChanged(data) {
+            console.log('Real-time runner change:', data);
+            showToast(`Runner ${data.operation} by ${data.changedBy}`, 'info', 3000);
+            
+            // Refresh runners data
+            loadRunners().then(() => {
+                updateDashboardUI();
+            });
+        }
+        
+        function handleAdminChanged(data) {
+            console.log('Real-time admin change:', data);
+            showToast(`Admin ${data.operation} by ${data.changedBy}`, 'info', 3000);
+            
+            // Refresh admins data
+            loadAdmins().then(() => {
+                updateDashboardUI();
+            });
+        }
+        
+        function handlePublicCaseChanged(data) {
+            console.log('Real-time public case change:', data);
+            showToast(`Public case ${data.operation} by ${data.changedBy}`, 'info', 3000);
+            
+            // Refresh public cases data
+            loadPublicCases().then(() => {
+                updateDashboardUI();
+            });
+        }
+        
+        function handleDataVersionChanged(data) {
+            console.log('Real-time data version change:', data);
+            
+            // Refresh all dashboard data
+            loadDashboardData();
         }
         
         // ===== CONNECTION STATUS =====
@@ -1345,8 +1430,20 @@
                 // Load dashboard data
                 await loadDashboardData();
                 
-                // Start refresh timer
-                refreshInterval = setInterval(loadDashboardData, 10000); // 10 seconds
+                // Initialize real-time system
+                if (typeof AdminRealtime !== 'undefined') {
+                    await AdminRealtime.initialize();
+                    
+                    // Set up real-time event handlers
+                    AdminRealtime.on('userChanged', handleUserChanged);
+                    AdminRealtime.on('runnerChanged', handleRunnerChanged);
+                    AdminRealtime.on('adminChanged', handleAdminChanged);
+                    AdminRealtime.on('publicCaseChanged', handlePublicCaseChanged);
+                    AdminRealtime.on('dataVersionChanged', handleDataVersionChanged);
+                }
+                
+                // Start refresh timer (fallback)
+                refreshInterval = setInterval(loadDashboardData, 30000); // 30 seconds
                 
                 // Show success message
                 showToast('Dashboard loaded successfully!', 'success', 3000);

@@ -42,11 +42,19 @@ A comprehensive platform for raising awareness about missing persons cases, spec
 ```
 
 ### Real-time Updates Flow
-1. **SignalR Connection**: Admin clients connect to SignalR hub
-2. **Event Broadcasting**: CRUD operations trigger real-time events
-3. **Client Updates**: Connected clients receive updates instantly
-4. **Polling Fallback**: If WebSocket fails, clients fall back to polling
+1. **SignalR Connection**: Admin clients connect to SignalR hub with JWT authentication
+2. **Event Broadcasting**: CRUD operations trigger real-time events via AdminHub
+3. **Client Updates**: Connected clients receive updates instantly (< 2 seconds)
+4. **Polling Fallback**: If WebSocket fails, clients fall back to 30-second polling
 5. **Debounced Processing**: Multiple events are batched for efficiency
+6. **Connection Management**: Automatic reconnection with exponential backoff
+
+### Security Architecture
+- **JWT Authentication**: Secure token-based authentication with automatic refresh
+- **Role-based Access**: Admin-only access to sensitive operations
+- **CORS Protection**: Configured for specific domains only
+- **Input Validation**: Server-side validation for all inputs
+- **HTTPS Everywhere**: All communications encrypted in transit
 
 ## 🛠️ Technology Stack
 
@@ -119,6 +127,53 @@ Create a `config.json` file in the root directory:
   "API_BASE_URL": "https://your-api-url.azurewebsites.net/api"
 }
 ```
+
+## 🚀 Deployment
+
+### Frontend Deployment (GitHub Pages)
+The frontend automatically deploys to GitHub Pages when changes are pushed to the `main` branch.
+
+**Manual Deployment:**
+```bash
+# Build assets with hashing
+node scripts/build.js
+
+# Deploy to GitHub Pages
+npm run deploy
+```
+
+### API Deployment (Azure App Service)
+The API automatically deploys to Azure App Service via GitHub Actions.
+
+**Manual Deployment:**
+```bash
+# Build and publish
+cd 241RunnersAwarenessAPI
+dotnet publish -c Release -o ./publish
+
+# Deploy to Azure
+az webapp deployment source config-zip \
+  --resource-group 241runners-rg \
+  --name 241runners-api \
+  --src ./publish.zip
+```
+
+### Environment Configuration
+1. **Azure App Service Configuration:**
+   - `DefaultConnection`: Azure SQL connection string
+   - `JWT_KEY`: Secure JWT signing key (32+ characters)
+   - `JWT_ISSUER`: JWT issuer (241RunnersAwareness)
+   - `JWT_AUDIENCE`: JWT audience (241RunnersAwareness)
+
+2. **GitHub Pages Configuration:**
+   - Custom domain: `241runnersawareness.org`
+   - HTTPS: Enabled
+   - CNAME: Configured for both www and apex domains
+
+### Health Monitoring
+- **Health Check**: https://241runners-api.azurewebsites.net/healthz
+- **Readiness Check**: https://241runners-api.azurewebsites.net/readyz
+- **Status Badge**: [![Deployment Status](https://github.com/241RunnersAwareness/241RunnersAwareness/workflows/API%20Build%20and%20Deploy/badge.svg)](https://github.com/241RunnersAwareness/241RunnersAwareness/actions)
 
 ## 📁 Project Structure
 

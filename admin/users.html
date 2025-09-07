@@ -17,10 +17,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <!-- Admin Authentication Script -->
+    <script src="/admin/assets/js/admin-auth.js?v=20250107"></script>
+    
     <!-- Admin Guard -->
-    <script type="module">
-        import { requireAdmin } from './assets/js/admin-auth.js';
-        requireAdmin();
+    <script>
+        // Check authentication on page load
+        if (!requireAdmin()) {
+            // Redirect will happen in requireAdmin function
+        }
     </script>
 
     <div class="admin-layout">

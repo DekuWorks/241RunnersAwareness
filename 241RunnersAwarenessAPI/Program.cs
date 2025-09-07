@@ -98,6 +98,9 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Add Application Insights
+builder.Services.AddApplicationInsightsTelemetry();
+
 // Add services
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<AdminSeedService>();
@@ -195,5 +198,20 @@ app.MapGet("/api/data-version", () => new {
     version = DateTime.UtcNow.Ticks.ToString(),
     timestamp = DateTime.UtcNow
 }).WithName("DataVersion");
+
+// Seed admin users on startup
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var adminSeedService = scope.ServiceProvider.GetRequiredService<AdminSeedService>();
+        await adminSeedService.SeedAdminUsersAsync();
+        Console.WriteLine("✅ Admin users seeded successfully");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Failed to seed admin users: {ex.Message}");
+    }
+}
 
 app.Run();

@@ -125,42 +125,71 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    event.respondWith(
-        caches.match(request)
-            .then(response => {
-                if (response) {
-                    // Serve from cache
-                    return response;
-                }
-
-                // Fetch from network
-                return fetch(request)
-                    .then(fetchResponse => {
-                        // Don't cache if not a valid response
-                        if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
-                            return fetchResponse;
-                        }
-
-                        // Clone the response
-                        const responseToCache = fetchResponse.clone();
-
-                        // Cache dynamic content
+    // API requests - Network first with cache fallback
+    if (url.pathname.startsWith('/api/')) {
+        event.respondWith(
+            fetch(request)
+                .then(response => {
+                    // Cache successful API responses
+                    if (response.ok) {
+                        const responseToCache = response.clone();
                         caches.open(DYNAMIC_CACHE)
-                            .then(cache => {
-                                cache.put(request, responseToCache);
-                            });
+                            .then(cache => cache.put(request, responseToCache));
+                    }
+                    return response;
+                })
+                .catch(() => {
+                    // Fallback to cache if network fails
+                    return caches.match(request);
+                })
+        );
+        return;
+    }
 
-                        return fetchResponse;
-                    })
-                    .catch(error => {
-                        console.error('Fetch failed:', error);
-                        
-                        // Return offline page for navigation requests
+    // Static assets - Cache first with network fallback
+    if (url.pathname.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/)) {
+        event.respondWith(
+            caches.match(request)
+                .then(response => {
+                    if (response) {
+                        return response;
+                    }
+                    return fetch(request)
+                        .then(fetchResponse => {
+                            if (fetchResponse.ok) {
+                                const responseToCache = fetchResponse.clone();
+                                caches.open(STATIC_CACHE)
+                                    .then(cache => cache.put(request, responseToCache));
+                            }
+                            return fetchResponse;
+                        });
+                })
+        );
+        return;
+    }
+
+    // HTML pages - Network first with cache fallback
+    event.respondWith(
+        fetch(request)
+            .then(response => {
+                if (response.ok) {
+                    const responseToCache = response.clone();
+                    caches.open(DYNAMIC_CACHE)
+                        .then(cache => cache.put(request, responseToCache));
+                }
+                return response;
+            })
+            .catch(() => {
+                // Fallback to cache, then to index.html for navigation
+                return caches.match(request)
+                    .then(response => {
+                        if (response) {
+                            return response;
+                        }
                         if (request.mode === 'navigate') {
                             return caches.match('/index.html');
                         }
-                        
-                        throw error;
+                        throw new Error('No cached response available');
                     });
             })
     );

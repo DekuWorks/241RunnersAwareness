@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
 using _241RunnersAwarenessAPI.Data;
 using _241RunnersAwarenessAPI.Models;
+using _241RunnersAwarenessAPI.Hubs;
 
 namespace _241RunnersAwarenessAPI.Controllers
 {
@@ -11,11 +13,13 @@ namespace _241RunnersAwarenessAPI.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<RunnersController> _logger;
+        private readonly IHubContext<AdminHub> _hubContext;
 
-        public RunnersController(ApplicationDbContext context, ILogger<RunnersController> logger)
+        public RunnersController(ApplicationDbContext context, ILogger<RunnersController> logger, IHubContext<AdminHub> hubContext)
         {
             _context = context;
             _logger = logger;
+            _hubContext = hubContext;
         }
 
         /// <summary>
@@ -442,7 +446,7 @@ namespace _241RunnersAwarenessAPI.Controllers
                 _logger.LogInformation("New runner created via public endpoint: {RunnerId} - {FirstName} {LastName}", 
                     runner.RunnerId, runner.FirstName, runner.LastName);
 
-                // Return the created runner as DTO
+                // Create the runner DTO for response and broadcast
                 var runnerDto = new RunnerDto
                 {
                     RunnerId = runner.RunnerId,
@@ -485,6 +489,21 @@ namespace _241RunnersAwarenessAPI.Controllers
                     ReportedByUserId = runner.ReportedByUserId,
                     Tags = runner.Tags
                 };
+
+                // Broadcast real-time update to admin clients
+                try
+                {
+                    await _hubContext.Clients.Group("Admins").SendAsync("RunnerChanged", new
+                    {
+                        operation = "create",
+                        runner = runnerDto,
+                        timestamp = DateTime.UtcNow
+                    });
+                }
+                catch (Exception hubEx)
+                {
+                    _logger.LogWarning(hubEx, "Failed to broadcast runner creation to admin clients");
+                }
 
                 return CreatedAtAction(nameof(GetRunners), new { id = runner.Id }, runnerDto);
             }

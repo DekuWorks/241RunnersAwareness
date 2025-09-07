@@ -7,80 +7,115 @@ We release patches for security vulnerabilities in the following versions:
 | Version | Supported          |
 | ------- | ------------------ |
 | 2.0.x   | :white_check_mark: |
-| 1.0.x   | :white_check_mark: |
-| < 1.0   | :x:                |
+| 1.x.x   | :x:                |
 
 ## Reporting a Vulnerability
 
-We take security seriously. If you discover a security vulnerability, please follow these steps:
+We take security vulnerabilities seriously. If you discover a security vulnerability, please follow these steps:
 
-### 1. Do NOT create a public issue
-Security vulnerabilities should be reported privately to prevent exploitation.
+### 1. **DO NOT** create a public GitHub issue
+
+Security vulnerabilities should be reported privately to protect our users.
 
 ### 2. Email us directly
-Send an email to: security@241runnersawareness.org
+
+Send an email to: **security@241runnersawareness.org**
 
 Include the following information:
 - Description of the vulnerability
-- Steps to reproduce
-- Potential impact
-- Suggested fix (if any)
+- Steps to reproduce the issue
+- Potential impact assessment
+- Any suggested fixes or mitigations
 
-### 3. Response timeline
-- **Acknowledgment**: Within 48 hours
-- **Initial assessment**: Within 1 week
-- **Resolution**: Within 30 days (depending on severity)
+### 3. What to expect
 
-### 4. What to expect
-- We will acknowledge receipt of your report
-- We will investigate and provide updates
-- We will work with you to resolve the issue
+- **Acknowledgment**: We will acknowledge receipt of your report within 48 hours
+- **Initial Assessment**: We will provide an initial assessment within 5 business days
+- **Regular Updates**: We will keep you informed of our progress
+- **Resolution**: We aim to resolve critical vulnerabilities within 30 days
+
+### 4. Responsible Disclosure
+
+We follow responsible disclosure practices:
+- We will not publicly disclose the vulnerability until it has been fixed
 - We will credit you in our security advisories (unless you prefer to remain anonymous)
+- We will not take legal action against security researchers who follow these guidelines
 
-## Security Best Practices
+## Security Measures
 
-### For Users
-- Use strong, unique passwords
-- Enable two-factor authentication when available
-- Keep your browser updated
-- Report suspicious activity immediately
-
-### For Developers
-- Follow secure coding practices
-- Regular security audits
-- Keep dependencies updated
-- Use HTTPS everywhere
-- Implement proper authentication and authorization
-- Validate all inputs
-- Use parameterized queries
-- Implement rate limiting
-
-## Security Features
-
-### Authentication
-- JWT-based authentication with secure token handling
+### Authentication & Authorization
+- JWT tokens with secure signing keys
 - Role-based access control (RBAC)
-- Session management with automatic timeout
-- Password strength requirements
+- Session management with proper expiration
+- Password hashing using BCrypt
 
 ### Data Protection
-- HTTPS encryption in transit
-- Secure storage of sensitive data
-- Regular security updates
-- Input validation and sanitization
+- HTTPS/TLS encryption for all communications
+- SQL injection prevention through parameterized queries
+- XSS protection through input sanitization
+- CSRF protection for state-changing operations
 
-### Monitoring
-- Security event logging
-- Failed login attempt monitoring
-- Suspicious activity detection
-- Regular security assessments
+### Infrastructure Security
+- Azure App Service with managed certificates
+- Database encryption at rest
+- Regular security updates and patches
+- Network security groups and firewalls
 
-## Contact
+### Code Security
+- Dependency vulnerability scanning
+- Static code analysis
+- Secure coding practices
+- Regular security audits
 
-For security-related questions or concerns:
-- Email: security@241runnersawareness.org
-- Response time: Within 48 hours
+## Security Best Practices for Contributors
 
-## Acknowledgments
+### 1. Never commit secrets
+- Use environment variables for sensitive configuration
+- Never commit API keys, passwords, or connection strings
+- Use `.env.example` files for configuration templates
 
-We thank the security researchers and community members who help keep our platform secure.
+### 2. Validate all inputs
+- Sanitize user inputs to prevent XSS
+- Validate data types and formats
+- Use parameterized queries for database operations
+
+### 3. Follow secure coding practices
+- Use HTTPS for all external communications
+- Implement proper error handling without information leakage
+- Follow the principle of least privilege
+
+### 4. Keep dependencies updated
+- Regularly update npm/dotnet packages
+- Monitor for security advisories
+- Use automated dependency scanning
+
+## Security Contacts
+
+- **Security Team**: security@241runnersawareness.org
+- **Project Maintainer**: admin@241runnersawareness.org
+- **Emergency Contact**: +1-XXX-XXX-XXXX (for critical vulnerabilities only)
+
+## Security Advisories
+
+Security advisories will be published on our [Security Advisories](https://github.com/241RunnersAwareness/241RunnersAwareness/security/advisories) page.
+
+## Bug Bounty Program
+
+We currently do not have a formal bug bounty program, but we appreciate security researchers who help us improve our security posture. We may consider implementing a formal program in the future.
+
+## Legal
+
+By reporting a security vulnerability, you agree to:
+- Not access or modify data beyond what is necessary to demonstrate the vulnerability
+- Not disrupt our services or systems
+- Not publicly disclose the vulnerability until we have had a chance to fix it
+- Comply with all applicable laws and regulations
+
+## Updates to this Policy
+
+This security policy may be updated from time to time. We will notify users of significant changes through our usual communication channels.
+
+---
+
+**Last Updated**: January 7, 2025
+**Version**: 1.0

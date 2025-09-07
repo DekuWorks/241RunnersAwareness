@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using BCrypt.Net;
 using _241RunnersAwarenessAPI.Data;
 using _241RunnersAwarenessAPI.Models;
 using _241RunnersAwarenessAPI.Services;
+using _241RunnersAwarenessAPI.Hubs;
 
 namespace _241RunnersAwarenessAPI.Controllers
 {
@@ -17,12 +19,14 @@ namespace _241RunnersAwarenessAPI.Controllers
         private readonly ApplicationDbContext _context;
         private readonly JwtService _jwtService;
         private readonly ILogger<AuthController> _logger;
+        private readonly IHubContext<AdminHub> _hubContext;
 
-        public AuthController(ApplicationDbContext context, JwtService jwtService, ILogger<AuthController> logger)
+        public AuthController(ApplicationDbContext context, JwtService jwtService, ILogger<AuthController> logger, IHubContext<AdminHub> hubContext)
         {
             _context = context;
             _jwtService = jwtService;
             _logger = logger;
+            _hubContext = hubContext;
         }
 
         [HttpPost("register")]
@@ -772,6 +776,44 @@ namespace _241RunnersAwarenessAPI.Controllers
             }
         }
 
+        [HttpGet("data-version")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult> GetDataVersion()
+        {
+            try
+            {
+                // Get counts for version calculation
+                var userCount = await _context.Users.CountAsync();
+                var runnerCount = await _context.Runners.CountAsync();
+                var publicCaseCount = await _context.PublicCases.CountAsync();
+                
+                // Create a simple version based on counts and timestamp
+                var version = $"{userCount}-{runnerCount}-{publicCaseCount}-{DateTime.UtcNow:yyyyMMddHHmm}";
+                var etag = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(version));
+                
+                Response.Headers.Add("ETag", $"\"{etag}\"");
+                Response.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate");
+                
+                return Ok(new { 
+                    version = version,
+                    timestamp = DateTime.UtcNow,
+                    counts = new {
+                        users = userCount,
+                        runners = runnerCount,
+                        publicCases = publicCaseCount
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Data version check failed");
+                return StatusCode(500, new { 
+                    error = "Failed to get data version",
+                    timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
         // Protected endpoint - only admins can view all users
         [HttpGet("users")]
         [Authorize(Roles = "admin")]
@@ -898,6 +940,29 @@ namespace _241RunnersAwarenessAPI.Controllers
                 await _context.SaveChangesAsync();
 
                 _logger.LogInformation($"User updated by admin: {user.Email}");
+
+                // Broadcast real-time update to admin clients
+                try
+                {
+                    await _hubContext.Clients.Group("Admins").SendAsync("UserChanged", new
+                    {
+                        operation = "update",
+                        user = new
+                        {
+                            id = user.Id,
+                            email = user.Email,
+                            firstName = user.FirstName,
+                            lastName = user.LastName,
+                            role = user.Role,
+                            isActive = user.IsActive
+                        },
+                        timestamp = DateTime.UtcNow
+                    });
+                }
+                catch (Exception hubEx)
+                {
+                    _logger.LogWarning(hubEx, "Failed to broadcast user update to admin clients");
+                }
 
                 return Ok(new AuthResponse
                 {
