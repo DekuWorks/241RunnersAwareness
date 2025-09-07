@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Accessible viewport: no maximum-scale or user-scalable restrictions -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - 241 Runners Awareness</title>
     <meta name="description" content="Admin dashboard for 241 Runners Awareness">
     
@@ -12,13 +12,13 @@
     <meta http-equiv="Cache-Control" content="no-cache">
     
     <!-- Favicon with cache busting -->
-    <link rel="icon" type="image/x-icon" href="/241-logo.jpg?v=20250906">
+    <link rel="icon" type="image/x-icon" href="/241-logo.jpg?v=20250107">
     
     <!-- External Stylesheets with cache busting -->
-    <link rel="stylesheet" href="/styles.css?v=20250906">
-    <link rel="stylesheet" href="/admin/assets/css/admin.css?v=20250906">
-    <link rel="stylesheet" href="/forms.css?v=20250906">
-    <link rel="stylesheet" href="/admin/assets/css/admin-dashboard-fixes.css?v=20250906">
+    <link rel="stylesheet" href="/styles.css?v=20250107">
+    <link rel="stylesheet" href="/admin/assets/css/admin.css?v=20250107">
+    <link rel="stylesheet" href="/forms.css?v=20250107">
+    <link rel="stylesheet" href="/admin/assets/css/admin-dashboard-fixes.css?v=20250107">
     
     <!-- Inline Critical CSS for immediate rendering -->
     <style>
@@ -74,6 +74,83 @@
         
         .admin-dashboard.loaded {
             opacity: 1;
+        }
+        
+        /* Toast Styles */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10001;
+            pointer-events: none;
+        }
+        
+        .toast {
+            background: white;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid;
+            animation: slideIn 0.3s ease;
+            max-width: 400px;
+            pointer-events: auto;
+        }
+        
+        .toast-success {
+            border-left-color: #059669;
+        }
+        
+        .toast-error {
+            border-left-color: #dc2626;
+        }
+        
+        .toast-warning {
+            border-left-color: #d97706;
+        }
+        
+        .toast-info {
+            border-left-color: #3b82f6;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .toast-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        
+        .toast-message {
+            flex: 1;
+        }
+        
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #666;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .toast-close:hover {
+            color: #333;
         }
     </style>
     
@@ -147,16 +224,6 @@
         
         /* Live Indicator */
         .live-indicator {
-            margin-bottom: 10px;
-        }
-        
-        .last-updated {
-            font-size: 0.8rem;
-            color: #666;
-            margin-top: 5px;
-        }
-        
-        .live-indicator {
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -189,8 +256,14 @@
             }
         }
         
+        .last-updated {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
         /* Action Buttons */
-        .logout-button, .refresh-button {
+        .logout-button, .refresh-button, .hard-refresh-button {
             background: #dc2626;
             color: white;
             border: none;
@@ -206,9 +279,17 @@
             gap: 5px;
         }
         
-        .logout-button:hover, .refresh-button:hover {
+        .logout-button:hover, .refresh-button:hover, .hard-refresh-button:hover {
             background: #b91c1c;
             transform: translateY(-1px);
+        }
+        
+        .hard-refresh-button {
+            background: #6b7280;
+        }
+        
+        .hard-refresh-button:hover {
+            background: #4b5563;
         }
         
         /* Dashboard Statistics */
@@ -259,6 +340,37 @@
             font-size: 0.9rem;
             display: block;
             margin-top: 5px;
+        }
+        
+        /* Connection Status */
+        .connection-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .connection-status.connected {
+            background: rgba(5, 150, 105, 0.8);
+        }
+        
+        .connection-status.disconnected {
+            background: rgba(220, 38, 38, 0.8);
+        }
+        
+        .connection-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
         }
         
         /* Modal Styles */
@@ -480,52 +592,6 @@
             margin-left: 10px;
         }
         
-        /* Toast Notifications */
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1001;
-        }
-        
-        .toast {
-            background: white;
-            border-radius: 8px;
-            padding: 15px 20px;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-            border-left: 4px solid;
-            animation: slideIn 0.3s ease;
-            max-width: 400px;
-        }
-        
-        .toast.success {
-            border-left-color: #059669;
-        }
-        
-        .toast.error {
-            border-left-color: #dc2626;
-        }
-        
-        .toast.warning {
-            border-left-color: #d97706;
-        }
-        
-        .toast.info {
-            border-left-color: #3b82f6;
-        }
-        
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
         /* Responsive Design */
         @media (max-width: 768px) {
             .admin-dashboard {
@@ -596,13 +662,16 @@
                     <div class="live-indicator">
                         <div class="live-dot"></div>
                         <span>Live Database Connection</span>
-                    <div class="last-updated">Last Updated: <span id="lastUpdated">Loading...</span></div>
                     </div>
+                    <div class="last-updated">Last Updated: <span id="lastUpdated">Loading...</span></div>
                     <button id="logoutBtn" class="logout-button" onclick="logout()">
                         <span>🚪 Logout</span>
                     </button>
                     <button id="refreshBtn" class="refresh-button" onclick="refreshDashboard()">
-                        <span>🔄 Refresh</span>
+                        <span>�� Refresh</span>
+                    </button>
+                    <button id="hardRefreshBtn" class="hard-refresh-button" onclick="hardRefresh()">
+                        <span>💾 Hard Refresh</span>
                     </button>
                 </div>
             </div>
@@ -655,6 +724,12 @@
 
     <!-- Toast Container -->
     <div id="toastContainer" class="toast-container"></div>
+    
+    <!-- Connection Status -->
+    <div id="connectionStatus" class="connection-status">
+        <div class="connection-dot"></div>
+        <span id="connectionText">Connecting...</span>
+    </div>
     
     <!-- Enhanced JavaScript with All Admin Functions -->
     <script>
@@ -837,11 +912,11 @@
             if (!container) return;
             
             const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
+            toast.className = `toast toast-${type}`;
             toast.innerHTML = `
-                <div class="toast-flex">
-                    <span>${message}</span>
-                    <button onclick="this.parentElement.parentElement.remove()" class="toast-close-btn">×</button>
+                <div class="toast-content">
+                    <span class="toast-message">${message}</span>
+                    <button class="toast-close" onclick="this.parentElement.parentElement.remove()">×</button>
                 </div>
             `;
             
@@ -1200,13 +1275,57 @@
             }
         }
         
-        // ===== REFRESH FUNCTION =====
+        // ===== REFRESH FUNCTIONS =====
         
         async function refreshDashboard() {
             console.log('Manual refresh triggered...');
             showToast('Refreshing dashboard...', 'info', 2000);
             await loadDashboardData();
             showToast('Dashboard refreshed!', 'success', 3000);
+        }
+        
+        async function hardRefresh() {
+            console.log('Hard refresh triggered...');
+            showToast('Performing hard refresh...', 'info', 2000);
+            
+            try {
+                // Clear all caches
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    await Promise.all(cacheNames.map(name => caches.delete(name)));
+                }
+                
+                // Clear localStorage
+                localStorage.clear();
+                
+                // Reload page
+                window.location.reload();
+                
+            } catch (error) {
+                console.error('Hard refresh failed:', error);
+                showToast('Hard refresh failed, reloading page...', 'error');
+                window.location.reload();
+            }
+        }
+        
+        // ===== CONNECTION STATUS =====
+        
+        function updateConnectionStatus(isConnected, isPolling = false) {
+            const statusElement = document.getElementById('connectionStatus');
+            const textElement = document.getElementById('connectionText');
+            
+            if (statusElement && textElement) {
+                if (isConnected) {
+                    statusElement.className = 'connection-status connected';
+                    textElement.textContent = 'Real-time Connected';
+                } else if (isPolling) {
+                    statusElement.className = 'connection-status';
+                    textElement.textContent = 'Polling Mode';
+                } else {
+                    statusElement.className = 'connection-status disconnected';
+                    textElement.textContent = 'Disconnected';
+                }
+            }
         }
         
         // ===== INITIALIZATION =====

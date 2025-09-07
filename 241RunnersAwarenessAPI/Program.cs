@@ -5,6 +5,7 @@ using System.Text;
 using _241RunnersAwarenessAPI.Data;
 using _241RunnersAwarenessAPI.Services;
 using _241RunnersAwarenessAPI.Models;
+using _241RunnersAwarenessAPI.Hubs;
 using BCrypt.Net;
 using DotNetEnv;
 using Microsoft.Extensions.FileProviders;
@@ -51,25 +52,47 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
             ClockSkew = TimeSpan.Zero // Remove default 5 minute clock skew
         };
+        
+        // Configure JWT for SignalR
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+                
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/admin-hub"))
+                {
+                    context.Token = accessToken;
+                }
+                
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAuthorization();
 
-// Add CORS - Fixed Implementation with both www and non-www origins
+// Add SignalR
+builder.Services.AddSignalR(options =>
+{
+    options.EnableDetailedErrors = builder.Environment.IsDevelopment();
+    options.KeepAliveInterval = TimeSpan.FromSeconds(15);
+    options.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
+    options.HandshakeTimeout = TimeSpan.FromSeconds(15);
+});
+
+// Add CORS - P0 Fix: Proper CORS configuration with named policy
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("AppCors", policy =>
     {
         policy.WithOrigins(
                 "https://241runnersawareness.org",
-                "https://www.241runnersawareness.org",
-                "http://localhost:3000",
-                "http://localhost:8080",
-                "http://127.0.0.1:3000",
-                "http://127.0.0.1:8080"
+                "https://www.241runnersawareness.org"
             )
-            .AllowAnyMethod()
-            .AllowAnyHeader()
+            .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+            .WithHeaders("Authorization", "Content-Type", "X-CSRF-Token", "X-Client")
             .AllowCredentials()
             .SetPreflightMaxAge(TimeSpan.FromSeconds(86400)); // 24 hours
     });
@@ -80,6 +103,7 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<AdminSeedService>();
 builder.Services.AddScoped<ImageUploadService>();
 builder.Services.AddScoped<DatabaseCleanupService>();
+builder.Services.AddScoped<RealtimeNotificationService>();
 
 // Add rate limiting
 builder.Services.AddMemoryCache();
@@ -96,8 +120,8 @@ if (app.Environment.IsDevelopment())
 // Use HTTPS redirection
 app.UseHttpsRedirection();
 
-// Use CORS - Must be before UseAuthentication
-app.UseCors();
+// P0 Fix: Use CORS BEFORE authentication/authorization
+app.UseCors("AppCors");
 
 // Use authentication and authorization
 app.UseAuthentication();
@@ -124,12 +148,52 @@ app.UseStaticFiles(new StaticFileOptions
 // Map controllers
 app.MapControllers();
 
-// Health check endpoint
+// Map SignalR hubs
+app.MapHub<AdminHub>("/admin-hub");
+
+// P0 Fix: Fast health check endpoint (no DB, in-process only)
+app.MapGet("/healthz", () => new { 
+    Status = "Healthy", 
+    Timestamp = DateTime.UtcNow,
+    Version = "2.0.0"
+}).WithName("HealthCheck");
+
+// P0 Fix: Readiness check (can check DB lightly)
+app.MapGet("/readyz", async (ApplicationDbContext context) => {
+    try
+    {
+        // Light DB check with timeout
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+        var userCount = await context.Users.CountAsync(cts.Token);
+        return Results.Ok(new { 
+            Status = "Ready", 
+            Timestamp = DateTime.UtcNow,
+            Database = "Connected",
+            UserCount = userCount
+        });
+    }
+    catch (Exception ex)
+    {
+        return Results.Json(new { 
+            Status = "Not Ready", 
+            Timestamp = DateTime.UtcNow,
+            Error = ex.Message
+        });
+    }
+}).WithName("ReadinessCheck");
+
+// Legacy health endpoint for backward compatibility
 app.MapGet("/health", () => new { Status = "Healthy", Timestamp = DateTime.UtcNow });
 
 // CORS test endpoint
 app.MapGet("/api/cors-test", () => new { Message = "CORS is working", Timestamp = DateTime.UtcNow })
     .WithName("CorsTest")
     .WithOpenApi();
+
+// Data version endpoint for polling fallback
+app.MapGet("/api/data-version", () => new { 
+    version = DateTime.UtcNow.Ticks.ToString(),
+    timestamp = DateTime.UtcNow
+}).WithName("DataVersion");
 
 app.Run();

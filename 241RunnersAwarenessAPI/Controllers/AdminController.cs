@@ -11,7 +11,7 @@ namespace _241RunnersAwarenessAPI.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize(Roles = "admin")]
-    public class AdminController : ControllerBase
+    public class AdminController : BaseController
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<AdminController> _logger;

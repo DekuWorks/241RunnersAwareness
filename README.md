@@ -1,442 +1,325 @@
-# 241 Runners Awareness Platform
+# 241 Runners Awareness
 
-A comprehensive platform for tracking and managing missing runners, built with ASP.NET Core 8.0 API and modern web technologies.
+A comprehensive platform for raising awareness about missing persons cases, specifically focused on the 241 area code region. The system provides both public-facing information and secure admin tools for case management.
 
-## 🚀 **Live Status - All Systems Operational**
+## 🚀 Features
 
-### ✅ **Production Deployment Status**
-- **API**: ✅ Live at `https://241runners-api.azurewebsites.net`
-- **Database**: ✅ Connected and operational
-- **Authentication**: ✅ JWT system working
-- **Frontend**: ✅ Live at `https://241runnersawareness.org`
-- **Admin Dashboard**: ✅ Fully functional at `/admin/`
+### Public Features
+- **Case Directory**: Browse missing persons cases with filtering and search
+- **Real-time Updates**: Live updates when new cases are added
+- **Responsive Design**: Works on desktop, tablet, and mobile devices
+- **PWA Support**: Install as a mobile app with offline capabilities
 
-### 📊 **Current System Metrics**
-- **Database**: Azure SQL Database (`241RunnersAwarenessDB`)
-- **Users**: 6 registered users (4 admin, 2 regular)
-- **Runners**: 3 active cases in database
-- **API Health**: Healthy and responding
-- **Uptime**: 100% operational
-- **Response Time**: < 400ms average
+### Admin Features
+- **Secure Dashboard**: Role-based access control for administrators
+- **Real-time Collaboration**: Multiple admins can work simultaneously with live updates
+- **Case Management**: Create, edit, and manage missing persons cases
+- **User Management**: Admin user creation and role management
+- **System Monitoring**: Health checks and performance monitoring
 
-### 📚 **Documentation**
-- **Complete Documentation**: Available in [`docs/`](./docs/) folder
-- **Deployment Guide**: [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md)
-- **Status Reports**: [`docs/AZURE_DEPLOYMENT_STATUS.md`](./docs/AZURE_DEPLOYMENT_STATUS.md)
-- **Bug Reports**: [`docs/BUG_REPORT.md`](./docs/BUG_REPORT.md)
+### Technical Features
+- **Real-time Updates**: SignalR-powered live updates with polling fallback
+- **Secure Authentication**: JWT-based authentication with automatic token refresh
+- **API-First Design**: RESTful API with comprehensive error handling
+- **Modern UI**: Clean, accessible interface with dark/light mode support
+- **Performance Optimized**: Cached assets, lazy loading, and efficient data fetching
 
-## 🏗️ **Architecture Overview**
+## 🏗️ Architecture
 
-### **Backend (ASP.NET Core 8.0)**
-- **Framework**: ASP.NET Core 8.0
-- **Database**: Azure SQL Database with Entity Framework Core
-- **Authentication**: JWT (JSON Web Tokens) with BCrypt password hashing
-- **API**: RESTful endpoints with comprehensive validation
-- **Deployment**: Azure App Service
-
-### **Frontend (Static Site)**
-- **Technology**: HTML5, CSS3, JavaScript (Vanilla)
-- **Features**: Progressive Web App (PWA), responsive design
-- **Authentication**: JWT-based client-side auth
-- **Deployment**: Ready for Netlify/GitHub Pages
-
-### **Database Schema**
-- **Users Table**: User management and authentication
-- **Runners Table**: Complete runner profiles with 30+ fields
-- **Relationships**: Foreign key constraints for data integrity
-
-## 📋 **API Endpoints**
-
-### **Authentication**
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-- `PUT /api/auth/profile` - Update user profile
-- `PUT /api/auth/password` - Change password
-- `GET /api/auth/health` - System health check
-
-### **Runners Management**
-- `GET /api/runners` - Get all runners (with filtering)
-- `GET /api/runners/{id}` - Get specific runner
-- `POST /api/runners` - Create new runner
-- `PUT /api/runners/{id}` - Update runner
-- `DELETE /api/runners/{id}` - Delete runner
-- `GET /api/runners/stats` - Get runner statistics
-
-### **Admin Endpoints**
-- `POST /api/auth/create-admin` - Create admin user (admin only)
-- `GET /api/admin/users` - Get all users (admin only)
-
-## 🗄️ **Database Schema**
-
-### **Runners Table**
-```sql
-CREATE TABLE [dbo].[Runners] (
-    [Id] int IDENTITY(1,1) NOT NULL,
-    [FirstName] nvarchar(100) NOT NULL,
-    [LastName] nvarchar(100) NOT NULL,
-    [RunnerId] nvarchar(50) NOT NULL,
-    [Age] int NOT NULL,
-    [Gender] nvarchar(50) NULL,
-    [Status] nvarchar(50) NOT NULL,
-    [City] nvarchar(100) NOT NULL,
-    [State] nvarchar(50) NOT NULL,
-    [Address] nvarchar(500) NULL,
-    [Description] nvarchar(500) NULL,
-    [ContactInfo] nvarchar(200) NULL,
-    [DateReported] datetime2 NOT NULL,
-    [DateFound] datetime2 NULL,
-    [LastSeen] datetime2 NULL,
-    [DateOfBirth] datetime2 NULL,
-    [Tags] nvarchar(500) NULL,
-    [IsActive] bit NOT NULL,
-    [IsUrgent] bit NOT NULL,
-    [CreatedAt] datetime2 NOT NULL,
-    [UpdatedAt] datetime2 NULL,
-    [Height] nvarchar(50) NULL,
-    [Weight] nvarchar(50) NULL,
-    [HairColor] nvarchar(50) NULL,
-    [EyeColor] nvarchar(50) NULL,
-    [IdentifyingMarks] nvarchar(500) NULL,
-    [MedicalConditions] nvarchar(1000) NULL,
-    [Medications] nvarchar(500) NULL,
-    [Allergies] nvarchar(500) NULL,
-    [EmergencyContacts] nvarchar(500) NULL,
-    [ReportedByUserId] int NULL,
-    CONSTRAINT [PK_Runners] PRIMARY KEY ([Id])
-);
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │   API Server    │    │   Database      │
+│   (GitHub Pages)│◄──►│   (Azure App    │◄──►│   (Azure SQL)   │
+│                 │    │    Service)     │    │                 │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │
+         │                       │
+         ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐
+│   CDN/Assets    │    │   SignalR Hub   │
+│   (Cached)      │    │   (Real-time)   │
+└─────────────────┘    └─────────────────┘
 ```
 
-## 🚀 **Deployment Information**
+### Real-time Updates Flow
+1. **SignalR Connection**: Admin clients connect to SignalR hub
+2. **Event Broadcasting**: CRUD operations trigger real-time events
+3. **Client Updates**: Connected clients receive updates instantly
+4. **Polling Fallback**: If WebSocket fails, clients fall back to polling
+5. **Debounced Processing**: Multiple events are batched for efficiency
 
-### **Azure Resources**
-- **Resource Group**: `241runnersawareness-rg`
-- **App Service**: `241runners-api`
-- **SQL Database**: `241RunnersAwarenessDB`
-- **SQL Server**: `241runners-sql-2025.database.windows.net`
+## 🛠️ Technology Stack
 
-### **Connection Details**
-- **API URL**: `https://241runners-api.azurewebsites.net`
-- **Database Server**: `241runners-sql-2025.database.windows.net`
-- **Database Name**: `241RunnersAwarenessDB`
-- **Admin Username**: `sqladmin`
+### Frontend
+- **HTML5/CSS3**: Semantic markup with modern CSS features
+- **Vanilla JavaScript**: No frameworks for maximum performance
+- **Service Workers**: Offline support and caching
+- **SignalR Client**: Real-time communication
+- **PWA**: Progressive Web App capabilities
 
-### **Environment Variables**
+### Backend
+- **ASP.NET Core 8**: Modern web API framework
+- **Entity Framework Core**: Database ORM with SQLite/Azure SQL
+- **SignalR**: Real-time communication hub
+- **JWT Authentication**: Secure token-based auth
+- **Swagger/OpenAPI**: API documentation
+
+### Infrastructure
+- **GitHub Pages**: Static site hosting
+- **Azure App Service**: API hosting
+- **Azure SQL**: Database hosting
+- **GitHub Actions**: CI/CD pipeline
+- **Azure CLI**: Deployment automation
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18+ (for build tools)
+- .NET 8 SDK (for API development)
+- Git
+
+### Local Development
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-org/241RunnersAwareness.git
+   cd 241RunnersAwareness
+   ```
+
+2. **Set up the API**
+   ```bash
+   cd 241RunnersAwarenessAPI
+   dotnet restore
+   dotnet run
+   ```
+
+3. **Set up the frontend**
+   ```bash
+   # Install build tools
+   npm install -g htmlhint eslint csslint
+   
+   # Run build script
+   chmod +x scripts/build.sh
+   ./scripts/build.sh
+   
+   # Serve locally (optional)
+   python -m http.server 8000
+   ```
+
+4. **Access the application**
+   - Frontend: http://localhost:8000
+   - API: https://localhost:7001
+   - Admin: http://localhost:8000/admin
+
+### Environment Configuration
+
+Create a `config.json` file in the root directory:
 ```json
 {
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=tcp:241runners-sql-2025.database.windows.net,1433;Initial Catalog=241RunnersAwarenessDB;User ID=sqladmin;Password=***REDACTED***;Encrypt=True;TrustServerCertificate=False;"
-  },
-  "Jwt": {
-    "Key": "***REDACTED***",
-    "Issuer": "241RunnersAwareness",
-    "Audience": "241RunnersAwareness"
-  }
+  "API_BASE_URL": "https://your-api-url.azurewebsites.net/api"
 }
 ```
 
-## 📁 **Project Structure**
+## 📁 Project Structure
 
 ```
 241RunnersAwareness/
 ├── 241RunnersAwarenessAPI/          # Backend API
-│   ├── Controllers/                 # API Controllers
-│   │   ├── AuthController.cs       # Authentication endpoints
-│   │   └── RunnersController.cs    # Runners management
+│   ├── Controllers/                 # API controllers
+│   ├── Hubs/                       # SignalR hubs
+│   ├── Services/                   # Business logic services
 │   ├── Models/                     # Data models
-│   │   ├── User.cs                 # User entity
-│   │   ├── Runner.cs               # Runner entity
-│   │   └── AuthDTOs.cs             # Authentication DTOs
 │   ├── Data/                       # Database context
-│   │   └── ApplicationDbContext.cs # EF Core context
-│   ├── Services/                   # Business logic
-│   │   └── JwtService.cs           # JWT token service
-│   └── Program.cs                  # Application startup
-├── admin/                          # Admin dashboard
-│   ├── index.html                  # Admin main page
-│   ├── login.html                  # Admin login
-│   └── assets/                     # Admin assets
-├── assets/                         # Shared assets
-│   ├── js/                         # JavaScript utilities
-│   │   ├── config.js               # Configuration
-│   │   └── api-utils.js            # API utilities
-│   └── styles/                     # Shared styles
-├── js/                             # Main site JavaScript
-│   └── auth.js                     # Authentication utilities
-├── partials/                       # Shared HTML components
-├── index.html                      # Main landing page
-├── runner.html                     # Runner profiles
-├── map.html                        # Interactive map
-├── signup.html                     # User registration
-├── login.html                      # User login
-└── README.md                       # This file
+│   └── Migrations/                 # Database migrations
+├── admin/                          # Admin interface
+│   ├── admindash.html             # Main admin dashboard
+│   ├── login.html                 # Admin login
+│   └── assets/                    # Admin-specific assets
+├── js/                            # JavaScript modules
+│   ├── admin-auth.js              # Authentication utilities
+│   ├── admin-realtime.js          # Real-time updates
+│   └── update-banner.js           # Service worker updates
+├── assets/                        # Static assets
+│   ├── images/                    # Images and media
+│   ├── styles/                    # CSS files
+│   └── js/                        # Frontend JavaScript
+├── scripts/                       # Build and deployment scripts
+│   └── build.sh                   # Asset building script
+├── .github/                       # GitHub configuration
+│   ├── workflows/                 # CI/CD pipelines
+│   └── ISSUE_TEMPLATE/            # Issue templates
+└── docs/                          # Documentation
 ```
 
-## 🛠️ **Development Setup**
+## 🔧 Configuration
 
-### **Prerequisites**
-- .NET 8.0 SDK
-- Azure CLI
-- SQL Server Management Studio (optional)
-- Visual Studio Code or Visual Studio
+### API Configuration
+The API uses environment variables for configuration:
 
-### **Local Development**
 ```bash
-# Clone the repository
-git clone https://github.com/DekuWorks/241RunnersAwareness.git
-cd 241RunnersAwareness
+# Database
+DefaultConnection="Data Source=app.db"
 
-# Backend setup
-cd 241RunnersAwarenessAPI
-dotnet restore
-dotnet build
-dotnet run
-
-# Frontend setup (static files)
-# Open index.html in browser or use live server
+# JWT Authentication
+JWT_KEY="your-super-secret-key-that-is-at-least-32-characters-long"
+JWT_ISSUER="241RunnersAwareness"
+JWT_AUDIENCE="241RunnersAwareness"
 ```
 
-### **Database Setup**
-```bash
-# Apply migrations
-dotnet ef database update
+### Frontend Configuration
+Update `config.json` for different environments:
 
-# Or use the provided SQL script
-# See create_runners_table_simple.sql
-```
-
-## 🔧 **Configuration**
-
-### **CORS Policy**
-```csharp
-builder.Services.AddCors(options =>
+```json
 {
-    options.AddPolicy("AppCors", policy =>
-    {
-        policy.WithOrigins(
-                "https://241runnersawareness.org",
-                "https://www.241runnersawareness.org",
-                "http://localhost:3000",
-                "http://localhost:5173",
-                "http://localhost:8080"
-            )
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
-    });
-});
+  "API_BASE_URL": "https://241runners-api.azurewebsites.net/api",
+  "ENVIRONMENT": "production"
+}
 ```
 
-### **API Configuration**
-- **Base URL**: `https://241runners-api.azurewebsites.net/api`
-- **Swagger UI**: Available at `/swagger`
-- **Health Check**: `/api/auth/health`
+## 🚀 Deployment
 
-## 👥 **241 Runners Awareness Team**
+### Automatic Deployment
+The project uses GitHub Actions for automatic deployment:
 
-### **Leadership & Core Team**
-- **Lisa Thomas** - Founder
-- **Marcus Brown** - Lead Front End Developer
-- **Daniel Carey** - Full Stack Developer
-- **Tina Matthews** - Program Director
-- **Ralph Frank** - Event Coordinator
-- **Arquelle Gilder** - Real Estate Broker / Sponsor
+- **Frontend**: Deploys to GitHub Pages on push to main
+- **API**: Deploys to Azure App Service on push to main
+- **Assets**: Automatically hashed and cached
 
-### **Our Mission**
-241 Runners Awareness is dedicated to honoring the memory of Israel Thomas and supporting and protecting missing and vulnerable individuals through real-time alerts, secure data management, and community engagement. We believe that every person deserves to be safe and that technology can be a powerful tool in preventing tragedies and bringing families closure.
+### Manual Deployment
 
-### **Israel's Legacy**
-In memory of Israel Thomas, who passed away at **2:41 AM**, our organization works tirelessly to prevent similar tragedies and support families affected by missing persons cases. Israel's memory drives our mission to create safer communities and provide hope to families in crisis.
+1. **Build the frontend**
+   ```bash
+   ./scripts/build.sh
+   ```
 
-## 📊 **Current Data**
+2. **Deploy the API**
+   ```bash
+   cd 241RunnersAwarenessAPI
+   dotnet publish -c Release
+   # Deploy to Azure App Service
+   ```
 
-### **Live System Status**
+3. **Update DNS**
+   - Point domain to GitHub Pages
+   - Configure CNAME for www subdomain
 
-The system is now live and integrated with real data. All mock data has been removed for production use.
+## 🔒 Security
 
-### **System Statistics**
-- **Total Users**: Live data from database
-- **Active Cases**: Live data from database
-- **Missing Cases**: Live data from database
-- **Resolved Cases**: Live data from database
-- **Urgent Cases**: Live data from database
-
-## 🔒 **Security Features**
-
-### **Authentication**
-- JWT-based authentication
-- BCrypt password hashing
+### Authentication
+- JWT tokens with automatic refresh
 - Role-based access control (Admin/User)
-- Secure token validation
+- Secure token storage in localStorage
+- Session timeout and automatic logout
 
-### **Data Validation**
-- Server-side validation with Data Annotations
-- Client-side validation with JavaScript
-- Input sanitization and validation
-- SQL injection prevention via Entity Framework
+### Data Protection
+- HTTPS everywhere
+- Input validation and sanitization
+- SQL injection prevention
+- XSS protection
+- CSRF protection
 
-### **API Security**
-- CORS policy configuration
-- HTTPS enforcement
-- Request validation
-- Error handling without sensitive data exposure
+### Monitoring
+- Security event logging
+- Failed login attempt tracking
+- Real-time security monitoring
+- Regular security audits
 
-## 🚀 **Deployment Commands**
+## 🧪 Testing
 
-### **Backend Deployment**
+### Frontend Testing
 ```bash
-# Build and publish
+# Lint HTML files
+htmlhint "**/*.html"
+
+# Lint JavaScript files
+eslint "**/*.js"
+
+# Lint CSS files
+csslint "**/*.css"
+```
+
+### API Testing
+```bash
 cd 241RunnersAwarenessAPI
-dotnet publish --configuration Release --output publish
-
-# Create deployment package
-cd publish
-zip -r ../241RunnersAwarenessAPI.zip . -x "publish/*"
-
-# Deploy to Azure
-az webapp deploy --resource-group 241runnersawareness-rg --name 241runners-api --src-path 241RunnersAwarenessAPI.zip
+dotnet test
 ```
 
-### **Database Deployment**
-```bash
-# Apply migrations
-dotnet ef database update
+### Manual Testing
+1. **Admin Login**: Test authentication flow
+2. **Real-time Updates**: Open multiple admin sessions
+3. **Responsive Design**: Test on different devices
+4. **Performance**: Check loading times and responsiveness
 
-# Or execute SQL script manually in Azure Portal
-# See create_runners_table_simple.sql
-```
+## 📊 Monitoring
 
-## 📈 **Performance & Monitoring**
+### Health Endpoints
+- `/healthz`: Basic health check
+- `/readyz`: Readiness check with database
+- `/api/data-version`: Data version for polling
 
-### **API Performance**
-- Response time: < 200ms average
-- Database queries optimized with indexes
-- Caching implemented for static data
-- Connection pooling enabled
+### Real-time Monitoring
+- SignalR connection status
+- Admin session tracking
+- System performance metrics
+- Error rate monitoring
 
-### **Monitoring**
-- Azure Application Insights (ready for integration)
-- Health check endpoint
-- Error logging and tracking
-- Performance metrics collection
+## 🤝 Contributing
 
-## 🔄 **Recent Updates**
+### Development Workflow
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and linting
+5. Submit a pull request
 
-### **Latest Changes (August 30, 2025)**
-- ✅ **Database Setup**: Runners table created and populated
-- ✅ **API Fixes**: Controller issues resolved
-- ✅ **Code Cleanup**: Removed redundant files
-- ✅ **Deployment**: All systems deployed to Azure
-- ✅ **Testing**: All endpoints verified working
+### Code Standards
+- Follow existing code style
+- Add comments for complex logic
+- Write tests for new features
+- Update documentation
 
-### **Key Improvements**
-- Consolidated "runners" and "cases" concepts
-- Implemented comprehensive validation
-- Added real-time form validation
-- Enhanced error handling
-- Optimized database queries
+### Issue Reporting
+Use the provided bug report template for issues:
+- Include reproduction steps
+- Provide environment details
+- Add relevant logs
+- Check for duplicates first
 
-## 🚀 **Platform Features**
+## 📝 License
 
-### **Core Functionality**
-- **User Authentication**: Secure JWT-based login system with role-based access
-- **Runner Case Management**: Complete CRUD operations for missing person cases
-- **Real-time Notifications**: Live updates and alerts for case status changes
-- **Advanced Search & Filtering**: Powerful search capabilities with multiple criteria
-- **Responsive Design**: Mobile-first design that works on all devices
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-### **Admin Dashboard Features**
-- **Advanced Analytics**: Interactive charts showing case trends, demographics, and geographic distribution
-- **User Management**: Complete user administration with role management
-- **Real-time Monitoring**: Live system status and performance metrics
-- **Case Analytics**: Comprehensive insights into runner cases and patterns
-- **System Administration**: Database management and system configuration tools
+## 🙏 Acknowledgments
 
-### **Security Features**
-- **Role-based Access Control**: Admin and User roles with appropriate permissions
-- **Input Validation**: Comprehensive client-side and server-side validation
-- **Secure API Endpoints**: Protected routes with proper authentication
-- **Data Encryption**: Secure transmission and storage of sensitive information
+- **Community**: Thanks to all contributors and users
+- **Security Researchers**: For helping keep the platform secure
+- **Open Source**: Built with amazing open source tools
+- **Volunteers**: For their time and dedication
 
-### **User Experience Features**
-- **Progressive Web App**: Works offline and provides app-like experience
-- **Multi-form Interface**: Streamlined case reporting with quick and detailed options
-- **Interactive Maps**: Geographic visualization of cases and locations
-- **Profile Management**: User account management and preferences
-- **Notification System**: Browser-based alerts and real-time updates
+## 📞 Support
 
-## 📊 **Deployment Status**
+- **Issues**: Use GitHub Issues for bug reports
+- **Security**: Email security@241runnersawareness.org
+- **General**: Contact through the website
 
-### **Production Environment**
-- **Status**: ✅ **FULLY OPERATIONAL**
-- **Last Deployment**: September 3, 2025
-- **Deployment Method**: GitHub Actions + Azure DevOps
+## 🔄 Changelog
 
-### **Backend Services**
-- **API Service**: ✅ Live at `https://241runners-api.azurewebsites.net`
-- **Database**: ✅ Azure SQL Database operational
-- **Authentication**: ✅ JWT system fully functional
-- **Security**: ✅ All endpoints properly protected with [Authorize] attributes
+### Version 2.0.0 (Current)
+- ✅ Real-time admin updates with SignalR
+- ✅ Enhanced authentication with token refresh
+- ✅ Improved admin dashboard with live data
+- ✅ Service worker for offline support
+- ✅ Automated CI/CD pipeline
+- ✅ Comprehensive security measures
+- ✅ Performance optimizations
 
-### **Frontend Services**
-- **Main Site**: ✅ Live at `https://241runnersawareness.org`
-- **Admin Dashboard**: ✅ Fully functional at `/admin/`
-- **User Portal**: ✅ Complete user authentication and management
-- **Case Management**: ✅ Full CRUD operations working
-
-### **Infrastructure Health**
-- **Azure App Service**: ✅ Healthy and responding
-- **Azure SQL Database**: ✅ Connected and operational
-- **CORS Configuration**: ✅ Properly configured for production
-- **SSL Certificates**: ✅ Valid and secure
-- **Performance**: ✅ < 400ms average response time
-
-### **Recent Deployments**
-- **Security Hardening**: ✅ Added [Authorize] attributes to protected endpoints
-- **Admin Dashboard Fix**: ✅ Resolved CSS display issues
-- **Repository Cleanup**: ✅ Removed unnecessary markdown files
-- **Code Quality**: ✅ All security vulnerabilities addressed
-
-### **Monitoring & Alerts**
-- **Health Checks**: ✅ Automated health monitoring active
-- **Error Logging**: ✅ Comprehensive error tracking implemented
-- **Performance Metrics**: ✅ Response time and uptime monitoring
-- **Security Monitoring**: ✅ Authentication and authorization logging
-
-## 🎯 **Next Steps**
-
-### **Immediate**
-- [ ] Deploy static frontend to hosting service
-- [ ] Set up custom domain
-- [ ] Configure SSL certificates
-- [ ] Set up monitoring and alerts
-
-### **Future Enhancements**
-- [ ] Add image upload for runners
-- [ ] Implement push notifications
-- [ ] Add advanced search and filtering
-- [ ] Create mobile app
-- [ ] Add analytics dashboard
-
-## 📞 **Support & Contact**
-
-### **Technical Support**
-- **Repository**: https://github.com/DekuWorks/241RunnersAwareness
-- **API Documentation**: https://241runners-api.azurewebsites.net/swagger
-- **Health Check**: https://241runners-api.azurewebsites.net/api/auth/health
-
-### **Emergency Contacts**
-- **Database Issues**: Check Azure Portal SQL Database
-- **API Issues**: Check Azure App Service logs
-- **Deployment Issues**: Check Azure CLI deployment status
-
-## 📄 **License**
-
-This project is proprietary software for 241 Runners Awareness organization.
+### Version 1.0.0
+- ✅ Basic admin dashboard
+- ✅ Public case directory
+- ✅ JWT authentication
+- ✅ Responsive design
+- ✅ API endpoints
 
 ---
 
-**Last Updated**: August 30, 2025  
-**Version**: 1.0.0  
-**Status**: Production Ready ✅
-
-
+**Built with ❤️ for the 241 Runners Awareness community**

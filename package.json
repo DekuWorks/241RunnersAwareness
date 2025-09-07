@@ -1,14 +1,38 @@
 {
   "name": "241runnersawareness",
-  "version": "1.0.0",
-  "description": "241 Runners Awareness - Main Repository",
-  "private": true,
+  "version": "2.0.0",
+  "description": "241 Runners Awareness - Missing Persons Case Management System",
   "scripts": {
-    "lint": "echo 'No linting configured in root'",
-    "format:check": "echo 'No formatting check configured in root'",
-    "test": "echo 'No tests configured in root'",
-    "build": "echo 'Static site - no build step required'"
+    "build": "./scripts/build.sh",
+    "test:e2e": "node scripts/e2e-test.js",
+    "lint:html": "htmlhint \"**/*.html\"",
+    "lint:js": "eslint \"**/*.js\"",
+    "lint:css": "csslint \"**/*.css\"",
+    "lint": "npm run lint:html && npm run lint:js && npm run lint:css",
+    "deploy": "npm run build && npm run test:e2e"
   },
-  "devDependencies": {},
-  "dependencies": {}
+  "devDependencies": {
+    "puppeteer": "^21.0.0",
+    "htmlhint": "^1.1.4",
+    "eslint": "^8.0.0",
+    "csslint": "^1.0.5"
+  },
+  "keywords": [
+    "missing-persons",
+    "case-management",
+    "admin-dashboard",
+    "real-time",
+    "signalr",
+    "pwa"
+  ],
+  "author": "241 Runners Awareness Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/241RunnersAwareness.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/241RunnersAwareness/issues"
+  },
+  "homepage": "https://241runnersawareness.org"
 }

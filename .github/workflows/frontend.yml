@@ -1,23 +1,27 @@
-name: Frontend Build and Deploy
+name: Frontend CI/CD
 
 on:
   push:
     branches: [ main ]
     paths:
       - '*.html'
-      - '*.css'
       - '*.js'
-      - '*.json'
-      - '*.md'
+      - '*.css'
+      - 'assets/**'
+      - 'admin/**'
+      - 'js/**'
+      - 'scripts/**'
       - '!241RunnersAwarenessAPI/**'
   pull_request:
     branches: [ main ]
     paths:
       - '*.html'
-      - '*.css'
       - '*.js'
-      - '*.json'
-      - '*.md'
+      - '*.css'
+      - 'assets/**'
+      - 'admin/**'
+      - 'js/**'
+      - 'scripts/**'
       - '!241RunnersAwarenessAPI/**'
 
 jobs:
@@ -38,81 +42,60 @@ jobs:
     
     - name: Install dependencies
       run: |
-        if [ -f package.json ]; then
-          npm ci
-        else
-          echo "No package.json found, skipping npm install"
-        fi
+        npm install -g htmlhint
+        npm install -g eslint
+        npm install -g csslint
     
     - name: Lint HTML files
       run: |
-        echo "Checking HTML files for basic issues..."
-        find . -name "*.html" -not -path "./241RunnersAwarenessAPI/*" -exec echo "Checking: {}" \;
-        find . -name "*.html" -not -path "./241RunnersAwarenessAPI/*" -exec grep -l "console\.log" {} \; | head -5 || true
+        find . -name "*.html" -not -path "./241RunnersAwarenessAPI/*" -not -path "./.git/*" | xargs htmlhint
     
     - name: Lint JavaScript files
       run: |
-        echo "Checking JavaScript files for basic issues..."
-        find . -name "*.js" -not -path "./241RunnersAwarenessAPI/*" -not -path "./node_modules/*" -exec echo "Checking: {}" \;
-        find . -name "*.js" -not -path "./241RunnersAwarenessAPI/*" -not -path "./node_modules/*" -exec grep -l "console\.log" {} \; | head -5 || true
+        find . -name "*.js" -not -path "./241RunnersAwarenessAPI/*" -not -path "./.git/*" -not -path "./node_modules/*" | xargs eslint --no-eslintrc --env browser,es6 --parser-options ecmaVersion:2020,sourceType:module
+    
+    - name: Lint CSS files
+      run: |
+        find . -name "*.css" -not -path "./241RunnersAwarenessAPI/*" -not -path "./.git/*" | xargs csslint --quiet
     
     - name: Run build script
       run: |
-        if [ -f scripts/build.sh ]; then
-          chmod +x scripts/build.sh
-          ./scripts/build.sh
-        else
-          echo "No build script found, creating basic version.json"
-          echo '{"version":"1.0.0","commit":"'${{ github.sha }}'","builtAt":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'","environment":"production"}' > version.json
-        fi
+        chmod +x scripts/build.sh
+        ./scripts/build.sh
     
-    - name: Validate version.json
-    - name: Check for secrets
-      run: |
-        echo "Checking for potential secrets in frontend files..."
-        echo "Secrets have been cleaned up from documentation files."
-        echo "No secrets found in frontend files."
-      run: |
-        if [ -f version.json ]; then
-          echo "Version file contents:"
-          cat version.json
-          echo "Validating JSON..."
-          python3 -m json.tool version.json
-        else
-          echo "ERROR: version.json not found"
-          exit 1
-        fi
-    
-  deploy:
-    needs: lint-and-build
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
       with:
         name: frontend-build
-        path: .
+        path: dist/
+        retention-days: 7
+    
+    - name: Update version file
+      run: |
+        # Get current commit hash
+        COMMIT_HASH=$(git rev-parse --short HEAD)
+        BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
+        BUILD_NUMBER=$(date +"%Y%m%d-%H%M")
+        
+        # Update version.json
+        cat > version.json << VERSION_EOF
+        {
+          "version": "1.0.0",
+          "build": "$BUILD_NUMBER",
+          "commit": "$COMMIT_HASH",
+          "builtAt": "$BUILD_TIME",
+          "environment": "production",
+          "apiVersion": "2.0.0"
+        }
+        VERSION_EOF
+        
+        echo "Version updated: $BUILD_NUMBER"
     
     - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: .
-        exclude_assets: |
-          241RunnersAwarenessAPI/**
-          .github/**
-          .git/**
-          .gitignore
-          README.md
-          env.example
-          scripts/**
-    
-    - name: Verify deployment
-      run: |
-        echo "Deployment completed successfully!"
-        echo "Site should be available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+        publish_dir: ./dist
+        cname: 241runnersawareness.org
+        keep_files: false

@@ -1,0 +1,51 @@
+name: API CI/CD
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '241RunnersAwarenessAPI/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '241RunnersAwarenessAPI/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore 241RunnersAwarenessAPI/241RunnersAwarenessAPI.csproj
+    
+    - name: Build project
+      run: dotnet build 241RunnersAwarenessAPI/241RunnersAwarenessAPI.csproj --configuration Release --no-restore
+    
+    - name: Run tests
+      run: dotnet test 241RunnersAwarenessAPI/241RunnersAwarenessAPI.csproj --configuration Release --no-build --verbosity normal
+    
+    - name: Publish project
+      run: dotnet publish 241RunnersAwarenessAPI/241RunnersAwarenessAPI.csproj --configuration Release --no-build --output ./publish
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: api-build
+        path: publish/
+        retention-days: 7
+    
+    - name: Deploy to Azure App Service
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: '241runners-api'
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ./publish
