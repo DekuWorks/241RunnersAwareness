@@ -47,15 +47,33 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Add JWT Service
 builder.Services.AddScoped<JwtService>();
 
-// Add CORS
+// Add CORS with improved configuration
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AppCors", policy =>
     {
-        policy.WithOrigins("https://241runnersawareness.org", "https://www.241runnersawareness.org", "https://dekuworks.github.io", "https://dekuworks.github.io/241RunnersAwareness")
+        policy.WithOrigins(
+                "https://241runnersawareness.org", 
+                "https://www.241runnersawareness.org", 
+                "https://dekuworks.github.io", 
+                "https://dekuworks.github.io/241RunnersAwareness",
+                "http://localhost:3000",
+                "http://localhost:8080",
+                "http://127.0.0.1:3000",
+                "http://127.0.0.1:8080"
+              )
               .AllowAnyMethod()
               .AllowCredentials()
-              .WithHeaders("Content-Type", "Authorization", "X-Client", "WWW-Authenticate", "Set-Cookie", "Cache-Control", "Pragma", "Expires");
+              .AllowAnyHeader()
+              .SetPreflightMaxAge(TimeSpan.FromSeconds(86400)); // 24 hours
+    });
+    
+    // Add a more permissive policy for development
+    options.AddPolicy("DevelopmentCors", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
 
@@ -125,6 +143,21 @@ app.UseHttpsRedirection();
 
 // Use CORS
 app.UseCors("AppCors");
+
+// Add authentication and authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Map controllers
+app.MapControllers();
+
+// Add a simple health check endpoint
+app.MapGet("/api/health", () => new { status = "healthy", timestamp = DateTime.UtcNow });
+
+// Add a simple CORS test endpoint
+app.MapGet("/api/cors-test", () => new { message = "CORS is working!", timestamp = DateTime.UtcNow })
+   .WithName("CorsTest")
+   .WithOpenApi();
 
 // Configure static files with proper cache control
 app.UseStaticFiles(new StaticFileOptions
