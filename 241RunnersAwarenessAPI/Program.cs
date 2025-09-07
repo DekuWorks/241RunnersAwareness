@@ -54,7 +54,7 @@ builder.Services.AddCors(options =>
         policy.WithOrigins("https://241runnersawareness.org", "https://www.241runnersawareness.org", "https://dekuworks.github.io", "https://dekuworks.github.io/241RunnersAwareness")
               .AllowAnyMethod()
               .AllowCredentials()
-              .WithHeaders("Content-Type", "Authorization", "X-Client", "WWW-Authenticate", "Set-Cookie");
+              .WithHeaders("Content-Type", "Authorization", "X-Client", "WWW-Authenticate", "Set-Cookie", "Cache-Control", "Pragma", "Expires");
     });
 });
 
