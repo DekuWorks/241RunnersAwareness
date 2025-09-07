@@ -9,19 +9,23 @@
 // Token storage keys
 const tokenKey = "ra_admin_token";
 const roleKey = "ra_admin_role";
-const refreshKey = "ra_admin_refresh";
+const userKey = "ra_admin_user";
 
-// API Configuration
-    let API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+// API Configuration - Fixed URL without trailing slash
+let API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
 
 // Load API configuration from config.json
 async function loadConfig() {
     try {
-        const response = await fetch('/config.json');
+        const response = await fetch('/config.json', {
+            cache: 'no-store',
+            credentials: 'include'
+        });
         const config = await response.json();
         API_BASE_URL = config.API_BASE_URL;
+        console.log('API Base URL loaded:', API_BASE_URL);
     } catch (error) {
-        console.warn('Failed to load config.json, using default API URL');
+        console.warn('Failed to load config.json, using default API URL:', error);
     }
 }
 
@@ -29,53 +33,62 @@ async function loadConfig() {
 loadConfig();
 
 /**
- * Save authentication tokens and role
- * @param {Object} tokens - Authentication data
- * @param {string} tokens.accessToken - JWT access token
- * @param {string} tokens.refreshToken - Refresh token
- * @param {string} tokens.role - User role
+ * Save authentication tokens and user data
+ * @param {string} token - JWT access token
+ * @param {Object} user - User data including role
  */
-export function saveTokens({ accessToken, refreshToken, role }) {
-    localStorage.setItem(tokenKey, accessToken);
-    localStorage.setItem(refreshKey, refreshToken);
-    localStorage.setItem(roleKey, role);
+function saveAuthData(token, user) {
+    try {
+        localStorage.setItem(tokenKey, token);
+        localStorage.setItem(roleKey, user.role);
+        localStorage.setItem(userKey, JSON.stringify(user));
+        console.log('Auth data saved successfully');
+    } catch (error) {
+        console.error('Failed to save auth data:', error);
+    }
 }
 
 /**
- * Get stored tokens
+ * Get stored authentication data
  * @returns {Object} Stored authentication data
  */
-export function getTokens() {
+function getAuthData() {
     return {
-        accessToken: localStorage.getItem(tokenKey),
-        refreshToken: localStorage.getItem(refreshKey),
-        role: localStorage.getItem(roleKey)
+        token: localStorage.getItem(tokenKey),
+        role: localStorage.getItem(roleKey),
+        user: JSON.parse(localStorage.getItem(userKey) || 'null')
     };
 }
 
 /**
  * Clear all authentication data
  */
-export function clearTokens() {
-    localStorage.removeItem(tokenKey);
-    localStorage.removeItem(refreshKey);
-    localStorage.removeItem(roleKey);
+function clearAuthData() {
+    try {
+        localStorage.removeItem(tokenKey);
+        localStorage.removeItem(roleKey);
+        localStorage.removeItem(userKey);
+        console.log('Auth data cleared successfully');
+    } catch (error) {
+        console.error('Failed to clear auth data:', error);
+    }
 }
 
 /**
  * Check if user is authenticated as admin
  * @returns {boolean} True if authenticated as admin
  */
-export function isAuthenticated() {
-    const tokens = getTokens();
-    return !!(tokens.accessToken && tokens.role === 'admin');
+function isAuthenticated() {
+    const { token, role } = getAuthData();
+    return !!(token && role && role.toLowerCase() === 'admin' && token.length > 10);
 }
 
 /**
  * Require admin role - redirect to login if not admin
  */
-export function requireAdmin() {
+function requireAdmin() {
     if (!isAuthenticated()) {
+        console.log('Admin authentication required, redirecting to login');
         window.location.href = "/admin/login.html";
         return false;
     }
@@ -86,107 +99,85 @@ export function requireAdmin() {
  * Get authorization header for API requests
  * @returns {Object} Authorization header object
  */
-export function authHeader() {
+function authHeader() {
     const token = localStorage.getItem(tokenKey);
     return token ? { "Authorization": `Bearer ${token}` } : {};
 }
 
 /**
- * Enhanced fetch wrapper with auth headers and error handling
+ * Enhanced fetch wrapper with proper headers and error handling
+ * @param {string} url - Full API URL
+ * @param {Object} options - Fetch options
+ * @returns {Promise} Parsed JSON response
+ */
+async function apiRequest(url, options = {}) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    
+    try {
+        const response = await fetch(url, {
+            ...options,
+            signal: controller.signal,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Client': '241RA-Admin/1.0',
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0',
+                ...options.headers
+            },
+            credentials: 'include',
+            cache: 'no-store'
+        });
+        
+        clearTimeout(timeout);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        clearTimeout(timeout);
+        if (error.name === 'AbortError') {
+            throw new Error('Request timeout');
+        }
+        throw error;
+    }
+}
+
+/**
+ * Enhanced fetch wrapper with auth headers
  * @param {string} path - API endpoint path
  * @param {Object} options - Fetch options
  * @returns {Promise} Parsed JSON response
  */
-export async function fetchWithAuth(path, options = {}) {
+async function fetchWithAuth(path, options = {}) {
     const url = path.startsWith('http') ? path : `${API_BASE_URL}${path}`;
     
     const headers = {
-        'Content-Type': 'application/json',
-        'X-Client': '241RA-Admin/1.0',
         ...authHeader(),
         ...options.headers
     };
     
     try {
-        const response = await fetch(url, {
+        const data = await apiRequest(url, {
             ...options,
             headers
         });
         
+        return data;
+    } catch (error) {
         // Handle 401 Unauthorized
-        if (response.status === 401) {
-            clearTokens();
+        if (error.message.includes('401')) {
+            clearAuthData();
             window.location.href = '/admin/login.html';
             throw new Error('Session expired. Please sign in again.');
         }
         
-        // Parse JSON response
-        const data = await response.json();
-        
-        // Handle error responses
-        if (!response.ok) {
-            const error = new Error(data.message || `HTTP ${response.status}`);
-            error.status = response.status;
-            error.errors = data.errors;
-            throw error;
-        }
-        
-        return data;
-    } catch (error) {
-        // Re-throw if it's already our custom error
-        if (error.status) {
-            throw error;
-        }
-        
-        // Handle network errors
-        console.error('API request failed:', error);
-        throw new Error('Network error. Please check your connection.');
+        // Re-throw other errors
+        throw error;
     }
-}
-
-/**
- * Refresh access token using refresh token
- * @returns {Promise<boolean>} True if refresh successful
- */
-export async function refreshToken() {
-    try {
-        const refreshToken = localStorage.getItem(refreshKey);
-        if (!refreshToken) {
-            throw new Error('No refresh token available');
-        }
-        
-        const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ refreshToken })
-        });
-        
-        if (response.ok) {
-            const data = await response.json();
-            saveTokens({
-                accessToken: data.accessToken,
-                refreshToken: data.refreshToken,
-                role: data.role
-            });
-            return true;
-        } else {
-            throw new Error('Token refresh failed');
-        }
-    } catch (error) {
-        console.error('Token refresh failed:', error);
-        clearTokens();
-        return false;
-    }
-}
-
-/**
- * Logout admin user
- */
-export function logout() {
-    clearTokens();
-    window.location.href = '/admin/login.html';
 }
 
 /**
@@ -194,7 +185,7 @@ export function logout() {
  * @param {string} email - Email to validate
  * @returns {boolean} True if valid email
  */
-export function isValidEmail(email) {
+function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
@@ -204,7 +195,7 @@ export function isValidEmail(email) {
  * @param {string} message - Message to display
  * @param {string} type - Message type (success, error, warning, info)
  */
-export function showNotification(message, type = 'info') {
+function showNotification(message, type = 'info') {
     // Create toast element
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
@@ -219,7 +210,11 @@ export function showNotification(message, type = 'info') {
     // Remove after 5 seconds
     setTimeout(() => {
         toast.classList.remove('show');
-        setTimeout(() => document.body.removeChild(toast), 300);
+        setTimeout(() => {
+            if (document.body.contains(toast)) {
+                document.body.removeChild(toast);
+            }
+        }, 300);
     }, 5000);
 }
 
@@ -228,7 +223,7 @@ export function showNotification(message, type = 'info') {
  * @param {string} elementId - Error element ID
  * @param {string} message - Error message
  */
-export function showError(elementId, message) {
+function showError(elementId, message) {
     const errorElement = document.getElementById(elementId);
     if (errorElement) {
         errorElement.textContent = message;
@@ -240,7 +235,7 @@ export function showError(elementId, message) {
  * Clear error message in form
  * @param {string} elementId - Error element ID
  */
-export function clearError(elementId) {
+function clearError(elementId) {
     const errorElement = document.getElementById(elementId);
     if (errorElement) {
         errorElement.textContent = '';
@@ -251,10 +246,29 @@ export function clearError(elementId) {
 /**
  * Clear all error messages
  */
-export function clearAllErrors() {
+function clearAllErrors() {
     const errorElements = document.querySelectorAll('.error-text, [role="alert"]');
     errorElements.forEach(element => {
         element.textContent = '';
         element.hidden = true;
     });
-} 
+}
+
+// Export functions for use in other scripts
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        saveAuthData,
+        getAuthData,
+        clearAuthData,
+        isAuthenticated,
+        requireAdmin,
+        authHeader,
+        fetchWithAuth,
+        apiRequest,
+        isValidEmail,
+        showNotification,
+        showError,
+        clearError,
+        clearAllErrors
+    };
+}

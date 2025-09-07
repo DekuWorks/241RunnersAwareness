@@ -26,170 +26,110 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     // Try to get connection string from multiple sources
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-        ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
-        ?? Environment.GetEnvironmentVariable("ASPNETCORE_ConnectionStrings__DefaultConnection");
+        ?? Environment.GetEnvironmentVariable("DefaultConnection")
+        ?? "Data Source=app.db";
     
-    // Log configuration sources for debugging
-    Console.WriteLine($"Configuration sources checked:");
-    Console.WriteLine($"  - Configuration: {builder.Configuration.GetConnectionString("DefaultConnection") != null}");
-    Console.WriteLine($"  - Env ConnectionStrings__DefaultConnection: {Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") != null}");
-    Console.WriteLine($"  - Env ASPNETCORE_ConnectionStrings__DefaultConnection: {Environment.GetEnvironmentVariable("ASPNETCORE_ConnectionStrings__DefaultConnection") != null}");
-    Console.WriteLine($"  - Final connection string found: {!string.IsNullOrEmpty(connectionString)}");
-    
-    if (string.IsNullOrEmpty(connectionString))
-    {
-        throw new InvalidOperationException("Database connection string not found in configuration or environment variables.");
-    }
-    
-    options.UseSqlServer(connectionString);
+    options.UseSqlite(connectionString);
 });
 
-// Add JWT Service
-builder.Services.AddScoped<JwtService>();
+// Add JWT Authentication
+var jwtKey = builder.Configuration["Jwt:Key"] ?? Environment.GetEnvironmentVariable("JWT_KEY") ?? "your-super-secret-key-that-is-at-least-32-characters-long";
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "241RunnersAwareness";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "241RunnersAwareness";
 
-// Add CORS with improved configuration
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+            ClockSkew = TimeSpan.Zero // Remove default 5 minute clock skew
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+// Add CORS - Fixed Implementation with both www and non-www origins
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AppCors", policy =>
+    options.AddDefaultPolicy(policy =>
     {
         policy.WithOrigins(
-                "https://241runnersawareness.org", 
-                "https://www.241runnersawareness.org", 
-                "https://dekuworks.github.io", 
-                "https://dekuworks.github.io/241RunnersAwareness",
+                "https://241runnersawareness.org",
+                "https://www.241runnersawareness.org",
                 "http://localhost:3000",
                 "http://localhost:8080",
                 "http://127.0.0.1:3000",
                 "http://127.0.0.1:8080"
-              )
-              .AllowAnyMethod()
-              .AllowCredentials()
-              .AllowAnyHeader()
-              .SetPreflightMaxAge(TimeSpan.FromSeconds(86400)); // 24 hours
-    });
-    
-    // Add a more permissive policy for development
-    options.AddPolicy("DevelopmentCors", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+            )
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials()
+            .SetPreflightMaxAge(TimeSpan.FromSeconds(86400)); // 24 hours
     });
 });
 
-// Add Authentication
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        string GetJwtKey() => builder.Configuration["Jwt:Key"] 
-            ?? Environment.GetEnvironmentVariable("JWT__Key")
-            ?? Environment.GetEnvironmentVariable("ASPNETCORE_JWT__Key")
-            ?? "241RunnersAwareness2025!SecureJWTKeyForProductionUse-32CharsMin";
-            
-        string GetJwtIssuer() => builder.Configuration["Jwt:Issuer"] 
-            ?? Environment.GetEnvironmentVariable("JWT__Issuer")
-            ?? Environment.GetEnvironmentVariable("ASPNETCORE_JWT__Issuer")
-            ?? "241RunnersAwareness";
-            
-        string GetJwtAudience() => builder.Configuration["Jwt:Audience"] 
-            ?? Environment.GetEnvironmentVariable("JWT__Audience")
-            ?? Environment.GetEnvironmentVariable("ASPNETCORE_JWT__Audience")
-            ?? "241RunnersAwareness";
-
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GetJwtKey())),
-            ValidateIssuer = true,
-            ValidIssuer = GetJwtIssuer(),
-            ValidateAudience = true,
-            ValidAudience = GetJwtAudience(),
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero
-        };
-    });
-
-// Add Authorization
-builder.Services.AddAuthorization();
-
-// Register AdminSeedService
+// Add services
+builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<AdminSeedService>();
+builder.Services.AddScoped<ImageUploadService>();
+builder.Services.AddScoped<DatabaseCleanupService>();
 
-// Register ImageUploadService
-// Register DatabaseCleanupService
-builder.Services.AddScoped<DatabaseCleanupService>();builder.Services.AddScoped<IImageUploadService, ImageUploadService>();
-
-// Register HttpClient for NamUs service
-builder.Services.AddHttpClient();
+// Add rate limiting
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-// Enable Swagger in all environments for API documentation
-app.UseSwagger();
-app.UseSwaggerUI(c =>
+if (app.Environment.IsDevelopment())
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "241 Runners Awareness API v1");
-    c.RoutePrefix = "swagger";
-    c.DocumentTitle = "241 Runners Awareness API";
-    c.DisplayRequestDuration();
-    c.EnableDeepLinking();
-    c.EnableFilter();
-    c.ShowExtensions();
-    c.EnableValidator();
-});
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
+// Use HTTPS redirection
 app.UseHttpsRedirection();
 
-// Use CORS - MUST be before UseAuthentication and UseAuthorization
-app.UseCors("AppCors");
+// Use CORS - Must be before UseAuthentication
+app.UseCors();
 
-// Add authentication and authorization middleware
+// Use authentication and authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Map controllers
-app.MapControllers();
-
-// Add a simple health check endpoint
-app.MapGet("/api/health", () => new { status = "healthy", timestamp = DateTime.UtcNow });
-
-// Add a simple CORS test endpoint
-app.MapGet("/api/cors-test", () => new { message = "CORS is working!", timestamp = DateTime.UtcNow })
-   .WithName("CorsTest")
-   .WithOpenApi();
-
-// Add a specific CORS test endpoint for your domain
-app.MapGet("/api/cors-test-domain", () => new { 
-    message = "CORS is working for 241runnersawareness.org!", 
-    timestamp = DateTime.UtcNow,
-    allowedOrigins = new[] { 
-        "https://241runnersawareness.org", 
-        "https://www.241runnersawareness.org" 
-    }
-})
-.WithName("CorsTestDomain")
-.WithOpenApi();
-
-// Seed admin users on startup
-using (var scope = app.Services.CreateScope())
+// Add request logging
+app.Use(async (context, next) =>
 {
-    var adminSeedService = scope.ServiceProvider.GetRequiredService<AdminSeedService>();
-    await adminSeedService.SeedAdminUsersAsync();
-}
+    var requestId = Guid.NewGuid().ToString();
+    context.Items["RequestId"] = requestId;
+    
+    Console.WriteLine($"[{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}] {context.Request.Method} {context.Request.Path} - RequestId: {requestId}");
+    
+    await next();
+});
 
-// Configure static files
+// Serve static files
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
     RequestPath = "/uploads"
 });
 
-// Add request logging middleware
-app.Use(async (context, next) =>
-{
-    Console.WriteLine($"[{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}] {context.Request.Method} {context.Request.Path} from {context.Request.Headers["Origin"]}");
-    await next();
-});
+// Map controllers
+app.MapControllers();
+
+// Health check endpoint
+app.MapGet("/health", () => new { Status = "Healthy", Timestamp = DateTime.UtcNow });
+
+// CORS test endpoint
+app.MapGet("/api/cors-test", () => new { Message = "CORS is working", Timestamp = DateTime.UtcNow })
+    .WithName("CorsTest")
+    .WithOpenApi();
 
 app.Run();

@@ -13,7 +13,7 @@
     <link rel="icon" type="image/x-icon" href="/assets/images/241-logo.jpg">
     
     <!-- Styles -->
-    <link rel="stylesheet" href="/styles.css?v=20250905">
+    <link rel="stylesheet" href="/styles.css?v=20250906">
     <link rel="stylesheet" href="/admin/assets/css/admin.css">
     <link rel="stylesheet" href="/forms.css">
     
@@ -238,20 +238,24 @@
     </div>
 
     <script>
-        // Admin Authentication Functions
+        // Admin Authentication Functions - FIXED VERSION
         const tokenKey = "ra_admin_token";
         const roleKey = "ra_admin_role";
         const userKey = "ra_admin_user";
         
-        // API Configuration
+        // API Configuration - Fixed URL without trailing slash
         let API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
         
         // Load API configuration
         async function loadConfig() {
             try {
-                const response = await fetch('/config.json');
+                const response = await fetch('/config.json', {
+                    cache: 'no-store',
+                    credentials: 'include'
+                });
                 const config = await response.json();
                 API_BASE_URL = config.API_BASE_URL;
+                console.log('API Base URL loaded:', API_BASE_URL);
             } catch (error) {
                 console.warn('Failed to load config.json, using default API URL', error);
             }
@@ -259,9 +263,14 @@
         
         // Save authentication data
         function saveAuthData(token, user) {
-            localStorage.setItem(tokenKey, token);
-            localStorage.setItem(roleKey, user.role);
-            localStorage.setItem(userKey, JSON.stringify(user));
+            try {
+                localStorage.setItem(tokenKey, token);
+                localStorage.setItem(roleKey, user.role);
+                localStorage.setItem(userKey, JSON.stringify(user));
+                console.log('Auth data saved successfully');
+            } catch (error) {
+                console.error('Failed to save auth data:', error);
+            }
         }
         
         // Validate email format
@@ -392,6 +401,7 @@
                     console.log('Sending login request...');
                     console.log('Form data being sent:', formData);
                     
+                    // FIXED: Proper headers and credentials
                     const response = await fetch(`${API_BASE_URL}/Auth/login`, {
                         method: 'POST',
                         headers: {
@@ -402,6 +412,7 @@
                             'Expires': '0'
                         },
                         body: JSON.stringify(formData),
+                        credentials: 'include',
                         cache: 'no-store'
                     });
                     
@@ -409,7 +420,7 @@
                     
                     const data = await response.json();
                     console.log('Login response data:', data);
-                    console.log('�� API Response Details:');
+                    console.log('🔍 API Response Details:');
                     console.log('  - Success:', data.success);
                     console.log('  - Message:', data.message);
                     console.log('  - Token present:', !!data.token);

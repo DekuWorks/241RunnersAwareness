@@ -7,9 +7,9 @@
  * and automatic update notifications for improved performance.
  */
 
-const CACHE_NAME = '241runners-v1.0.1';
-const STATIC_CACHE = 'static-v1.0.1';
-const DYNAMIC_CACHE = 'dynamic-v1.0.1';
+const CACHE_NAME = '241runners-v1.0.2';
+const STATIC_CACHE = 'static-v1.0.2';
+const DYNAMIC_CACHE = 'dynamic-v1.0.2';
 
 // Files to cache immediately
 const STATIC_FILES = [
@@ -27,6 +27,14 @@ const STATIC_FILES = [
     '/241-logo.jpg',
     '/manifest.json',
     '/version.json'
+];
+
+// Auth endpoints that should NEVER be cached
+const AUTH_ENDPOINTS = [
+    '/api/auth/',
+    '/api/Auth/',
+    '/admin/login.html',
+    '/admin/admindash.html'
 ];
 
 // Install event - cache static files and skip waiting
@@ -82,10 +90,30 @@ self.addEventListener('activate', (event) => {
     );
 });
 
+// Check if URL is an auth endpoint
+function isAuthEndpoint(url) {
+    return AUTH_ENDPOINTS.some(endpoint => url.includes(endpoint));
+}
+
 // Fetch event - serve from cache with network fallback
 self.addEventListener('fetch', (event) => {
     const { request } = event;
     const url = new URL(request.url);
+
+    // CRITICAL: Never cache auth endpoints - always fetch fresh
+    if (isAuthEndpoint(url.href)) {
+        console.log('Auth endpoint detected, bypassing cache:', url.href);
+        event.respondWith(
+            fetch(request, {
+                cache: 'no-store',
+                credentials: 'include'
+            }).catch(error => {
+                console.error('Auth fetch failed:', error);
+                throw error;
+            })
+        );
+        return;
+    }
 
     // Skip non-GET requests
     if (request.method !== 'GET') {
