@@ -588,5 +588,71 @@ namespace _241RunnersAwarenessAPI.Controllers
                 _logger.LogError(ex, "Error uploading runner image");
                 return StatusCode(500, new { success = false, message = "An error occurred while uploading the image" });
             }
-        }    }
+        }
+
+        /// <summary>
+        /// Delete a runner by ID
+        /// </summary>
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteRunner(int id)
+        {
+            try
+            {
+                var runner = await _context.Runners.FindAsync(id);
+                if (runner == null)
+                {
+                    return NotFound(new { success = false, message = "Runner not found" });
+                }
+
+                // Delete associated images if they exist
+                if (!string.IsNullOrEmpty(runner.ProfileImageUrl))
+                {
+                    try
+                    {
+                        var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", runner.ProfileImageUrl.TrimStart('/'));
+                        if (System.IO.File.Exists(imagePath))
+                        {
+                            System.IO.File.Delete(imagePath);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Could not delete profile image for runner {RunnerId}", id);
+                    }
+                }
+
+                // Delete additional images if they exist
+                if (!string.IsNullOrEmpty(runner.AdditionalImageUrls))
+                {
+                    try
+                    {
+                        var additionalImages = System.Text.Json.JsonSerializer.Deserialize<List<string>>(runner.AdditionalImageUrls) ?? new List<string>();
+                        foreach (var imageUrl in additionalImages)
+                        {
+                            var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", imageUrl.TrimStart('/'));
+                            if (System.IO.File.Exists(imagePath))
+                            {
+                                System.IO.File.Delete(imagePath);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Could not delete additional images for runner {RunnerId}", id);
+                    }
+                }
+
+                _context.Runners.Remove(runner);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Runner {RunnerId} deleted successfully", id);
+                return Ok(new { success = true, message = "Runner deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting runner {RunnerId}", id);
+                return StatusCode(500, new { success = false, message = "An error occurred while deleting the runner" });
+            }
+        }
+    }
 }
