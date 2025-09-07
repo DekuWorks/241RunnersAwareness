@@ -27,7 +27,7 @@
 
 ### Admin Login Credentials:
 
-1. **Marcus Brown**: dekuworks1@gmail.com / marcus2025
+1. **Marcus Brown**: dekuworks1@gmail.com / ***REDACTED***
 2. **Daniel Carey**: danielcarey9770@yahoo.com / Daniel2025!
 3. **Lisa Thomas**: lthomas3350@gmail.com / Lisa2025!
 4. **Tina Matthews**: tinaleggins@yahoo.com / Tina2025!

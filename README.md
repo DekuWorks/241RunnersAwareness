@@ -124,10 +124,10 @@ CREATE TABLE [dbo].[Runners] (
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=tcp:241runners-sql-2025.database.windows.net,1433;Initial Catalog=241RunnersAwarenessDB;User ID=sqladmin;Password=241RunnersAwareness2024!;Encrypt=True;TrustServerCertificate=False;"
+    "DefaultConnection": "Server=tcp:241runners-sql-2025.database.windows.net,1433;Initial Catalog=241RunnersAwarenessDB;User ID=sqladmin;Password=***REDACTED***;Encrypt=True;TrustServerCertificate=False;"
   },
   "Jwt": {
-    "Key": "your-super-secret-key-with-at-least-32-characters-for-production-use-a-strong-key-here",
+    "Key": "***REDACTED***",
     "Issuer": "241RunnersAwareness",
     "Audience": "241RunnersAwareness"
   }

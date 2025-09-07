@@ -1432,6 +1432,10 @@
     <div id="toastContainer" class="toast-container"></div>
     
     <!-- Enhanced JavaScript with All Admin Functions -->
+    <!-- Admin Authentication Module -->
+    <script src="/js/admin-auth.js?v=20250905"></script>
+    <!-- Update Banner -->
+    <script src="/js/update-banner.js?v=20250905"></script>
     <script>
         // ===== CONFIGURATION & INITIALIZATION =====
         
@@ -2404,7 +2408,7 @@
                 console.log('Initializing dashboard...');
                 
                 // Check authentication
-                if (!requireAdmin()) {
+                if (!window.adminAuth.requireAdmin()) {
                     return;
                 }
                 

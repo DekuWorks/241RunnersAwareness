@@ -28,7 +28,7 @@ The following admin users have been successfully seeded in the database:
 
 | Email | Name | Role | Password |
 |-------|------|------|----------|
-| dekuworks1@gmail.com | Marcus Brown | Co-Founder | marcus2025 |
+| dekuworks1@gmail.com | Marcus Brown | Co-Founder | ***REDACTED*** |
 | danielcarey9770@yahoo.com | Daniel Carey | Co-Founder | daniel2025 |
 | lthomas3350@gmail.com | Lisa Thomas | Founder | lisa2025 |
 | tinaleggins@yahoo.com | Tina Matthews | Program Director | tina2025 |
@@ -71,7 +71,7 @@ The following admin users have been successfully seeded in the database:
    ```bash
    curl -X POST "http://localhost:5001/api/auth/login" \
      -H "Content-Type: application/json" \
-     -d '{"email":"dekuworks1@gmail.com","password":"marcus2025"}'
+     -d '{"email":"dekuworks1@gmail.com","password":"***REDACTED***"}'
    # Result: Success with JWT token
    ```
 

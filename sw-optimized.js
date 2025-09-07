@@ -3,13 +3,13 @@
  * 241 RUNNERS AWARENESS - OPTIMIZED SERVICE WORKER
  * ============================================
  * 
- * This service worker provides offline functionality and caching
- * for improved performance and user experience.
+ * This service worker provides offline functionality, caching,
+ * and automatic update notifications for improved performance.
  */
 
-const CACHE_NAME = '241runners-v1.0.0';
-const STATIC_CACHE = 'static-v1';
-const DYNAMIC_CACHE = 'dynamic-v1';
+const CACHE_NAME = '241runners-v1.0.1';
+const STATIC_CACHE = 'static-v1.0.1';
+const DYNAMIC_CACHE = 'dynamic-v1.0.1';
 
 // Files to cache immediately
 const STATIC_FILES = [
@@ -22,17 +22,26 @@ const STATIC_FILES = [
     '/js/cases.js',
     '/js/public-cases.js',
     '/js/my-cases.js',
+    '/js/admin-auth.js',
+    '/js/update-banner.js',
     '/241-logo.jpg',
-    '/manifest.json'
+    '/manifest.json',
+    '/version.json'
 ];
 
-// Install event - cache static files
+// Install event - cache static files and skip waiting
 self.addEventListener('install', (event) => {
+    console.log('Service Worker installing...');
+    
     event.waitUntil(
         caches.open(STATIC_CACHE)
             .then(cache => {
                 console.log('Caching static files');
                 return cache.addAll(STATIC_FILES);
+            })
+            .then(() => {
+                // Skip waiting to activate immediately
+                return self.skipWaiting();
             })
             .catch(error => {
                 console.error('Failed to cache static files:', error);
@@ -40,23 +49,40 @@ self.addEventListener('install', (event) => {
     );
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up old caches and claim clients
 self.addEventListener('activate', (event) => {
+    console.log('Service Worker activating...');
+    
     event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames.map(cacheName => {
-                    if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
-                        console.log('Deleting old cache:', cacheName);
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
+        Promise.all([
+            // Clean up old caches
+            caches.keys().then(cacheNames => {
+                return Promise.all(
+                    cacheNames.map(cacheName => {
+                        if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
+                            console.log('Deleting old cache:', cacheName);
+                            return caches.delete(cacheName);
+                        }
+                    })
+                );
+            }),
+            // Claim all clients immediately
+            self.clients.claim()
+        ]).then(() => {
+            // Notify all clients about the update
+            return self.clients.matchAll().then(clients => {
+                clients.forEach(client => {
+                    client.postMessage({
+                        type: 'SW_UPDATE_AVAILABLE',
+                        message: 'A new version is available'
+                    });
+                });
+            });
         })
     );
 });
 
-// Fetch event - serve from cache or network
+// Fetch event - serve from cache with network fallback
 self.addEventListener('fetch', (event) => {
     const { request } = event;
     const url = new URL(request.url);
@@ -66,42 +92,37 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Skip external requests (except for critical resources)
-    if (url.origin !== location.origin && !url.pathname.includes('api')) {
+    // Skip external requests
+    if (url.origin !== location.origin) {
         return;
     }
 
     event.respondWith(
         caches.match(request)
             .then(response => {
-                // Return cached response if available
                 if (response) {
+                    // Serve from cache
                     return response;
                 }
 
-                // Clone the request for potential caching
-                const fetchRequest = request.clone();
-
-                return fetch(fetchRequest)
-                    .then(response => {
-                        // Check if response is valid
-                        if (!response || response.status !== 200 || response.type !== 'basic') {
-                            return response;
+                // Fetch from network
+                return fetch(request)
+                    .then(fetchResponse => {
+                        // Don't cache if not a valid response
+                        if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
+                            return fetchResponse;
                         }
 
-                        // Clone response for caching
-                        const responseToCache = response.clone();
+                        // Clone the response
+                        const responseToCache = fetchResponse.clone();
 
-                        // Cache dynamic responses
+                        // Cache dynamic content
                         caches.open(DYNAMIC_CACHE)
                             .then(cache => {
                                 cache.put(request, responseToCache);
-                            })
-                            .catch(error => {
-                                console.error('Failed to cache response:', error);
                             });
 
-                        return response;
+                        return fetchResponse;
                     })
                     .catch(error => {
                         console.error('Fetch failed:', error);
@@ -111,10 +132,25 @@ self.addEventListener('fetch', (event) => {
                             return caches.match('/index.html');
                         }
                         
-                        return new Response('Network error', { status: 503 });
+                        throw error;
                     });
             })
     );
+});
+
+// Message event - handle messages from main thread
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+    
+    if (event.data && event.data.type === 'GET_VERSION') {
+        event.ports[0].postMessage({
+            type: 'VERSION_INFO',
+            version: CACHE_NAME,
+            timestamp: Date.now()
+        });
+    }
 });
 
 // Background sync for offline actions
@@ -122,24 +158,32 @@ self.addEventListener('sync', (event) => {
     if (event.tag === 'background-sync') {
         event.waitUntil(
             // Handle background sync tasks
-            console.log('Background sync triggered')
+            handleBackgroundSync()
         );
     }
 });
 
-// Push notification handling
+// Push notifications
 self.addEventListener('push', (event) => {
     if (event.data) {
         const data = event.data.json();
+        
         const options = {
             body: data.body,
             icon: '/241-logo.jpg',
             badge: '/241-logo.jpg',
-            vibrate: [100, 50, 100],
-            data: {
-                dateOfArrival: Date.now(),
-                primaryKey: 1
-            }
+            tag: '241runners-notification',
+            requireInteraction: true,
+            actions: [
+                {
+                    action: 'view',
+                    title: 'View'
+                },
+                {
+                    action: 'close',
+                    title: 'Close'
+                }
+            ]
         };
 
         event.waitUntil(
@@ -148,11 +192,50 @@ self.addEventListener('push', (event) => {
     }
 });
 
-// Notification click handling
+// Notification click handler
 self.addEventListener('notificationclick', (event) => {
     event.notification.close();
-    
-    event.waitUntil(
-        clients.openWindow('/')
-    );
-}); 
+
+    if (event.action === 'view') {
+        event.waitUntil(
+            clients.openWindow('/')
+        );
+    }
+});
+
+// Helper function for background sync
+async function handleBackgroundSync() {
+    try {
+        // Get pending actions from IndexedDB
+        const pendingActions = await getPendingActions();
+        
+        for (const action of pendingActions) {
+            try {
+                await processPendingAction(action);
+                await removePendingAction(action.id);
+            } catch (error) {
+                console.error('Failed to process pending action:', error);
+            }
+        }
+    } catch (error) {
+        console.error('Background sync failed:', error);
+    }
+}
+
+// Helper functions for IndexedDB operations
+async function getPendingActions() {
+    // Implementation would depend on your IndexedDB setup
+    return [];
+}
+
+async function processPendingAction(action) {
+    // Process the pending action (e.g., sync form data)
+    console.log('Processing pending action:', action);
+}
+
+async function removePendingAction(actionId) {
+    // Remove the processed action from IndexedDB
+    console.log('Removing pending action:', actionId);
+}
+
+console.log('Service Worker loaded successfully');

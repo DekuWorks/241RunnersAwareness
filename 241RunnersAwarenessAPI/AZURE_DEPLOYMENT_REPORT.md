@@ -55,7 +55,7 @@ The following admin users are available for login:
 
 | Email | Name | Role | Password |
 |-------|------|------|----------|
-| dekuworks1@gmail.com | Marcus Brown | Co-Founder | marcus2025 |
+| dekuworks1@gmail.com | Marcus Brown | Co-Founder | ***REDACTED*** |
 | danielcarey9770@yahoo.com | Daniel Carey | Co-Founder | daniel2025 |
 | lthomas3350@gmail.com | Lisa Thomas | Founder | lisa2025 |
 | tinaleggins@yahoo.com | Tina Matthews | Program Director | tina2025 |
