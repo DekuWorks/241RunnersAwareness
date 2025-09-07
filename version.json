@@ -1,8 +1,6 @@
 {
   "version": "1.0.0",
-  "build": "20250107-001",
-  "commit": "initial",
-  "builtAt": "2025-01-07T00:00:00.000Z",
-  "environment": "production",
-  "apiVersion": "2.0.0"
+  "commit": "1d1718c",
+  "builtAt": "2025-09-07T23:16:48Z",
+  "environment": "production"
 }
