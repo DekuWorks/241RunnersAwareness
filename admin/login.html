@@ -224,8 +224,6 @@
                             <div class="spinner"></div>
                         </div>
                     </button>
-                        
-                    </button>
                 </div>
             </form>
             
@@ -251,8 +249,7 @@
         // Load API configuration
         async function loadConfig() {
             try {
-                console.log('Form data being sent:');
-                    console.log(formData);('/config.json');
+                const response = await fetch('/config.json');
                 const config = await response.json();
                 API_BASE_URL = config.API_BASE_URL;
             } catch (error) {
@@ -289,31 +286,6 @@
                 element.textContent = '';
                 element.style.display = 'none';
             });
-        
-        // ===== CLEAR ALL SESSIONS FUNCTION =====
-        
-            try {
-                console.log('🧹 Clearing all sessions...');
-                
-                // Clear all localStorage
-                localStorage.clear();
-                
-                // Clear all sessionStorage
-                sessionStorage.clear();
-                
-                // Clear cookies (if possible)
-                document.cookie.split(";").forEach(function(c) {
-                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-                });
-                
-                console.log('✅ All sessions cleared');
-                alert('All sessions cleared! Please try logging in again.');
-                
-                // Reload the page
-                window.location.reload();
-                
-            } catch (error) {
-                console.error('❌ Error clearing sessions:'
         }
         
         // Show alert message
@@ -417,14 +389,9 @@
                 
                 try {
                     console.log('Attempting login with API URL:', API_BASE_URL);
-                    
-                    // Attempt login
-                    // console.log('About to make fetch request to:'
                     console.log('Sending login request...');
-                    console.log('Form data being sent:');
-                    console.log(formData);
-                    // console.log('About to make fetch request to:'
-                    // console.log('About to make fetch request to:'
+                    console.log('Form data being sent:', formData);
+                    
                     const response = await fetch(`${API_BASE_URL}/Auth/login`, {
                         method: 'POST',
                         headers: {
@@ -437,37 +404,12 @@
                         body: JSON.stringify(formData),
                         cache: 'no-store'
                     });
-        
-        // ===== CLEAR ALL SESSIONS FUNCTION =====
-        
-            try {
-                console.log('🧹 Clearing all sessions...');
-                
-                // Clear all localStorage
-                localStorage.clear();
-                
-                // Clear all sessionStorage
-                sessionStorage.clear();
-                
-                // Clear cookies (if possible)
-                document.cookie.split(";").forEach(function(c) {
-                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-                });
-                
-                console.log('✅ All sessions cleared');
-                alert('All sessions cleared! Please try logging in again.');
-                
-                // Reload the page
-                window.location.reload();
-                
-            } catch (error) {
-                console.error('❌ Error clearing sessions:'
                     
                     console.log('Login response status:', response.status);
                     
                     const data = await response.json();
                     console.log('Login response data:', data);
-                    console.log('🔍 API Response Details:');
+                    console.log('�� API Response Details:');
                     console.log('  - Success:', data.success);
                     console.log('  - Message:', data.message);
                     console.log('  - Token present:', !!data.token);
@@ -538,57 +480,7 @@
                     setLoading(false);
                 }
             });
-        
-        // ===== CLEAR ALL SESSIONS FUNCTION =====
-        
-            try {
-                console.log('🧹 Clearing all sessions...');
-                
-                // Clear all localStorage
-                localStorage.clear();
-                
-                // Clear all sessionStorage
-                sessionStorage.clear();
-                
-                // Clear cookies (if possible)
-                document.cookie.split(";").forEach(function(c) {
-                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-                });
-                
-                console.log('✅ All sessions cleared');
-                alert('All sessions cleared! Please try logging in again.');
-                
-                // Reload the page
-                window.location.reload();
-                
-            } catch (error) {
-                console.error('❌ Error clearing sessions:'
         });
-        
-        // ===== CLEAR ALL SESSIONS FUNCTION =====
-        
-            try {
-                console.log('🧹 Clearing all sessions...');
-                
-                // Clear all localStorage
-                localStorage.clear();
-                
-                // Clear all sessionStorage
-                sessionStorage.clear();
-                
-                // Clear cookies (if possible)
-                document.cookie.split(";").forEach(function(c) {
-                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-                });
-                
-                console.log('✅ All sessions cleared');
-                alert('All sessions cleared! Please try logging in again.');
-                
-                // Reload the page
-                window.location.reload();
-                
-            } catch (error) {
-                console.error('❌ Error clearing sessions:'
     </script>
 </body>
-</html> 
+</html>
