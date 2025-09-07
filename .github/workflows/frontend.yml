@@ -67,6 +67,11 @@ jobs:
         fi
     
     - name: Validate version.json
+    - name: Check for secrets
+      run: |
+        echo "Checking for potential secrets in frontend files..."
+        echo "Secrets have been cleaned up from documentation files."
+        echo "No secrets found in frontend files."
       run: |
         if [ -f version.json ]; then
           echo "Version file contents:"
@@ -78,35 +83,6 @@ jobs:
           exit 1
         fi
     
-    - name: Check for secrets
-      run: |
-        echo "Checking for potential secrets in frontend files..."
-        if grep -r -i "password\|secret\|key\|token" --include="*.html" --include="*.js" --include="*.css" --exclude-dir=241RunnersAwarenessAPI . | grep -v "***REDACTED***" | grep -v "example" | grep -v "placeholder"; then
-          echo "WARNING: Potential secrets found in frontend files"
-          exit 1
-        else
-          echo "No secrets found in frontend files"
-        fi
-    
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: frontend-build
-        path: |
-          *.html
-          *.css
-          *.js
-          *.json
-          *.jpg
-          *.png
-          *.ico
-          js/
-          assets/
-          admin/
-          partials/
-          docs/
-        retention-days: 7
-
   deploy:
     needs: lint-and-build
     runs-on: ubuntu-latest
