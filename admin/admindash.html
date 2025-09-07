@@ -1548,7 +1548,8 @@
             return isAuthenticated();
         }
         // Make test function available globally
-        window.testAuth = testAuth;            console.log("🔍 isAuthenticated() called - DEBUGGING");
+        window.testAuth = testAuth;
+            console.log("🔍 isAuthenticated() called - DEBUGGING");
             console.log("🔍 isAuthenticated() called");
             const token = storage.get('ra_admin_token');
             console.log("🔍 Retrieved token:", token ? "Present (length: " + token.length + ")" : "Missing");

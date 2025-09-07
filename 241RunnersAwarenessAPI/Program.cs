@@ -141,7 +141,7 @@ app.UseSwaggerUI(c =>
 
 app.UseHttpsRedirection();
 
-// Use CORS
+// Use CORS - MUST be before UseAuthentication and UseAuthorization
 app.UseCors("AppCors");
 
 // Add authentication and authorization middleware
@@ -159,117 +159,37 @@ app.MapGet("/api/cors-test", () => new { message = "CORS is working!", timestamp
    .WithName("CorsTest")
    .WithOpenApi();
 
-// Configure static files with proper cache control
+// Add a specific CORS test endpoint for your domain
+app.MapGet("/api/cors-test-domain", () => new { 
+    message = "CORS is working for 241runnersawareness.org!", 
+    timestamp = DateTime.UtcNow,
+    allowedOrigins = new[] { 
+        "https://241runnersawareness.org", 
+        "https://www.241runnersawareness.org" 
+    }
+})
+.WithName("CorsTestDomain")
+.WithOpenApi();
+
+// Seed admin users on startup
+using (var scope = app.Services.CreateScope())
+{
+    var adminSeedService = scope.ServiceProvider.GetRequiredService<AdminSeedService>();
+    await adminSeedService.SeedAdminUsersAsync();
+}
+
+// Configure static files
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "wwwroot")),
-    RequestPath = "",
-    OnPrepareResponse = ctx =>
-    {
-        const int durationInSeconds = 60 * 60 * 24 * 30; // 30 days
-        ctx.Context.Response.Headers["Cache-Control"] = $"public,max-age={durationInSeconds}";
-        ctx.Context.Response.Headers["Expires"] = DateTime.UtcNow.AddDays(30).ToString("R");
-    }
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
+    RequestPath = "/uploads"
 });
 
-// Add cache control middleware for API responses
+// Add request logging middleware
 app.Use(async (context, next) =>
 {
+    Console.WriteLine($"[{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}] {context.Request.Method} {context.Request.Path} from {context.Request.Headers["Origin"]}");
     await next();
-    
-    // Set cache control headers based on content type and endpoint
-    if (context.Request.Path.StartsWithSegments("/api"))
-    {
-        // API endpoints - short cache for dynamic data
-        if (context.Request.Path.Value?.Contains("/runners") == true || 
-            context.Request.Path.Value?.Contains("/publiccases") == true)
-        {
-            context.Response.Headers["Cache-Control"] = "public, max-age=300"; // 5 minutes
-        }
-        else if (context.Request.Path.Value?.Contains("/auth") == true)
-        {
-            context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
-            context.Response.Headers["Pragma"] = "no-cache";
-            context.Response.Headers["Expires"] = "0";
-        }
-        else
-        {
-            context.Response.Headers["Cache-Control"] = "public, max-age=60"; // 1 minute default
-        }
-    }
 });
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
-
-// Initialize database, apply migrations, and seed admin users
-try
-{
-    using (var scope = app.Services.CreateScope())
-    {
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var adminSeedService = scope.ServiceProvider.GetRequiredService<AdminSeedService>();
-        
-        Console.WriteLine("Starting database initialization...");
-        
-        // Test database connection first
-        try
-        {
-            context.Database.EnsureCreated();
-            Console.WriteLine("Database connection successful");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Database connection failed: {ex.Message}");
-            goto skipDatabaseInit;
-        }
-        
-        // Apply migrations
-        try
-        {
-            context.Database.Migrate();
-            Console.WriteLine("Database migrations applied successfully");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Migration failed: {ex.Message}");
-            goto skipDatabaseInit;
-        }
-        
-        // Seed admin users
-        try
-        {
-            await adminSeedService.SeedAdminUsersAsync();
-            Console.WriteLine("Admin users seeded successfully");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"WARNING: Admin user seeding failed: {ex.Message}");
-            Console.WriteLine("Admin users may not be available.");
-        }
-        
-        Console.WriteLine("Database initialization completed successfully");
-        goto databaseInitComplete;
-        
-        skipDatabaseInit:
-        Console.WriteLine("Skipping database initialization due to connection/permission issues.");
-        Console.WriteLine("The app will start but database-dependent features will not work.");
-        Console.WriteLine("Please check:");
-        Console.WriteLine("  1. Database connection string is correct");
-        Console.WriteLine("  2. Database user 'sqladmin' has db_owner permissions");
-        Console.WriteLine("  3. Database server firewall allows Azure App Service connections");
-        
-        databaseInitComplete:
-        Console.WriteLine("Database initialization process completed.");
-    }
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"WARNING: Database initialization failed: {ex.Message}");
-    Console.WriteLine("App will continue to start but database features will not work.");
-    // Don't throw - let the app start even if database fails
-}
 
 app.Run();
