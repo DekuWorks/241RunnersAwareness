@@ -1756,7 +1756,11 @@
                 updateHealthIndicators();
                 hideLoadingState();
                 
-                console.log('Dashboard data loading completed');
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showToast('Failed to load dashboard data. Please refresh the page.', 'error');
+                hideLoadingState();
+            }
         }
         
         // ===== UPDATE TIMESTAMP FUNCTION =====
@@ -1769,14 +1773,7 @@
             if (timestampElement) {
                 timestampElement.textContent = `${dateString} at ${timeString}`;
             }
-        }
-            } catch (error) {
-                console.error('Error loading dashboard data:', error);
-                showToast('Failed to load dashboard data. Please refresh the page.', 'error');
-                hideLoadingState();
-            }
-        }
-        
+        }        
         async function loadUsers() {
             try {
                 const data = await apiRequest(`${API_BASE_URL}/Admin/users`, {
@@ -2423,7 +2420,8 @@
                     return;
                 }
                 
-                // Load admin profile                await loadCurrentAdmin();
+                // Load admin profile
+                await loadCurrentAdmin();
                 
                 // Load dashboard data
                 await loadDashboardData();
