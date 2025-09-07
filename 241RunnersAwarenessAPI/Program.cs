@@ -7,6 +7,7 @@ using _241RunnersAwarenessAPI.Services;
 using _241RunnersAwarenessAPI.Models;
 using BCrypt.Net;
 using DotNetEnv;
+using Microsoft.Extensions.FileProviders;
 
 // Load environment variables from .env file
 Env.Load();
@@ -124,6 +125,46 @@ app.UseHttpsRedirection();
 
 // Use CORS
 app.UseCors("AppCors");
+
+// Configure static files with proper cache control
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "wwwroot")),
+    RequestPath = "",
+    OnPrepareResponse = ctx =>
+    {
+        const int durationInSeconds = 60 * 60 * 24 * 30; // 30 days
+        ctx.Context.Response.Headers["Cache-Control"] = $"public,max-age={durationInSeconds}";
+        ctx.Context.Response.Headers["Expires"] = DateTime.UtcNow.AddDays(30).ToString("R");
+    }
+});
+
+// Add cache control middleware for API responses
+app.Use(async (context, next) =>
+{
+    await next();
+    
+    // Set cache control headers based on content type and endpoint
+    if (context.Request.Path.StartsWithSegments("/api"))
+    {
+        // API endpoints - short cache for dynamic data
+        if (context.Request.Path.Value?.Contains("/runners") == true || 
+            context.Request.Path.Value?.Contains("/publiccases") == true)
+        {
+            context.Response.Headers["Cache-Control"] = "public, max-age=300"; // 5 minutes
+        }
+        else if (context.Request.Path.Value?.Contains("/auth") == true)
+        {
+            context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+            context.Response.Headers["Pragma"] = "no-cache";
+            context.Response.Headers["Expires"] = "0";
+        }
+        else
+        {
+            context.Response.Headers["Cache-Control"] = "public, max-age=60"; // 1 minute default
+        }
+    }
+});
 
 app.UseAuthentication();
 app.UseAuthorization();

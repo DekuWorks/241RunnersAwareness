@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Accessible viewport: no maximum-scale or user-scalable restrictions -->
     <title>Admin Dashboard - 241 Runners Awareness</title>
     <meta name="description" content="Admin dashboard for 241 Runners Awareness">
     
@@ -12,13 +12,13 @@
     <meta http-equiv="Cache-Control" content="no-cache">
     
     <!-- Favicon with cache busting -->
-    <link rel="icon" type="image/x-icon" href="/241-logo.jpg?v=20250905">
+    <link rel="icon" type="image/x-icon" href="/241-logo.jpg?v=20250906">
     
     <!-- External Stylesheets with cache busting -->
-    <link rel="stylesheet" href="/styles.css?v=20250905">
-    <link rel="stylesheet" href="/admin/assets/css/admin.css?v=20250905">
-    <link rel="stylesheet" href="/forms.css?v=20250905">
-    <link rel="stylesheet" href="/admin/assets/css/admin-dashboard-fixes.css?v=20250905">
+    <link rel="stylesheet" href="/styles.css?v=20250906">
+    <link rel="stylesheet" href="/admin/assets/css/admin.css?v=20250906">
+    <link rel="stylesheet" href="/forms.css?v=20250906">
+    <link rel="stylesheet" href="/admin/assets/css/admin-dashboard-fixes.css?v=20250906">
     
     <!-- Inline Critical CSS for immediate rendering -->
     <style>
@@ -1217,7 +1217,8 @@
                 <h3 class="data-table-title">User Management</h3>
                 <div class="data-table-actions">
                     <input type="text" class="search-input" id="userSearch" placeholder="Search users...">
-                    <select class="filter-select" id="userRoleFilter" title="Filter users by role" aria-label="Filter users by role">
+                    <label for="userRoleFilter" class="filter-label">Filter by Role:</label>
+                    <select class="filter-select" id="userRoleFilter">
                         <option value="">All Roles</option>
                         <option value="admin">Admin</option>
                         <option value="user">User</option>
@@ -1253,7 +1254,8 @@
                 <h3 class="data-table-title">Runner Management</h3>
                 <div class="data-table-actions">
                     <input type="text" class="search-input" id="runnerSearch" placeholder="Search runners...">
-                    <select class="filter-select" id="runnerStatusFilter" title="Filter runners by status" aria-label="Filter runners by status">
+                    <label for="runnerStatusFilter" class="filter-label">Filter by Status:</label>
+                    <select class="filter-select" id="runnerStatusFilter">
                         <option value="">All Status</option>
                         <option value="active">Active</option>
                         <option value="found">Found</option>
@@ -1290,7 +1292,8 @@
                 <h3 class="data-table-title">Public Cases Management</h3>
                 <div class="data-table-actions">
                     <input type="text" class="search-input" id="caseSearch" placeholder="Search cases...">
-                    <select class="filter-select" id="caseStatusFilter" title="Filter cases by status" aria-label="Filter cases by status">
+                    <label for="caseStatusFilter" class="filter-label">Filter by Status:</label>
+                    <select class="filter-select" id="caseStatusFilter">
                         <option value="">All Status</option>
                         <option value="pending">Pending</option>
                         <option value="verified">Verified</option>
@@ -1431,9 +1434,9 @@
     
     <!-- Enhanced JavaScript with All Admin Functions -->
     <!-- Admin Authentication Module -->
-    <script src="/js/admin-auth.js?v=20250905"></script>
+    <script src="/js/admin-auth.js?v=20250906"></script>
     <!-- Update Banner -->
-    <script src="/js/update-banner.js?v=20250905"></script>
+    <script src="/js/update-banner.js?v=20250906"></script>
     <script>
         // ===== CONFIGURATION & INITIALIZATION =====
         

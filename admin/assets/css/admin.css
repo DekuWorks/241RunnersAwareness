@@ -350,6 +350,16 @@
     background-color: white;
 }
 
+/* Filter Labels */
+.filter-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+    margin-right: 8px;
+    display: inline-block;
+    white-space: nowrap;
+}
+
 /* Pagination */
 .pagination {
     display: flex;
