@@ -2505,6 +2505,7 @@ body.dark-mode .dna-stat-label {
 
 .database-card {
   background: rgba(255,255,255,0.1);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255,255,255,0.2);
   padding: 1.5rem;
@@ -2696,6 +2697,7 @@ body.dark-mode .report-preview {
   font-weight: 600;
   font-size: 0.9rem;
   color: white;
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
 
@@ -2717,6 +2719,7 @@ body.dark-mode .report-preview {
   padding: 25px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 20px;
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -4039,6 +4042,7 @@ body.dark-mode .action-card p {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
 }
 
@@ -5493,6 +5497,7 @@ footer .footer-bottom p {
   background: rgba(255, 255, 255, 0.1);
   padding: 1.5rem;
   border-radius: 12px;
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   min-width: 120px;
@@ -5548,6 +5553,7 @@ footer .footer-bottom p {
   background: rgba(255, 255, 255, 0.1);
   padding: 1.5rem;
   border-radius: 12px;
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   min-width: 120px;

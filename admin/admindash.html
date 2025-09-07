@@ -2,17 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - 241 Runners Awareness</title>
     <meta name="description" content="Admin dashboard for 241 Runners Awareness">
     
     <!-- Enhanced Cache Control for All Browsers -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <meta name="cache-control" content="no-cache">
-    <meta name="expires" content="0">
-    <meta name="pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
     
     <!-- Favicon with cache busting -->
     <link rel="icon" type="image/x-icon" href="/241-logo.jpg?v=20250905">
@@ -21,6 +18,7 @@
     <link rel="stylesheet" href="/styles.css?v=20250905">
     <link rel="stylesheet" href="/admin/assets/css/admin.css?v=20250905">
     <link rel="stylesheet" href="/forms.css?v=20250905">
+    <link rel="stylesheet" href="/admin/assets/css/admin-dashboard-fixes.css?v=20250905">
     
     <!-- Inline Critical CSS for immediate rendering -->
     <style>
@@ -1186,7 +1184,7 @@
         </div>
         
         <!-- Analytics Section -->
-        <div class="analytics-grid" id="analyticsSection" style="display: none;">
+        <div class="analytics-grid" id="analyticsSection" class="hidden">
             <div class="chart-container">
                 <h3 class="chart-title">User Registration Trends</h3>
                 <div class="chart-placeholder" id="userTrendsChart">
@@ -1214,12 +1212,12 @@
         </div>
         
         <!-- Data Management Sections -->
-        <div id="userManagementSection" class="data-table-container" style="display: none;">
+        <div id="userManagementSection" class="data-table-container" class="hidden">
             <div class="data-table-header">
                 <h3 class="data-table-title">User Management</h3>
                 <div class="data-table-actions">
                     <input type="text" class="search-input" id="userSearch" placeholder="Search users...">
-                    <select class="filter-select" id="userRoleFilter">
+                    <select class="filter-select" id="userRoleFilter" title="Filter users by role" aria-label="Filter users by role">
                         <option value="">All Roles</option>
                         <option value="admin">Admin</option>
                         <option value="user">User</option>
@@ -1250,12 +1248,12 @@
             <div class="pagination" id="usersPagination"></div>
         </div>
         
-        <div id="runnerManagementSection" class="data-table-container" style="display: none;">
+        <div id="runnerManagementSection" class="data-table-container" class="hidden">
             <div class="data-table-header">
                 <h3 class="data-table-title">Runner Management</h3>
                 <div class="data-table-actions">
                     <input type="text" class="search-input" id="runnerSearch" placeholder="Search runners...">
-                    <select class="filter-select" id="runnerStatusFilter">
+                    <select class="filter-select" id="runnerStatusFilter" title="Filter runners by status" aria-label="Filter runners by status">
                         <option value="">All Status</option>
                         <option value="active">Active</option>
                         <option value="found">Found</option>
@@ -1287,12 +1285,12 @@
             <div class="pagination" id="runnersPagination"></div>
         </div>
         
-        <div id="publicCasesSection" class="data-table-container" style="display: none;">
+        <div id="publicCasesSection" class="data-table-container" class="hidden">
             <div class="data-table-header">
                 <h3 class="data-table-title">Public Cases Management</h3>
                 <div class="data-table-actions">
                     <input type="text" class="search-input" id="caseSearch" placeholder="Search cases...">
-                    <select class="filter-select" id="caseStatusFilter">
+                    <select class="filter-select" id="caseStatusFilter" title="Filter cases by status" aria-label="Filter cases by status">
                         <option value="">All Status</option>
                         <option value="pending">Pending</option>
                         <option value="verified">Verified</option>
@@ -1352,34 +1350,34 @@
             </div>
             <div class="modal-body">
                 <form id="userForm">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div class="admin-form-grid">
                         <div>
                             <label for="firstName">First Name *</label>
-                            <input type="text" id="firstName" name="firstName" required style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+                            <input type="text" id="firstName" name="firstName" autocomplete="given-name" required class="admin-form-field">
                         </div>
                         <div>
                             <label for="lastName">Last Name *</label>
-                            <input type="text" id="lastName" name="lastName" required style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+                            <input type="text" id="lastName" name="lastName" autocomplete="family-name" required class="admin-form-field">
                         </div>
                     </div>
-                    <div style="margin-bottom: 15px;">
+                    <div class="admin-form-section">
                         <label for="email">Email *</label>
-                        <input type="email" id="email" name="email" required style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+                        <input type="email" id="email" name="email" autocomplete="email" required class="admin-form-field">
                     </div>
-                    <div style="margin-bottom: 15px;">
+                    <div class="admin-form-section">
                         <label for="role">Role *</label>
-                        <select id="role" name="role" required style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+                        <select id="role" name="role" required class="admin-form-field">
                             <option value="user">User</option>
                             <option value="admin">Admin</option>
                         </select>
                     </div>
-                    <div style="margin-bottom: 15px;">
+                    <div class="admin-form-section">
                         <label for="phoneNumber">Phone Number</label>
-                        <input type="tel" id="phoneNumber" name="phoneNumber" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+                        <input type="tel" id="phoneNumber" name="phoneNumber" autocomplete="tel" class="admin-form-field">
                     </div>
-                    <div style="margin-bottom: 15px;">
+                    <div class="admin-form-section">
                         <label for="password">Password *</label>
-                        <input type="password" id="password" name="password" required style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+                        <input type="password" id="password" name="password" autocomplete="new-password" required class="admin-form-field">
                     </div>
                 </form>
             </div>
@@ -1398,24 +1396,24 @@
                 <button class="modal-close" onclick="closeSystemSettingsModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <div style="display: grid; gap: 20px;">
+                <div class="admin-system-grid">
                     <div>
                         <h3>Database Management</h3>
-                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <div class="admin-system-actions">
                             <button class="btn btn-primary" onclick="performDatabaseCleanup()">Clean Database</button>
                             <button class="btn btn-secondary" onclick="validateAdminCredentials()">Validate Admins</button>
                         </div>
                     </div>
                     <div>
                         <h3>System Maintenance</h3>
-                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <div class="admin-system-actions">
                             <button class="btn btn-primary" onclick="resetAdminPasswords()">Reset Admin Passwords</button>
                             <button class="btn btn-secondary" onclick="exportSystemData()">Export Data</button>
                         </div>
                     </div>
                     <div>
                         <h3>Security Settings</h3>
-                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <div class="admin-system-actions">
                             <button class="btn btn-primary" onclick="updateSecuritySettings()">Update Security</button>
                             <button class="btn btn-secondary" onclick="viewAuditLogs()">View Audit Logs</button>
                         </div>
@@ -1455,7 +1453,7 @@
         })();
         
         if (!isModernBrowser) {
-            document.body.innerHTML = '<div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;"><h2>Browser Not Supported</h2><p>Please use a modern browser like Chrome, Firefox, Safari, or Edge.</p></div>';
+            document.body.innerHTML = '<div class="no-support-message"><h2>Browser Not Supported</h2><p>Please use a modern browser like Chrome, Firefox, Safari, or Edge.</p></div>';
             throw new Error('Browser not supported');
         }
         
@@ -1624,9 +1622,9 @@
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             toast.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="toast-flex">
                     <span>${message}</span>
-                    <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; margin-left: 10px;">×</button>
+                    <button onclick="this.parentElement.parentElement.remove()" class="toast-close-btn">×</button>
                 </div>
             `;
             
@@ -1977,7 +1975,7 @@
                 showToast('Admin list loaded successfully!', 'success', 3000);
             } catch (error) {
                 console.error('Error loading admins in modal:', error);
-                adminsList.innerHTML = '<div style="text-align: center; padding: 40px; color: #dc2626;">Failed to load admin list. Please try again.</div>';
+                adminsList.innerHTML = '<div class="error-text-center">Failed to load admin list. Please try again.</div>';
                 showToast('Failed to load admin list', 'error');
             }
         }
@@ -1987,7 +1985,7 @@
             if (!adminsList) return;
             
             if (dashboardData.admins.length === 0) {
-                adminsList.innerHTML = '<div style="text-align: center; padding: 40px; color: #6b7280;">No admin users found.</div>';
+                adminsList.innerHTML = '<div class="empty-text-center">No admin users found.</div>';
                 return;
             }
             
