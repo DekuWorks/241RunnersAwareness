@@ -173,6 +173,7 @@ namespace _241RunnersAwarenessAPI.Services
             {
                 var adminPasswordUpdates = new Dictionary<string, string>
                 {
+                    { "dekuworks1@gmail.com", "marcus2025" },
                     { "danielcarey9770@yahoo.com", "Daniel2025!" },
                     { "lthomas3350@gmail.com", "Lisa2025!" },
                     { "tinaleggins@yahoo.com", "Tina2025!" },
