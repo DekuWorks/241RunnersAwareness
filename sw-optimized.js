@@ -7,9 +7,9 @@
  * and automatic update notifications for improved performance.
  */
 
-const CACHE_NAME = '241runners-v1.0.3';
-const STATIC_CACHE = 'static-v1.0.3';
-const DYNAMIC_CACHE = 'dynamic-v1.0.3';
+const CACHE_NAME = '241runners-v1.1.0';
+const STATIC_CACHE = 'static-v1.1.0';
+const DYNAMIC_CACHE = 'dynamic-v1.1.0';
 
 // Files to cache immediately
 const STATIC_FILES = [
@@ -26,7 +26,6 @@ const STATIC_FILES = [
     '/js/update-banner.js',
     '/assets/js/config.js',
     '/assets/js/api-utils.js',
-    '/config.json',
     '/241-logo.jpg',
     '/manifest.json',
     '/version.json'
@@ -112,6 +111,25 @@ self.addEventListener('fetch', (event) => {
                 credentials: 'include'
             }).catch(error => {
                 console.error('Auth fetch failed:', error);
+                throw error;
+            })
+        );
+        return;
+    }
+
+    // CRITICAL: Never cache config.json - always fetch fresh
+    if (url.pathname === '/config.json') {
+        console.log('Config.json detected, bypassing cache:', url.href);
+        event.respondWith(
+            fetch(request, {
+                cache: 'no-store',
+                headers: {
+                    'Cache-Control': 'no-store, no-cache, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                }
+            }).catch(error => {
+                console.error('Config fetch failed:', error);
                 throw error;
             })
         );

@@ -132,7 +132,7 @@ builder.Services.AddCors(options =>
                 "http://localhost:5000", // For local development
                 "https://localhost:5001" // For local HTTPS development
             )
-            .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+            .WithMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
             .WithHeaders("Authorization", "Content-Type", "X-CSRF-Token", "X-Client")
             .AllowCredentials()
             .SetPreflightMaxAge(TimeSpan.FromSeconds(86400)); // 24 hours
