@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Admin Dashboard - 241 Runners Awareness</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #b91c1c; }
+        pre { background: #f8f8f8; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        .admin-credentials {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Admin Dashboard Test Page</h1>
+    
+    <div class="admin-credentials">
+        <h3>🔐 Admin Login Credentials</h3>
+        <p><strong>Email:</strong> dekuworks1@gmail.com</p>
+        <p><strong>Password:</strong> Marcus2025!</p>
+        <p><em>Use these credentials to test the admin dashboard</em></p>
+    </div>
+
+    <div class="test-section">
+        <h2>API Endpoint Tests</h2>
+        <button onclick="testHealthCheck()">Test Health Check</button>
+        <button onclick="testAdminLogin()">Test Admin Login</button>
+        <button onclick="testMeEndpoint()">Test /me Endpoint</button>
+        <button onclick="testAllEndpoints()">Test All Endpoints</button>
+        <div id="test-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Admin Dashboard Access</h2>
+        <p>Click the button below to open the admin dashboard:</p>
+        <button onclick="openAdminDashboard()">Open Admin Dashboard</button>
+        <p><em>Note: You'll need to log in with the admin credentials above</em></p>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+        let currentToken = null;
+
+        function log(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = type;
+            div.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            results.appendChild(div);
+            results.scrollTop = results.scrollHeight;
+        }
+
+        async function testHealthCheck() {
+            log('Testing health check endpoint...', 'info');
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/health`);
+                const data = await response.json();
+                if (data.status === 'Healthy') {
+                    log('✅ Health check successful', 'success');
+                } else {
+                    log('❌ Health check failed: ' + JSON.stringify(data), 'error');
+                }
+            } catch (error) {
+                log('❌ Health check error: ' + error.message, 'error');
+            }
+        }
+
+        async function testAdminLogin() {
+            log('Testing admin login...', 'info');
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'dekuworks1@gmail.com',
+                        password: 'Marcus2025!'
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    currentToken = data.token;
+                    log('✅ Admin login successful', 'success');
+                    log(`User: ${data.user.firstName} ${data.user.lastName} (${data.user.role})`, 'info');
+                } else {
+                    log('❌ Admin login failed: ' + data.message, 'error');
+                }
+            } catch (error) {
+                log('❌ Admin login error: ' + error.message, 'error');
+            }
+        }
+
+        async function testMeEndpoint() {
+            if (!currentToken) {
+                log('❌ No token available. Please test admin login first.', 'error');
+                return;
+            }
+            log('Testing /me endpoint...', 'info');
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${currentToken}` }
+                });
+                const data = await response.json();
+                if (data.email) {
+                    log('✅ /me endpoint successful', 'success');
+                    log(`User: ${data.firstName} ${data.lastName} (${data.role})`, 'info');
+                } else {
+                    log('❌ /me endpoint failed: ' + JSON.stringify(data), 'error');
+                }
+            } catch (error) {
+                log('❌ /me endpoint error: ' + error.message, 'error');
+            }
+        }
+
+        async function testAllEndpoints() {
+            log('Running all endpoint tests...', 'info');
+            await testHealthCheck();
+            await testAdminLogin();
+            await testMeEndpoint();
+            log('All tests completed!', 'info');
+        }
+
+        function openAdminDashboard() {
+            window.open('/admin/admindash.html', '_blank');
+        }
+
+        // Auto-run tests on page load
+        window.addEventListener('load', () => {
+            log('Test page loaded. Ready to test admin dashboard functionality.', 'info');
+        });
+    </script>
+</body>
+</html>

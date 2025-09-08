@@ -2,6 +2,40 @@
 
 A comprehensive platform for raising awareness about missing persons cases, specifically focused on the 241 area code region. The system provides both public-facing information and secure admin tools for case management.
 
+## 🎯 Current Status: **OPERATIONAL** ✅
+
+**Version:** 1.0.3 | **Last Updated:** January 27, 2025  
+**API Health:** [![API Status](https://img.shields.io/badge/API-Operational-green)](https://241runners-api.azurewebsites.net/api/auth/health)  
+**Frontend:** [![Frontend Status](https://img.shields.io/badge/Frontend-Live-blue)](https://241runnersawareness.org)
+
+> 📊 **Detailed Status:** See [DEPLOYMENT_STATUS.md](./DEPLOYMENT_STATUS.md) for comprehensive system health and monitoring information.
+
+## 🚀 Quick Start
+
+### For Users
+- **Visit:** [https://241runnersawareness.org](https://241runnersawareness.org)
+- **Browse Cases:** View missing persons cases with advanced filtering
+- **Install PWA:** Add to home screen for offline access
+
+### For Developers
+```bash
+# Clone the repository
+git clone https://github.com/your-username/241RunnersAwareness.git
+cd 241RunnersAwareness
+
+# Deploy to Azure (requires Azure CLI)
+chmod +x scripts/deploy-azure.sh
+./scripts/deploy-azure.sh
+
+# Run integration tests
+node scripts/integration-tests.js
+```
+
+### For Administrators
+- **Admin Portal:** [https://241runnersawareness.org/admin](https://241runnersawareness.org/admin)
+- **API Documentation:** [https://241runners-api.azurewebsites.net/swagger](https://241runners-api.azurewebsites.net/swagger)
+- **Health Monitoring:** [https://241runners-api.azurewebsites.net/api/auth/health](https://241runners-api.azurewebsites.net/api/auth/health)
+
 ## 🚀 Features
 
 ### Public Features

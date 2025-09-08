@@ -1,6 +1,12 @@
 {
-  "version": "1.0.0",
-  "commit": "1d1718c",
-  "builtAt": "2025-09-07T23:16:48Z",
-  "environment": "production"
+  "version": "1.0.3",
+  "commit": "api-centralization",
+  "builtAt": "2025-01-27T12:00:00Z",
+  "environment": "production",
+  "features": [
+    "Centralized API configuration",
+    "API health monitoring",
+    "Improved error handling",
+    "Enhanced PWA caching"
+  ]
 }

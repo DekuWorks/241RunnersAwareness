@@ -1,0 +1,6 @@
+<step title="Incoming Request" date="2025-09-05T16:38:08.249" instance="ab4c51" url="/api/settings/branch" method="GET" type="request" pid="827,1,22" Host="241runners-api.scm.azurewebsites.net" User-Agent="Azure-WebSites-Controller/105.0.7.92" Authorization="Bas..." x-ms-request-id="d91f3fa8-89ee-43e0-b07c-1bf6bce642dd" X-ARR-LOG-ID="d91f3fa8-89ee-43e0-b07c-1bf6bce642dd" CLIENT-IP="20.40.202.32:1472" X-SITE-DEPLOYMENT-ID="241runners-api" WAS-DEFAULT-HOSTNAME="241runners-api.scm.azurewebsites.net" X-MS-PLATFORM-INTERNAL="True" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/settings/branch" X-Client-IP="20.40.202.32" X-Client-Port="1472" >
+  <step title="Cleanup Xml Logs" date="2025-09-05T16:38:08.266" >
+    <step title="Cleanup Infos" date="2025-09-05T16:38:08.317" totalFiles="255" totalCleanup="95" /><!-- duration: 22ms -->
+  </step><!-- duration: 83ms -->
+  <step title="Outgoing response" date="2025-09-05T16:38:08.408" type="response" statusCode="200" statusText="OK" /><!-- duration: 40ms -->
+</step><!-- duration: 211ms -->

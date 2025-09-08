@@ -1,0 +1,4 @@
+<step title="Incoming Request" date="2025-08-30T22:14:36.643" instance="840df5" url="/dump" method="GET" type="request" pid="823,1,30" Host="241runners-api.scm.azurewebsites.net" User-Agent="AZURECLI/2.76.0 (HOMEBREW)" Accept-Encoding="identity" Authorization="Bea..." x-ms-client-request-id="b5aa440e-85ee-11f0-adac-5aba6e9e812a" X-ARR-LOG-ID="b5aa440e-85ee-11f0-adac-5aba6e9e812a" CLIENT-IP="97.75.150.66:38465" X-SITE-DEPLOYMENT-ID="241runners-api" WAS-DEFAULT-HOSTNAME="241runners-api.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/dump" X-Client-IP="97.75.150.66" X-Client-Port="38465" >
+  <step title="Cleanup Xml Logs" date="2025-08-30T22:14:36.662" /><!-- duration: 30ms -->
+  <step title="Outgoing response" date="2025-08-30T22:14:39.772" type="response" statusCode="200" statusText="OK" /><!-- duration: 8ms -->
+</step><!-- duration: 3160ms -->

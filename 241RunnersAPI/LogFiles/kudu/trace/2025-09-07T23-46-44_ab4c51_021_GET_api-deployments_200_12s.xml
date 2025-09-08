@@ -1,0 +1,12 @@
+<step title="Incoming Request" date="2025-09-07T23:46:44.609" instance="ab4c51" url="/api/deployments?warmup=true" method="GET" type="request" pid="821,1,35" Accept="*/*" Host="241runners-api.scm.azurewebsites.net" User-Agent="AZURECLI/2.76.0 (HOMEBREW)" Accept-Encoding="gzip, deflate" Authorization="Bea..." Cookie="ARRAffinity=ab4c5168e31020da211c082be26c6c82aba0cf9ced664bcf9cca711c40b54858; ARRAffinitySameSite=ab4c5168e31020da211c082be26c6c82aba0cf9ced664bcf9cca711c40b54858" x-ms-client-request-id="e3f5ab08-8c44-11f0-8c1f-5aba6e9e812a" X-ARR-LOG-ID="e3f5ab08-8c44-11f0-8c1f-5aba6e9e812a" CLIENT-IP="97.75.150.69:15457" X-SITE-DEPLOYMENT-ID="241runners-api" WAS-DEFAULT-HOSTNAME="241runners-api.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/deployments?warmup=true" X-Client-IP="97.75.150.69" X-Client-Port="15457" >
+  <step title="Cleanup Xml Logs" date="2025-09-07T23:46:44.798" >
+    <step title="Cleanup Infos" date="2025-09-07T23:46:45.079" totalFiles="397" totalCleanup="237" /><!-- duration: 203ms -->
+  </step><!-- duration: 613ms -->
+  <step title="DeploymentService.GetCurrentEtag" date="2025-09-07T23:46:46.901" >
+    <step title="Current Etag: &quot;8ddee657bc60dac&quot;, Cached Etag: &quot;8ddee60d52fd6e8&quot;" date="2025-09-07T23:46:47.703" /><!-- duration: 51ms -->
+  </step><!-- duration: 883ms -->
+  <step title="DeploymentService.GetDeployResults" date="2025-09-07T23:46:47.825" >
+    <step title="DeploymentManager.GetResults" date="2025-09-07T23:46:47.877" /><!-- duration: 5996ms -->
+  </step><!-- duration: 6820ms -->
+  <step title="Outgoing response" date="2025-09-07T23:46:56.456" type="response" statusCode="200" statusText="OK" /><!-- duration: 20ms -->
+</step><!-- duration: 11918ms -->

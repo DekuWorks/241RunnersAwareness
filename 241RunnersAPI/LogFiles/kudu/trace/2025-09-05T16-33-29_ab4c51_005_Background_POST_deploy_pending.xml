@@ -1,0 +1,42 @@
+<step title="BackgroundTrace" date="2025-09-05T16:33:29.511" instance="ab4c51" url="/deploy" method="POST" >
+  <step title="Cleanup Xml Logs" date="2025-09-05T16:33:29.522" >
+    <step title="Cleanup Infos" date="2025-09-05T16:33:29.571" totalFiles="224" totalCleanup="64" /><!-- duration: 39ms -->
+  </step><!-- duration: 112ms -->
+  <step title="Creating temporary deployment - FetchDeploymentManager" date="2025-09-05T16:33:30.728" /><!-- duration: 10ms -->
+  <step title="Creating temporary deployment" date="2025-09-05T16:33:30.777" /><!-- duration: 234ms -->
+  <step title="Performing fetch based deployment" date="2025-09-05T16:33:31.753" >
+    <step title="Deployment timer started" date="2025-09-05T16:34:56.194" >
+      <step title="DeploymentManager.Deploy(id:a1163259afdc6c7a4c297f4f0daf06b4ba887a8e)" date="2025-09-05T16:34:56.212" >
+        <step title="Collecting changeset information" date="2025-09-05T16:34:56.251" /><!-- duration: 107ms -->
+        <step title="Updating submodules" date="2025-09-05T16:34:56.364" /><!-- duration: 1796ms -->
+        <step title="Determining deployment builder" date="2025-09-05T16:34:58.483" >
+          <step title="Builder is OryxBuilder" date="2025-09-05T16:34:58.508" /><!-- duration: 29ms -->
+        </step><!-- duration: 59ms -->
+        <step title="PreDeployment: context.CleanOutputPath False" date="2025-09-05T16:34:58.611" >
+          <step title="PreDeployment: context.OutputPath /home/site/wwwroot" date="2025-09-05T16:34:58.741" >
+            <step title="Building" date="2025-09-05T16:34:58.882" >
+              <step title="Executing external process" date="2025-09-05T16:34:59.256" type="process" path="bash" arguments="-c &quot;oryx build /home/site/repository -o /home/site/wwwroot --platform dotnet --platform-version 8.0 -p virtualenv_name= --log-file /tmp/build-debug.log  -i /tmp/8ddec9a2756bc3c | tee /tmp/oryx-build.log ; exit $PIPESTATUS &quot;" >
+                <step title="Cpu: dotnet(1118,21.960s)+build.sh(1117,0.000s)+build.sh(1000,0.060s)+oryx(969,9.650s)+tee(970,0.010s)+bash(968,0.000s)=total(31.590s)" date="2025-09-05T16:37:26.168" /><!-- duration: 39ms -->
+                <step title="bash: no io activity for 61s, prev-cpu=-1.000s, current-cpu=31.590s" date="2025-09-05T16:37:26.368" /><!-- duration: 61ms -->
+                <step title="Cpu: dotnet(1118,50.390s)+build.sh(1117,0.000s)+build.sh(1000,0.060s)+oryx(969,9.730s)+tee(970,0.010s)+bash(968,0.000s)=total(60.080s)" date="2025-09-05T16:38:27.236" /><!-- duration: 19ms -->
+                <step title="bash: no io activity for 127s, prev-cpu=31.590s, current-cpu=60.080s" date="2025-09-05T16:38:27.296" /><!-- duration: 49ms -->
+                <step title="Cpu: dotnet(1277,26.160s)+dotnet(1230,11.240s)+build.sh(1229,0.000s)+build.sh(1000,0.060s)+oryx(969,10.060s)+tee(970,0.010s)+bash(968,0.000s)=total(47.480s)" date="2025-09-05T16:40:08.679" /><!-- duration: 111ms -->
+                <step title="bash: no io activity for 60s, prev-cpu=-1.000s, current-cpu=47.480s" date="2025-09-05T16:40:08.971" /><!-- duration: 49ms -->
+              </step><!-- duration: 328127ms -->
+              <step title="Using GenericDeploymentLogParser" date="2025-09-05T16:40:27.925" /><!-- duration: 11ms -->
+              <step title="Triggering recycle (preview mode disabled)." date="2025-09-05T16:40:29.116" /><!-- duration: 13ms -->
+              <step title="Modified file to trigger a restart of the app container." date="2025-09-05T16:40:29.178" /><!-- duration: 9ms -->
+              <step title="Skip function trigger and logicapp sync because function is not enabled." date="2025-09-05T16:40:29.208" /><!-- duration: 4ms -->
+              <step title="Purge deployment items" date="2025-09-05T16:40:30.338" >
+                <step title="Remove 8e03e2e3-, Success, received at 09/04/2025 19:23:32" date="2025-09-05T16:40:30.401" /><!-- duration: 5ms -->
+              </step><!-- duration: 73ms -->
+            </step><!-- duration: 331613ms -->
+          </step><!-- duration: 331775ms -->
+          <step title="Cleaning up temp files" date="2025-09-05T16:40:30.520" /><!-- duration: 91ms -->
+          <step title="Cleaning up temp files" date="2025-09-05T16:40:30.615" /><!-- duration: 516ms -->
+          <step title="Reloading status file with latest updates" date="2025-09-05T16:40:31.181" >
+            <step title="WebHooksManager.PublishEventAsync: PostDeployment" date="2025-09-05T16:40:31.186" /><!-- duration: 115ms -->
+          </step><!-- duration: 125ms -->
+          <step title="Cleaning up temporary deployment - fetch deployment was successful" date="2025-09-05T16:40:31.316" /><!-- duration: 3ms -->
+        </step><!-- duration: 332775ms -->
+      </step><!-- duration: 335200ms -->

@@ -7,9 +7,9 @@
  * and automatic update notifications for improved performance.
  */
 
-const CACHE_NAME = '241runners-v1.0.2';
-const STATIC_CACHE = 'static-v1.0.2';
-const DYNAMIC_CACHE = 'dynamic-v1.0.2';
+const CACHE_NAME = '241runners-v1.0.3';
+const STATIC_CACHE = 'static-v1.0.3';
+const DYNAMIC_CACHE = 'dynamic-v1.0.3';
 
 // Files to cache immediately
 const STATIC_FILES = [
@@ -24,6 +24,9 @@ const STATIC_FILES = [
     '/js/my-cases.js',
     '/js/admin-auth.js',
     '/js/update-banner.js',
+    '/assets/js/config.js',
+    '/assets/js/api-utils.js',
+    '/config.json',
     '/241-logo.jpg',
     '/manifest.json',
     '/version.json'
@@ -128,10 +131,17 @@ self.addEventListener('fetch', (event) => {
     // API requests - Network first with cache fallback
     if (url.pathname.startsWith('/api/')) {
         event.respondWith(
-            fetch(request)
+            fetch(request, {
+                cache: 'no-cache',
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                }
+            })
                 .then(response => {
-                    // Cache successful API responses
-                    if (response.ok) {
+                    // Only cache GET requests that are successful and not auth-related
+                    if (response.ok && request.method === 'GET' && !isAuthEndpoint(url.href)) {
                         const responseToCache = response.clone();
                         caches.open(DYNAMIC_CACHE)
                             .then(cache => cache.put(request, responseToCache));
@@ -139,8 +149,11 @@ self.addEventListener('fetch', (event) => {
                     return response;
                 })
                 .catch(() => {
-                    // Fallback to cache if network fails
-                    return caches.match(request);
+                    // Fallback to cache if network fails (only for non-auth endpoints)
+                    if (!isAuthEndpoint(url.href)) {
+                        return caches.match(request);
+                    }
+                    throw new Error('Network error and no cache available');
                 })
         );
         return;

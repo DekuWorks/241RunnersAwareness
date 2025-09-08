@@ -1,0 +1,9 @@
+<step title="Incoming Request" date="2025-08-30T20:34:30.389" instance="840df5" url="/api/deployments/latest" method="GET" type="request" pid="820,1,78" Accept="*/*" Host="241runners-api.scm.azurewebsites.net" User-Agent="AZURECLI/2.76.0 (HOMEBREW)" Accept-Encoding="gzip, deflate" Authorization="Bea..." x-ms-client-request-id="a57a7b16-85e0-11f0-ae2c-5aba6e9e812a" X-ARR-LOG-ID="a57a7b16-85e0-11f0-ae2c-5aba6e9e812a" CLIENT-IP="97.75.150.66:38512" X-SITE-DEPLOYMENT-ID="241runners-api" WAS-DEFAULT-HOSTNAME="241runners-api.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/deployments/latest" X-Client-IP="97.75.150.66" X-Client-Port="38512" >
+  <step title="Cleanup Xml Logs" date="2025-08-30T20:34:30.525" /><!-- duration: 58ms -->
+  <step title="DeploymentService.GetResult" date="2025-08-30T20:34:30.816" >
+    <step title="DeploymentService.GetLatestDeployment" date="2025-08-30T20:34:30.848" >
+      <step title="DeploymentManager.GetResults" date="2025-08-30T20:34:30.916" /><!-- duration: 2435ms -->
+    </step><!-- duration: 2597ms -->
+  </step><!-- duration: 2688ms -->
+  <step title="Outgoing response" date="2025-08-30T20:34:33.580" type="response" statusCode="202" statusText="Accepted" /><!-- duration: 17ms -->
+</step><!-- duration: 3228ms -->

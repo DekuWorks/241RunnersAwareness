@@ -1,0 +1,5 @@
+<step title="Incoming Request" date="2025-09-08T00:51:51.003" instance="ab4c51" url="/logstream" method="GET" type="request" pid="823,1,18" Host="241runners-api.scm.azurewebsites.net" User-Agent="AZURECLI/2.76.0 (HOMEBREW)" Accept-Encoding="identity" Authorization="Bea..." x-ms-client-request-id="e6a6fc0e-8c4d-11f0-bbad-5aba6e9e812a" X-ARR-LOG-ID="e6a6fc0e-8c4d-11f0-bbad-5aba6e9e812a" CLIENT-IP="97.75.150.69:15550" X-SITE-DEPLOYMENT-ID="241runners-api" WAS-DEFAULT-HOSTNAME="241runners-api.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/logstream" X-Client-IP="97.75.150.69" X-Client-Port="15550" >
+  <step title="LogStreamHandlerMiddleware.Invoke" date="2025-09-08T00:51:51.024" /><!-- duration: 72ms -->
+  <step title="Error occurred" date="2025-09-08T00:52:51.116" type="error" text="LogStreamManager: ProcessRequest end" /><!-- duration: 31ms -->
+  <step title="Outgoing response" date="2025-09-08T00:52:51.197" type="response" statusCode="200" statusText="OK" /><!-- duration: 19ms -->
+</step><!-- duration: 60225ms -->

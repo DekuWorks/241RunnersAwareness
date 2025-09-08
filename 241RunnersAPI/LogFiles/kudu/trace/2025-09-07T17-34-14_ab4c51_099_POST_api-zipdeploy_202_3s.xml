@@ -1,0 +1,23 @@
+<step title="Incoming Request" date="2025-09-07T17:34:14.366" instance="ab4c51" url="/api/zipdeploy?isAsync=true" method="POST" type="request" pid="827,1,31" Accept="*/*" Host="241runners-api.scm.azurewebsites.net" User-Agent="AZURECLI/2.76.0 (HOMEBREW)" Accept-Encoding="gzip, deflate" Authorization="Bea..." Cache-Control="no-cache" Content-Type="application/octet-stream" Cookie="ARRAffinity=ab4c5168e31020da211c082be26c6c82aba0cf9ced664bcf9cca711c40b54858; ARRAffinitySameSite=ab4c5168e31020da211c082be26c6c82aba0cf9ced664bcf9cca711c40b54858" Content-Length="23469364" x-ms-client-request-id="d94bb456-8c10-11f0-8717-5aba6e9e812a" x-ms-artifact-checksum="d5387f0d35e19abbf05bc062f3d3e0817e50d73b525709e46d8a8b6268f36ea4" X-ARR-LOG-ID="d94bb456-8c10-11f0-8717-5aba6e9e812a" CLIENT-IP="97.75.150.69:15495" X-SITE-DEPLOYMENT-ID="241runners-api" WAS-DEFAULT-HOSTNAME="241runners-api.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/zipdeploy?isAsync=true" X-Client-IP="97.75.150.69" X-Client-Port="15495" >
+  <step title="ZipPushDeploy" date="2025-09-07T17:34:14.461" >
+    <step title="ZipDeploy. Extract zip." date="2025-09-07T17:34:14.479" /><!-- duration: 5ms -->
+    <step title="None repository commit" date="2025-09-07T17:34:14.496" >
+      <step title="Commit id: fdc8fa37-390f-49aa-b7c4-068a3602a14d" date="2025-09-07T17:34:14.501" Message="N/A" AuthorName="N/A" AuthorEmail="N/A" /><!-- duration: 5ms -->
+    </step><!-- duration: 13ms -->
+    <step title="Starting PushDeployAsync" date="2025-09-07T17:34:14.515" /><!-- duration: 5ms -->
+    <step title="Writing artifact to /tmp/zipdeploy/8dd9e97a-5bfd-494b-8f01-3ca417c9fe89.zip" date="2025-09-07T17:34:14.571" >
+      <step title="Writing multipart request body to /tmp/zipdeploy/8dd9e97a-5bfd-494b-8f01-3ca417c9fe89.zip" date="2025-09-07T17:34:14.596" /><!-- duration: 14ms -->
+    </step><!-- duration: 2043ms -->
+    <step title="None repository commit" date="2025-09-07T17:34:16.630" >
+      <step title="Commit id: fdc8fa37-390f-49aa-b7c4-068a3602a14d" date="2025-09-07T17:34:16.635" Message="N/A" AuthorName="N/A" AuthorEmail="N/A" /><!-- duration: 15ms -->
+    </step><!-- duration: 26ms -->
+    <step title="Start deployment in the background" date="2025-09-07T17:34:16.668" >
+      <step title="None repository commit" date="2025-09-07T17:34:16.734" >
+        <step title="Commit id: fdc8fa37-390f-49aa-b7c4-068a3602a14d" date="2025-09-07T17:34:16.738" Message="N/A" AuthorName="N/A" AuthorEmail="N/A" /><!-- duration: 6ms -->
+      </step><!-- duration: 13ms -->
+      <step title="Acquiring Deployment Lock" date="2025-09-07T17:34:16.754" /><!-- duration: 4ms -->
+      <step title="Acquired Deployment Lock" date="2025-09-07T17:34:16.803" /><!-- duration: 4ms -->
+    </step><!-- duration: 470ms -->
+  </step><!-- duration: 2704ms -->
+  <step title="Outgoing response" date="2025-09-07T17:34:17.194" type="response" statusCode="202" statusText="Accepted" /><!-- duration: 4ms -->
+</step><!-- duration: 2837ms -->

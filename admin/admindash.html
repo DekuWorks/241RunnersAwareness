@@ -1043,15 +1043,18 @@
         
         async function loadUsers() {
             try {
-                const data = await apiRequest(`${API_BASE_URL}/Admin/users`, {
-                    headers: authHeader()
-                });
-                
-                if (data.success && data.users) {
-                    dashboardData.users = data.users;
-                } else {
-                    dashboardData.users = [];
-                }
+                // For now, we'll simulate user data since the admin endpoint isn't deployed yet
+                // TODO: Update to use ${API_BASE_URL}/auth/admin/users when deployed
+                dashboardData.users = [
+                    { id: 1, email: "test@example.com", firstName: "Test", lastName: "User", role: "user", isActive: true },
+                    { id: 2, email: "dekuworks1@gmail.com", firstName: "Marcus", lastName: "Brown", role: "admin", isActive: true },
+                    { id: 3, email: "danielcarey9770@yahoo.com", firstName: "Daniel", lastName: "Carey", role: "admin", isActive: true },
+                    { id: 4, email: "lthomas3350@gmail.com", firstName: "Lisa", lastName: "Thomas", role: "admin", isActive: true },
+                    { id: 5, email: "tinaleggins@yahoo.com", firstName: "Tina", lastName: "Matthews", role: "admin", isActive: true },
+                    { id: 6, email: "mmelasky@iplawconsulting.com", firstName: "Mark", lastName: "Melasky", role: "admin", isActive: true },
+                    { id: 7, email: "ralphfrank900@gmail.com", firstName: "Ralph", lastName: "Frank", role: "admin", isActive: true }
+                ];
+                console.log('Loaded users:', dashboardData.users.length);
             } catch (error) {
                 console.error('Error loading users:', error);
                 dashboardData.users = [];
@@ -1060,10 +1063,13 @@
         
         async function loadRunners() {
             try {
-                const data = await apiRequest(`${API_BASE_URL}/Runners`, {
-                    headers: authHeader()
-                });
-                dashboardData.runners = data || [];
+                // Mock data for runners - TODO: Update when runners endpoint is available
+                dashboardData.runners = [
+                    { id: 1, name: "John Doe", status: "active" },
+                    { id: 2, name: "Jane Smith", status: "active" },
+                    { id: 3, name: "Bob Johnson", status: "inactive" }
+                ];
+                console.log('Loaded runners:', dashboardData.runners.length);
             } catch (error) {
                 console.error('Error loading runners:', error);
                 dashboardData.runners = [];
@@ -1072,15 +1078,9 @@
         
         async function loadAdmins() {
             try {
-                const data = await apiRequest(`${API_BASE_URL}/Admin/users`, {
-                    headers: authHeader()
-                });
-                
-                if (data.success && data.users) {
-                    dashboardData.admins = data.users.filter(user => user.role === 'admin');
-                } else {
-                    dashboardData.admins = [];
-                }
+                // Filter admin users from the loaded users
+                dashboardData.admins = dashboardData.users.filter(user => user.role === 'admin');
+                console.log('Loaded admins:', dashboardData.admins.length);
             } catch (error) {
                 console.error('Error loading admins:', error);
                 dashboardData.admins = [];
@@ -1089,10 +1089,13 @@
         
         async function loadPublicCases() {
             try {
-                const data = await apiRequest(`${API_BASE_URL}/PublicCases`, {
-                    headers: authHeader()
-                });
-                dashboardData.publicCases = data || [];
+                // Mock data for public cases - TODO: Update when public cases endpoint is available
+                dashboardData.publicCases = [
+                    { id: 1, title: "Case 1", status: "open" },
+                    { id: 2, title: "Case 2", status: "closed" },
+                    { id: 3, title: "Case 3", status: "pending" }
+                ];
+                console.log('Loaded public cases:', dashboardData.publicCases.length);
             } catch (error) {
                 console.error('Error loading public cases:', error);
                 dashboardData.publicCases = [];
@@ -1101,8 +1104,8 @@
         
         async function checkSystemStatus() {
             try {
-                const data = await apiRequest(`${API_BASE_URL}/Auth/health`);
-                dashboardData.systemStatus = data.status === 'healthy' ? 'healthy' : 'error';
+                const data = await apiRequest(`${API_BASE_URL}/auth/health`);
+                dashboardData.systemStatus = data.status === 'Healthy' ? 'healthy' : 'error';
                 return data;
             } catch (error) {
                 console.error('Error checking system status:', error);
@@ -1147,11 +1150,11 @@
 
                 console.log("🔍 Making API call to verify endpoint");
                 console.log("🔍 API call headers:", authHeader());
-                const data = await apiRequest(`${API_BASE_URL}/Auth/verify`, {
+                const data = await apiRequest(`${API_BASE_URL}/auth/me`, {
                     headers: authHeader()
                 });
                 
-                currentAdmin = data.user;
+                currentAdmin = data;
                 updateAdminProfile();
             } catch (error) {
                 console.error('Error loading admin profile:', error);

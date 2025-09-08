@@ -7,8 +7,8 @@
  * It includes API communication, token management, and error handling.
  */
 
-// API Configuration
-let API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+// API Configuration - now centralized in api-utils.js
+let API_BASE_URL = 'https://241runners-api.azurewebsites.net';
 
 // Load API configuration from config.json
 async function loadConfig() {
@@ -37,6 +37,43 @@ loadConfig();
  * @returns {Promise} Parsed JSON response
  */
 async function fetchJson(path, options = {}) {
+    // Use centralized API utilities if available
+    if (window.apiUtils) {
+        try {
+            const url = path.startsWith('http') ? path : `${API_BASE_URL}${path}`;
+            
+            // Get auth token
+            const auth = getAuth();
+            const headers = {
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+            
+            // Add auth header if token exists
+            if (auth && auth.token) {
+                headers['Authorization'] = `Bearer ${auth.token}`;
+            }
+            
+            const response = await window.apiUtils.fetchWithRetry(url, {
+                ...options,
+                headers
+            });
+            
+            // Parse JSON response
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            // Handle 401 Unauthorized
+            if (error.message.includes('Authentication required')) {
+                clearAuth();
+                window.location.href = '/login.html';
+                throw new Error('Session expired. Please sign in again.');
+            }
+            throw error;
+        }
+    }
+    
+    // Fallback to original implementation
     const url = path.startsWith('http') ? path : `${API_BASE_URL}${path}`;
     
     // Get auth token

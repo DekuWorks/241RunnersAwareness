@@ -101,7 +101,7 @@ class CasesPage {
             this.showLoading();
             
             // Use the configured API base URL
-            const apiUrl = window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+            const apiUrl = window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api.azurewebsites.net';
             
             // Load NamUs public cases for Houston area
             let namusCases = [];
@@ -112,7 +112,7 @@ class CasesPage {
                     pageSize: 100 // Get more cases to combine
                 });
 
-                const namusResponse = await fetch(`${apiUrl}/publiccases?${params}`);
+                const namusResponse = await fetch(`${apiUrl}/api/publiccases?${params}`);
                 
                 if (namusResponse.ok) {
                     namusCases = await namusResponse.json() || [];
