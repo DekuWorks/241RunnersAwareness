@@ -756,7 +756,12 @@ namespace _241RunnersAPI.Controllers
                 new Claim(ClaimTypes.Email, email),
                 new Claim(ClaimTypes.Role, role),
                 new Claim(ClaimTypes.GivenName, firstName),
-                new Claim(ClaimTypes.Surname, lastName)
+                new Claim(ClaimTypes.Surname, lastName),
+                new Claim(ClaimTypes.Name, $"{firstName} {lastName}"),
+                new Claim("firstName", firstName),
+                new Claim("lastName", lastName),
+                new Claim("userId", userId.ToString()),
+                new Claim("userRole", role)
             };
 
             var token = new JwtSecurityToken(

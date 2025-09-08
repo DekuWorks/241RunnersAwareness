@@ -405,7 +405,7 @@
                     console.log('Form data being sent:', formData);
                     
                     // FIXED: Proper headers and credentials
-                    const response = await fetch(`${API_BASE_URL}/Auth/login`, {
+                    const response = await fetch(`${API_BASE_URL}/auth/login`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

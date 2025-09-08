@@ -737,6 +737,8 @@
     <!-- Admin Authentication and Real-time Scripts -->
     <script src="/admin/assets/js/admin-auth.js?v=20250107"></script>
     <script src="/admin/assets/js/admin-realtime.js?v=20250107"></script>
+    <script src="/admin/assets/js/admin-profile.js?v=20250107"></script>
+    <script src="/admin/assets/js/admin-monitoring.js?v=20250107"></script>
     <script src="/js/error-tracking.js?v=20250107"></script>
     
     <!-- Enhanced JavaScript with All Admin Functions -->
@@ -857,11 +859,41 @@
         
         function requireAdmin() {
             console.log('🔐 requireAdmin() called');
-            if (!isAuthenticated()) {
-                console.log('❌ Authentication failed, redirecting to login');
+            
+            // Debug authentication step by step
+            const token = storage.get('ra_admin_token');
+            const role = storage.get('ra_admin_role');
+            const user = storage.get('ra_admin_user');
+            
+            console.log('🔍 Authentication Debug:');
+            console.log('  - Token:', token ? `Present (length: ${token.length})` : 'Missing');
+            console.log('  - Role:', role || 'Missing');
+            console.log('  - User:', user ? 'Present' : 'Missing');
+            
+            if (!token) {
+                console.log('❌ No token found, redirecting to login');
                 window.location.href = "/admin/login.html";
                 return false;
             }
+            
+            if (!role) {
+                console.log('❌ No role found, redirecting to login');
+                window.location.href = "/admin/login.html";
+                return false;
+            }
+            
+            if (role.toLowerCase() !== 'admin') {
+                console.log('❌ Invalid role:', role, 'redirecting to login');
+                window.location.href = "/admin/login.html";
+                return false;
+            }
+            
+            if (typeof token !== 'string' || token.length <= 10) {
+                console.log('❌ Invalid token format or length, redirecting to login');
+                window.location.href = "/admin/login.html";
+                return false;
+            }
+            
             console.log('✅ Authentication successful');
             return true;
         }
@@ -975,55 +1007,74 @@
         
         async function loadDashboardData() {
             try {
-                console.log('Loading dashboard data...');
+                console.log('📊 Loading dashboard data...');
                 showLoadingState();
                 
-                // Load data in parallel for better performance
-                const [usersData, runnersData, adminsData, publicCasesData, healthData] = await Promise.allSettled([
-                    loadUsers(),
-                    loadRunners(),
-                    loadAdmins(),
-                    loadPublicCases(),
-                    checkSystemStatus()
-                ]);
-                
-                // Handle results
-                if (usersData.status === 'fulfilled') {
-                    console.log('Users loaded:', dashboardData.users.length);
+                // Use monitoring system if available, otherwise fallback to individual functions
+                if (typeof AdminMonitoringSystem !== 'undefined') {
+                    // Get data from monitoring system
+                    dashboardData.users = AdminMonitoringSystem.getUsers();
+                    dashboardData.admins = AdminMonitoringSystem.getAdmins();
+                    dashboardData.runners = AdminMonitoringSystem.getRunners();
+                    dashboardData.publicCases = AdminMonitoringSystem.getPublicCases();
+                    
+                    console.log('📊 Data loaded from monitoring system:', {
+                        users: dashboardData.users.length,
+                        admins: dashboardData.admins.length,
+                        runners: dashboardData.runners.length,
+                        publicCases: dashboardData.publicCases.length
+                    });
                 } else {
-                    console.error('Users load failed:', usersData.reason);
+                    // Fallback to individual loading functions
+                    const [usersData, runnersData, adminsData, publicCasesData, healthData] = await Promise.allSettled([
+                        loadUsers(),
+                        loadRunners(),
+                        loadAdmins(),
+                        loadPublicCases(),
+                        checkSystemStatus()
+                    ]);
+                    
+                    // Handle results
+                    if (usersData.status === 'fulfilled') {
+                        console.log('Users loaded:', dashboardData.users.length);
+                    } else {
+                        console.error('Users load failed:', usersData.reason);
+                    }
+                    
+                    if (runnersData.status === 'fulfilled') {
+                        console.log('Runners loaded:', dashboardData.runners.length);
+                    } else {
+                        console.error('Runners load failed:', runnersData.reason);
+                    }
+                    
+                    if (adminsData.status === 'fulfilled') {
+                        console.log('Admins loaded:', dashboardData.admins.length);
+                    } else {
+                        console.error('Admins load failed:', adminsData.reason);
+                    }
+                    
+                    if (publicCasesData.status === 'fulfilled') {
+                        console.log('Public cases loaded:', dashboardData.publicCases.length);
+                    } else {
+                        console.error('Public cases load failed:', publicCasesData.reason);
+                    }
+                    
+                    if (healthData.status === 'fulfilled') {
+                        console.log('System status:', dashboardData.systemStatus);
+                    } else {
+                        console.error('Health check failed:', healthData.reason);
+                    }
                 }
                 
-                if (runnersData.status === 'fulfilled') {
-                    console.log('Runners loaded:', dashboardData.runners.length);
-                } else {
-                    console.error('Runners load failed:', runnersData.reason);
-                }
-                
-                if (adminsData.status === 'fulfilled') {
-                    console.log('Admins loaded:', dashboardData.admins.length);
-                } else {
-                    console.error('Admins load failed:', adminsData.reason);
-                }
-                
-                if (publicCasesData.status === 'fulfilled') {
-                    console.log('Public cases loaded:', dashboardData.publicCases.length);
-                } else {
-                    console.error('Public cases load failed:', publicCasesData.reason);
-                }
-                
-                if (healthData.status === 'fulfilled') {
-                    console.log('System status:', dashboardData.systemStatus);
-                } else {
-                    console.error('Health check failed:', healthData.reason);
-                }
+                // Always check system status
+                await checkSystemStatus();
                 
                 updateDashboardUI();
                 updateLastUpdatedTimestamp();
                 hideLoadingState();
                 
             } catch (error) {
-                console.error('Error loading dashboard data:', error);
+                console.error('❌ Error loading dashboard data:', error);
                 showToast('Failed to load dashboard data. Please refresh the page.', 'error');
                 hideLoadingState();
             }
@@ -1263,13 +1314,23 @@
         
         // ===== LOGOUT FUNCTION =====
         
-        function logout() {
+        async function logout() {
             try {
                 console.log('🚪 Logout initiated...');
                 
                 // Disconnect real-time system
                 if (typeof AdminRealtime !== 'undefined') {
-                    AdminRealtime.disconnect();
+                    await AdminRealtime.disconnect();
+                }
+                
+                // Stop monitoring system
+                if (typeof AdminMonitoringSystem !== 'undefined') {
+                    AdminMonitoringSystem.stopMonitoring();
+                }
+                
+                // Clear profile data
+                if (typeof AdminProfileManager !== 'undefined') {
+                    AdminProfileManager.clearProfile();
                 }
                 
                 // Clear authentication data
@@ -1396,6 +1457,15 @@
             loadDashboardData();
         }
         
+        function handleAdminActivity(data) {
+            console.log('Real-time admin activity:', data);
+            
+            // Show activity notification
+            if (data.adminName && data.activity) {
+                showToast(`Admin activity: ${data.activity} by ${data.adminName}`, 'info', 3000);
+            }
+        }
+        
         // ===== CONNECTION STATUS =====
         
         function updateConnectionStatus(isConnected, isPolling = false) {
@@ -1420,40 +1490,74 @@
         
         async function initializeDashboard() {
             try {
-                console.log('Initializing dashboard...');
+                console.log('🚀 Initializing enhanced admin dashboard...');
                 
                 // Check authentication
                 if (!requireAdmin()) {
                     return;
                 }
                 
-                // Load admin profile
-                await loadCurrentAdmin();
+                // Initialize admin profile manager
+                if (typeof AdminProfileManager !== 'undefined') {
+                    await AdminProfileManager.initialize();
+                    
+                    // Set up profile update callbacks
+                    AdminProfileManager.onProfileUpdate((profileData) => {
+                        console.log('📱 Profile updated:', profileData);
+                        updateAdminProfile();
+                    });
+                }
                 
-                // Load dashboard data
-                await loadDashboardData();
+                // Initialize monitoring system
+                if (typeof AdminMonitoringSystem !== 'undefined') {
+                    await AdminMonitoringSystem.initialize();
+                    
+                    // Set up monitoring callbacks
+                    AdminMonitoringSystem.on('users', (data) => {
+                        console.log('👤 Users updated:', data);
+                        updateDashboardUI();
+                    });
+                    
+                    AdminMonitoringSystem.on('admins', (data) => {
+                        console.log('👥 Admins updated:', data);
+                        updateDashboardUI();
+                    });
+                    
+                    AdminMonitoringSystem.on('activity', (data) => {
+                        console.log('📱 Admin activity:', data);
+                        // Handle admin activity notifications
+                    });
+                }
                 
                 // Initialize real-time system
                 if (typeof AdminRealtime !== 'undefined') {
                     await AdminRealtime.initialize();
                     
+                    // Set up connection status callbacks
+                    AdminRealtime.onConnectionStatusChange((isConnected, isPolling) => {
+                        updateConnectionStatus(isConnected, isPolling);
+                    });
+                    
                     // Set up real-time event handlers
                     AdminRealtime.on('userChanged', handleUserChanged);
                     AdminRealtime.on('runnerChanged', handleRunnerChanged);
-                    AdminRealtime.on('adminChanged', handleAdminChanged);
-                    AdminRealtime.on('publicCaseChanged', handlePublicCaseChanged);
+                    AdminRealtime.on('adminProfileChanged', handleAdminChanged);
                     AdminRealtime.on('dataVersionChanged', handleDataVersionChanged);
+                    AdminRealtime.on('adminActivity', handleAdminActivity);
                 }
+                
+                // Load dashboard data using monitoring system
+                await loadDashboardData();
                 
                 // Start refresh timer (fallback)
                 refreshInterval = setInterval(loadDashboardData, 30000); // 30 seconds
                 
                 // Show success message
-                showToast('Dashboard loaded successfully!', 'success', 3000);
+                showToast('Enhanced admin dashboard loaded successfully!', 'success', 3000);
                 
-                console.log('Dashboard initialized successfully');
+                console.log('✅ Enhanced admin dashboard initialized successfully');
             } catch (error) {
-                console.error('Error initializing dashboard:', error);
+                console.error('❌ Error initializing dashboard:', error);
                 showToast('Dashboard initialization failed. Please refresh the page.', 'error');
             }
         }
@@ -1493,8 +1597,11 @@
                 }
             });
             
-            // Initialize dashboard
-            initializeDashboard();
+            // Initialize dashboard with a small delay to ensure DOM is fully ready
+            setTimeout(() => {
+                console.log('🚀 Starting dashboard initialization...');
+                initializeDashboard();
+            }, 100);
         });
         
     </script>

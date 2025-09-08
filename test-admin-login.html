@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Admin Login</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { background: #d4edda; }
+        .error { background: #f8d7da; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        input { padding: 8px; margin: 5px; width: 200px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Admin Login Flow</h1>
+    
+    <div class="test-section">
+        <h3>Step 1: Test Login</h3>
+        <input type="email" id="email" placeholder="Email" value="dekuworks1@gmail.com">
+        <input type="password" id="password" placeholder="Password" value="Marcus2025!">
+        <button onclick="testLogin()">Test Login</button>
+        <div id="loginResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Step 2: Check Authentication</h3>
+        <button onclick="checkAuth()">Check Auth Status</button>
+        <div id="authResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Step 3: Test Dashboard Redirect</h3>
+        <button onclick="testDashboardRedirect()">Test Dashboard Redirect</button>
+        <div id="redirectResult"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+        
+        // Same storage implementation as admin dashboard
+        const storage = {
+            get: (key, defaultValue = null) => {
+                try {
+                    const value = localStorage.getItem(key);
+                    return value || defaultValue;
+                } catch (e) {
+                    console.warn('localStorage get error:', e);
+                    return defaultValue;
+                }
+            },
+            set: (key, value) => {
+                try {
+                    localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value));
+                    return true;
+                } catch (e) {
+                    console.warn('localStorage set error:', e);
+                    return false;
+                }
+            },
+            remove: (key) => {
+                try {
+                    localStorage.removeItem(key);
+                    return true;
+                } catch (e) {
+                    console.warn('localStorage remove error:', e);
+                    return false;
+                }
+            }
+        };
+        
+        function isAuthenticated() {
+            console.log("🔍 isAuthenticated() called");
+            const token = storage.get('ra_admin_token');
+            console.log("🔍 Retrieved token:", token ? "Present (length: " + token.length + ")" : "Missing");
+            const role = storage.get('ra_admin_role');
+            
+            console.log('🔐 Authentication check:', {
+                hasToken: !!token,
+                role: role,
+                isValidRole: role && role.toLowerCase() === 'admin'
+            });
+            
+            return !!(token && role && role.toLowerCase() === 'admin' && typeof token === 'string' && token.length > 10);
+        }
+        
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('loginResult');
+            
+            resultDiv.innerHTML = 'Testing login...';
+            
+            try {
+                console.log('Testing login with:', { email, password: '***' });
+                
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                console.log('Login response:', data);
+                
+                if (data.success && data.user.role === 'admin') {
+                    // Save auth data exactly like the login page does
+                    storage.set('ra_admin_token', data.token);
+                    storage.set('ra_admin_role', data.user.role);
+                    storage.set('ra_admin_user', JSON.stringify(data.user));
+                    
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Login successful!<br>
+                            Token: ${data.token ? 'Present' : 'Missing'}<br>
+                            Role: ${data.user.role}<br>
+                            Email: ${data.user.email}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            ❌ Login failed: ${data.message || 'Unknown error'}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Network error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        function checkAuth() {
+            const resultDiv = document.getElementById('authResult');
+            const authStatus = isAuthenticated();
+            
+            const token = storage.get('ra_admin_token');
+            const role = storage.get('ra_admin_role');
+            const user = storage.get('ra_admin_user');
+            
+            resultDiv.innerHTML = `
+                <div class="${authStatus ? 'success' : 'error'}">
+                    <strong>Auth Status:</strong> ${authStatus ? '✅ AUTHENTICATED' : '❌ NOT AUTHENTICATED'}<br>
+                    <strong>Token:</strong> ${token ? 'Present (length: ' + token.length + ')' : 'Missing'}<br>
+                    <strong>Role:</strong> ${role || 'Missing'}<br>
+                    <strong>User:</strong> ${user ? 'Present' : 'Missing'}
+                </div>
+            `;
+        }
+        
+        function testDashboardRedirect() {
+            const resultDiv = document.getElementById('redirectResult');
+            
+            if (isAuthenticated()) {
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        ✅ Authentication successful!<br>
+                        <a href="/admin/admindash.html" target="_blank">Click here to open admin dashboard</a>
+                    </div>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Not authenticated. Please login first.
+                    </div>
+                `;
+            }
+        }
+        
+        // Check auth status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+        });
+    </script>
+</body>
+</html>

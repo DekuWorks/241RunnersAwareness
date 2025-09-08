@@ -1,480 +1,465 @@
 /**
- * ============================================
- * 241 RUNNERS AWARENESS - ADMIN REALTIME CLIENT
- * ============================================
- * 
- * P1 Implementation: Real-Time Admin Updates
- * SignalR client for real-time admin dashboard updates
+ * Real-time Admin Dashboard System
+ * Handles SignalR connections and real-time updates across all admin dashboards
  */
 
-// ===== CONFIGURATION =====
-const REALTIME_CONFIG = {
-    hubUrl: 'https://241runners-api.azurewebsites.net/admin-hub',
-    reconnectInterval: 5000,
-    maxReconnectAttempts: 10,
-    pollingFallbackInterval: 30000, // 30 seconds
-    debounceDelay: 1000
-};
-
-// ===== STATE MANAGEMENT =====
-let realtimeState = {
-    connection: null,
-    isConnected: false,
-    reconnectAttempts: 0,
-    pollingTimer: null,
-    lastDataVersion: null,
-    eventHandlers: new Map(),
-    isPollingMode: false
-};
-
-// ===== SIGNALR CONNECTION =====
-
-/**
- * Initialize SignalR connection
- */
-async function initializeSignalR() {
-    try {
-        console.log('🔄 Initializing SignalR connection...');
+class AdminRealtime {
+    constructor() {
+        this.connection = null;
+        this.isConnected = false;
+        this.isConnecting = false;
+        this.reconnectAttempts = 0;
+        this.maxReconnectAttempts = 5;
+        this.reconnectDelay = 1000; // Start with 1 second
+        this.maxReconnectDelay = 30000; // Max 30 seconds
+        this.pingInterval = null;
+        this.eventHandlers = new Map();
+        this.connectionStatusCallbacks = [];
+        this.adminActivityCallbacks = [];
         
-        // Check if SignalR is available
-        if (typeof signalR === 'undefined') {
-            console.warn('⚠️ SignalR not available, falling back to polling');
-            startPollingFallback();
-            return false;
-        }
+        // API Configuration
+        this.apiBaseUrl = window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+        this.signalRUrl = this.apiBaseUrl.replace('/api', '/adminHub');
         
-        // Get auth token
-        const authData = getAuthData();
-        if (!authData.token) {
-            console.error('❌ No auth token available for SignalR');
-            startPollingFallback();
-            return false;
-        }
-        
-        // Create connection
-        realtimeState.connection = new signalR.HubConnectionBuilder()
-            .withUrl(REALTIME_CONFIG.hubUrl, {
-                accessTokenFactory: () => authData.token,
-                transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling
-            })
-            .withAutomaticReconnect([0, 2000, 10000, 30000])
-            .configureLogging(signalR.LogLevel.Information)
-            .build();
-        
-        // Set up event handlers
-        setupSignalREventHandlers();
-        
-        // Start connection
-        await realtimeState.connection.start();
-        
-        console.log('✅ SignalR connected successfully');
-        realtimeState.isConnected = true;
-        realtimeState.reconnectAttempts = 0;
-        realtimeState.isPollingMode = false;
-        
-        // Stop polling if it was running
-        stopPollingFallback();
-        
-        // Join admin group
-        await realtimeState.connection.invoke('JoinAdminGroup');
-        
-        updateConnectionStatus(true);
-        return true;
-        
-    } catch (error) {
-        console.error('❌ SignalR connection failed:', error);
-        realtimeState.isConnected = false;
-        startPollingFallback();
-        return false;
+        console.log('🔌 AdminRealtime initialized with SignalR URL:', this.signalRUrl);
     }
-}
 
-/**
- * Setup SignalR event handlers
- */
-function setupSignalREventHandlers() {
-    if (!realtimeState.connection) return;
-    
-    // Connection events
-    realtimeState.connection.onclose((error) => {
-        console.log('🔌 SignalR connection closed:', error);
-        realtimeState.isConnected = false;
-        updateConnectionStatus(false);
-        
-        // Start polling fallback
-        if (!realtimeState.isPollingMode) {
-            startPollingFallback();
-        }
-    });
-    
-    realtimeState.connection.onreconnecting((error) => {
-        console.log('🔄 SignalR reconnecting:', error);
-        updateConnectionStatus(false, true);
-    });
-    
-    realtimeState.connection.onreconnected((connectionId) => {
-        console.log('✅ SignalR reconnected:', connectionId);
-        realtimeState.isConnected = true;
-        realtimeState.reconnectAttempts = 0;
-        realtimeState.isPollingMode = false;
-        updateConnectionStatus(true);
-        stopPollingFallback();
-    });
-    
-    // Admin events
-    realtimeState.connection.on('AdminJoined', (data) => {
-        console.log('👤 Admin joined:', data);
-        triggerEvent('adminJoined', data);
-    });
-    
-    realtimeState.connection.on('AdminLeft', (data) => {
-        console.log('👋 Admin left:', data);
-        triggerEvent('adminLeft', data);
-    });
-    
-    // Data change events
-    realtimeState.connection.on('UserChanged', (data) => {
-        console.log('👥 User changed:', data);
-        debounceEvent('userChanged', data);
-    });
-    
-    realtimeState.connection.on('RunnerChanged', (data) => {
-        console.log('🏃 Runner changed:', data);
-        debounceEvent('runnerChanged', data);
-    });
-    
-    realtimeState.connection.on('AdminChanged', (data) => {
-        console.log('👨‍💼 Admin changed:', data);
-        debounceEvent('adminChanged', data);
-    });
-    
-    realtimeState.connection.on('PublicCaseChanged', (data) => {
-        console.log('📋 Public case changed:', data);
-        debounceEvent('publicCaseChanged', data);
-    });
-    
-    realtimeState.connection.on('SystemStatusChanged', (data) => {
-        console.log('⚡ System status changed:', data);
-        triggerEvent('systemStatusChanged', data);
-    });
-    
-    realtimeState.connection.on('DataVersionChanged', (data) => {
-        console.log('📊 Data version changed:', data);
-        triggerEvent('dataVersionChanged', data);
-    });
-    
-    realtimeState.connection.on('ConnectionInfo', (data) => {
-        console.log('🔗 Connection info:', data);
-        triggerEvent('connectionInfo', data);
-    });
-}
-
-// ===== POLLING FALLBACK =====
-
-/**
- * Start polling fallback when SignalR is not available
- */
-function startPollingFallback() {
-    if (realtimeState.pollingTimer) {
-        return; // Already polling
-    }
-    
-    console.log('🔄 Starting polling fallback...');
-    realtimeState.isPollingMode = true;
-    updateConnectionStatus(false, true);
-    
-    // Initial poll
-    pollForUpdates();
-    
-    // Set up periodic polling
-    realtimeState.pollingTimer = setInterval(pollForUpdates, REALTIME_CONFIG.pollingFallbackInterval);
-}
-
-/**
- * Stop polling fallback
- */
-function stopPollingFallback() {
-    if (realtimeState.pollingTimer) {
-        clearInterval(realtimeState.pollingTimer);
-        realtimeState.pollingTimer = null;
-        console.log('🛑 Polling fallback stopped');
-    }
-}
-
-/**
- * Poll for updates using ETag
- */
-async function pollForUpdates() {
-    try {
-        console.log('🔄 Polling for updates...');
-        
-        // Check data version
-        const response = await fetchWithAuth('/Admin/data-version', {
-            headers: {
-                'If-None-Match': realtimeState.lastDataVersion || ''
-            }
-        });
-        
-        if (response.status === 304) {
-            // No changes
-            return;
-        }
-        
-        const data = await response.json();
-        const newVersion = response.headers.get('ETag');
-        
-        if (newVersion && newVersion !== realtimeState.lastDataVersion) {
-            console.log('📊 Data version changed:', newVersion);
-            realtimeState.lastDataVersion = newVersion;
+    /**
+     * Initialize the real-time connection
+     */
+    async initialize() {
+        try {
+            console.log('🚀 Initializing real-time admin connection...');
             
-            // Trigger refresh event
-            triggerEvent('dataVersionChanged', {
-                version: newVersion,
-                timestamp: new Date().toISOString()
+            if (this.isConnecting || this.isConnected) {
+                console.log('⚠️ Connection already in progress or established');
+                return;
+            }
+
+            this.isConnecting = true;
+            this.updateConnectionStatus(false, false);
+
+            // Get authentication token
+            const token = this.getAuthToken();
+            if (!token) {
+                console.error('❌ No authentication token found');
+                this.isConnecting = false;
+                this.updateConnectionStatus(false, false);
+                return;
+            }
+
+            // Create SignalR connection
+            this.connection = new signalR.HubConnectionBuilder()
+                .withUrl(this.signalRUrl, {
+                    accessTokenFactory: () => token,
+                    transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
+                    skipNegotiation: false
+                })
+                .withAutomaticReconnect({
+                    nextRetryDelayInMilliseconds: (retryContext) => {
+                        if (retryContext.previousRetryCount < this.maxReconnectAttempts) {
+                            const delay = Math.min(this.reconnectDelay * Math.pow(2, retryContext.previousRetryCount), this.maxReconnectDelay);
+                            console.log(`🔄 Reconnection attempt ${retryContext.previousRetryCount + 1} in ${delay}ms`);
+                            return delay;
+                        }
+                        return null; // Stop reconnecting
+                    }
+                })
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
+
+            // Set up event handlers
+            this.setupEventHandlers();
+
+            // Start connection
+            await this.connection.start();
+            
+            this.isConnected = true;
+            this.isConnecting = false;
+            this.reconnectAttempts = 0;
+            this.reconnectDelay = 1000;
+
+            console.log('✅ Real-time connection established');
+            this.updateConnectionStatus(true, false);
+
+            // Start ping to keep connection alive
+            this.startPing();
+
+            // Notify admin activity
+            await this.notifyAdminActivity('dashboard_connected');
+
+        } catch (error) {
+            console.error('❌ Failed to initialize real-time connection:', error);
+            this.isConnecting = false;
+            this.updateConnectionStatus(false, false);
+            
+            // Fallback to polling mode
+            this.startPollingMode();
+        }
+    }
+
+    /**
+     * Set up SignalR event handlers
+     */
+    setupEventHandlers() {
+        if (!this.connection) return;
+
+        // Connection events
+        this.connection.onclose((error) => {
+            console.log('🔌 Real-time connection closed:', error);
+            this.isConnected = false;
+            this.updateConnectionStatus(false, false);
+            this.stopPing();
+        });
+
+        this.connection.onreconnecting((error) => {
+            console.log('🔄 Real-time connection reconnecting:', error);
+            this.isConnected = false;
+            this.updateConnectionStatus(false, true);
+        });
+
+        this.connection.onreconnected((connectionId) => {
+            console.log('✅ Real-time connection reconnected:', connectionId);
+            this.isConnected = true;
+            this.reconnectAttempts = 0;
+            this.updateConnectionStatus(true, false);
+            this.startPing();
+        });
+
+        // Admin events
+        this.connection.on('AdminConnected', (adminData) => {
+            console.log('👤 Admin connected:', adminData);
+            this.triggerEvent('adminConnected', adminData);
+            this.showAdminNotification(`${adminData.adminName} joined the admin dashboard`, 'info');
+        });
+
+        this.connection.on('AdminDisconnected', (adminData) => {
+            console.log('👋 Admin disconnected:', adminData);
+            this.triggerEvent('adminDisconnected', adminData);
+            this.showAdminNotification(`${adminData.adminName} left the admin dashboard`, 'info');
+        });
+
+        this.connection.on('CurrentAdmins', (admins) => {
+            console.log('👥 Current online admins:', admins);
+            this.triggerEvent('currentAdmins', admins);
+        });
+
+        this.connection.on('OnlineAdmins', (admins) => {
+            console.log('👥 Online admins updated:', admins);
+            this.triggerEvent('onlineAdmins', admins);
+        });
+
+        // Data change events
+        this.connection.on('UserChanged', (changeData) => {
+            console.log('👤 User changed:', changeData);
+            this.triggerEvent('userChanged', changeData);
+            this.showAdminNotification(`User ${changeData.operation} by ${changeData.changedBy}`, 'success');
+        });
+
+        this.connection.on('RunnerChanged', (changeData) => {
+            console.log('🏃 Runner changed:', changeData);
+            this.triggerEvent('runnerChanged', changeData);
+            this.showAdminNotification(`Runner ${changeData.operation} by ${changeData.changedBy}`, 'success');
+        });
+
+        this.connection.on('AdminProfileChanged', (changeData) => {
+            console.log('👤 Admin profile changed:', changeData);
+            this.triggerEvent('adminProfileChanged', changeData);
+            this.showAdminNotification(`Admin profile ${changeData.operation} by ${changeData.changedBy}`, 'info');
+        });
+
+        this.connection.on('DataVersionChanged', (changeData) => {
+            console.log('📊 Data version changed:', changeData);
+            this.triggerEvent('dataVersionChanged', changeData);
+            this.showAdminNotification(`Data updated: ${changeData.dataType} by ${changeData.changedBy}`, 'info');
+        });
+
+        this.connection.on('AdminActivity', (activityData) => {
+            console.log('📱 Admin activity:', activityData);
+            this.triggerEvent('adminActivity', activityData);
+            this.notifyAdminActivityCallbacks(activityData);
+        });
+
+        // Ping/Pong
+        this.connection.on('Pong', (timestamp) => {
+            console.log('🏓 Pong received:', new Date(timestamp));
+        });
+    }
+
+    /**
+     * Start ping to keep connection alive
+     */
+    startPing() {
+        if (this.pingInterval) {
+            clearInterval(this.pingInterval);
+        }
+
+        this.pingInterval = setInterval(async () => {
+            if (this.isConnected && this.connection) {
+                try {
+                    await this.connection.invoke('Ping');
+                } catch (error) {
+                    console.error('❌ Ping failed:', error);
+                }
+            }
+        }, 30000); // Ping every 30 seconds
+    }
+
+    /**
+     * Stop ping
+     */
+    stopPing() {
+        if (this.pingInterval) {
+            clearInterval(this.pingInterval);
+            this.pingInterval = null;
+        }
+    }
+
+    /**
+     * Start polling mode as fallback
+     */
+    startPollingMode() {
+        console.log('🔄 Starting polling mode as fallback');
+        this.updateConnectionStatus(false, true);
+        
+        // Poll for updates every 30 seconds
+        setInterval(() => {
+            if (!this.isConnected) {
+                this.pollForUpdates();
+            }
+        }, 30000);
+    }
+
+    /**
+     * Poll for updates when real-time connection is not available
+     */
+    async pollForUpdates() {
+        try {
+            // This would call API endpoints to check for updates
+            // For now, we'll just log that polling is happening
+            console.log('🔄 Polling for updates...');
+        } catch (error) {
+            console.error('❌ Polling failed:', error);
+        }
+    }
+
+    /**
+     * Notify admin activity
+     */
+    async notifyAdminActivity(activity, data = null) {
+        if (this.isConnected && this.connection) {
+            try {
+                await this.connection.invoke('AdminActivity', activity, data);
+            } catch (error) {
+                console.error('❌ Failed to notify admin activity:', error);
+            }
+        }
+    }
+
+    /**
+     * Broadcast user change
+     */
+    async broadcastUserChange(operation, userData) {
+        if (this.isConnected && this.connection) {
+            try {
+                await this.connection.invoke('UserChanged', operation, userData, this.getCurrentAdminName());
+                console.log(`📢 Broadcasted user ${operation}:`, userData);
+            } catch (error) {
+                console.error('❌ Failed to broadcast user change:', error);
+            }
+        }
+    }
+
+    /**
+     * Broadcast runner change
+     */
+    async broadcastRunnerChange(operation, runnerData) {
+        if (this.isConnected && this.connection) {
+            try {
+                await this.connection.invoke('RunnerChanged', operation, runnerData, this.getCurrentAdminName());
+                console.log(`📢 Broadcasted runner ${operation}:`, runnerData);
+            } catch (error) {
+                console.error('❌ Failed to broadcast runner change:', error);
+            }
+        }
+    }
+
+    /**
+     * Broadcast admin profile change
+     */
+    async broadcastAdminProfileChange(operation, adminData) {
+        if (this.isConnected && this.connection) {
+            try {
+                await this.connection.invoke('AdminProfileChanged', operation, adminData, this.getCurrentAdminName());
+                console.log(`📢 Broadcasted admin profile ${operation}:`, adminData);
+            } catch (error) {
+                console.error('❌ Failed to broadcast admin profile change:', error);
+            }
+        }
+    }
+
+    /**
+     * Broadcast data version change
+     */
+    async broadcastDataVersionChange(dataType, version) {
+        if (this.isConnected && this.connection) {
+            try {
+                await this.connection.invoke('DataVersionChanged', dataType, version, this.getCurrentAdminName());
+                console.log(`📢 Broadcasted data version change: ${dataType} v${version}`);
+            } catch (error) {
+                console.error('❌ Failed to broadcast data version change:', error);
+            }
+        }
+    }
+
+    /**
+     * Get online admins
+     */
+    async getOnlineAdmins() {
+        if (this.isConnected && this.connection) {
+            try {
+                await this.connection.invoke('GetOnlineAdmins');
+            } catch (error) {
+                console.error('❌ Failed to get online admins:', error);
+            }
+        }
+    }
+
+    /**
+     * Event handling system
+     */
+    on(eventName, callback) {
+        if (!this.eventHandlers.has(eventName)) {
+            this.eventHandlers.set(eventName, []);
+        }
+        this.eventHandlers.get(eventName).push(callback);
+    }
+
+    off(eventName, callback) {
+        if (this.eventHandlers.has(eventName)) {
+            const handlers = this.eventHandlers.get(eventName);
+            const index = handlers.indexOf(callback);
+            if (index > -1) {
+                handlers.splice(index, 1);
+            }
+        }
+    }
+
+    triggerEvent(eventName, data) {
+        if (this.eventHandlers.has(eventName)) {
+            this.eventHandlers.get(eventName).forEach(callback => {
+                try {
+                    callback(data);
+                } catch (error) {
+                    console.error(`❌ Error in event handler for ${eventName}:`, error);
+                }
             });
         }
-        
-    } catch (error) {
-        console.error('❌ Polling failed:', error);
     }
-}
 
-// ===== EVENT SYSTEM =====
+    /**
+     * Connection status callbacks
+     */
+    onConnectionStatusChange(callback) {
+        this.connectionStatusCallbacks.push(callback);
+    }
 
-/**
- * Register event handler
- * @param {string} eventName - Event name
- * @param {Function} handler - Event handler function
- */
-function onRealtimeEvent(eventName, handler) {
-    if (!realtimeState.eventHandlers.has(eventName)) {
-        realtimeState.eventHandlers.set(eventName, []);
+    updateConnectionStatus(isConnected, isPolling) {
+        this.connectionStatusCallbacks.forEach(callback => {
+            try {
+                callback(isConnected, isPolling);
+            } catch (error) {
+                console.error('❌ Error in connection status callback:', error);
+            }
+        });
     }
-    realtimeState.eventHandlers.get(eventName).push(handler);
-}
 
-/**
- * Remove event handler
- * @param {string} eventName - Event name
- * @param {Function} handler - Event handler function
- */
-function offRealtimeEvent(eventName, handler) {
-    if (!realtimeState.eventHandlers.has(eventName)) {
-        return;
+    /**
+     * Admin activity callbacks
+     */
+    onAdminActivity(callback) {
+        this.adminActivityCallbacks.push(callback);
     }
-    
-    const handlers = realtimeState.eventHandlers.get(eventName);
-    const index = handlers.indexOf(handler);
-    if (index > -1) {
-        handlers.splice(index, 1);
-    }
-}
 
-/**
- * Trigger event
- * @param {string} eventName - Event name
- * @param {*} data - Event data
- */
-function triggerEvent(eventName, data) {
-    if (!realtimeState.eventHandlers.has(eventName)) {
-        return;
+    notifyAdminActivityCallbacks(activityData) {
+        this.adminActivityCallbacks.forEach(callback => {
+            try {
+                callback(activityData);
+            } catch (error) {
+                console.error('❌ Error in admin activity callback:', error);
+            }
+        });
     }
-    
-    const handlers = realtimeState.eventHandlers.get(eventName);
-    handlers.forEach(handler => {
-        try {
-            handler(data);
-        } catch (error) {
-            console.error(`❌ Error in event handler for ${eventName}:`, error);
+
+    /**
+     * Utility methods
+     */
+    getAuthToken() {
+        return localStorage.getItem('ra_admin_token');
+    }
+
+    getCurrentAdminName() {
+        const adminData = localStorage.getItem('ra_admin_user');
+        if (adminData) {
+            try {
+                const admin = JSON.parse(adminData);
+                return `${admin.firstName} ${admin.lastName}`;
+            } catch (error) {
+                console.error('❌ Error parsing admin data:', error);
+            }
         }
-    });
-}
-
-/**
- * Debounced event trigger
- * @param {string} eventName - Event name
- * @param {*} data - Event data
- */
-let debounceTimers = new Map();
-
-function debounceEvent(eventName, data) {
-    if (debounceTimers.has(eventName)) {
-        clearTimeout(debounceTimers.get(eventName));
+        return 'Unknown Admin';
     }
-    
-    debounceTimers.set(eventName, setTimeout(() => {
-        triggerEvent(eventName, data);
-        debounceTimers.delete(eventName);
-    }, REALTIME_CONFIG.debounceDelay));
-}
 
-// ===== CONNECTION STATUS =====
-
-/**
- * Update connection status UI
- * @param {boolean} isConnected - Connection status
- * @param {boolean} isPolling - Polling mode status
- */
-function updateConnectionStatus(isConnected, isPolling = false) {
-    const statusElement = document.getElementById('connectionStatus');
-    const textElement = document.getElementById('connectionText');
-    
-    if (statusElement && textElement) {
-        if (isConnected) {
-            statusElement.className = 'connection-status connected';
-            textElement.textContent = 'Real-time Connected';
-        } else if (isPolling) {
-            statusElement.className = 'connection-status';
-            textElement.textContent = 'Polling Mode';
+    showAdminNotification(message, type = 'info') {
+        if (typeof showToast === 'function') {
+            showToast(message, type, 5000);
         } else {
-            statusElement.className = 'connection-status disconnected';
-            textElement.textContent = 'Disconnected';
+            console.log(`📢 ${type.toUpperCase()}: ${message}`);
         }
     }
-}
 
-// ===== BROADCAST FUNCTIONS =====
-
-/**
- * Broadcast user change
- * @param {string} operation - Operation type (create, update, delete)
- * @param {Object} userData - User data
- */
-async function broadcastUserChange(operation, userData) {
-    if (realtimeState.connection && realtimeState.isConnected) {
+    /**
+     * Disconnect and cleanup
+     */
+    async disconnect() {
         try {
-            await realtimeState.connection.invoke('BroadcastUserChange', operation, userData);
+            console.log('🔌 Disconnecting real-time connection...');
+            
+            this.stopPing();
+            
+            if (this.connection) {
+                await this.connection.stop();
+                this.connection = null;
+            }
+            
+            this.isConnected = false;
+            this.isConnecting = false;
+            this.updateConnectionStatus(false, false);
+            
+            console.log('✅ Real-time connection disconnected');
         } catch (error) {
-            console.error('❌ Failed to broadcast user change:', error);
+            console.error('❌ Error disconnecting:', error);
         }
+    }
+
+    /**
+     * Get connection status
+     */
+    getStatus() {
+        return {
+            isConnected: this.isConnected,
+            isConnecting: this.isConnecting,
+            reconnectAttempts: this.reconnectAttempts,
+            connectionState: this.connection?.state || 'Disconnected'
+        };
     }
 }
 
-/**
- * Broadcast runner change
- * @param {string} operation - Operation type (create, update, delete)
- * @param {Object} runnerData - Runner data
- */
-async function broadcastRunnerChange(operation, runnerData) {
-    if (realtimeState.connection && realtimeState.isConnected) {
-        try {
-            await realtimeState.connection.invoke('BroadcastRunnerChange', operation, runnerData);
-        } catch (error) {
-            console.error('❌ Failed to broadcast runner change:', error);
-        }
-    }
+// Create global instance
+window.AdminRealtime = new AdminRealtime();
+
+// Export for module systems
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = AdminRealtime;
 }
-
-/**
- * Broadcast admin change
- * @param {string} operation - Operation type (create, update, delete)
- * @param {Object} adminData - Admin data
- */
-async function broadcastAdminChange(operation, adminData) {
-    if (realtimeState.connection && realtimeState.isConnected) {
-        try {
-            await realtimeState.connection.invoke('BroadcastAdminChange', operation, adminData);
-        } catch (error) {
-            console.error('❌ Failed to broadcast admin change:', error);
-        }
-    }
-}
-
-/**
- * Broadcast public case change
- * @param {string} operation - Operation type (create, update, delete)
- * @param {Object} caseData - Case data
- */
-async function broadcastPublicCaseChange(operation, caseData) {
-    if (realtimeState.connection && realtimeState.isConnected) {
-        try {
-            await realtimeState.connection.invoke('BroadcastPublicCaseChange', operation, caseData);
-        } catch (error) {
-            console.error('❌ Failed to broadcast public case change:', error);
-        }
-    }
-}
-
-// ===== INITIALIZATION =====
-
-/**
- * Initialize real-time system
- */
-async function initializeRealtime() {
-    console.log('🚀 Initializing real-time system...');
-    
-    try {
-        // Check authentication
-        if (!isAuthenticated()) {
-            console.warn('⚠️ Not authenticated, skipping real-time initialization');
-            return false;
-        }
-        
-        // Initialize SignalR
-        const signalRSuccess = await initializeSignalR();
-        
-        if (!signalRSuccess) {
-            console.log('🔄 SignalR failed, using polling fallback');
-        }
-        
-        console.log('✅ Real-time system initialized');
-        return true;
-        
-    } catch (error) {
-        console.error('❌ Failed to initialize real-time system:', error);
-        startPollingFallback();
-        return false;
-    }
-}
-
-/**
- * Disconnect real-time system
- */
-function disconnectRealtime() {
-    console.log('🔌 Disconnecting real-time system...');
-    
-    // Stop polling
-    stopPollingFallback();
-    
-    // Disconnect SignalR
-    if (realtimeState.connection) {
-        realtimeState.connection.stop();
-        realtimeState.connection = null;
-    }
-    
-    realtimeState.isConnected = false;
-    realtimeState.isPollingMode = false;
-    
-    updateConnectionStatus(false);
-    
-    console.log('✅ Real-time system disconnected');
-}
-
-// ===== EXPORTS =====
-
-// Make functions available globally
-window.AdminRealtime = {
-    initialize: initializeRealtime,
-    disconnect: disconnectRealtime,
-    on: onRealtimeEvent,
-    off: offRealtimeEvent,
-    broadcastUserChange,
-    broadcastRunnerChange,
-    broadcastAdminChange,
-    broadcastPublicCaseChange,
-    isConnected: () => realtimeState.isConnected,
-    isPolling: () => realtimeState.isPollingMode,
-    getState: () => ({ ...realtimeState })
-};
-
-// Auto-initialize if authenticated
-document.addEventListener('DOMContentLoaded', () => {
-    if (typeof isAuthenticated === 'function' && isAuthenticated()) {
-        initializeRealtime();
-    }
-});
-
-// Cleanup on page unload
-window.addEventListener('beforeunload', () => {
-    disconnectRealtime();
-});
