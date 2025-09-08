@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Auth Flow - 241 Runners Awareness</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .debug-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .debug-output {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            border: 1px solid #dee2e6;
+        }
+        button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #b91c1c;
+        }
+        .success { color: #166534; }
+        .error { color: #dc2626; }
+        .warning { color: #d97706; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug Authentication Flow</h1>
+    
+    <div class="debug-section">
+        <h2>Current Authentication State</h2>
+        <button onclick="checkAuthState()">Check Auth State</button>
+        <button onclick="clearAuth()">Clear Auth</button>
+        <button onclick="testLogin()">Test Login</button>
+        <div id="authState" class="debug-output"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>Storage Operations</h2>
+        <button onclick="testStorage()">Test Storage Operations</button>
+        <div id="storageTest" class="debug-output"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>API Test</h2>
+        <button onclick="testAPI()">Test API Connection</button>
+        <div id="apiTest" class="debug-output"></div>
+    </div>
+
+    <script>
+        // Storage wrapper (same as admin dashboard)
+        const storage = {
+            get: (key, defaultValue = null) => {
+                try {
+                    const value = localStorage.getItem(key);
+                    return value || defaultValue;
+                } catch (e) {
+                    console.warn('localStorage get error:', e);
+                    return defaultValue;
+                }
+            },
+            set: (key, value) => {
+                try {
+                    localStorage.setItem(key, value);
+                    return true;
+                } catch (e) {
+                    console.warn('localStorage set error:', e);
+                    return false;
+                }
+            },
+            remove: (key) => {
+                try {
+                    localStorage.removeItem(key);
+                    return true;
+                } catch (e) {
+                    console.warn('localStorage remove error:', e);
+                    return false;
+                }
+            }
+        };
+
+        // Auth keys
+        const tokenKey = "ra_admin_token";
+        const roleKey = "ra_admin_role";
+        const userKey = "ra_admin_user";
+
+        function checkAuthState() {
+            const output = document.getElementById('authState');
+            let result = '🔍 Authentication State Check:\n\n';
+            
+            // Direct localStorage check
+            const directToken = localStorage.getItem(tokenKey);
+            const directRole = localStorage.getItem(roleKey);
+            const directUser = localStorage.getItem(userKey);
+            
+            result += 'Direct localStorage access:\n';
+            result += `  - Token: ${directToken ? `Present (${directToken.length} chars)` : 'Missing'}\n`;
+            result += `  - Role: ${directRole || 'Missing'}\n`;
+            result += `  - User: ${directUser ? 'Present' : 'Missing'}\n\n`;
+            
+            // Storage wrapper check
+            const wrapperToken = storage.get(tokenKey);
+            const wrapperRole = storage.get(roleKey);
+            const wrapperUser = storage.get(userKey);
+            
+            result += 'Storage wrapper access:\n';
+            result += `  - Token: ${wrapperToken ? `Present (${wrapperToken.length} chars)` : 'Missing'}\n`;
+            result += `  - Role: ${wrapperRole || 'Missing'}\n`;
+            result += `  - User: ${wrapperUser ? 'Present' : 'Missing'}\n\n`;
+            
+            // Authentication check
+            const isAuth = !!(directToken && directRole && directRole.toLowerCase() === 'admin' && typeof directToken === 'string' && directToken.length > 10);
+            result += `Authentication Status: ${isAuth ? '✅ AUTHENTICATED' : '❌ NOT AUTHENTICATED'}\n\n`;
+            
+            // Token details
+            if (directToken) {
+                try {
+                    const payload = JSON.parse(atob(directToken.split('.')[1]));
+                    result += 'Token Details:\n';
+                    result += `  - Issuer: ${payload.iss}\n`;
+                    result += `  - Audience: ${payload.aud}\n`;
+                    result += `  - Expires: ${new Date(payload.exp * 1000).toLocaleString()}\n`;
+                    result += `  - Role: ${payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']}\n`;
+                    result += `  - Email: ${payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress']}\n`;
+                } catch (e) {
+                    result += `Token parsing error: ${e.message}\n`;
+                }
+            }
+            
+            output.textContent = result;
+        }
+
+        function clearAuth() {
+            localStorage.removeItem(tokenKey);
+            localStorage.removeItem(roleKey);
+            localStorage.removeItem(userKey);
+            document.getElementById('authState').textContent = 'Auth data cleared.';
+        }
+
+        async function testLogin() {
+            const output = document.getElementById('authState');
+            output.textContent = 'Testing login...';
+            
+            try {
+                const response = await fetch('https://241runners-api.azurewebsites.net/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Client': '241RA-Debug/1.0'
+                    },
+                    body: JSON.stringify({
+                        email: 'dekuworks1@gmail.com',
+                        password: 'Marcus2025!'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.token) {
+                    // Save auth data
+                    localStorage.setItem(tokenKey, data.token);
+                    localStorage.setItem(roleKey, data.user.role);
+                    localStorage.setItem(userKey, JSON.stringify(data.user));
+                    
+                    output.textContent = `✅ Login successful!\nToken saved. Check auth state again.`;
+                } else {
+                    output.textContent = `❌ Login failed: ${data.message}`;
+                }
+            } catch (error) {
+                output.textContent = `❌ Login error: ${error.message}`;
+            }
+        }
+
+        function testStorage() {
+            const output = document.getElementById('storageTest');
+            let result = '🧪 Storage Operations Test:\n\n';
+            
+            // Test direct localStorage
+            const testKey = 'test_key';
+            const testValue = 'test_value_' + Date.now();
+            
+            try {
+                localStorage.setItem(testKey, testValue);
+                const retrieved = localStorage.getItem(testKey);
+                localStorage.removeItem(testKey);
+                
+                result += `Direct localStorage: ${retrieved === testValue ? '✅ Working' : '❌ Failed'}\n`;
+            } catch (e) {
+                result += `Direct localStorage: ❌ Error - ${e.message}\n`;
+            }
+            
+            // Test storage wrapper
+            try {
+                const wrapperSet = storage.set(testKey, testValue);
+                const wrapperGet = storage.get(testKey);
+                const wrapperRemove = storage.remove(testKey);
+                
+                result += `Storage wrapper: ${wrapperGet === testValue ? '✅ Working' : '❌ Failed'}\n`;
+                result += `  - Set: ${wrapperSet ? '✅' : '❌'}\n`;
+                result += `  - Get: ${wrapperGet ? '✅' : '❌'}\n`;
+                result += `  - Remove: ${wrapperRemove ? '✅' : '❌'}\n`;
+            } catch (e) {
+                result += `Storage wrapper: ❌ Error - ${e.message}\n`;
+            }
+            
+            // Test current auth keys
+            result += '\nCurrent Auth Keys:\n';
+            result += `  - ${tokenKey}: ${localStorage.getItem(tokenKey) ? '✅' : '❌'}\n`;
+            result += `  - ${roleKey}: ${localStorage.getItem(roleKey) ? '✅' : '❌'}\n`;
+            result += `  - ${userKey}: ${localStorage.getItem(userKey) ? '✅' : '❌'}\n`;
+            
+            output.textContent = result;
+        }
+
+        async function testAPI() {
+            const output = document.getElementById('apiTest');
+            output.textContent = 'Testing API connection...';
+            
+            try {
+                const response = await fetch('https://241runners-api.azurewebsites.net/healthz');
+                const data = await response.json();
+                
+                output.textContent = `✅ API Connection: ${data.status}\nTimestamp: ${data.timestamp}`;
+            } catch (error) {
+                output.textContent = `❌ API Error: ${error.message}`;
+            }
+        }
+
+        // Auto-check on load
+        window.addEventListener('load', () => {
+            checkAuthState();
+        });
+    </script>
+</body>
+</html>

@@ -870,8 +870,16 @@
             console.log('  - Role:', role || 'Missing');
             console.log('  - User:', user ? 'Present' : 'Missing');
             
+            // Also check direct localStorage for debugging
+            const directToken = localStorage.getItem('ra_admin_token');
+            const directRole = localStorage.getItem('ra_admin_role');
+            console.log('🔍 Direct localStorage Debug:');
+            console.log('  - Direct Token:', directToken ? `Present (length: ${directToken.length})` : 'Missing');
+            console.log('  - Direct Role:', directRole || 'Missing');
+            
             if (!token) {
                 console.log('❌ No token found, redirecting to login');
+                console.log('🔍 Full localStorage contents:', Object.keys(localStorage).filter(k => k.includes('admin')));
                 window.location.href = "/admin/login.html";
                 return false;
             }
@@ -1598,10 +1606,11 @@
             });
             
             // Initialize dashboard with a small delay to ensure DOM is fully ready
+            // Increased delay to allow login page to finish saving auth data
             setTimeout(() => {
                 console.log('🚀 Starting dashboard initialization...');
                 initializeDashboard();
-            }, 100);
+            }, 500);
         });
         
     </script>
