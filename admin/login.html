@@ -242,45 +242,12 @@
     
     <script>
         // Admin Authentication Functions - FIXED VERSION
-        const tokenKey = "ra_admin_token";
-        const roleKey = "ra_admin_role";
-        const userKey = "ra_admin_user";
+        // Note: tokenKey, roleKey, userKey, and API_BASE_URL are already declared in admin-auth.js
         
-        // API Configuration - Fixed URL without trailing slash
+        // Override API_BASE_URL if needed (admin-auth.js will load from config.json)
         let API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
         
-        // Load API configuration
-        async function loadConfig() {
-            try {
-                const response = await fetch('/config.json', {
-                    cache: 'no-store',
-                    credentials: 'include'
-                });
-                const config = await response.json();
-                API_BASE_URL = config.API_BASE_URL;
-                console.log('API Base URL loaded:', API_BASE_URL);
-            } catch (error) {
-                console.warn('Failed to load config.json, using default API URL', error);
-            }
-        }
-        
-        // Save authentication data
-        function saveAuthData(token, user) {
-            try {
-                localStorage.setItem(tokenKey, token);
-                localStorage.setItem(roleKey, user.role);
-                localStorage.setItem(userKey, JSON.stringify(user));
-                console.log('Auth data saved successfully');
-            } catch (error) {
-                console.error('Failed to save auth data:', error);
-            }
-        }
-        
-        // Validate email format
-        function isValidEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
-        }
+        // Note: loadConfig, saveAuthData, and isValidEmail functions are already defined in admin-auth.js
         
         // Show error message
         function showError(elementId, message) {
