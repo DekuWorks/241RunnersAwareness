@@ -1,0 +1,25 @@
+{
+  "extends": ["html-validate:recommended"],
+  "rules": {
+    "doctype-style": "off",
+    "no-inline-style": "off",
+    "no-trailing-whitespace": "off",
+    "void-content": "off",
+    "wcag/h30": "off",
+    "wcag/h32": "off",
+    "wcag/h36": "off",
+    "wcag/h37": "off",
+    "wcag/h67": "off",
+    "wcag/h71": "off"
+  },
+  "elements": {
+    "script": {
+      "attributes": {
+        "src": "string",
+        "type": "string",
+        "defer": "boolean",
+        "async": "boolean"
+      }
+    }
+  }
+}

@@ -156,12 +156,12 @@ class AdminMonitoringSystem {
             // TODO: Update to use real API endpoint when available
             const mockUsers = [
                 { id: 1, email: "test@example.com", firstName: "Test", lastName: "User", role: "user", isActive: true, lastLoginAt: new Date().toISOString() },
-                { id: 2, email: "dekuworks1@gmail.com", firstName: "Marcus", lastName: "Brown", role: "admin", isActive: true, lastLoginAt: new Date().toISOString() },
-                { id: 3, email: "danielcarey9770@yahoo.com", firstName: "Daniel", lastName: "Carey", role: "admin", isActive: true, lastLoginAt: new Date().toISOString() },
-                { id: 4, email: "lthomas3350@gmail.com", firstName: "Lisa", lastName: "Thomas", role: "admin", isActive: true, lastLoginAt: new Date().toISOString() },
-                { id: 5, email: "tinaleggins@yahoo.com", firstName: "Tina", lastName: "Matthews", role: "admin", isActive: true, lastLoginAt: new Date().toISOString() },
-                { id: 6, email: "mmelasky@iplawconsulting.com", firstName: "Mark", lastName: "Melasky", role: "admin", isActive: true, lastLoginAt: new Date().toISOString() },
-                { id: 7, email: "ralphfrank900@gmail.com", firstName: "Ralph", lastName: "Frank", role: "admin", isActive: true, lastLoginAt: new Date().toISOString() }
+                { id: 2, email: "admin1@example.com", firstName: "Admin", lastName: "User", role: "admin", isActive: true, lastLoginAt: new Date().toISOString() },
+                { id: 3, email: "admin2@example.com", firstName: "Admin", lastName: "Two", role: "admin", isActive: true, lastLoginAt: new Date().toISOString() },
+                { id: 4, email: "admin3@example.com", firstName: "Admin", lastName: "Three", role: "admin", isActive: true, lastLoginAt: new Date().toISOString() },
+                { id: 5, email: "admin4@example.com", firstName: "Admin", lastName: "Four", role: "admin", isActive: true, lastLoginAt: new Date().toISOString() },
+                { id: 6, email: "admin5@example.com", firstName: "Admin", lastName: "Five", role: "admin", isActive: true, lastLoginAt: new Date().toISOString() },
+                { id: 7, email: "admin6@example.com", firstName: "Admin", lastName: "Six", role: "admin", isActive: true, lastLoginAt: new Date().toISOString() }
             ];
 
             // Update users map

@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using _241RunnersAPI.Data;
 using _241RunnersAPI.Hubs;
+using _241RunnersAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,9 @@ builder.Services.AddSignalR(options =>
 // Add Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Add custom services
+builder.Services.AddScoped<DatabaseCleanupService>();
 
 // Add Swagger/OpenAPI documentation
 builder.Services.AddEndpointsApiExplorer();
