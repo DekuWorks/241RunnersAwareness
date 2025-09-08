@@ -1018,12 +1018,17 @@
                 showLoadingState();
                 
                 // Use monitoring system if available, otherwise fallback to individual functions
-                if (typeof AdminMonitoringSystem !== 'undefined') {
-                    // Get data from monitoring system
-                    dashboardData.users = AdminMonitoringSystem.getUsers();
-                    dashboardData.admins = AdminMonitoringSystem.getAdmins();
-                    dashboardData.runners = AdminMonitoringSystem.getRunners();
-                    dashboardData.publicCases = AdminMonitoringSystem.getPublicCases();
+                if (typeof AdminMonitoringSystem !== 'undefined' && AdminMonitoringSystem.getUsers) {
+                    try {
+                        // Get data from monitoring system
+                        dashboardData.users = AdminMonitoringSystem.getUsers();
+                        dashboardData.admins = AdminMonitoringSystem.getAdmins();
+                        dashboardData.runners = AdminMonitoringSystem.getRunners();
+                        dashboardData.publicCases = AdminMonitoringSystem.getPublicCases();
+                    } catch (error) {
+                        console.warn('Error getting data from monitoring system:', error);
+                        // Fall through to individual loading functions
+                    }
                     
                     console.log('📊 Data loaded from monitoring system:', {
                         users: dashboardData.users.length,
@@ -1333,13 +1338,21 @@
                 }
                 
                 // Stop monitoring system
-                if (typeof AdminMonitoringSystem !== 'undefined') {
-                    AdminMonitoringSystem.stopMonitoring();
+                if (typeof AdminMonitoringSystem !== 'undefined' && AdminMonitoringSystem.stopMonitoring) {
+                    try {
+                        AdminMonitoringSystem.stopMonitoring();
+                    } catch (error) {
+                        console.warn('Error stopping monitoring system:', error);
+                    }
                 }
                 
                 // Clear profile data
-                if (typeof AdminProfileManager !== 'undefined') {
-                    AdminProfileManager.clearProfile();
+                if (typeof AdminProfileManager !== 'undefined' && AdminProfileManager.clearProfile) {
+                    try {
+                        AdminProfileManager.clearProfile();
+                    } catch (error) {
+                        console.warn('Error clearing profile:', error);
+                    }
                 }
                 
                 // Clear authentication data
