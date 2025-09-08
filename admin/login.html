@@ -377,19 +377,15 @@
                     console.log('Sending login request...');
                     console.log('Form data being sent:', formData);
                     
-                    // FIXED: Proper headers and credentials
+                    // FIXED: Proper headers and credentials - removed problematic CORS headers
                     const response = await fetch(`${apiUrl}/auth/login`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-Client': '241RA-Admin/1.0',
-                            'Cache-Control': 'no-cache, no-store, must-revalidate',
-                            'Pragma': 'no-cache',
-                            'Expires': '0'
+                            'X-Client': '241RA-Admin/1.0'
                         },
                         body: JSON.stringify(formData),
-                        credentials: 'include',
-                        cache: 'no-store'
+                        credentials: 'include'
                     });
                     
                     console.log('Login response status:', response.status);

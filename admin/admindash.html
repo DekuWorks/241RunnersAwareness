@@ -930,13 +930,9 @@
                     headers: {
                         'Content-Type': 'application/json',
                         'X-Client': '241RA-Admin/1.0',
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache',
-                        'Expires': '0',
                         ...options.headers
                     },
-                    credentials: 'include',
-                    cache: 'no-store'
+                    credentials: 'include'
                 });
                 
                 clearTimeout(timeout);
