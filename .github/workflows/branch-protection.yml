@@ -47,7 +47,7 @@ jobs:
       - name: Validate HTML
         run: |
           echo "Validating HTML files..."
-          find . -name "*.html" -type f -not -path "./.git/*" -not -path "./241RunnersAwarenessAPI/*" | head -10 | while read file; do
+          find . -name "*.html" -type f -not -path "./.git/*" -not -path "./241RunnersAPI/*" | head -10 | while read file; do
             echo "Validating $file"
             if grep -q "<!DOCTYPE html>" "$file"; then
               echo "✅ $file has valid DOCTYPE"
@@ -140,8 +140,8 @@ jobs:
       - name: Validate CORS configuration
         run: |
           echo "Validating CORS configuration..."
-          if [ -f "241RunnersAwarenessAPI/appsettings.Production.json" ]; then
-            if grep -q "241runnersawareness.org" 241RunnersAwarenessAPI/appsettings.Production.json; then
+          if [ -f "241RunnersAPI/appsettings.Production.json" ]; then
+            if grep -q "241runnersawareness.org" 241RunnersAPI/appsettings.Production.json; then
               echo "✅ CORS configured for production domain"
             else
               echo "⚠️ CORS may not be configured for production domain"
@@ -151,14 +151,14 @@ jobs:
       - name: Check database cleanup functionality
         run: |
           echo "Checking database cleanup functionality..."
-          if [ -f "241RunnersAwarenessAPI/Services/DatabaseCleanupService.cs" ]; then
+          if [ -f "241RunnersAPI/Services/DatabaseCleanupService.cs" ]; then
             echo "✅ DatabaseCleanupService exists"
           else
             echo "❌ DatabaseCleanupService missing"
             exit 1
           fi
           
-          if [ -f "241RunnersAwarenessAPI/Controllers/DatabaseCleanupController.cs" ]; then
+          if [ -f "241RunnersAPI/Controllers/DatabaseCleanupController.cs" ]; then
             echo "✅ DatabaseCleanupController exists"
           else
             echo "❌ DatabaseCleanupController missing"
