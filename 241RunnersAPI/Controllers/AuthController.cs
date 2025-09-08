@@ -584,7 +584,7 @@ namespace _241RunnersAPI.Controllers
 
                 await _context.SaveChangesAsync();
 
-                return Ok(new 
+            return Ok(new
                 { 
                     success = true, 
                     message = "Admin users seeded successfully",
