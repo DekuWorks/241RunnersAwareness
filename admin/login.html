@@ -244,8 +244,13 @@
         // Admin Authentication Functions - FIXED VERSION
         // Note: tokenKey, roleKey, userKey, and API_BASE_URL are already declared in admin-auth.js
         
-        // Override API_BASE_URL if needed (admin-auth.js will load from config.json)
-        let API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+        // Wait for admin-auth.js to load and set API_BASE_URL, then override if needed
+        document.addEventListener('DOMContentLoaded', function() {
+            // Override API_BASE_URL if needed (admin-auth.js will load from config.json)
+            if (typeof API_BASE_URL === 'undefined') {
+                window.API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+            }
+        });
         
         // Note: loadConfig, saveAuthData, and isValidEmail functions are already defined in admin-auth.js
         
@@ -367,12 +372,13 @@
                 };
                 
                 try {
-                    console.log('Attempting login with API URL:', API_BASE_URL);
+                    const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+                    console.log('Attempting login with API URL:', apiUrl);
                     console.log('Sending login request...');
                     console.log('Form data being sent:', formData);
                     
                     // FIXED: Proper headers and credentials
-                    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    const response = await fetch(`${apiUrl}/auth/login`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

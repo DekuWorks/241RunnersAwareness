@@ -746,7 +746,10 @@
         // ===== CONFIGURATION & INITIALIZATION =====
         
         // API Configuration - Fixed URL without trailing slash
-        let API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+        // Note: API_BASE_URL may be set by admin-auth.js, so we check for it first
+        if (typeof API_BASE_URL === 'undefined') {
+            window.API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+        }
         
         // Browser compatibility checks
         const isModernBrowser = (() => {
@@ -1163,7 +1166,8 @@
         
         async function checkSystemStatus() {
             try {
-                const data = await apiRequest(`${API_BASE_URL}/auth/health`);
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+                const data = await apiRequest(`${apiUrl}/auth/health`);
                 dashboardData.systemStatus = data.status === 'Healthy' ? 'healthy' : 'error';
                 return data;
             } catch (error) {
@@ -1207,9 +1211,10 @@
                     return;
                 }
 
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
                 console.log("🔍 Making API call to verify endpoint");
                 console.log("🔍 API call headers:", authHeader());
-                const data = await apiRequest(`${API_BASE_URL}/auth/me`, {
+                const data = await apiRequest(`${apiUrl}/auth/me`, {
                     headers: authHeader()
                 });
                 
