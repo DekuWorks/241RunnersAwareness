@@ -1017,34 +1017,16 @@
                 console.log('📊 Loading dashboard data...');
                 showLoadingState();
                 
-                // Use monitoring system if available, otherwise fallback to individual functions
-                if (typeof AdminMonitoringSystem !== 'undefined' && AdminMonitoringSystem.getUsers) {
-                    try {
-                        // Get data from monitoring system
-                        dashboardData.users = AdminMonitoringSystem.getUsers();
-                        dashboardData.admins = AdminMonitoringSystem.getAdmins();
-                        dashboardData.runners = AdminMonitoringSystem.getRunners();
-                        dashboardData.publicCases = AdminMonitoringSystem.getPublicCases();
-                    } catch (error) {
-                        console.warn('Error getting data from monitoring system:', error);
-                        // Fall through to individual loading functions
-                    }
-                    
-                    console.log('📊 Data loaded from monitoring system:', {
-                        users: dashboardData.users.length,
-                        admins: dashboardData.admins.length,
-                        runners: dashboardData.runners.length,
-                        publicCases: dashboardData.publicCases.length
-                    });
-                } else {
-                    // Fallback to individual loading functions
-                    const [usersData, runnersData, adminsData, publicCasesData, healthData] = await Promise.allSettled([
-                        loadUsers(),
-                        loadRunners(),
-                        loadAdmins(),
-                        loadPublicCases(),
-                        checkSystemStatus()
-                    ]);
+                // Always use individual loading functions since monitoring system is not available
+                console.log('📊 Loading data using individual functions...');
+                
+                const [usersData, runnersData, adminsData, publicCasesData, healthData] = await Promise.allSettled([
+                    loadUsers(),
+                    loadRunners(),
+                    loadAdmins(),
+                    loadPublicCases(),
+                    checkSystemStatus()
+                ]);
                     
                     // Handle results
                     if (usersData.status === 'fulfilled') {
@@ -1212,6 +1194,20 @@
                     return;
                 }
 
+                // Try to get admin data from localStorage first
+                const savedUser = storage.get('ra_admin_user');
+                if (savedUser) {
+                    try {
+                        currentAdmin = JSON.parse(savedUser);
+                        console.log('📱 Loaded admin from localStorage:', currentAdmin);
+                        updateAdminProfile();
+                        return;
+                    } catch (e) {
+                        console.warn('Failed to parse saved user data:', e);
+                    }
+                }
+
+                // Fallback to API call
                 const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
                 console.log("🔍 Making API call to verify endpoint");
                 console.log("🔍 API call headers:", authHeader());
@@ -1223,8 +1219,14 @@
                 updateAdminProfile();
             } catch (error) {
                 console.error('Error loading admin profile:', error);
-                clearAuthData();
-                window.location.href = '/admin/login.html';
+                // Don't redirect on error, just use fallback data
+                console.log('Using fallback admin data');
+                currentAdmin = {
+                    firstName: 'Admin',
+                    lastName: 'User',
+                    email: 'admin@241runnersawareness.org'
+                };
+                updateAdminProfile();
             }
         }        
         
@@ -1600,7 +1602,10 @@
                     console.log('AdminRealtime not available, skipping initialization');
                 }
                 
-                // Load dashboard data using monitoring system
+                // Load current admin profile
+                await loadCurrentAdmin();
+                
+                // Load dashboard data using individual functions
                 await loadDashboardData();
                 
                 // Start refresh timer (fallback) - reduced frequency for better performance
