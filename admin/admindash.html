@@ -1333,8 +1333,12 @@
                 console.log('🚪 Logout initiated...');
                 
                 // Disconnect real-time system
-                if (typeof AdminRealtime !== 'undefined') {
-                    await AdminRealtime.disconnect();
+                if (typeof AdminRealtime !== 'undefined' && AdminRealtime.disconnect) {
+                    try {
+                        await AdminRealtime.disconnect();
+                    } catch (error) {
+                        console.warn('Error disconnecting real-time system:', error);
+                    }
                 }
                 
                 // Stop monitoring system
@@ -1365,7 +1369,9 @@
                 }
                 
                 console.log('✅ Logout completed, redirecting...');
-                window.location.href = '/admin/login.html';
+                
+                // Force immediate redirect with cache bypass
+                window.location.replace('/admin/login.html');
                 
             } catch (error) {
                 console.error('❌ Error during logout:', error);
@@ -1597,8 +1603,8 @@
                 // Load dashboard data using monitoring system
                 await loadDashboardData();
                 
-                // Start refresh timer (fallback)
-                refreshInterval = setInterval(loadDashboardData, 30000); // 30 seconds
+                // Start refresh timer (fallback) - reduced frequency for better performance
+                refreshInterval = setInterval(loadDashboardData, 60000); // 60 seconds
                 
                 // Show success message
                 showToast('Enhanced admin dashboard loaded successfully!', 'success', 3000);
@@ -1646,11 +1652,11 @@
             });
             
             // Initialize dashboard with a small delay to ensure DOM is fully ready
-            // Increased delay to allow login page to finish saving auth data
+            // Reduced delay for faster loading
             setTimeout(() => {
                 console.log('🚀 Starting dashboard initialization...');
                 initializeDashboard();
-            }, 500);
+            }, 200);
         });
         
     </script>
