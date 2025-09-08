@@ -12,7 +12,7 @@
     <meta http-equiv="Cache-Control" content="no-cache">
     
     <!-- Favicon with cache busting -->
-    <link rel="icon" type="image/x-icon" href="/241-logo.jpg?v=20250107">
+    <link rel="icon" type="image/x-icon" href="assets/images/241-logo.jpg?v=20250107">
     
     <!-- External Stylesheets with cache busting -->
     <link rel="stylesheet" href="/styles.css?v=20250107">
@@ -1506,53 +1506,79 @@
                     return;
                 }
                 
-                // Initialize admin profile manager
-                if (typeof AdminProfileManager !== 'undefined') {
-                    await AdminProfileManager.initialize();
-                    
-                    // Set up profile update callbacks
-                    AdminProfileManager.onProfileUpdate((profileData) => {
-                        console.log('📱 Profile updated:', profileData);
-                        updateAdminProfile();
-                    });
+                // Initialize admin profile manager (optional)
+                if (typeof AdminProfileManager !== 'undefined' && AdminProfileManager.initialize) {
+                    try {
+                        await AdminProfileManager.initialize();
+                        
+                        // Set up profile update callbacks
+                        if (AdminProfileManager.onProfileUpdate) {
+                            AdminProfileManager.onProfileUpdate((profileData) => {
+                                console.log('📱 Profile updated:', profileData);
+                                updateAdminProfile();
+                            });
+                        }
+                    } catch (error) {
+                        console.warn('AdminProfileManager initialization failed:', error);
+                    }
+                } else {
+                    console.log('AdminProfileManager not available, skipping initialization');
                 }
                 
-                // Initialize monitoring system
-                if (typeof AdminMonitoringSystem !== 'undefined') {
-                    await AdminMonitoringSystem.initialize();
-                    
-                    // Set up monitoring callbacks
-                    AdminMonitoringSystem.on('users', (data) => {
-                        console.log('👤 Users updated:', data);
-                        updateDashboardUI();
-                    });
-                    
-                    AdminMonitoringSystem.on('admins', (data) => {
-                        console.log('👥 Admins updated:', data);
-                        updateDashboardUI();
-                    });
-                    
-                    AdminMonitoringSystem.on('activity', (data) => {
-                        console.log('📱 Admin activity:', data);
-                        // Handle admin activity notifications
-                    });
+                // Initialize monitoring system (optional)
+                if (typeof AdminMonitoringSystem !== 'undefined' && AdminMonitoringSystem.initialize) {
+                    try {
+                        await AdminMonitoringSystem.initialize();
+                        
+                        // Set up monitoring callbacks
+                        if (AdminMonitoringSystem.on) {
+                            AdminMonitoringSystem.on('users', (data) => {
+                                console.log('👤 Users updated:', data);
+                                updateDashboardUI();
+                            });
+                            
+                            AdminMonitoringSystem.on('admins', (data) => {
+                                console.log('👥 Admins updated:', data);
+                                updateDashboardUI();
+                            });
+                            
+                            AdminMonitoringSystem.on('activity', (data) => {
+                                console.log('📱 Admin activity:', data);
+                                // Handle admin activity notifications
+                            });
+                        }
+                    } catch (error) {
+                        console.warn('AdminMonitoringSystem initialization failed:', error);
+                    }
+                } else {
+                    console.log('AdminMonitoringSystem not available, skipping initialization');
                 }
                 
-                // Initialize real-time system
-                if (typeof AdminRealtime !== 'undefined') {
-                    await AdminRealtime.initialize();
-                    
-                    // Set up connection status callbacks
-                    AdminRealtime.onConnectionStatusChange((isConnected, isPolling) => {
-                        updateConnectionStatus(isConnected, isPolling);
-                    });
-                    
-                    // Set up real-time event handlers
-                    AdminRealtime.on('userChanged', handleUserChanged);
-                    AdminRealtime.on('runnerChanged', handleRunnerChanged);
-                    AdminRealtime.on('adminProfileChanged', handleAdminChanged);
-                    AdminRealtime.on('dataVersionChanged', handleDataVersionChanged);
-                    AdminRealtime.on('adminActivity', handleAdminActivity);
+                // Initialize real-time system (optional)
+                if (typeof AdminRealtime !== 'undefined' && AdminRealtime.initialize) {
+                    try {
+                        await AdminRealtime.initialize();
+                        
+                        // Set up connection status callbacks
+                        if (AdminRealtime.onConnectionStatusChange) {
+                            AdminRealtime.onConnectionStatusChange((isConnected, isPolling) => {
+                                updateConnectionStatus(isConnected, isPolling);
+                            });
+                        }
+                        
+                        // Set up real-time event handlers
+                        if (AdminRealtime.on) {
+                            AdminRealtime.on('userChanged', handleUserChanged);
+                            AdminRealtime.on('runnerChanged', handleRunnerChanged);
+                            AdminRealtime.on('adminProfileChanged', handleAdminChanged);
+                            AdminRealtime.on('dataVersionChanged', handleDataVersionChanged);
+                            AdminRealtime.on('adminActivity', handleAdminActivity);
+                        }
+                    } catch (error) {
+                        console.warn('AdminRealtime initialization failed:', error);
+                    }
+                } else {
+                    console.log('AdminRealtime not available, skipping initialization');
                 }
                 
                 // Load dashboard data using monitoring system
