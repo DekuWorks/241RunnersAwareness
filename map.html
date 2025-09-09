@@ -741,19 +741,19 @@
                         const publicCases = await response.json();
                         if (publicCases && Array.isArray(publicCases)) {
                             // Convert public cases to runner format if needed
-                            const convertedCases = publicCases.map(case => ({
-                                id: case.id,
-                                fullName: case.fullName || case.name || "Unknown",
-                                currentStatus: case.currentStatus || case.status || "missing",
-                                latitude: case.latitude || case.lat,
-                                longitude: case.longitude || case.lng,
-                                city: case.city,
-                                state: case.state,
-                                dateAdded: case.dateAdded || case.createdAt || new Date(),
-                                address: case.address,
-                                age: case.age,
-                                gender: case.gender,
-                                dateOfBirth: case.dateOfBirth
+                            const convertedCases = publicCases.map(caseItem => ({
+                                id: caseItem.id,
+                                fullName: caseItem.fullName || caseItem.name || "Unknown",
+                                currentStatus: caseItem.currentStatus || caseItem.status || "missing",
+                                latitude: caseItem.latitude || caseItem.lat,
+                                longitude: caseItem.longitude || caseItem.lng,
+                                city: caseItem.city,
+                                state: caseItem.state,
+                                dateAdded: caseItem.dateAdded || caseItem.createdAt || new Date(),
+                                address: caseItem.address,
+                                age: caseItem.age,
+                                gender: caseItem.gender,
+                                dateOfBirth: caseItem.dateOfBirth
                             }));
                             apiData = [...apiData, ...convertedCases];
                         }
