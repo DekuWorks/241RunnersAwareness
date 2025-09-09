@@ -1499,6 +1499,363 @@
         .moderation-action-btn-review:hover {
             background: #bfdbfe;
         }
+
+        /* Notifications & Escalation Styles */
+        .notifications-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            overflow: hidden;
+        }
+
+        .notification-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .notification-metric {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #dc2626;
+        }
+
+        .notification-metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .notification-metric-header h4 {
+            margin: 0;
+            color: #1f2937;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .notification-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .notification-status.notification-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .notification-status.notification-sent {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .notification-status.notification-good {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .notification-metric-value {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .notification-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #dc2626;
+        }
+
+        .notification-target {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .notification-channels {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .notification-channels h3 {
+            margin: 0 0 20px 0;
+            color: #1f2937;
+            font-size: 1.1rem;
+        }
+
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .channel-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .channel-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .channel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .channel-header h4 {
+            margin: 0;
+            color: #1f2937;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .channel-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .channel-status.channel-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .channel-status.channel-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .channel-stats {
+            margin-bottom: 15px;
+        }
+
+        .channel-stats p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .channel-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .notification-queue {
+            padding: 20px;
+        }
+
+        .notification-queue h3 {
+            margin: 0 0 20px 0;
+            color: #1f2937;
+            font-size: 1.1rem;
+        }
+
+        .queue-controls {
+            margin-bottom: 20px;
+        }
+
+        .queue-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .queue-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .notification-table-container {
+            overflow-x: auto;
+        }
+
+        .notification-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .notification-table th {
+            background: #f8fafc;
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+            white-space: nowrap;
+        }
+
+        .notification-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid #f3f4f6;
+            vertical-align: middle;
+        }
+
+        .notification-table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .notification-table tbody tr.selected {
+            background: #fef2f2;
+        }
+
+        .message-id {
+            font-family: monospace;
+            font-weight: 600;
+            color: #dc2626;
+        }
+
+        .channel-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .channel-badge.email {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .channel-badge.sms {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .channel-badge.push {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .channel-badge.in_app {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .notification-priority-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .notification-priority-urgent {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .notification-priority-high {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .notification-priority-normal {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .notification-priority-low {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .notification-status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .notification-status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .notification-status-sent {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .notification-status-delivered {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .notification-status-failed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .notification-status-read {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .notification-action-btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .notification-action-btn-send {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .notification-action-btn-send:hover {
+            background: #a7f3d0;
+        }
+
+        .notification-action-btn-cancel {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .notification-action-btn-cancel:hover {
+            background: #fecaca;
+        }
+
+        .notification-action-btn-view {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .notification-action-btn-view:hover {
+            background: #bfdbfe;
+        }
     </style>
     
     <!-- Main Dashboard Styles -->
@@ -2366,6 +2723,532 @@
                         <!-- Content will be populated by JavaScript -->
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- Notifications & Escalation Section -->
+        <div class="notifications-section">
+            <div class="section-header">
+                <h2>📢 Notifications & Escalation Management</h2>
+                <div class="section-actions">
+                    <button class="btn btn-primary" onclick="openNotificationComposer()">
+                        <span class="btn-icon">✉️</span>
+                        Compose Message
+                    </button>
+                    <button class="btn btn-warning" onclick="openEscalationConfigModal()">
+                        <span class="btn-icon">⚙️</span>
+                        Escalation Rules
+                    </button>
+                    <button class="btn btn-outline" onclick="openTemplateManager()">
+                        <span class="btn-icon">📝</span>
+                        Message Templates
+                    </button>
+                    <button class="btn btn-secondary" onclick="refreshNotifications()">
+                        <span class="btn-icon">🔄</span>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Notification Stats -->
+            <div class="notification-stats">
+                <div class="notification-metric">
+                    <div class="notification-metric-header">
+                        <h4>Pending Notifications</h4>
+                        <span class="notification-status notification-pending" id="pendingNotificationsStatus">High</span>
+                    </div>
+                    <div class="notification-metric-value">
+                        <span class="notification-number" id="pendingNotificationsCount">15</span>
+                        <span class="notification-target">Messages awaiting delivery</span>
+                    </div>
+                </div>
+                <div class="notification-metric">
+                    <div class="notification-metric-header">
+                        <h4>Sent Today</h4>
+                        <span class="notification-status notification-sent" id="sentTodayStatus">Good</span>
+                    </div>
+                    <div class="notification-metric-value">
+                        <span class="notification-number" id="sentTodayCount">127</span>
+                        <span class="notification-target">Messages delivered</span>
+                    </div>
+                </div>
+                <div class="notification-metric">
+                    <div class="notification-metric-header">
+                        <h4>Delivery Rate</h4>
+                        <span class="notification-status notification-good" id="deliveryRateStatus">Excellent</span>
+                    </div>
+                    <div class="notification-metric-value">
+                        <span class="notification-number" id="deliveryRate">98.2%</span>
+                        <span class="notification-target">Successful deliveries</span>
+                    </div>
+                </div>
+                <div class="notification-metric">
+                    <div class="notification-metric-header">
+                        <h4>Response Rate</h4>
+                        <span class="notification-status notification-good" id="responseRateStatus">Good</span>
+                    </div>
+                    <div class="notification-metric-value">
+                        <span class="notification-number" id="responseRate">67.5%</span>
+                        <span class="notification-target">Recipient engagement</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Channels -->
+            <div class="notification-channels">
+                <h3>Communication Channels</h3>
+                <div class="channels-grid">
+                    <div class="channel-card">
+                        <div class="channel-header">
+                            <h4>📧 Email</h4>
+                            <span class="channel-status channel-active">Active</span>
+                        </div>
+                        <div class="channel-stats">
+                            <p><strong>Sent Today:</strong> 89</p>
+                            <p><strong>Delivery Rate:</strong> 99.1%</p>
+                            <p><strong>Open Rate:</strong> 72.3%</p>
+                        </div>
+                        <div class="channel-actions">
+                            <button class="btn btn-sm btn-outline" onclick="testEmailChannel()">Test</button>
+                            <button class="btn btn-sm btn-outline" onclick="configureEmailChannel()">Configure</button>
+                        </div>
+                    </div>
+
+                    <div class="channel-card">
+                        <div class="channel-header">
+                            <h4>📱 SMS</h4>
+                            <span class="channel-status channel-active">Active</span>
+                        </div>
+                        <div class="channel-stats">
+                            <p><strong>Sent Today:</strong> 23</p>
+                            <p><strong>Delivery Rate:</strong> 95.7%</p>
+                            <p><strong>Response Rate:</strong> 78.3%</p>
+                        </div>
+                        <div class="channel-actions">
+                            <button class="btn btn-sm btn-outline" onclick="testSMSChannel()">Test</button>
+                            <button class="btn btn-sm btn-outline" onclick="configureSMSChannel()">Configure</button>
+                        </div>
+                    </div>
+
+                    <div class="channel-card">
+                        <div class="channel-header">
+                            <h4>🔔 Push Notifications</h4>
+                            <span class="channel-status channel-active">Active</span>
+                        </div>
+                        <div class="channel-stats">
+                            <p><strong>Sent Today:</strong> 15</p>
+                            <p><strong>Delivery Rate:</strong> 93.3%</p>
+                            <p><strong>Click Rate:</strong> 45.2%</p>
+                        </div>
+                        <div class="channel-actions">
+                            <button class="btn btn-sm btn-outline" onclick="testPushChannel()">Test</button>
+                            <button class="btn btn-sm btn-outline" onclick="configurePushChannel()">Configure</button>
+                        </div>
+                    </div>
+
+                    <div class="channel-card">
+                        <div class="channel-header">
+                            <h4>💬 In-App Messages</h4>
+                            <span class="channel-status channel-active">Active</span>
+                        </div>
+                        <div class="channel-stats">
+                            <p><strong>Sent Today:</strong> 34</p>
+                            <p><strong>Delivery Rate:</strong> 100%</p>
+                            <p><strong>Read Rate:</strong> 89.7%</p>
+                        </div>
+                        <div class="channel-actions">
+                            <button class="btn btn-sm btn-outline" onclick="testInAppChannel()">Test</button>
+                            <button class="btn btn-sm btn-outline" onclick="configureInAppChannel()">Configure</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Queue -->
+            <div class="notification-queue">
+                <h3>Notification Queue</h3>
+                <div class="queue-controls">
+                    <div class="queue-filters">
+                        <div class="filter-group">
+                            <label>Channel</label>
+                            <select id="notificationChannelFilter" onchange="filterNotificationQueue()">
+                                <option value="">All Channels</option>
+                                <option value="email">Email</option>
+                                <option value="sms">SMS</option>
+                                <option value="push">Push</option>
+                                <option value="in_app">In-App</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Status</label>
+                            <select id="notificationStatusFilter" onchange="filterNotificationQueue()">
+                                <option value="">All Statuses</option>
+                                <option value="pending">Pending</option>
+                                <option value="sent">Sent</option>
+                                <option value="delivered">Delivered</option>
+                                <option value="failed">Failed</option>
+                                <option value="read">Read</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Priority</label>
+                            <select id="notificationPriorityFilter" onchange="filterNotificationQueue()">
+                                <option value="">All Priorities</option>
+                                <option value="urgent">Urgent</option>
+                                <option value="high">High</option>
+                                <option value="normal">Normal</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="queue-actions">
+                        <button class="btn btn-warning" onclick="bulkSendNotifications()">
+                            <span class="btn-icon">📤</span>
+                            Bulk Send
+                        </button>
+                        <button class="btn btn-danger" onclick="bulkCancelNotifications()">
+                            <span class="btn-icon">❌</span>
+                            Bulk Cancel
+                        </button>
+                        <button class="btn btn-outline" onclick="exportNotificationReport()">
+                            <span class="btn-icon">📊</span>
+                            Export Report
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Notification Table -->
+                <div class="notification-table-container">
+                    <table class="notification-table" id="notificationTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllNotifications" onchange="toggleSelectAllNotifications()"></th>
+                                <th>Message ID</th>
+                                <th>Channel</th>
+                                <th>Recipient</th>
+                                <th>Subject/Content</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Scheduled</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="notificationTableBody">
+                            <!-- Notifications will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Quality Section -->
+        <div class="data-quality-section">
+            <div class="section-header">
+                <h2>🔍 Data Quality & Duplicate Detection</h2>
+                <div class="section-actions">
+                    <button class="btn btn-primary" onclick="runDataQualityScan()">
+                        <span class="btn-icon">🔍</span>
+                        Scan for Issues
+                    </button>
+                    <button class="btn btn-warning" onclick="openDataQualityConfig()">
+                        <span class="btn-icon">⚙️</span>
+                        Quality Rules
+                    </button>
+                    <button class="btn btn-outline" onclick="exportDataQualityReport()">
+                        <span class="btn-icon">📊</span>
+                        Export Report
+                    </button>
+                    <button class="btn btn-secondary" onclick="refreshDataQuality()">
+                        <span class="btn-icon">🔄</span>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Data Quality Overview -->
+            <div class="data-quality-overview">
+                <div class="quality-metric">
+                    <div class="quality-metric-header">
+                        <h4>Data Completeness</h4>
+                        <span class="quality-status quality-good" id="dataCompletenessStatus">Good</span>
+                    </div>
+                    <div class="quality-metric-value">
+                        <span class="quality-number" id="dataCompletenessRate">94.2%</span>
+                        <span class="quality-target">Complete records</span>
+                    </div>
+                </div>
+                <div class="quality-metric">
+                    <div class="quality-metric-header">
+                        <h4>Duplicate Records</h4>
+                        <span class="quality-status quality-warning" id="duplicateRecordsStatus">Warning</span>
+                    </div>
+                    <div class="quality-metric-value">
+                        <span class="quality-number" id="duplicateRecordsCount">23</span>
+                        <span class="quality-target">Potential duplicates</span>
+                    </div>
+                </div>
+                <div class="quality-metric">
+                    <div class="quality-metric-header">
+                        <h4>Data Accuracy</h4>
+                        <span class="quality-status quality-good" id="dataAccuracyStatus">Good</span>
+                    </div>
+                    <div class="quality-metric-value">
+                        <span class="quality-number" id="dataAccuracyRate">97.8%</span>
+                        <span class="quality-target">Valid data</span>
+                    </div>
+                </div>
+                <div class="quality-metric">
+                    <div class="quality-metric-header">
+                        <h4>Data Consistency</h4>
+                        <span class="quality-status quality-good" id="dataConsistencyStatus">Good</span>
+                    </div>
+                    <div class="quality-metric-value">
+                        <span class="quality-number" id="dataConsistencyRate">96.5%</span>
+                        <span class="quality-target">Consistent records</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Quality Issues -->
+            <div class="data-quality-issues">
+                <h3>Data Quality Issues</h3>
+                <div class="issues-tabs">
+                    <button class="tab-btn active" onclick="switchQualityTab('duplicates')">Duplicates</button>
+                    <button class="tab-btn" onclick="switchQualityTab('incomplete')">Incomplete</button>
+                    <button class="tab-btn" onclick="switchQualityTab('invalid')">Invalid</button>
+                    <button class="tab-btn" onclick="switchQualityTab('inconsistent')">Inconsistent</button>
+                </div>
+
+                <!-- Duplicates Tab -->
+                <div id="duplicates-tab" class="quality-tab-content active">
+                    <div class="duplicates-controls">
+                        <div class="duplicate-filters">
+                            <div class="filter-group">
+                                <label>Record Type</label>
+                                <select id="duplicateTypeFilter" onchange="filterDuplicates()">
+                                    <option value="">All Types</option>
+                                    <option value="users">Users</option>
+                                    <option value="cases">Cases</option>
+                                    <option value="runners">Runners</option>
+                                    <option value="reports">Reports</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Similarity</label>
+                                <select id="duplicateSimilarityFilter" onchange="filterDuplicates()">
+                                    <option value="">All Levels</option>
+                                    <option value="high">High (90%+)</option>
+                                    <option value="medium">Medium (70-89%)</option>
+                                    <option value="low">Low (50-69%)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="duplicate-actions">
+                            <button class="btn btn-warning" onclick="bulkMergeDuplicates()">
+                                <span class="btn-icon">🔗</span>
+                                Bulk Merge
+                            </button>
+                            <button class="btn btn-danger" onclick="bulkDeleteDuplicates()">
+                                <span class="btn-icon">🗑️</span>
+                                Bulk Delete
+                            </button>
+                            <button class="btn btn-outline" onclick="exportDuplicatesReport()">
+                                <span class="btn-icon">📊</span>
+                                Export Report
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Duplicates Table -->
+                    <div class="duplicates-table-container">
+                        <table class="duplicates-table" id="duplicatesTable">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllDuplicates" onchange="toggleSelectAllDuplicates()"></th>
+                                    <th>Record Type</th>
+                                    <th>Primary Record</th>
+                                    <th>Duplicate Record</th>
+                                    <th>Similarity</th>
+                                    <th>Confidence</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="duplicatesTableBody">
+                                <!-- Duplicates will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Incomplete Tab -->
+                <div id="incomplete-tab" class="quality-tab-content">
+                    <div class="incomplete-controls">
+                        <div class="incomplete-filters">
+                            <div class="filter-group">
+                                <label>Missing Field</label>
+                                <select id="missingFieldFilter" onchange="filterIncomplete()">
+                                    <option value="">All Fields</option>
+                                    <option value="email">Email</option>
+                                    <option value="phone">Phone</option>
+                                    <option value="address">Address</option>
+                                    <option value="description">Description</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Record Type</label>
+                                <select id="incompleteTypeFilter" onchange="filterIncomplete()">
+                                    <option value="">All Types</option>
+                                    <option value="users">Users</option>
+                                    <option value="cases">Cases</option>
+                                    <option value="runners">Runners</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="incomplete-actions">
+                            <button class="btn btn-primary" onclick="bulkUpdateIncomplete()">
+                                <span class="btn-icon">✏️</span>
+                                Bulk Update
+                            </button>
+                            <button class="btn btn-outline" onclick="exportIncompleteReport()">
+                                <span class="btn-icon">📊</span>
+                                Export Report
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Incomplete Records Table -->
+                    <div class="incomplete-table-container">
+                        <table class="incomplete-table" id="incompleteTable">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllIncomplete" onchange="toggleSelectAllIncomplete()"></th>
+                                    <th>Record ID</th>
+                                    <th>Type</th>
+                                    <th>Missing Fields</th>
+                                    <th>Completeness</th>
+                                    <th>Last Updated</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="incompleteTableBody">
+                                <!-- Incomplete records will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Invalid Tab -->
+                <div id="invalid-tab" class="quality-tab-content">
+                    <div class="invalid-controls">
+                        <div class="invalid-filters">
+                            <div class="filter-group">
+                                <label>Validation Rule</label>
+                                <select id="validationRuleFilter" onchange="filterInvalid()">
+                                    <option value="">All Rules</option>
+                                    <option value="email_format">Email Format</option>
+                                    <option value="phone_format">Phone Format</option>
+                                    <option value="date_range">Date Range</option>
+                                    <option value="required_field">Required Field</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Severity</label>
+                                <select id="invalidSeverityFilter" onchange="filterInvalid()">
+                                    <option value="">All Levels</option>
+                                    <option value="critical">Critical</option>
+                                    <option value="warning">Warning</option>
+                                    <option value="info">Info</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="invalid-actions">
+                            <button class="btn btn-warning" onclick="bulkFixInvalid()">
+                                <span class="btn-icon">🔧</span>
+                                Bulk Fix
+                            </button>
+                            <button class="btn btn-outline" onclick="exportInvalidReport()">
+                                <span class="btn-icon">📊</span>
+                                Export Report
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Invalid Records Table -->
+                    <div class="invalid-table-container">
+                        <table class="invalid-table" id="invalidTable">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllInvalid" onchange="toggleSelectAllInvalid()"></th>
+                                    <th>Record ID</th>
+                                    <th>Type</th>
+                                    <th>Validation Rule</th>
+                                    <th>Issue</th>
+                                    <th>Severity</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invalidTableBody">
+                                <!-- Invalid records will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Inconsistent Tab -->
+                <div id="inconsistent-tab" class="quality-tab-content">
+                    <div class="inconsistent-controls">
+                        <div class="inconsistent-filters">
+                            <div class="filter-group">
+                                <label>Consistency Rule</label>
+                                <select id="consistencyRuleFilter" onchange="filterInconsistent()">
+                                    <option value="">All Rules</option>
+                                    <option value="data_format">Data Format</option>
+                                    <option value="reference_integrity">Reference Integrity</option>
+                                    <option value="business_rules">Business Rules</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Impact</label>
+                                <select id="inconsistentImpactFilter" onchange="filterInconsistent()">
+                                    <option value="">All Levels</option>
+                                    <option value="high">High</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="low">Low</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="inconsistent-actions">
+                            <button class="btn btn-primary" onclick="bulkResolveInconsistent()">
+                                <span class="btn-icon">✅</span>
+                                Bulk Resolve
+                            </button>
+                            <button class="btn btn-outline" onclick="exportInconsistentReport()">
+                                <span class="btn-icon">📊</span>
+                                Export Report
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Inconsistent Records Table -->
+                    <div class="inconsistent-table-container">
+                        <table class="inconsistent-table" id="inconsistentTable">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllInconsistent" onchange="toggleSelectAllInconsistent()"></th>
+                                    <th>Record ID</th>
+                                    <th>Type</th>
+                                    <th>Consistency Rule</th>
+                                    <th>Issue</th>
+                                    <th>Impact</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inconsistentTableBody">
+                                <!-- Inconsistent records will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -5458,6 +6341,418 @@
             }
         }
 
+        // ===== NOTIFICATIONS & ESCALATION FUNCTIONS =====
+        
+        // Global state for notifications
+        let notificationData = {
+            notifications: [],
+            stats: {
+                pendingNotifications: 15,
+                sentToday: 127,
+                deliveryRate: 98.2,
+                responseRate: 67.5
+            },
+            channels: {
+                email: { status: 'active', sentToday: 89, deliveryRate: 99.1, openRate: 72.3 },
+                sms: { status: 'active', sentToday: 23, deliveryRate: 95.7, responseRate: 78.3 },
+                push: { status: 'active', sentToday: 15, deliveryRate: 93.3, clickRate: 45.2 },
+                in_app: { status: 'active', sentToday: 34, deliveryRate: 100, readRate: 89.7 }
+            }
+        };
+
+        async function loadNotifications() {
+            try {
+                console.log('Loading notifications data...');
+                
+                // Mock data for now - TODO: Replace with API call
+                notificationData.notifications = [
+                    {
+                        id: 'MSG-001',
+                        channel: 'email',
+                        recipient: 'user@example.com',
+                        subject: 'Case Update: Your report has been reviewed',
+                        content: 'Your case report has been reviewed and approved...',
+                        priority: 'normal',
+                        status: 'delivered',
+                        scheduledAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+                        sentAt: new Date(Date.now() - 1.5 * 60 * 60 * 1000), // 1.5 hours ago
+                        deliveredAt: new Date(Date.now() - 1 * 60 * 60 * 1000) // 1 hour ago
+                    },
+                    {
+                        id: 'MSG-002',
+                        channel: 'sms',
+                        recipient: '+1234567890',
+                        subject: 'Urgent: Security alert',
+                        content: 'Security alert: Suspicious activity detected...',
+                        priority: 'urgent',
+                        status: 'sent',
+                        scheduledAt: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
+                        sentAt: new Date(Date.now() - 25 * 60 * 1000) // 25 minutes ago
+                    },
+                    {
+                        id: 'MSG-003',
+                        channel: 'push',
+                        recipient: 'device_token_123',
+                        subject: 'New case assigned',
+                        content: 'You have been assigned a new case...',
+                        priority: 'high',
+                        status: 'pending',
+                        scheduledAt: new Date(Date.now() + 10 * 60 * 1000) // 10 minutes from now
+                    }
+                ];
+                
+                updateNotificationQueueUI();
+                updateNotificationStats();
+                
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+                showToast('Failed to load notifications data', 'error');
+            }
+        }
+        
+        function updateNotificationQueueUI() {
+            const tbody = document.getElementById('notificationTableBody');
+            if (!tbody) return;
+            
+            if (notificationData.notifications.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" class="text-center text-gray-500">No notifications found</td></tr>';
+                return;
+            }
+            
+            const notificationsHTML = notificationData.notifications.map(notification => {
+                const timeSinceScheduled = getTimeSince(notification.scheduledAt);
+                const contentPreview = notification.subject || notification.content.substring(0, 50) + '...';
+                
+                return `
+                    <tr data-notification-id="${notification.id}">
+                        <td>
+                            <input type="checkbox" onchange="toggleNotificationSelection(this)">
+                        </td>
+                        <td>
+                            <span class="message-id">${notification.id}</span>
+                        </td>
+                        <td>
+                            <span class="channel-badge ${notification.channel}">${notification.channel}</span>
+                        </td>
+                        <td>${notification.recipient}</td>
+                        <td>
+                            <div class="content-preview" title="${contentPreview}">
+                                ${contentPreview}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="notification-priority-badge notification-priority-${notification.priority}">${notification.priority}</span>
+                        </td>
+                        <td>
+                            <span class="notification-status-badge notification-status-${notification.status}">${notification.status}</span>
+                        </td>
+                        <td>
+                            <div>
+                                ${timeSinceScheduled}
+                                <br>
+                                <small class="text-gray-500">${notification.scheduledAt.toLocaleDateString()}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="notification-actions">
+                                <button class="notification-action-btn notification-action-btn-view" onclick="viewNotification('${notification.id}')" title="View Details">
+                                    👁️
+                                </button>
+                                <button class="notification-action-btn notification-action-btn-send" onclick="sendNotification('${notification.id}')" title="Send Now" ${notification.status === 'sent' || notification.status === 'delivered' ? 'disabled' : ''}>
+                                    📤
+                                </button>
+                                <button class="notification-action-btn notification-action-btn-cancel" onclick="cancelNotification('${notification.id}')" title="Cancel" ${notification.status === 'sent' || notification.status === 'delivered' ? 'disabled' : ''}>
+                                    ❌
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = notificationsHTML;
+        }
+        
+        function updateNotificationStats() {
+            const stats = notificationData.stats;
+            
+            updateElement('pendingNotificationsCount', stats.pendingNotifications);
+            updateElement('sentTodayCount', stats.sentToday);
+            updateElement('deliveryRate', `${stats.deliveryRate}%`);
+            updateElement('responseRate', `${stats.responseRate}%`);
+            
+            // Update status indicators
+            updateNotificationStatus('pendingNotificationsStatus', stats.pendingNotifications > 20 ? 'pending' : stats.pendingNotifications > 10 ? 'warning' : 'good');
+            updateNotificationStatus('sentTodayStatus', stats.sentToday > 100 ? 'sent' : 'warning');
+            updateNotificationStatus('deliveryRateStatus', stats.deliveryRate >= 95 ? 'good' : stats.deliveryRate >= 90 ? 'warning' : 'critical');
+            updateNotificationStatus('responseRateStatus', stats.responseRate >= 70 ? 'good' : stats.responseRate >= 50 ? 'warning' : 'critical');
+        }
+        
+        function updateNotificationStatus(elementId, status) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.className = `notification-status notification-${status}`;
+                element.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+            }
+        }
+        
+        // Notification action functions
+        function openNotificationComposer() {
+            showToast('Notification composer modal - TODO: Implement', 'info');
+            // TODO: Implement notification composer modal
+        }
+        
+        function openEscalationConfigModal() {
+            showToast('Escalation configuration modal - TODO: Implement', 'info');
+            // TODO: Implement escalation configuration modal
+        }
+        
+        function openTemplateManager() {
+            showToast('Template manager modal - TODO: Implement', 'info');
+            // TODO: Implement template manager modal
+        }
+        
+        function exportNotificationReport() {
+            const csvContent = [
+                ['Message ID', 'Channel', 'Recipient', 'Subject', 'Priority', 'Status', 'Scheduled', 'Sent', 'Delivered'],
+                ...notificationData.notifications.map(notification => [
+                    notification.id,
+                    notification.channel,
+                    notification.recipient,
+                    notification.subject || '',
+                    notification.priority,
+                    notification.status,
+                    notification.scheduledAt.toLocaleDateString(),
+                    notification.sentAt ? notification.sentAt.toLocaleDateString() : '',
+                    notification.deliveredAt ? notification.deliveredAt.toLocaleDateString() : ''
+                ])
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `notification_report_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showToast('Notification report exported', 'success');
+        }
+        
+        function refreshNotifications() {
+            showToast('Refreshing notifications...', 'info', 2000);
+            loadNotifications().then(() => {
+                showToast('Notifications refreshed!', 'success', 3000);
+            });
+        }
+        
+        function filterNotificationQueue() {
+            const channelFilter = document.getElementById('notificationChannelFilter').value;
+            const statusFilter = document.getElementById('notificationStatusFilter').value;
+            const priorityFilter = document.getElementById('notificationPriorityFilter').value;
+            
+            const rows = document.querySelectorAll('.notification-table tbody tr');
+            
+            rows.forEach(row => {
+                const notificationId = row.dataset.notificationId;
+                const notification = notificationData.notifications.find(n => n.id === notificationId);
+                
+                if (!notification) return;
+                
+                const matchesChannel = !channelFilter || notification.channel === channelFilter;
+                const matchesStatus = !statusFilter || notification.status === statusFilter;
+                const matchesPriority = !priorityFilter || notification.priority === priorityFilter;
+                
+                if (matchesChannel && matchesStatus && matchesPriority) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        function toggleSelectAllNotifications() {
+            const selectAllCheckbox = document.getElementById('selectAllNotifications');
+            const checkboxes = document.querySelectorAll('.notification-table tbody input[type="checkbox"]');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+                checkbox.closest('tr').classList.toggle('selected', selectAllCheckbox.checked);
+            });
+        }
+        
+        function toggleNotificationSelection(checkbox) {
+            const row = checkbox.closest('tr');
+            row.classList.toggle('selected', checkbox.checked);
+        }
+        
+        // Bulk notification actions
+        function bulkSendNotifications() {
+            const selectedNotifications = document.querySelectorAll('.notification-table tbody tr.selected');
+            if (selectedNotifications.length === 0) {
+                showToast('Please select notifications first', 'warning');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to send ${selectedNotifications.length} notifications?`)) {
+                return;
+            }
+            
+            try {
+                const notificationIds = Array.from(selectedNotifications).map(row => row.dataset.notificationId);
+                
+                // Update notifications in data
+                notificationIds.forEach(notificationId => {
+                    const notification = notificationData.notifications.find(n => n.id === notificationId);
+                    if (notification && notification.status === 'pending') {
+                        notification.status = 'sent';
+                        notification.sentAt = new Date();
+                    }
+                });
+                
+                updateNotificationQueueUI();
+                updateNotificationStats();
+                showToast(`Sent ${notificationIds.length} notifications`, 'success');
+                
+                // Log audit trail
+                logAuditAction('bulk_notification_send', {
+                    notificationIds: notificationIds,
+                    count: notificationIds.length,
+                    sentBy: currentAdmin?.email || 'Unknown'
+                });
+                
+            } catch (error) {
+                console.error('Error sending notifications:', error);
+                showToast('Failed to send notifications', 'error');
+            }
+        }
+        
+        function bulkCancelNotifications() {
+            const selectedNotifications = document.querySelectorAll('.notification-table tbody tr.selected');
+            if (selectedNotifications.length === 0) {
+                showToast('Please select notifications first', 'warning');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to cancel ${selectedNotifications.length} notifications?`)) {
+                return;
+            }
+            
+            try {
+                const notificationIds = Array.from(selectedNotifications).map(row => row.dataset.notificationId);
+                
+                // Update notifications in data
+                notificationIds.forEach(notificationId => {
+                    const notification = notificationData.notifications.find(n => n.id === notificationId);
+                    if (notification && notification.status === 'pending') {
+                        notification.status = 'cancelled';
+                    }
+                });
+                
+                updateNotificationQueueUI();
+                updateNotificationStats();
+                showToast(`Cancelled ${notificationIds.length} notifications`, 'success');
+                
+                // Log audit trail
+                logAuditAction('bulk_notification_cancel', {
+                    notificationIds: notificationIds,
+                    count: notificationIds.length,
+                    cancelledBy: currentAdmin?.email || 'Unknown'
+                });
+                
+            } catch (error) {
+                console.error('Error cancelling notifications:', error);
+                showToast('Failed to cancel notifications', 'error');
+            }
+        }
+        
+        // Individual notification actions
+        function viewNotification(notificationId) {
+            const notification = notificationData.notifications.find(n => n.id === notificationId);
+            if (notification) {
+                showToast(`Viewing notification: ${notification.subject || notification.content.substring(0, 50)}...`, 'info');
+                // TODO: Implement notification details modal
+            }
+        }
+        
+        function sendNotification(notificationId) {
+            const notification = notificationData.notifications.find(n => n.id === notificationId);
+            if (notification && notification.status === 'pending') {
+                notification.status = 'sent';
+                notification.sentAt = new Date();
+                
+                updateNotificationQueueUI();
+                updateNotificationStats();
+                showToast(`Notification ${notificationId} sent`, 'success');
+                
+                // Log audit trail
+                logAuditAction('notification_sent', {
+                    notificationId: notificationId,
+                    sentBy: currentAdmin?.email || 'Unknown'
+                });
+            }
+        }
+        
+        function cancelNotification(notificationId) {
+            const notification = notificationData.notifications.find(n => n.id === notificationId);
+            if (notification && notification.status === 'pending') {
+                notification.status = 'cancelled';
+                
+                updateNotificationQueueUI();
+                updateNotificationStats();
+                showToast(`Notification ${notificationId} cancelled`, 'success');
+                
+                // Log audit trail
+                logAuditAction('notification_cancelled', {
+                    notificationId: notificationId,
+                    cancelledBy: currentAdmin?.email || 'Unknown'
+                });
+            }
+        }
+        
+        // Channel management functions
+        function testEmailChannel() {
+            showToast('Testing email channel...', 'info', 2000);
+            // TODO: Implement email channel test
+        }
+        
+        function configureEmailChannel() {
+            showToast('Email channel configuration - TODO: Implement', 'info');
+            // TODO: Implement email channel configuration
+        }
+        
+        function testSMSChannel() {
+            showToast('Testing SMS channel...', 'info', 2000);
+            // TODO: Implement SMS channel test
+        }
+        
+        function configureSMSChannel() {
+            showToast('SMS channel configuration - TODO: Implement', 'info');
+            // TODO: Implement SMS channel configuration
+        }
+        
+        function testPushChannel() {
+            showToast('Testing push notification channel...', 'info', 2000);
+            // TODO: Implement push channel test
+        }
+        
+        function configurePushChannel() {
+            showToast('Push notification channel configuration - TODO: Implement', 'info');
+            // TODO: Implement push channel configuration
+        }
+        
+        function testInAppChannel() {
+            showToast('Testing in-app message channel...', 'info', 2000);
+            // TODO: Implement in-app channel test
+        }
+        
+        function configureInAppChannel() {
+            showToast('In-app message channel configuration - TODO: Implement', 'info');
+            // TODO: Implement in-app channel configuration
+        }
+
         // ===== USER SELECTION AND FILTERING FUNCTIONS =====
         
         function selectAllUsers() {
@@ -5835,6 +7130,9 @@
                 
                 // Load moderation queue data
                 await loadModerationQueue();
+                
+                // Load notifications data
+                await loadNotifications();
                 
                 // Start refresh timer (fallback) - reduced frequency for better performance
                 refreshInterval = setInterval(loadDashboardData, 60000); // 60 seconds
