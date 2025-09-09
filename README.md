@@ -149,9 +149,9 @@ node scripts/integration-tests.js
    ```
 
 4. **Access the application**
-   - Frontend: http://localhost:8000
-   - API: https://localhost:7001
-   - Admin: http://localhost:8000/admin
+   - Frontend: https://241runnersawareness.org
+   - API: https://241runners-api.azurewebsites.net
+   - Admin: https://241runnersawareness.org/admin
 
 ### Environment Configuration
 

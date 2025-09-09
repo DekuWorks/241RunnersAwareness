@@ -21,6 +21,144 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
+        /// Get all cases (anonymous access for public site)
+        /// </summary>
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetCases([FromQuery] string? status = null, [FromQuery] string? priority = null, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+        {
+            try
+            {
+                var query = _context.Cases
+                    .Include(c => c.Runner)
+                    .Include(c => c.ReportedByUser)
+                    .Where(c => c.IsPublic && c.IsApproved); // Only public and approved cases
+
+                // Apply filters
+                if (!string.IsNullOrEmpty(status))
+                {
+                    query = query.Where(c => c.Status == status);
+                }
+
+                if (!string.IsNullOrEmpty(priority))
+                {
+                    query = query.Where(c => c.Priority == priority);
+                }
+
+                // Get total count
+                var totalCount = await query.CountAsync();
+
+                // Apply pagination
+                var cases = await query
+                    .OrderByDescending(c => c.CreatedAt)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(c => new
+                    {
+                        c.Id,
+                        c.Title,
+                        c.Description,
+                        c.Status,
+                        c.Priority,
+                        c.LastSeenLocation,
+                        c.LastSeenLatitude,
+                        c.LastSeenLongitude,
+                        c.CreatedAt,
+                        c.UpdatedAt,
+                        c.IsPublic,
+                        c.IsApproved,
+                        c.IsVerified,
+                        Runner = c.Runner != null ? new
+                        {
+                            c.Runner.Id,
+                            c.Runner.Name,
+                            c.Runner.Age,
+                            c.Runner.Gender,
+                            c.Runner.PhysicalDescription,
+                            c.Runner.LastKnownLocation,
+                            c.Runner.LastLocationUpdate,
+                            c.Runner.PreferredContactMethod,
+                            c.Runner.IsActive
+                        } : null,
+                        ReportedBy = c.ReportedByUser != null ? new
+                        {
+                            c.ReportedByUser.Id,
+                            c.ReportedByUser.FirstName,
+                            c.ReportedByUser.LastName,
+                            c.ReportedByUser.Email
+                        } : null
+                    })
+                    .ToListAsync();
+
+                return Ok(new
+                {
+                    success = true,
+                    cases = cases,
+                    pagination = new
+                    {
+                        page = page,
+                        pageSize = pageSize,
+                        totalCount = totalCount,
+                        totalPages = (int)Math.Ceiling((double)totalCount / pageSize)
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving cases");
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
+        /// Get map data (anonymous access for public site)
+        /// </summary>
+        [HttpGet("map")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetMapData()
+        {
+            try
+            {
+                var cases = await _context.Cases
+                    .Include(c => c.Runner)
+                    .Where(c => c.IsPublic && c.IsApproved && c.LastSeenLatitude.HasValue && c.LastSeenLongitude.HasValue)
+                    .Select(c => new
+                    {
+                        c.Id,
+                        c.Title,
+                        c.Status,
+                        c.Priority,
+                        c.LastSeenLatitude,
+                        c.LastSeenLongitude,
+                        c.LastSeenLocation,
+                        c.CreatedAt,
+                        Runner = c.Runner != null ? new
+                        {
+                            c.Runner.Id,
+                            c.Runner.Name,
+                            c.Runner.Age,
+                            c.Runner.Gender,
+                            c.Runner.LastKnownLocation,
+                            c.Runner.LastLocationUpdate
+                        } : null
+                    })
+                    .ToListAsync();
+
+                return Ok(new
+                {
+                    success = true,
+                    cases = cases,
+                    count = cases.Count
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving map data");
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
         /// Get public cases (no authentication required)
         /// </summary>
         [HttpGet("publiccases")]
@@ -259,7 +397,7 @@ namespace _241RunnersAPI.Controllers
         /// <summary>
         /// Get all cases (admin only)
         /// </summary>
-        [HttpGet]
+        [HttpGet("admin")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllCases([FromQuery] string? status = null, [FromQuery] string? priority = null, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
         {

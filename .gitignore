@@ -141,4 +141,13 @@ sw.js
 workbox-*.js
 
 # Azure deployment
-.azure/ 
+.azure/
+
+# Debug logs and deployment artifacts
+LogFiles/
+**/LogFiles/
+*.zip
+deployments/
+**/deployments/
+publish/
+**/publish/ 

@@ -1,9 +1,0 @@
-<step title="Incoming Request" date="2025-09-08T00:32:07.285" instance="ab4c51" url="/api/deployments?warmup=true" method="GET" type="request" pid="821,1,5" Accept="*/*" Host="241runners-api.scm.azurewebsites.net" User-Agent="AZURECLI/2.76.0 (HOMEBREW)" Accept-Encoding="gzip, deflate" Authorization="Bea..." Cookie="ARRAffinity=ab4c5168e31020da211c082be26c6c82aba0cf9ced664bcf9cca711c40b54858; ARRAffinitySameSite=ab4c5168e31020da211c082be26c6c82aba0cf9ced664bcf9cca711c40b54858" x-ms-client-request-id="3a6388d8-8c4b-11f0-84a7-5aba6e9e812a" X-ARR-LOG-ID="3a6388d8-8c4b-11f0-84a7-5aba6e9e812a" CLIENT-IP="97.75.150.69:15598" X-SITE-DEPLOYMENT-ID="241runners-api" WAS-DEFAULT-HOSTNAME="241runners-api.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/deployments?warmup=true" X-Client-IP="97.75.150.69" X-Client-Port="15598" >
-  <step title="DeploymentService.GetCurrentEtag" date="2025-09-08T00:32:15.630" >
-    <step title="Current Etag: &quot;8ddee6ca4294b42&quot;, Cached Etag: " date="2025-09-08T00:32:16.241" /><!-- duration: 90ms -->
-  </step><!-- duration: 743ms -->
-  <step title="DeploymentService.GetDeployResults" date="2025-09-08T00:32:16.442" >
-    <step title="DeploymentManager.GetResults" date="2025-09-08T00:32:16.482" /><!-- duration: 6652ms -->
-  </step><!-- duration: 6835ms -->
-  <step title="Outgoing response" date="2025-09-08T00:32:25.073" type="response" statusCode="200" statusText="OK" /><!-- duration: 92ms -->
-</step><!-- duration: 17929ms -->

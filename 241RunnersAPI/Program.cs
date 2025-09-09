@@ -45,30 +45,11 @@ builder.Services.AddAuthorization();
 builder.Services.AddHealthChecks();
 
 // Add CORS - Production domains only
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("ProductionCORS", policy =>
-    {
-        policy.WithOrigins(
-                "https://241runnersawareness.org",
-                "https://www.241runnersawareness.org")
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
-    });
-    
-    // Development CORS policy
-    options.AddPolicy("DevelopmentCORS", policy =>
-    {
-        policy.SetIsOriginAllowed(origin => 
-            origin == "https://241runnersawareness.org" ||
-            origin == "https://www.241runnersawareness.org" ||
-            origin == "http://localhost:8080" ||
-            origin == "http://localhost:3000")
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
+builder.Services.AddCors(o =>
+    o.AddPolicy("ProdCors", p => p
+        .WithOrigins("https://241runnersawareness.org","https://www.241runnersawareness.org")
+        .AllowAnyHeader()
+        .AllowAnyMethod()));
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -127,15 +108,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-// Add CORS - Use production policy in production, development policy in development
-if (app.Environment.IsDevelopment())
-{
-    app.UseCors("DevelopmentCORS");
-}
-else
-{
-    app.UseCors("ProductionCORS");
-}
+app.UseCors("ProdCors");   // put this BEFORE auth
 
 // Enable Swagger based on configuration
 var swaggerEnabled = builder.Configuration.GetValue<bool>("Swagger:Enabled", true);
@@ -165,7 +138,20 @@ app.MapControllers();
 
 // Map health check endpoints
 app.MapHealthChecks("/health");
-app.MapHealthChecks("/api/auth/health");
+app.MapHealthChecks("/api/auth/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    ResponseWriter = async (context, report) =>
+    {
+        context.Response.ContentType = "application/json";
+        var response = new
+        {
+            status = report.Status.ToString().ToLower(),
+            timestamp = DateTime.UtcNow,
+            environment = app.Environment.EnvironmentName
+        };
+        await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(response));
+    }
+});
 
 // Add a simple health endpoint that doesn't require database
 app.MapGet("/api/health", () => new { 

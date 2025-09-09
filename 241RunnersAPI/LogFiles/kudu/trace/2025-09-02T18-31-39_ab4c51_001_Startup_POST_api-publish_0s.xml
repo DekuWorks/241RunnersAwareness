@@ -1,3 +1,0 @@
-<step title="Startup Request" date="2025-09-02T18:31:39.360" instance="ab4c51" url="/api/publish?type=zip" method="POST" type="request" pid="823,1,15" ScmType="None" >
-  <step title="Cleanup Xml Logs" date="2025-09-02T18:31:39.373" /><!-- duration: 30ms -->
-</step><!-- duration: 141ms -->

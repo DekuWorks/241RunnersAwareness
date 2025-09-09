@@ -25,6 +25,7 @@ namespace _241RunnersAPI.Controllers
         /// Get all admin users
         /// </summary>
         [HttpGet("admins")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAdmins()
         {
             try
@@ -77,6 +78,7 @@ namespace _241RunnersAPI.Controllers
         /// Seed admin users (development only)
         /// </summary>
         [HttpPost("seed-admins")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SeedAdmins()
         {
             try
@@ -272,6 +274,7 @@ namespace _241RunnersAPI.Controllers
         /// Get dashboard statistics
         /// </summary>
         [HttpGet("dashboard-stats")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetDashboardStats()
         {
             try
@@ -391,10 +394,99 @@ namespace _241RunnersAPI.Controllers
                 return StatusCode(500, new { success = false, message = "Internal server error" });
             }
         }
+
+        /// <summary>
+        /// Get all users (temporary - no auth for debugging)
+        /// </summary>
+        [HttpGet("users-debug")]
+        public async Task<IActionResult> GetUsersDebug()
+        {
+            try
+            {
+                var users = await _context.Users
+                    .Select(u => new UserResponseDto
+                    {
+                        Id = u.Id,
+                        Email = u.Email,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        FullName = $"{u.FirstName} {u.LastName}",
+                        Role = u.Role,
+                        IsActive = u.IsActive,
+                        CreatedAt = u.CreatedAt,
+                        LastLoginAt = u.LastLoginAt,
+                        UpdatedAt = u.UpdatedAt,
+                        PhoneNumber = u.PhoneNumber,
+                        Address = u.Address,
+                        City = u.City,
+                        State = u.State,
+                        ZipCode = u.ZipCode,
+                        Organization = u.Organization,
+                        Title = u.Title,
+                        Credentials = u.Credentials,
+                        Specialization = u.Specialization,
+                        YearsOfExperience = u.YearsOfExperience,
+                        ProfileImageUrl = u.ProfileImageUrl,
+                        EmergencyContactName = u.EmergencyContactName,
+                        EmergencyContactPhone = u.EmergencyContactPhone,
+                        EmergencyContactRelationship = u.EmergencyContactRelationship,
+                        IsEmailVerified = u.IsEmailVerified,
+                        IsPhoneVerified = u.IsPhoneVerified,
+                        EmailVerifiedAt = u.EmailVerifiedAt,
+                        PhoneVerifiedAt = u.PhoneVerifiedAt
+                    })
+                    .ToListAsync();
+
+                return Ok(new { success = true, users = users, count = users.Count });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving users for debug");
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
+        /// Report client-side errors
+        /// </summary>
+        [HttpPost("errors")]
+        public IActionResult ReportError([FromBody] ErrorReportDto errorReport)
+        {
+            try
+            {
+                _logger.LogWarning("Client Error Report: {Message} | URL: {Url} | Severity: {Severity}", 
+                    errorReport.Message, errorReport.Url, errorReport.Severity);
+
+                // Log additional context if available
+                if (errorReport.Context != null)
+                {
+                    _logger.LogInformation("Error Context: {Context}", System.Text.Json.JsonSerializer.Serialize(errorReport.Context));
+                }
+
+                return Ok(new { success = true, message = "Error reported successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error processing error report");
+                return StatusCode(500, new { success = false, message = "Failed to process error report" });
+            }
+        }
     }
 
     public class UpdateUserStatusDto
     {
         public bool IsActive { get; set; }
+    }
+
+    public class ErrorReportDto
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Timestamp { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;
+        public string? Stack { get; set; }
+        public string Url { get; set; } = string.Empty;
+        public string UserAgent { get; set; } = string.Empty;
+        public string Severity { get; set; } = "medium";
+        public object? Context { get; set; }
     }
 }

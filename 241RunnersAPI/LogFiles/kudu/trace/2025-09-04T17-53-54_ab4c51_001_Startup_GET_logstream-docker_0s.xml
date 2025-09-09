@@ -1,3 +1,0 @@
-<step title="Startup Request" date="2025-09-04T17:53:54.808" instance="ab4c51" url="/logstream/docker" method="GET" type="request" pid="822,1,18" ScmType="None" >
-  <step title="Cleanup Xml Logs" date="2025-09-04T17:53:54.856" /><!-- duration: 44ms -->
-</step><!-- duration: 101ms -->

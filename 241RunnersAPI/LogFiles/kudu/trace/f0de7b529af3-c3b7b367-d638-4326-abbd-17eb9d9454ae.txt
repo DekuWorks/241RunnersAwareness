@@ -1,3 +1,0 @@
-2025-09-07T21:37:42  Startup Request, url: /logstream/application, method: GET, type: request, pid: 820,1,5, ScmType: ExternalGit
-2025-09-07T21:39:43    Error occurred, type: error, text: LogStreamManager: ProcessRequest end
-2025-09-07T21:39:43  Error occurred, type: error, text: LogStreamManager: Inside Reset

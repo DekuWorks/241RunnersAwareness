@@ -1,4 +1,4 @@
-@_241RunnersAPI_HostAddress = http://localhost:5051
+@_241RunnersAPI_HostAddress = https://241runners-api.azurewebsites.net
 
 GET {{_241RunnersAPI_HostAddress}}/weatherforecast/
 Accept: application/json
