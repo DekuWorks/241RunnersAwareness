@@ -357,6 +357,7 @@
         font-size: 1.5rem;
       }
     }
+    
     /* Image Upload Styles */
     .image-upload-container {
       display: flex;
@@ -440,7 +441,8 @@
         flex-direction: column;
         gap: 1rem;
       }
-    }  </style>
+    }
+  </style>
 </head>
 <body>
   <!-- Header -->
@@ -452,33 +454,6 @@
           <span class="brand-text">241 Runners Awareness</span>
         </a>
       </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>      
       <div class="nav-menu" id="navMenu">
         <a href="index.html">Home</a>
         <a href="aboutus.html">About</a>
@@ -491,65 +466,12 @@
         <a href="my-cases.html">My Cases</a>
         <a href="#" id="logoutBtn" class="nav-login">Logout</a>
       </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>      
       <div class="nav-toggle" id="navToggle">
         <span></span>
         <span></span>
         <span></span>
       </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>    </nav>
+    </nav>
   </header>
 
   <!-- Main Content -->
@@ -557,65 +479,14 @@
     <!-- Profile Header -->
     <div class="profile-header">
       <div class="profile-avatar" id="profileAvatar">
-      <img id="profileImage" src="" alt="Profile Image" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
-      <div id="avatarPlaceholder" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 3rem; color: #dc2626;">👤</div>        👤
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
+        <img id="profileImage" src="" alt="Profile Image" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+        <div id="avatarPlaceholder" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 3rem; color: #dc2626;">👤</div>
       </div>
-    </div>      </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>      <h1 class="profile-name" id="profileName">Loading...</h1>
+      <h1 class="profile-name" id="profileName">Loading...</h1>
       <p class="profile-email" id="profileEmail">Loading...</p>
       <span class="profile-role" id="profileRole">Loading...</span>
     </div>
+
     <!-- Profile Image Upload Section -->
     <div class="profile-section" style="margin-bottom: 2rem;">
       <h2 class="section-title">Profile Image</h2>
@@ -643,6 +514,7 @@
         </div>
       </div>
     </div>
+
     <!-- Profile Content -->
     <div class="profile-content">
       <!-- Personal Information -->
@@ -658,210 +530,28 @@
             <span class="info-label">First Name</span>
             <span class="info-value" id="firstName">Loading...</span>
           </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>          <div class="info-item">
+          <div class="info-item">
             <span class="info-label">Last Name</span>
             <span class="info-value" id="lastName">Loading...</span>
           </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>          <div class="info-item">
+          <div class="info-item">
             <span class="info-label">Email</span>
             <span class="info-value" id="email">Loading...</span>
           </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>          <div class="info-item">
+          <div class="info-item">
             <span class="info-label">Phone</span>
             <span class="info-value" id="phone">Loading...</span>
           </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>          <div class="info-item">
+          <div class="info-item">
             <span class="info-label">Role</span>
             <span class="info-value" id="role">Loading...</span>
           </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>          <div class="info-item">
+          <div class="info-item">
             <span class="info-label">Member Since</span>
             <span class="info-value" id="memberSince">Loading...</span>
           </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
         </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>        </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>
+
         <!-- Edit Personal Information Form -->
         <div class="edit-form" id="personalInfoForm">
           <form id="updatePersonalForm">
@@ -869,93 +559,15 @@
               <label for="editFirstName">First Name</label>
               <input type="text" id="editFirstName" name="firstName" required>
             </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>            <div class="form-group">
+            <div class="form-group">
               <label for="editLastName">Last Name</label>
               <input type="text" id="editLastName" name="lastName" required>
             </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>            <div class="form-group">
+            <div class="form-group">
               <label for="editPhone">Phone Number</label>
               <input type="tel" id="editPhone" name="phoneNumber">
             </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>            <div class="form-group">
+            <div class="form-group">
               <label for="editRole">Role</label>
               <select id="editRole" name="role" required>
                 <option value="user">User</option>
@@ -965,118 +577,14 @@
                 <option value="adoptive_parent">Adoptive Parent</option>
               </select>
             </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>            <div class="form-actions">
+            <div class="form-actions">
               <button type="button" class="btn btn-secondary" onclick="toggleEditForm('personalInfo')">Cancel</button>
               <button type="submit" class="btn btn-primary">Save Changes</button>
             </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
+          </form>
         </div>
       </div>
-    </div>          </form>
-        </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>      </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>
+
       <!-- Account Statistics -->
       <div class="profile-section">
         <h2 class="section-title">
@@ -1089,177 +597,21 @@
             <span class="info-label">Total Cases Reported</span>
             <span class="info-value" id="totalCases">-</span>
           </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>          <div class="info-item">
+          <div class="info-item">
             <span class="info-label">Active Cases</span>
             <span class="info-value" id="activeCases">-</span>
           </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>          <div class="info-item">
+          <div class="info-item">
             <span class="info-label">Resolved Cases</span>
             <span class="info-value" id="resolvedCases">-</span>
           </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>          <div class="info-item">
+          <div class="info-item">
             <span class="info-label">Cases This Month</span>
             <span class="info-value" id="monthlyCases">-</span>
           </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
         </div>
       </div>
-    </div>        </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>      </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>
+
       <!-- My Cases -->
       <div class="profile-section my-cases-section">
         <h2 class="section-title">
@@ -1270,114 +622,10 @@
         
         <div id="myCasesList">
           <div class="loading">Loading your cases...</div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
         </div>
       </div>
-    </div>        </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>      </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>    </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>  </main>
+    </div>
+  </main>
 
   <!-- Footer -->
   <footer class="footer">
@@ -1388,60 +636,8 @@
         <a href="terms.html">Terms of Use</a>
         <a href="aboutus.html">About Us</a>
       </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>    </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>  </footer>
+    </div>
+  </footer>
 
   <script>
     // API Configuration
@@ -1569,63 +765,11 @@
         container.innerHTML = `
           <div class="empty-state">
             <div class="empty-state-icon">📋</div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>            <h3>No cases yet</h3>
+            <h3>No cases yet</h3>
             <p>You haven't reported any cases yet.</p>
             <a href="report-case.html" class="btn-small btn-primary-small">Report Your First Case</a>
           </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>        `;
+        `;
         return;
       }
 
@@ -1635,148 +779,18 @@
             <li class="case-item">
               <div class="case-header">
                 <div class="case-name">${caseItem.fullName || `${caseItem.firstName} ${caseItem.lastName}`}</div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>                <div class="case-status status-${caseItem.status}">${caseItem.status}</div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>              </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>              <div class="case-details">
+                <div class="case-status status-${caseItem.status}">${caseItem.status}</div>
+              </div>
+              <div class="case-details">
                 <strong>Age:</strong> ${caseItem.age} | 
                 <strong>Location:</strong> ${caseItem.city}, ${caseItem.state} | 
                 <strong>Reported:</strong> ${new Date(caseItem.createdAt).toLocaleDateString()}
               </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>              <div class="case-actions">
+              <div class="case-actions">
                 <a href="my-cases.html?id=${caseItem.id}" class="btn-small btn-primary-small">View Details</a>
                 <a href="report-case.html?update=${caseItem.id}" class="btn-small btn-secondary-small">Update</a>
               </div>
-    <!-- Profile Image Upload Section -->
-    <div class="profile-section" style="margin-bottom: 2rem;">
-      <h2 class="section-title">Profile Image</h2>
-      <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
-        <div class="upload-section">
-          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-          <button type="button" id="uploadImageBtn" class="upload-btn">
-            📷 Upload New Image
-          </button>
-          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
-            🗑️ Remove Image
-          </button>
-          <div class="upload-progress" id="uploadProgress" style="display: none;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </div>            </li>
+            </li>
           `).join('')}
         </ul>
       `;
@@ -1874,7 +888,7 @@
     let currentUser = null;
 
     // Load user profile data
-    async function loadUserProfile() {
+    async function loadUserProfileData() {
       try {
         const userData = JSON.parse(localStorage.getItem("user"));
         if (!userData || !userData.token) {
@@ -1894,7 +908,6 @@
           const result = await response.json();
           if (result.success) {
             currentUser = result.user;
-            updateProfileDisplay(result.user);
             updateProfileImage(result.user.profileImageUrl);
           }
         } else {
@@ -1903,27 +916,6 @@
       } catch (error) {
         console.error("Error loading profile:", error);
       }
-    }
-
-    // Update profile display
-    function updateProfileDisplay(user) {
-      document.getElementById("profileName").textContent = user.fullName || `${user.firstName} ${user.lastName}`;
-      document.getElementById("profileEmail").textContent = user.email;
-      document.getElementById("profileRole").textContent = user.role;
-      
-      // Update form fields
-      document.getElementById("firstName").value = user.firstName || "";
-      document.getElementById("lastName").value = user.lastName || "";
-      document.getElementById("phoneNumber").value = user.phoneNumber || "";
-      document.getElementById("address").value = user.address || "";
-      document.getElementById("city").value = user.city || "";
-      document.getElementById("state").value = user.state || "";
-      document.getElementById("zipCode").value = user.zipCode || "";
-      document.getElementById("organization").value = user.organization || "";
-      document.getElementById("title").value = user.title || "";
-      document.getElementById("credentials").value = user.credentials || "";
-      document.getElementById("specialization").value = user.specialization || "";
-      document.getElementById("yearsOfExperience").value = user.yearsOfExperience || "";
     }
 
     // Update profile image display
@@ -2071,7 +1063,7 @@
           // Update local display
           updateProfileImage(imageUrl);
           // Reload profile data
-          await loadUserProfile();
+          await loadUserProfileData();
         } else {
           throw new Error("Failed to update profile with image");
         }
@@ -2100,7 +1092,7 @@
 
         if (response.ok) {
           updateProfileImage(null);
-          await loadUserProfile();
+          await loadUserProfileData();
           alert("Profile image removed successfully");
         } else {
           throw new Error("Failed to remove image");
@@ -2109,12 +1101,16 @@
         console.error("Error removing image:", error);
         alert(`Failed to remove image: ${error.message}`);
       }
-    }    // Initialize profile
+    }
+
+    // Initialize profile
     document.addEventListener('DOMContentLoaded', async function() {
       await loadConfig();
       loadUserProfile();
       await loadUserCases();
-      setupImageUpload();    });
+      await loadUserProfileData();
+      setupImageUpload();
+    });
   </script>
 </body>
 </html>
