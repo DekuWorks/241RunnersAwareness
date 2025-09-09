@@ -1091,10 +1091,10 @@
                 
                 // Try to load from API first, fallback to mock data
                 const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
-                console.log('📡 Users API URL:', `${apiUrl}/auth/admin/users`);
+                console.log('📡 Users API URL:', `${apiUrl}/admin/users`);
                 
                 try {
-                    const response = await fetch(`${apiUrl}/auth/admin/users`, {
+                    const response = await fetch(`${apiUrl}/admin/users`, {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('ra_admin_token')}`,
                             'Content-Type': 'application/json'
