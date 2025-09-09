@@ -1,0 +1,176 @@
+2025-09-08T23:01:31  Fetching changes.
+2025-09-08T23:01:31    Starting  LocalZipHandler
+2025-09-08T23:01:31    Cleaning up temp folders from previous zip deployments and extracting pushed zip file /tmp/zipdeploy/44517433-e337-4071-a7c7-4e0ef65966dc.zip (6.64 MB) to /tmp/zipdeploy/extracted
+2025-09-08T23:01:35  Updating submodules.
+2025-09-08T23:01:35  Preparing deployment for commit id '6c92d7cf-8'.
+2025-09-08T23:01:35  PreDeployment: context.CleanOutputPath False
+2025-09-08T23:01:36  PreDeployment: context.OutputPath /home/site/wwwroot
+2025-09-08T23:01:36  Running build. Project type: OneDeploy
+2025-09-08T23:01:36  Copying the manifest
+2025-09-08T23:01:36  Running deployment command...
+2025-09-08T23:01:36    Command: /opt/Kudu/Scripts/parallel_rsync.sh /tmp/zipdeploy/extracted /home/site/wwwroot 8 /tmp/ False False  
+2025-09-08T23:01:36    Run rsync from: /tmp/zipdeploy/extracted/ to: /home/site/wwwroot/ in 8 parallel threads
+2025-09-08T23:01:36    Delete options: clean=False, use manifest=False, directory to ignore=
+2025-09-08T23:01:36    Prev manifest = /home/site/deployments/a54f75bb-944e-45c8-988d-17cfc462cce1/manifest and next /home/site/deployments/6c92d7cf-8df8-456f-a90f-33ce8868a142/manifest
+2025-09-08T23:01:36    Cleaning up /tmp//filelist.txt and /tmp//splits
+2025-09-08T23:01:36    Creating a list of all files at /tmp//filelist.txt
+2025-09-08T23:01:36    No directory to exclude.
+2025-09-08T23:01:36    Created /tmp//filelist.txt. Total number of files to be synced = 58.
+2025-09-08T23:01:36    Created batches from the list of files. Processing 8 files in each thread
+2025-09-08T23:01:36    Running rsync for filelist /tmp//splits/split.aa from /tmp/zipdeploy/extracted/ to /home/site/wwwroot/
+2025-09-08T23:01:36    Running rsync for filelist /tmp//splits/split.ab from /tmp/zipdeploy/extracted/ to /home/site/wwwroot/
+2025-09-08T23:01:36    Running rsync for filelist /tmp//splits/split.ac from /tmp/zipdeploy/extracted/ to /home/site/wwwroot/
+2025-09-08T23:01:37    Running rsync for filelist /tmp//splits/split.ad from /tmp/zipdeploy/extracted/ to /home/site/wwwroot/
+2025-09-08T23:01:37    Running rsync for filelist /tmp//splits/split.ae from /tmp/zipdeploy/extracted/ to /home/site/wwwroot/
+2025-09-08T23:01:37    Running rsync for filelist /tmp//splits/split.ag from /tmp/zipdeploy/extracted/ to /home/site/wwwroot/
+2025-09-08T23:01:37    Running rsync for filelist /tmp//splits/split.ah from /tmp/zipdeploy/extracted/ to /home/site/wwwroot/
+2025-09-08T23:01:37    Running rsync for filelist /tmp//splits/split.af from /tmp/zipdeploy/extracted/ to /home/site/wwwroot/
+2025-09-08T23:01:37    
+2025-09-08T23:01:37    Number of files: 2 (reg: 2)
+2025-09-08T23:01:37    Number of created files: 0
+2025-09-08T23:01:37    Number of deleted files: 0
+2025-09-08T23:01:37    Number of regular files transferred: 0
+2025-09-08T23:01:37    Total file size: 276.61K bytes
+2025-09-08T23:01:37    Total transferred file size: 0 bytes
+2025-09-08T23:01:37    Literal data: 0 bytes
+2025-09-08T23:01:37    Matched data: 0 bytes
+2025-09-08T23:01:37    File list size: 0
+2025-09-08T23:01:37    File list generation time: 0.001 seconds
+2025-09-08T23:01:37    File list transfer time: 0.000 seconds
+2025-09-08T23:01:37    Total bytes sent: 161
+2025-09-08T23:01:37    Total bytes received: 22
+2025-09-08T23:01:37    
+2025-09-08T23:01:37    sent 161 bytes  received 22 bytes  366.00 bytes/sec
+2025-09-08T23:01:37    total size is 276.61K  speedup is 1,511.50
+2025-09-08T23:01:37    Attempt 1: Rsync for filelist /tmp//splits/split.ah completed with exit code 0
+2025-09-08T23:01:37    
+2025-09-08T23:01:37    Number of files: 8 (reg: 8)
+2025-09-08T23:01:37    Number of created files: 0
+2025-09-08T23:01:37    Number of deleted files: 0
+2025-09-08T23:01:37    Number of regular files transferred: 1
+2025-09-08T23:01:37    Total file size: 4.85M bytes
+2025-09-08T23:01:37    Total transferred file size: 124.45K bytes
+2025-09-08T23:01:37    Literal data: 124.45K bytes
+2025-09-08T23:01:37    Matched data: 0 bytes
+2025-09-08T23:01:37    File list size: 0
+2025-09-08T23:01:37    File list generation time: 0.001 seconds
+2025-09-08T23:01:37    File list transfer time: 0.000 seconds
+2025-09-08T23:01:37    Total bytes sent: 28.05K
+2025-09-08T23:01:37    Total bytes received: 56
+2025-09-08T23:01:37    
+2025-09-08T23:01:37    sent 28.05K bytes  received 56 bytes  56.20K bytes/sec
+2025-09-08T23:01:37    total size is 4.85M  speedup is 172.61
+2025-09-08T23:01:37    Attempt 1: Rsync for filelist /tmp//splits/split.ab completed with exit code 0
+2025-09-08T23:01:37    
+2025-09-08T23:01:37    Number of files: 8 (reg: 8)
+2025-09-08T23:01:37    Number of created files: 0
+2025-09-08T23:01:37    Number of deleted files: 0
+2025-09-08T23:01:37    Number of regular files transferred: 0
+2025-09-08T23:01:37    Total file size: 3.87M bytes
+2025-09-08T23:01:37    Total transferred file size: 0 bytes
+2025-09-08T23:01:37    Literal data: 0 bytes
+2025-09-08T23:01:37    Matched data: 0 bytes
+2025-09-08T23:01:37    File list size: 0
+2025-09-08T23:01:37    File list generation time: 0.002 seconds
+2025-09-08T23:01:37    File list transfer time: 0.000 seconds
+2025-09-08T23:01:37    Total bytes sent: 424
+2025-09-08T23:01:37    Total bytes received: 40
+2025-09-08T23:01:37    
+2025-09-08T23:01:37    sent 424 bytes  received 40 bytes  928.00 bytes/sec
+2025-09-08T23:01:37    total size is 3.87M  speedup is 8,337.58
+2025-09-08T23:01:37    Attempt 1: Rsync for filelist /tmp//splits/split.af completed with exit code 0
+2025-09-08T23:01:37    
+2025-09-08T23:01:37    Number of files: 12 (reg: 8, dir: 4)
+2025-09-08T23:01:37    Number of created files: 0
+2025-09-08T23:01:37    Number of deleted files: 0
+2025-09-08T23:01:37    Number of regular files transferred: 0
+2025-09-08T23:01:37    Total file size: 2.36M bytes
+2025-09-08T23:01:37    Total transferred file size: 0 bytes
+2025-09-08T23:01:37    Literal data: 0 bytes
+2025-09-08T23:01:37    Matched data: 0 bytes
+2025-09-08T23:01:37    File list size: 0
+2025-09-08T23:01:37    File list generation time: 0.030 seconds
+2025-09-08T23:01:37    File list transfer time: 0.000 seconds
+2025-09-08T23:01:37    Total bytes sent: 502
+2025-09-08T23:01:38    Total bytes received: 52
+2025-09-08T23:01:38    
+2025-09-08T23:01:38    sent 502 bytes  received 52 bytes  1.11K bytes/sec
+2025-09-08T23:01:38    total size is 2.36M  speedup is 4,252.87
+2025-09-08T23:01:38    Attempt 1: Rsync for filelist /tmp//splits/split.ae completed with exit code 0
+2025-09-08T23:01:38    
+2025-09-08T23:01:38    Number of files: 20 (reg: 8, dir: 12)
+2025-09-08T23:01:38    Number of created files: 0
+2025-09-08T23:01:38    Number of deleted files: 0
+2025-09-08T23:01:38    Number of regular files transferred: 0
+2025-09-08T23:01:38    Total file size: 4.34M bytes
+2025-09-08T23:01:38    Total transferred file size: 0 bytes
+2025-09-08T23:01:38    Literal data: 0 bytes
+2025-09-08T23:01:38    Matched data: 0 bytes
+2025-09-08T23:01:38    File list size: 0
+2025-09-08T23:01:38    File list generation time: 0.002 seconds
+2025-09-08T23:01:38    File list transfer time: 0.000 seconds
+2025-09-08T23:01:38    Total bytes sent: 752
+2025-09-08T23:01:38    Total bytes received: 76
+2025-09-08T23:01:38    
+2025-09-08T23:01:38    sent 752 bytes  received 76 bytes  1.66K bytes/sec
+2025-09-08T23:01:38    total size is 4.34M  speedup is 5,239.83
+2025-09-08T23:01:38    Attempt 1: Rsync for filelist /tmp//splits/split.ad completed with exit code 0
+2025-09-08T23:01:38    
+2025-09-08T23:01:38    Number of files: 8 (reg: 8)
+2025-09-08T23:01:38    Number of created files: 0
+2025-09-08T23:01:38    Number of deleted files: 0
+2025-09-08T23:01:38    Number of regular files transferred: 1
+2025-09-08T23:01:38    Total file size: 1.10M bytes
+2025-09-08T23:01:38    Total transferred file size: 64.76K bytes
+2025-09-08T23:01:38    Literal data: 64.76K bytes
+2025-09-08T23:01:38    Matched data: 0 bytes
+2025-09-08T23:01:38    File list size: 0
+2025-09-08T23:01:38    File list generation time: 0.015 seconds
+2025-09-08T23:01:38    File list transfer time: 0.000 seconds
+2025-09-08T23:01:38    Total bytes sent: 27.12K
+2025-09-08T23:01:38    Total bytes received: 56
+2025-09-08T23:01:38    
+2025-09-08T23:01:38    sent 27.12K bytes  received 56 bytes  54.35K bytes/sec
+2025-09-08T23:01:38    total size is 1.10M  speedup is 40.46
+2025-09-08T23:01:38    Attempt 1: Rsync for filelist /tmp//splits/split.aa completed with exit code 0
+2025-09-08T23:01:38    
+2025-09-08T23:01:38    Number of files: 8 (reg: 8)
+2025-09-08T23:01:38    Number of created files: 0
+2025-09-08T23:01:38    Number of deleted files: 0
+2025-09-08T23:01:38    Number of regular files transferred: 1
+2025-09-08T23:01:38    Total file size: 929.91K bytes
+2025-09-08T23:01:38    Total transferred file size: 489 bytes
+2025-09-08T23:01:38    Literal data: 489 bytes
+2025-09-08T23:01:38    Matched data: 0 bytes
+2025-09-08T23:01:38    File list size: 0
+2025-09-08T23:01:38    File list generation time: 0.008 seconds
+2025-09-08T23:01:38    File list transfer time: 0.000 seconds
+2025-09-08T23:01:38    Total bytes sent: 769
+2025-09-08T23:01:38    Total bytes received: 56
+2025-09-08T23:01:38    
+2025-09-08T23:01:38    sent 769 bytes  received 56 bytes  1.65K bytes/sec
+2025-09-08T23:01:38    total size is 929.91K  speedup is 1,127.17
+2025-09-08T23:01:38    Attempt 1: Rsync for filelist /tmp//splits/split.ac completed with exit code 0
+2025-09-08T23:01:38    
+2025-09-08T23:01:38    Number of files: 8 (reg: 8)
+2025-09-08T23:01:38    Number of created files: 0
+2025-09-08T23:01:38    Number of deleted files: 0
+2025-09-08T23:01:38    Number of regular files transferred: 1
+2025-09-08T23:01:38    Total file size: 2.01M bytes
+2025-09-08T23:01:38    Total transferred file size: 289.28K bytes
+2025-09-08T23:01:38    Literal data: 289.28K bytes
+2025-09-08T23:01:38    Matched data: 0 bytes
+2025-09-08T23:01:38    File list size: 0
+2025-09-08T23:01:38    File list generation time: 0.001 seconds
+2025-09-08T23:01:38    File list transfer time: 0.000 seconds
+2025-09-08T23:01:38    Total bytes sent: 85.25K
+2025-09-08T23:01:39    Total bytes received: 56
+2025-09-08T23:01:39    
+2025-09-08T23:01:39    sent 85.25K bytes  received 56 bytes  170.61K bytes/sec
+2025-09-08T23:01:39    total size is 2.01M  speedup is 23.54
+2025-09-08T23:01:39    Attempt 1: Rsync for filelist /tmp//splits/split.ag completed with exit code 0
+2025-09-08T23:01:39    Completed successfully in 0 seconds
+2025-09-08T23:01:39  Build completed succesfully.
+2025-09-08T23:01:39  Running post deployment command(s)...
+2025-09-08T23:01:39  Triggering container recycle for OneDeploy by adding/updating restartTrigger.txt to the site root path
+2025-09-08T23:01:39  Deployment successful. deployer = OneDeploy deploymentPath = OneDeploy

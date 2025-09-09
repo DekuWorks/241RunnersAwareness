@@ -19,7 +19,7 @@ class AdminRealtime {
         
         // API Configuration
         this.apiBaseUrl = window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
-        this.signalRUrl = this.apiBaseUrl.replace('/api', '/adminHub');
+        this.signalRUrl = this.apiBaseUrl.replace('/api', '/hubs/admin');
         
         console.log('🔌 AdminRealtime initialized with SignalR URL:', this.signalRUrl);
     }

@@ -12,7 +12,7 @@
     <meta http-equiv="Cache-Control" content="no-cache">
     
     <!-- Favicon with cache busting -->
-    <link rel="icon" type="image/x-icon" href="assets/images/241-logo.jpg?v=20250107">
+    <link rel="icon" type="image/x-icon" href="../assets/images/241-logo.jpg?v=20250107">
     
     <!-- External Stylesheets with cache busting -->
     <link rel="stylesheet" href="/styles.css?v=20250107">
@@ -1058,7 +1058,6 @@
                     } else {
                         console.error('Health check failed:', healthData.reason);
                     }
-                }
                 
                 // Always check system status
                 await checkSystemStatus();
@@ -1068,8 +1067,8 @@
                 hideLoadingState();
                 
             } catch (error) {
-                console.error('❌ Error loading dashboard data:', error);
-                showToast('Failed to load dashboard data. Please refresh the page.', 'error');
+                console.error('Error loading dashboard data:', error);
+                showToast('Failed to load dashboard data', 'error');
                 hideLoadingState();
             }
         }

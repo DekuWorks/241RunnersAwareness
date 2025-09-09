@@ -7,7 +7,7 @@ set -e
 # Tests the SignalR-based real-time admin dashboard functionality
 
 API_BASE_URL="https://241runners-api.azurewebsites.net/api"
-SIGNALR_URL="https://241runners-api.azurewebsites.net/adminHub"
+SIGNALR_URL="https://241runners-api.azurewebsites.net/hubs/admin"
 
 log_info() {
     echo "[INFO] $1"

@@ -1,0 +1,46 @@
+<step title="Incoming Request" date="2025-09-08T22:58:24.817" instance="93ec31" url="/api/publish?type=zip" method="POST" type="request" pid="801,1,19" Accept="*/*" Host="241runners-api.scm.azurewebsites.net" User-Agent="AZURECLI/2.76.0 (HOMEBREW)" Accept-Encoding="gzip, deflate" Authorization="Bea..." Cache-Control="no-cache" Content-Type="application/octet-stream" Cookie="ARRAffinity=93ec31e1a33d787308b32dd4ce9024d0a491ad82d9245b74f0d4b584a8f7f7d0; ARRAffinitySameSite=93ec31e1a33d787308b32dd4ce9024d0a491ad82d9245b74f0d4b584a8f7f7d0" Content-Length="10480198" x-ms-client-request-id="4ee48f7a-8d07-11f0-9cc0-5aba6e9e812a" x-ms-artifact-checksum="0c236b153af745945579ae5e9ac41cc43812f8b6a4b346c4adb625f7dfe5c175" X-ARR-LOG-ID="4ee48f7a-8d07-11f0-9cc0-5aba6e9e812a" CLIENT-IP="97.75.150.69:15509" X-SITE-DEPLOYMENT-ID="241runners-api" WAS-DEFAULT-HOSTNAME="241runners-api.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/publish?type=zip" X-Client-IP="97.75.150.69" X-Client-Port="15509" >
+  <step title="OneDeploy" date="2025-09-08T22:58:24.843" >
+    <step title="Starting PushDeployAsync" date="2025-09-08T22:58:24.873" /><!-- duration: 11ms -->
+    <step title="Writing artifact to /tmp/zipdeploy/f6eef15d-f3d6-4172-a007-2edda3aa5fd7.zip" date="2025-09-08T22:58:24.893" >
+      <step title="Writing multipart request body to /tmp/zipdeploy/f6eef15d-f3d6-4172-a007-2edda3aa5fd7.zip" date="2025-09-08T22:58:24.899" /><!-- duration: 13ms -->
+    </step><!-- duration: 355ms -->
+    <step title="Attempting to fetch target branch HEAD" date="2025-09-08T22:58:25.355" /><!-- duration: 5ms -->
+    <step title="Acquiring Deployment Lock" date="2025-09-08T22:58:25.363" /><!-- duration: 4ms -->
+    <step title="Acquired Deployment Lock" date="2025-09-08T22:58:25.475" /><!-- duration: 4ms -->
+    <step title="Performing fetch based deployment" date="2025-09-08T22:58:25.487" >
+      <step title="Creating temporary deployment" date="2025-09-08T22:58:25.491" /><!-- duration: 125ms -->
+      <step title="Releasing Deployment Lock" date="2025-09-08T22:58:26.953" /><!-- duration: 6ms -->
+      <step title="Cleaning up temp folders from previous zip deployments and extracting pushed zip file /tmp/zipdeploy/f6eef15d-f3d6-4172-a007-2edda3aa5fd7.zip (9.99 MB) to /tmp/zipdeploy/extracted" date="2025-09-08T22:58:27.013" >
+        <step title="ChmodRecursive Process exited with total time taken in ms: 135" date="2025-09-08T22:58:28.840" /><!-- duration: 18ms -->
+      </step><!-- duration: 1850ms -->
+      <step title="None repository commit" date="2025-09-08T22:58:28.869" >
+        <step title="Commit id: a54f75bb-944e-45c8-988d-17cfc462cce1" date="2025-09-08T22:58:28.874" Message="OneDeploy" AuthorName="N/A" AuthorEmail="N/A" /><!-- duration: 6ms -->
+      </step><!-- duration: 15ms -->
+      <step title="Deployment timer started" date="2025-09-08T22:58:30.890" >
+        <step title="DeploymentManager.Deploy(id:a54f75bb-944e-45c8-988d-17cfc462cce1)" date="2025-09-08T22:58:30.895" >
+          <step title="Collecting changeset information" date="2025-09-08T22:58:30.920" /><!-- duration: 117ms -->
+          <step title="Updating submodules" date="2025-09-08T22:58:31.043" /><!-- duration: 1144ms -->
+          <step title="Determining deployment builder" date="2025-09-08T22:58:32.430" >
+            <step title="Builder is OneDeployBuilder" date="2025-09-08T22:58:32.450" /><!-- duration: 7ms -->
+          </step><!-- duration: 30ms -->
+          <step title="PreDeployment: context.CleanOutputPath False" date="2025-09-08T22:58:32.505" >
+            <step title="PreDeployment: context.OutputPath /home/site/wwwroot" date="2025-09-08T22:58:32.645" >
+              <step title="Building" date="2025-09-08T22:58:32.803" >
+                <step title="Executing external process" date="2025-09-08T22:58:33.476" type="process" path="starter.sh" arguments="/opt/Kudu/Scripts/parallel_rsync.sh /tmp/zipdeploy/extracted /home/site/wwwroot 8 /tmp/ False False  " /><!-- duration: 48307ms -->
+                <step title="Modified file to trigger a restart of the app container." date="2025-09-08T22:59:22.317" /><!-- duration: 6ms -->
+                <step title="Skip function trigger and logicapp sync because function is not enabled." date="2025-09-08T22:59:22.333" /><!-- duration: 7ms -->
+                <step title="Purge deployment items" date="2025-09-08T22:59:23.650" >
+                  <step title="Remove 8f051d39-, Success, received at 09/08/2025 15:54:13" date="2025-09-08T22:59:23.747" /><!-- duration: 4ms -->
+                </step><!-- duration: 106ms -->
+              </step><!-- duration: 51072ms -->
+            </step><!-- duration: 51242ms -->
+            <step title="Cleaning up temp files" date="2025-09-08T22:59:23.895" /><!-- duration: 5ms -->
+            <step title="Cleaning up temp files" date="2025-09-08T22:59:23.905" /><!-- duration: 506ms -->
+            <step title="Reloading status file with latest updates" date="2025-09-08T22:59:24.455" >
+              <step title="WebHooksManager.PublishEventAsync: PostDeployment" date="2025-09-08T22:59:24.460" /><!-- duration: 33ms -->
+            </step><!-- duration: 43ms -->
+            <step title="Cleaning up temporary deployment - fetch deployment was successful" date="2025-09-08T22:59:24.515" /><!-- duration: 5ms -->
+          </step><!-- duration: 52099ms -->
+        </step><!-- duration: 53715ms -->
+        <step title="Outgoing response" date="2025-09-08T22:59:24.624" type="response" statusCode="200" statusText="OK" /><!-- duration: 8ms -->
+      </step><!-- duration: 53745ms -->

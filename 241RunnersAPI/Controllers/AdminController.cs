@@ -328,8 +328,12 @@ namespace _241RunnersAPI.Controllers
                 var totalUsers = await _context.Users.CountAsync();
                 var totalAdmins = await _context.Users.CountAsync(u => u.Role == "admin");
                 var activeAdmins = await _context.Users.CountAsync(u => u.Role == "admin" && u.IsActive);
-                var totalRunners = await _context.Users.CountAsync(u => u.Role == "runner");
-                var totalPublicCases = 0; // Placeholder for future implementation
+                var totalRunners = await _context.Runners.CountAsync();
+                var activeRunners = await _context.Runners.CountAsync(r => r.IsActive);
+                var totalCases = await _context.Cases.CountAsync();
+                var openCases = await _context.Cases.CountAsync(c => c.Status == "Open");
+                var publicCases = await _context.Cases.CountAsync(c => c.IsPublic && c.IsApproved);
+                var verifiedCases = await _context.Cases.CountAsync(c => c.IsVerified);
 
                 return Ok(new
                 {
@@ -340,7 +344,11 @@ namespace _241RunnersAPI.Controllers
                         totalAdmins,
                         activeAdmins,
                         totalRunners,
-                        totalPublicCases,
+                        activeRunners,
+                        totalCases,
+                        openCases,
+                        publicCases,
+                        verifiedCases,
                         systemStatus = "healthy"
                     }
                 });

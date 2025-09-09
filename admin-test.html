@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login Test - 241 Runners Awareness</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #dc2626;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        .info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+        button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #b91c1c;
+        }
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        .credentials {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        pre {
+            background: #f3f4f6;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 Admin Login & Dashboard Test</h1>
+        <p>This page tests the admin authentication and dashboard functionality with the local API.</p>
+
+        <div class="test-section">
+            <h3>📋 Test Credentials</h3>
+            <div class="credentials">
+                <strong>Admin Email:</strong> admin@241runnersawareness.org<br>
+                <strong>Password:</strong> Admin123!@#
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🌐 API Connection Test</h3>
+            <button onclick="testApiConnection()">Test API Connection</button>
+            <div id="apiResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔐 Admin Login Test</h3>
+            <button onclick="testAdminLogin()">Test Admin Login</button>
+            <div id="loginResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 Dashboard Data Test</h3>
+            <button onclick="testDashboardData()" id="dashboardBtn" disabled>Test Dashboard Data</button>
+            <div id="dashboardResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>👥 Admin Users Test</h3>
+            <button onclick="testAdminUsers()" id="adminUsersBtn" disabled>Test Admin Users</button>
+            <div id="adminUsersResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 Full Integration Test</h3>
+            <button onclick="runFullTest()">Run Full Integration Test</button>
+            <div id="fullTestResult"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5051/api';
+        let authToken = null;
+
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="test-result ${type}">${message}</div>`;
+        }
+
+        function showJsonResult(elementId, data, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="test-result ${type}"><pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+        }
+
+        async function testApiConnection() {
+            try {
+                showResult('apiResult', 'Testing API connection...', 'info');
+                
+                const response = await fetch('http://localhost:5051/health');
+                const data = await response.json();
+                
+                if (data.status === 'Healthy') {
+                    showJsonResult('apiResult', data, 'success');
+                } else {
+                    showResult('apiResult', 'API is not healthy', 'error');
+                }
+            } catch (error) {
+                showResult('apiResult', `API Connection Failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAdminLogin() {
+            try {
+                showResult('loginResult', 'Testing admin login...', 'info');
+                
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@241runnersawareness.org',
+                        password: 'Admin123!@#'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.user.role === 'admin') {
+                    authToken = data.token;
+                    document.getElementById('dashboardBtn').disabled = false;
+                    document.getElementById('adminUsersBtn').disabled = false;
+                    showJsonResult('loginResult', {
+                        success: data.success,
+                        message: data.message,
+                        user: {
+                            id: data.user.id,
+                            email: data.user.email,
+                            firstName: data.user.firstName,
+                            lastName: data.user.lastName,
+                            role: data.user.role
+                        },
+                        tokenLength: data.token.length
+                    }, 'success');
+                } else {
+                    showResult('loginResult', 'Admin login failed - invalid role or credentials', 'error');
+                }
+            } catch (error) {
+                showResult('loginResult', `Login Failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testDashboardData() {
+            if (!authToken) {
+                showResult('dashboardResult', 'Please login first', 'error');
+                return;
+            }
+
+            try {
+                showResult('dashboardResult', 'Testing dashboard data...', 'info');
+                
+                const response = await fetch(`${API_BASE_URL}/auth/admin/dashboard-stats`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showJsonResult('dashboardResult', data, 'success');
+                } else {
+                    showResult('dashboardResult', 'Dashboard data failed', 'error');
+                }
+            } catch (error) {
+                showResult('dashboardResult', `Dashboard Test Failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAdminUsers() {
+            if (!authToken) {
+                showResult('adminUsersResult', 'Please login first', 'error');
+                return;
+            }
+
+            try {
+                showResult('adminUsersResult', 'Testing admin users...', 'info');
+                
+                const response = await fetch(`${API_BASE_URL}/auth/admin/admins`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showJsonResult('adminUsersResult', {
+                        success: data.success,
+                        count: data.count,
+                        admins: data.admins.map(admin => ({
+                            id: admin.id,
+                            email: admin.email,
+                            firstName: admin.firstName,
+                            lastName: admin.lastName,
+                            role: admin.role,
+                            isActive: admin.isActive
+                        }))
+                    }, 'success');
+                } else {
+                    showResult('adminUsersResult', 'Admin users test failed', 'error');
+                }
+            } catch (error) {
+                showResult('adminUsersResult', `Admin Users Test Failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function runFullTest() {
+            showResult('fullTestResult', 'Running full integration test...', 'info');
+            
+            try {
+                // Test 1: API Connection
+                await testApiConnection();
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Test 2: Admin Login
+                await testAdminLogin();
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Test 3: Dashboard Data
+                if (authToken) {
+                    await testDashboardData();
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // Test 4: Admin Users
+                    await testAdminUsers();
+                }
+                
+                showResult('fullTestResult', '✅ Full integration test completed successfully!', 'success');
+            } catch (error) {
+                showResult('fullTestResult', `❌ Full integration test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-run API connection test on page load
+        window.addEventListener('load', () => {
+            testApiConnection();
+        });
+    </script>
+</body>
+</html>

@@ -124,7 +124,7 @@ configure_app_service() {
     az webapp config set \
         --name $APP_SERVICE_NAME \
         --resource-group $RESOURCE_GROUP \
-        --arr-affinity false
+        --always-on false
     
     # Set application settings
     az webapp config appsettings set \

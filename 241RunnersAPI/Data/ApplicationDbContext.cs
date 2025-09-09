@@ -13,6 +13,8 @@ namespace _241RunnersAPI.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Runner> Runners { get; set; }
+        public DbSet<Case> Cases { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -86,6 +88,105 @@ namespace _241RunnersAPI.Data
                 entity.Property(e => e.Notes).HasMaxLength(2000);
                 entity.Property(e => e.EmailVerificationToken).HasMaxLength(255);
                 entity.Property(e => e.PasswordResetToken).HasMaxLength(255);
+            });
+
+            // Runner configuration
+            modelBuilder.Entity<Runner>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                
+                // Foreign key relationship
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                
+                // Required fields
+                entity.Property(e => e.UserId).IsRequired();
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.DateOfBirth).IsRequired();
+                entity.Property(e => e.Gender).IsRequired().HasMaxLength(20);
+                entity.Property(e => e.IsActive).IsRequired().HasDefaultValue(true);
+                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
+                
+                // String length constraints
+                entity.Property(e => e.PhysicalDescription).HasMaxLength(500);
+                entity.Property(e => e.MedicalConditions).HasMaxLength(1000);
+                entity.Property(e => e.Medications).HasMaxLength(1000);
+                entity.Property(e => e.Allergies).HasMaxLength(1000);
+                entity.Property(e => e.EmergencyInstructions).HasMaxLength(500);
+                entity.Property(e => e.PreferredRunningLocations).HasMaxLength(200);
+                entity.Property(e => e.TypicalRunningTimes).HasMaxLength(200);
+                entity.Property(e => e.ExperienceLevel).HasMaxLength(100);
+                entity.Property(e => e.SpecialNeeds).HasMaxLength(500);
+                entity.Property(e => e.AdditionalNotes).HasMaxLength(1000);
+                entity.Property(e => e.LastKnownLocation).HasMaxLength(50);
+                entity.Property(e => e.PreferredContactMethod).HasMaxLength(50);
+                entity.Property(e => e.ProfileImageUrl).HasMaxLength(500);
+                entity.Property(e => e.AdditionalImageUrls).HasMaxLength(1000);
+                entity.Property(e => e.VerifiedBy).HasMaxLength(255);
+                
+                // Default values
+                entity.Property(e => e.IsProfileComplete).HasDefaultValue(false);
+                entity.Property(e => e.IsVerified).HasDefaultValue(false);
+            });
+
+            // Case configuration
+            modelBuilder.Entity<Case>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                
+                // Foreign key relationships
+                entity.HasOne(e => e.Runner)
+                    .WithMany()
+                    .HasForeignKey(e => e.RunnerId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                
+                entity.HasOne(e => e.ReportedByUser)
+                    .WithMany()
+                    .HasForeignKey(e => e.ReportedByUserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+                
+                // Required fields
+                entity.Property(e => e.RunnerId).IsRequired();
+                entity.Property(e => e.ReportedByUserId).IsRequired();
+                entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Description).IsRequired().HasMaxLength(2000);
+                entity.Property(e => e.LastSeenDate).IsRequired();
+                entity.Property(e => e.LastSeenLocation).IsRequired().HasMaxLength(500);
+                entity.Property(e => e.Status).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.Priority).IsRequired().HasMaxLength(20);
+                entity.Property(e => e.IsPublic).IsRequired().HasDefaultValue(false);
+                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
+                
+                // String length constraints
+                entity.Property(e => e.LastSeenTime).HasMaxLength(100);
+                entity.Property(e => e.LastSeenCircumstances).HasMaxLength(1000);
+                entity.Property(e => e.ClothingDescription).HasMaxLength(200);
+                entity.Property(e => e.PhysicalCondition).HasMaxLength(200);
+                entity.Property(e => e.MentalState).HasMaxLength(200);
+                entity.Property(e => e.AdditionalInformation).HasMaxLength(1000);
+                entity.Property(e => e.ResolutionNotes).HasMaxLength(1000);
+                entity.Property(e => e.ResolvedBy).HasMaxLength(200);
+                entity.Property(e => e.ContactPersonName).HasMaxLength(100);
+                entity.Property(e => e.ContactPersonPhone).HasMaxLength(20);
+                entity.Property(e => e.ContactPersonEmail).HasMaxLength(255);
+                entity.Property(e => e.CaseImageUrls).HasMaxLength(1000);
+                entity.Property(e => e.DocumentUrls).HasMaxLength(1000);
+                entity.Property(e => e.LastSeenLatitude).HasPrecision(18, 6);
+                entity.Property(e => e.LastSeenLongitude).HasPrecision(18, 6);
+                entity.Property(e => e.EmergencyContactName).HasMaxLength(100);
+                entity.Property(e => e.EmergencyContactPhone).HasMaxLength(20);
+                entity.Property(e => e.EmergencyContactRelationship).HasMaxLength(100);
+                entity.Property(e => e.VerifiedBy).HasMaxLength(255);
+                entity.Property(e => e.ApprovedBy).HasMaxLength(255);
+                
+                // Default values
+                entity.Property(e => e.IsVerified).HasDefaultValue(false);
+                entity.Property(e => e.IsApproved).HasDefaultValue(false);
+                entity.Property(e => e.ViewCount).HasDefaultValue(0);
+                entity.Property(e => e.ShareCount).HasDefaultValue(0);
+                entity.Property(e => e.TipCount).HasDefaultValue(0);
             });
 
             // Seed data
