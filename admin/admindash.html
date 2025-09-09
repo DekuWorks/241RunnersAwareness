@@ -1033,7 +1033,7 @@
                     
                     // Handle results
                     if (usersData.status === 'fulfilled') {
-                        console.log('Users loaded:', dashboardData.users.length);
+                        console.log('Users loaded:', dashboardData.users ? dashboardData.users.length : 'undefined');
                     } else {
                         console.error('Users load failed:', usersData.reason);
                     }
@@ -1044,10 +1044,10 @@
                         console.error('Runners load failed:', runnersData.reason);
                     }
                     
-                    if (adminsData.status === 'fulfilled') {
-                        console.log('Admins loaded:', dashboardData.admins.length);
+                    if (adminsData[0].status === 'fulfilled') {
+                        console.log('Admins loaded:', dashboardData.admins ? dashboardData.admins.length : 'undefined');
                     } else {
-                        console.error('Admins load failed:', adminsData.reason);
+                        console.error('Admins load failed:', adminsData[0].reason);
                     }
                     
                     if (publicCasesData.status === 'fulfilled') {
@@ -1098,15 +1098,20 @@
                 
                 try {
                     const response = await fetch(`${apiUrl}/admin/users-debug`, {
+                        method: 'GET',
                         headers: {
-                            'Authorization': `Bearer ${localStorage.getItem('ra_admin_token')}`,
                             'Content-Type': 'application/json'
                         }
                     });
                     
                     if (response.ok) {
-                        dashboardData.users = await response.json();
-                        console.log('✅ Users loaded from API:', dashboardData.users.length);
+                        const responseData = await response.json();
+                        if (responseData.success && responseData.users) {
+                            dashboardData.users = responseData.users;
+                            console.log('✅ Users loaded from API:', dashboardData.users.length);
+                        } else {
+                            throw new Error('Invalid response format from API');
+                        }
                     } else {
                         throw new Error(`API returned ${response.status}`);
                     }
