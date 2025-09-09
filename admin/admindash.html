@@ -155,6 +155,569 @@
         .toast-close:hover {
             color: #333;
         }
+        
+        /* User Management Styles */
+        .user-management-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            border-bottom: 1px solid #e5e7eb;
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+        }
+        
+        .section-header h2 {
+            margin: 0;
+            color: #1f2937;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .section-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #b91c1c, #7f1d1d);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #6b7280;
+            border: 1px solid #d1d5db;
+        }
+        
+        .btn-outline:hover {
+            background: #f9fafb;
+            border-color: #9ca3af;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #d97706, #b45309);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .btn-icon {
+            font-size: 1rem;
+        }
+        
+        .user-controls {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e5e7eb;
+            background: #f9fafb;
+        }
+        
+        .search-filter-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: white;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 1rem;
+        }
+        
+        .filter-controls {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .filter-controls select {
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: white;
+            min-width: 120px;
+        }
+        
+        .filter-controls select:focus {
+            outline: none;
+            border-color: #dc2626;
+        }
+        
+        .bulk-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .users-table-container {
+            overflow-x: auto;
+        }
+        
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        
+        .users-table th {
+            background: #f8fafc;
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+            white-space: nowrap;
+        }
+        
+        .users-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid #f3f4f6;
+            vertical-align: middle;
+        }
+        
+        .users-table tbody tr:hover {
+            background: #f9fafb;
+        }
+        
+        .users-table tbody tr.selected {
+            background: #fef2f2;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .user-details h4 {
+            margin: 0;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .user-details p {
+            margin: 2px 0 0 0;
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+        
+        .role-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .role-admin {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        
+        .role-user {
+            background: #f0f9ff;
+            color: #0284c7;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+        
+        .status-inactive {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .action-btn-edit {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .action-btn-edit:hover {
+            background: #e5e7eb;
+        }
+        
+        .action-btn-delete {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        
+        .action-btn-delete:hover {
+            background: #fee2e2;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 20px;
+            background: #f9fafb;
+        }
+        
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .pagination button:hover:not(:disabled) {
+            background: #f3f4f6;
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination .active {
+            background: #dc2626;
+            color: white;
+            border-color: #dc2626;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: white;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        /* Bulk Actions Styles */
+        .bulk-actions-info {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #dc2626;
+        }
+
+        .bulk-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .bulk-actions-grid .btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 20px;
+            text-align: center;
+            min-height: 80px;
+        }
+
+        /* Saved Filters Styles */
+        .saved-filters-section {
+            margin-bottom: 30px;
+        }
+
+        .saved-filters-section h3 {
+            margin-bottom: 15px;
+            color: #1f2937;
+            font-size: 1.1rem;
+        }
+
+        .saved-filters-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .saved-filter-item {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .saved-filter-item:hover {
+            background: #f1f5f9;
+            border-color: #dc2626;
+        }
+
+        .saved-filter-info h4 {
+            margin: 0 0 5px 0;
+            color: #1f2937;
+            font-size: 0.9rem;
+        }
+
+        .saved-filter-info p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 0.8rem;
+        }
+
+        .saved-filter-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .save-current-filter {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 20px;
+        }
+
+        .save-current-filter h3 {
+            margin-bottom: 15px;
+            color: #1f2937;
+            font-size: 1.1rem;
+        }
+
+        /* Audit Log Styles */
+        .audit-log-filters {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-row select,
+        .filter-row input {
+            min-width: 150px;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .audit-log-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .audit-log-entry {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .audit-log-entry:hover {
+            background: #f9fafb;
+        }
+
+        .audit-log-info {
+            flex: 1;
+        }
+
+        .audit-log-info h4 {
+            margin: 0 0 5px 0;
+            color: #1f2937;
+            font-size: 0.9rem;
+        }
+
+        .audit-log-info p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 0.8rem;
+        }
+
+        .audit-log-meta {
+            text-align: right;
+            color: #9ca3af;
+            font-size: 0.8rem;
+        }
+
+        .audit-log-meta .timestamp {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .audit-log-meta .user {
+            font-weight: 600;
+        }
+
+        /* Action Badges */
+        .action-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .action-badge-created {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .action-badge-updated {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .action-badge-deleted {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .action-badge-login {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .action-badge-logout {
+            background: #e5e7eb;
+            color: #374151;
+        }
     </style>
     
     <!-- Main Dashboard Styles -->
@@ -676,6 +1239,9 @@
                     <button id="hardRefreshBtn" class="hard-refresh-button" onclick="hardRefresh()">
                         <span>💾 Hard Refresh</span>
                     </button>
+                    <button id="auditLogBtn" class="btn btn-outline" onclick="openAuditLogModal()">
+                        <span>📋 Audit Log</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -704,6 +1270,92 @@
                 <p class="stat-number" id="systemStatus">-</p>
             </div>
         </div>
+        
+        <!-- User Management Section -->
+        <div class="user-management-section">
+            <div class="section-header">
+                <h2>👥 User & Admin Management</h2>
+                <div class="section-actions">
+                    <button class="btn btn-primary" onclick="openInviteUserModal()">
+                        <span class="btn-icon">📧</span>
+                        Invite User
+                    </button>
+                    <button class="btn btn-warning" onclick="openBulkActionsModal()">
+                        <span class="btn-icon">⚡</span>
+                        Bulk Actions
+                    </button>
+                    <button class="btn btn-outline" onclick="openSavedFiltersModal()">
+                        <span class="btn-icon">🔍</span>
+                        Saved Filters
+                    </button>
+                    <button class="btn btn-secondary" onclick="refreshUsersData()">
+                        <span class="btn-icon">🔄</span>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+            
+            <!-- User Management Controls -->
+            <div class="user-controls">
+                <div class="search-filter-bar">
+                    <div class="search-box">
+                        <input type="text" id="userSearch" placeholder="Search users by name, email, or role..." onkeyup="filterUsers()">
+                        <span class="search-icon">🔍</span>
+                    </div>
+                    <div class="filter-controls">
+                        <select id="roleFilter" onchange="filterUsers()">
+                            <option value="">All Roles</option>
+                            <option value="admin">Admin</option>
+                            <option value="user">User</option>
+                        </select>
+                        <select id="statusFilter" onchange="filterUsers()">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="bulk-actions">
+                    <button class="btn btn-outline" onclick="selectAllUsers()">Select All</button>
+                    <button class="btn btn-outline" onclick="clearSelection()">Clear Selection</button>
+                    <button class="btn btn-warning" onclick="bulkUpdateStatus()" disabled id="bulkStatusBtn">
+                        <span class="btn-icon">⚡</span>
+                        Update Status
+                    </button>
+                    <button class="btn btn-danger" onclick="bulkDeleteUsers()" disabled id="bulkDeleteBtn">
+                        <span class="btn-icon">🗑️</span>
+                        Delete Selected
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Users Table -->
+            <div class="users-table-container">
+                <table class="users-table" id="usersTable">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()"></th>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Last Login</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Users will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination" id="usersPagination">
+                <!-- Pagination will be populated by JavaScript -->
+            </div>
+        </div>
     </div>
 
     <!-- Admins Modal -->
@@ -721,6 +1373,171 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeAdminsModal()">Close</button>
                 <button class="btn btn-primary" onclick="refreshAdminsList()">Refresh</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invite User Modal -->
+    <div id="inviteUserModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📧 Invite New User</h2>
+                <button class="modal-close" onclick="closeInviteUserModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="inviteUserForm" onsubmit="handleInviteUser(event)">
+                    <div class="form-group">
+                        <label for="inviteEmail">Email Address *</label>
+                        <input type="email" id="inviteEmail" name="email" required 
+                               placeholder="user@example.com" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="inviteFirstName">First Name *</label>
+                        <input type="text" id="inviteFirstName" name="firstName" required 
+                               placeholder="John" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="inviteLastName">Last Name *</label>
+                        <input type="text" id="inviteLastName" name="lastName" required 
+                               placeholder="Doe" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="inviteRole">Role *</label>
+                        <select id="inviteRole" name="role" required class="form-control">
+                            <option value="">Select Role</option>
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="inviteMessage">Welcome Message (Optional)</label>
+                        <textarea id="inviteMessage" name="message" rows="3" 
+                                  placeholder="Welcome to 241 Runners Awareness! You've been invited to join our platform..." 
+                                  class="form-control"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeInviteUserModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="handleInviteUser()">Send Invitation</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Actions Modal -->
+    <div id="bulkActionsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚡ Bulk Actions</h2>
+                <button class="modal-close" onclick="closeBulkActionsModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="bulk-actions-info">
+                    <p><strong>Selected Users:</strong> <span id="bulkSelectedCount">0</span></p>
+                </div>
+                <div class="bulk-actions-grid">
+                    <button class="btn btn-warning" onclick="bulkUpdateStatus('active')">
+                        <span class="btn-icon">✅</span>
+                        Activate Selected
+                    </button>
+                    <button class="btn btn-warning" onclick="bulkUpdateStatus('inactive')">
+                        <span class="btn-icon">⏸️</span>
+                        Deactivate Selected
+                    </button>
+                    <button class="btn btn-primary" onclick="bulkUpdateRole('admin')">
+                        <span class="btn-icon">👑</span>
+                        Promote to Admin
+                    </button>
+                    <button class="btn btn-secondary" onclick="bulkUpdateRole('user')">
+                        <span class="btn-icon">👤</span>
+                        Demote to User
+                    </button>
+                    <button class="btn btn-outline" onclick="bulkExportUsers()">
+                        <span class="btn-icon">📊</span>
+                        Export Selected
+                    </button>
+                    <button class="btn btn-danger" onclick="bulkDeleteUsers()">
+                        <span class="btn-icon">🗑️</span>
+                        Delete Selected
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeBulkActionsModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Saved Filters Modal -->
+    <div id="savedFiltersModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔍 Saved Filters & Views</h2>
+                <button class="modal-close" onclick="closeSavedFiltersModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="saved-filters-section">
+                    <h3>My Saved Filters</h3>
+                    <div id="savedFiltersList" class="saved-filters-list">
+                        <!-- Saved filters will be populated here -->
+                    </div>
+                </div>
+                <div class="save-current-filter">
+                    <h3>Save Current Filter</h3>
+                    <form id="saveFilterForm" onsubmit="handleSaveFilter(event)">
+                        <div class="form-group">
+                            <label for="filterName">Filter Name *</label>
+                            <input type="text" id="filterName" name="name" required 
+                                   placeholder="Active Admins" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="filterDescription">Description</label>
+                            <input type="text" id="filterDescription" name="description" 
+                                   placeholder="All active admin users" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Filter</button>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeSavedFiltersModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audit Log Modal -->
+    <div id="auditLogModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 Audit Log</h2>
+                <button class="modal-close" onclick="closeAuditLogModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="audit-log-filters">
+                    <div class="filter-row">
+                        <select id="auditActionFilter" onchange="filterAuditLog()">
+                            <option value="">All Actions</option>
+                            <option value="user_created">User Created</option>
+                            <option value="user_updated">User Updated</option>
+                            <option value="user_deleted">User Deleted</option>
+                            <option value="role_changed">Role Changed</option>
+                            <option value="login">Login</option>
+                            <option value="logout">Logout</option>
+                        </select>
+                        <select id="auditUserFilter" onchange="filterAuditLog()">
+                            <option value="">All Users</option>
+                        </select>
+                        <input type="date" id="auditDateFrom" onchange="filterAuditLog()" placeholder="From Date">
+                        <input type="date" id="auditDateTo" onchange="filterAuditLog()" placeholder="To Date">
+                    </div>
+                </div>
+                <div id="auditLogList" class="audit-log-list">
+                    <!-- Audit log entries will be populated here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAuditLogModal()">Close</button>
+                <button class="btn btn-outline" onclick="exportAuditLog()">Export Log</button>
             </div>
         </div>
     </div>
@@ -1237,6 +2054,85 @@
                 systemStatusElement.textContent = statusText;
                 systemStatusElement.className = `stat-number ${dashboardData.systemStatus === 'healthy' ? 'status-healthy' : 'status-error'}`;
             }
+            
+            // Update users table
+            updateUsersTable();
+        }
+        
+        function updateUsersTable() {
+            const tbody = document.getElementById('usersTableBody');
+            if (!tbody) return;
+            
+            if (dashboardData.users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center text-gray-500">No users found</td></tr>';
+                return;
+            }
+            
+            const usersHTML = dashboardData.users.map(user => {
+                const initials = `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`;
+                const fullName = `${user.firstName} ${user.lastName}`;
+                const isActive = user.isActive !== false;
+                const lastLogin = user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString() : 'Never';
+                const created = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A';
+                
+                return `
+                    <tr data-user-id="${user.id}">
+                        <td>
+                            <input type="checkbox" onchange="toggleUserSelection(this)">
+                        </td>
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">${initials}</div>
+                                <div class="user-details">
+                                    <h4>${fullName}</h4>
+                                    <p>ID: ${user.id}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${user.email}</td>
+                        <td>
+                            <span class="role-badge role-${user.role}">${user.role}</span>
+                        </td>
+                        <td>
+                            <span class="status-badge status-${isActive ? 'active' : 'inactive'}">
+                                ${isActive ? 'Active' : 'Inactive'}
+                            </span>
+                        </td>
+                        <td>${lastLogin}</td>
+                        <td>${created}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn action-btn-edit" onclick="editUser(${user.id})" title="Edit User">
+                                    ✏️
+                                </button>
+                                <button class="action-btn action-btn-delete" onclick="deleteUser(${user.id})" title="Delete User">
+                                    🗑️
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = usersHTML;
+        }
+        
+        function editUser(userId) {
+            const user = dashboardData.users.find(u => u.id === userId);
+            if (user) {
+                showToast(`Edit user: ${user.email}`, 'info');
+                // TODO: Implement edit user modal
+            }
+        }
+        
+        function deleteUser(userId) {
+            const user = dashboardData.users.find(u => u.id === userId);
+            if (user) {
+                if (confirm(`Are you sure you want to delete user ${user.email}?`)) {
+                    showToast(`Delete user: ${user.email}`, 'warning');
+                    // TODO: Implement delete user API call
+                }
+            }
         }
         
         function updateElement(id, value) {
@@ -1321,6 +2217,476 @@
                 modal.style.display = 'none';
             }
         }
+
+        // ===== INVITE USER FUNCTIONS =====
+        
+        function openInviteUserModal() {
+            console.log('Opening invite user modal...');
+            const modal = document.getElementById('inviteUserModal');
+            if (modal) {
+                modal.style.display = 'block';
+                // Clear form
+                document.getElementById('inviteUserForm').reset();
+            }
+        }
+        
+        function closeInviteUserModal() {
+            console.log('Closing invite user modal...');
+            const modal = document.getElementById('inviteUserModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        async function handleInviteUser(event) {
+            if (event) event.preventDefault();
+            
+            try {
+                const form = document.getElementById('inviteUserForm');
+                const formData = new FormData(form);
+                const inviteData = {
+                    email: formData.get('email'),
+                    firstName: formData.get('firstName'),
+                    lastName: formData.get('lastName'),
+                    role: formData.get('role'),
+                    message: formData.get('message') || 'Welcome to 241 Runners Awareness!'
+                };
+                
+                console.log('Sending invitation:', inviteData);
+                
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+                const response = await fetch(`${apiUrl}/admin/invite-user`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...authHeader()
+                    },
+                    body: JSON.stringify(inviteData)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    showToast(`Invitation sent to ${inviteData.email}`, 'success');
+                    closeInviteUserModal();
+                    
+                    // Log audit trail
+                    logAuditAction('user_invited', {
+                        email: inviteData.email,
+                        role: inviteData.role,
+                        invitedBy: currentAdmin?.email || 'Unknown'
+                    });
+                    
+                    // Refresh users data
+                    await loadUsers();
+                    updateDashboardUI();
+                } else {
+                    throw new Error(`Failed to send invitation: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error sending invitation:', error);
+                showToast('Failed to send invitation. Please try again.', 'error');
+            }
+        }
+
+        // ===== BULK ACTIONS FUNCTIONS =====
+        
+        function openBulkActionsModal() {
+            console.log('Opening bulk actions modal...');
+            const modal = document.getElementById('bulkActionsModal');
+            if (modal) {
+                modal.style.display = 'block';
+                updateBulkActionsCount();
+            }
+        }
+        
+        function closeBulkActionsModal() {
+            console.log('Closing bulk actions modal...');
+            const modal = document.getElementById('bulkActionsModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        function updateBulkActionsCount() {
+            const selectedCount = document.querySelectorAll('.users-table tbody tr.selected').length;
+            const countElement = document.getElementById('bulkSelectedCount');
+            if (countElement) {
+                countElement.textContent = selectedCount;
+            }
+        }
+        
+        async function bulkUpdateStatus(status) {
+            const selectedRows = document.querySelectorAll('.users-table tbody tr.selected');
+            if (selectedRows.length === 0) {
+                showToast('Please select users first', 'warning');
+                return;
+            }
+            
+            try {
+                const userIds = Array.from(selectedRows).map(row => row.dataset.userId);
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+                
+                const response = await fetch(`${apiUrl}/admin/users/bulk-update-status`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...authHeader()
+                    },
+                    body: JSON.stringify({
+                        userIds: userIds,
+                        status: status
+                    })
+                });
+                
+                if (response.ok) {
+                    showToast(`Updated ${userIds.length} users to ${status}`, 'success');
+                    
+                    // Log audit trail
+                    logAuditAction('bulk_status_update', {
+                        userIds: userIds,
+                        status: status,
+                        count: userIds.length,
+                        updatedBy: currentAdmin?.email || 'Unknown'
+                    });
+                    
+                    // Refresh data
+                    await loadUsers();
+                    updateDashboardUI();
+                    clearSelection();
+                } else {
+                    throw new Error(`Failed to update users: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error updating users:', error);
+                showToast('Failed to update users. Please try again.', 'error');
+            }
+        }
+        
+        async function bulkUpdateRole(role) {
+            const selectedRows = document.querySelectorAll('.users-table tbody tr.selected');
+            if (selectedRows.length === 0) {
+                showToast('Please select users first', 'warning');
+                return;
+            }
+            
+            try {
+                const userIds = Array.from(selectedRows).map(row => row.dataset.userId);
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+                
+                const response = await fetch(`${apiUrl}/admin/users/bulk-update-role`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...authHeader()
+                    },
+                    body: JSON.stringify({
+                        userIds: userIds,
+                        role: role
+                    })
+                });
+                
+                if (response.ok) {
+                    showToast(`Updated ${userIds.length} users to ${role} role`, 'success');
+                    
+                    // Log audit trail
+                    logAuditAction('bulk_role_update', {
+                        userIds: userIds,
+                        role: role,
+                        count: userIds.length,
+                        updatedBy: currentAdmin?.email || 'Unknown'
+                    });
+                    
+                    // Refresh data
+                    await loadUsers();
+                    updateDashboardUI();
+                    clearSelection();
+                } else {
+                    throw new Error(`Failed to update user roles: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error updating user roles:', error);
+                showToast('Failed to update user roles. Please try again.', 'error');
+            }
+        }
+        
+        async function bulkExportUsers() {
+            const selectedRows = document.querySelectorAll('.users-table tbody tr.selected');
+            if (selectedRows.length === 0) {
+                showToast('Please select users first', 'warning');
+                return;
+            }
+            
+            try {
+                const userIds = Array.from(selectedRows).map(row => row.dataset.userId);
+                const selectedUsers = dashboardData.users.filter(user => userIds.includes(user.id.toString()));
+                
+                // Create CSV content
+                const csvContent = [
+                    ['Email', 'First Name', 'Last Name', 'Role', 'Status', 'Created Date'],
+                    ...selectedUsers.map(user => [
+                        user.email,
+                        user.firstName,
+                        user.lastName,
+                        user.role,
+                        user.isActive ? 'Active' : 'Inactive',
+                        user.createdAt || 'N/A'
+                    ])
+                ].map(row => row.join(',')).join('\n');
+                
+                // Download CSV
+                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `users_export_${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                showToast(`Exported ${selectedUsers.length} users`, 'success');
+                
+                // Log audit trail
+                logAuditAction('bulk_export', {
+                    userIds: userIds,
+                    count: selectedUsers.length,
+                    exportedBy: currentAdmin?.email || 'Unknown'
+                });
+            } catch (error) {
+                console.error('Error exporting users:', error);
+                showToast('Failed to export users. Please try again.', 'error');
+            }
+        }
+
+        // ===== SAVED FILTERS FUNCTIONS =====
+        
+        function openSavedFiltersModal() {
+            console.log('Opening saved filters modal...');
+            const modal = document.getElementById('savedFiltersModal');
+            if (modal) {
+                modal.style.display = 'block';
+                loadSavedFilters();
+            }
+        }
+        
+        function closeSavedFiltersModal() {
+            console.log('Closing saved filters modal...');
+            const modal = document.getElementById('savedFiltersModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        function loadSavedFilters() {
+            const savedFilters = JSON.parse(storage.get('savedFilters', '[]'));
+            const filtersList = document.getElementById('savedFiltersList');
+            
+            if (savedFilters.length === 0) {
+                filtersList.innerHTML = '<p class="text-center text-gray-500">No saved filters yet</p>';
+                return;
+            }
+            
+            const filtersHTML = savedFilters.map(filter => `
+                <div class="saved-filter-item">
+                    <div class="saved-filter-info">
+                        <h4>${filter.name}</h4>
+                        <p>${filter.description || 'No description'}</p>
+                    </div>
+                    <div class="saved-filter-actions">
+                        <button class="btn btn-sm btn-primary" onclick="applySavedFilter('${filter.id}')">Apply</button>
+                        <button class="btn btn-sm btn-outline" onclick="deleteSavedFilter('${filter.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            filtersList.innerHTML = filtersHTML;
+        }
+        
+        function applySavedFilter(filterId) {
+            const savedFilters = JSON.parse(storage.get('savedFilters', '[]'));
+            const filter = savedFilters.find(f => f.id === filterId);
+            
+            if (filter) {
+                // Apply the saved filter
+                document.getElementById('roleFilter').value = filter.filters.role || '';
+                document.getElementById('statusFilter').value = filter.filters.status || '';
+                document.getElementById('userSearch').value = filter.filters.search || '';
+                
+                // Trigger filter
+                filterUsers();
+                showToast(`Applied filter: ${filter.name}`, 'success');
+                closeSavedFiltersModal();
+            }
+        }
+        
+        function deleteSavedFilter(filterId) {
+            const savedFilters = JSON.parse(storage.get('savedFilters', '[]'));
+            const updatedFilters = savedFilters.filter(f => f.id !== filterId);
+            storage.set('savedFilters', JSON.stringify(updatedFilters));
+            loadSavedFilters();
+            showToast('Filter deleted', 'success');
+        }
+        
+        function handleSaveFilter(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const filterName = formData.get('name');
+            const filterDescription = formData.get('description');
+            
+            const currentFilters = {
+                role: document.getElementById('roleFilter').value,
+                status: document.getElementById('statusFilter').value,
+                search: document.getElementById('userSearch').value
+            };
+            
+            const newFilter = {
+                id: Date.now().toString(),
+                name: filterName,
+                description: filterDescription,
+                filters: currentFilters,
+                createdAt: new Date().toISOString()
+            };
+            
+            const savedFilters = JSON.parse(storage.get('savedFilters', '[]'));
+            savedFilters.push(newFilter);
+            storage.set('savedFilters', JSON.stringify(savedFilters));
+            
+            showToast(`Filter "${filterName}" saved`, 'success');
+            loadSavedFilters();
+            event.target.reset();
+        }
+
+        // ===== AUDIT LOG FUNCTIONS =====
+        
+        function openAuditLogModal() {
+            console.log('Opening audit log modal...');
+            const modal = document.getElementById('auditLogModal');
+            if (modal) {
+                modal.style.display = 'block';
+                loadAuditLog();
+            }
+        }
+        
+        function closeAuditLogModal() {
+            console.log('Closing audit log modal...');
+            const modal = document.getElementById('auditLogModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        function loadAuditLog() {
+            const auditLog = JSON.parse(storage.get('auditLog', '[]'));
+            const logList = document.getElementById('auditLogList');
+            
+            if (auditLog.length === 0) {
+                logList.innerHTML = '<p class="text-center text-gray-500">No audit log entries yet</p>';
+                return;
+            }
+            
+            // Sort by timestamp (newest first)
+            const sortedLog = auditLog.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            const logHTML = sortedLog.map(entry => `
+                <div class="audit-log-entry">
+                    <div class="audit-log-info">
+                        <h4>
+                            <span class="action-badge action-badge-${entry.action.replace('_', '')}">${entry.action.replace('_', ' ')}</span>
+                            ${entry.description}
+                        </h4>
+                        <p>${entry.details ? JSON.stringify(entry.details) : ''}</p>
+                    </div>
+                    <div class="audit-log-meta">
+                        <span class="timestamp">${new Date(entry.timestamp).toLocaleString()}</span>
+                        <span class="user">${entry.user}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            logList.innerHTML = logHTML;
+        }
+        
+        function filterAuditLog() {
+            // Implementation for filtering audit log
+            loadAuditLog();
+        }
+        
+        function exportAuditLog() {
+            const auditLog = JSON.parse(storage.get('auditLog', '[]'));
+            
+            // Create CSV content
+            const csvContent = [
+                ['Timestamp', 'Action', 'Description', 'User', 'Details'],
+                ...auditLog.map(entry => [
+                    new Date(entry.timestamp).toLocaleString(),
+                    entry.action,
+                    entry.description,
+                    entry.user,
+                    entry.details ? JSON.stringify(entry.details) : ''
+                ])
+            ].map(row => row.join(',')).join('\n');
+            
+            // Download CSV
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `audit_log_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showToast('Audit log exported', 'success');
+        }
+        
+        function logAuditAction(action, details = {}) {
+            const auditEntry = {
+                timestamp: new Date().toISOString(),
+                action: action,
+                description: getActionDescription(action, details),
+                user: currentAdmin?.email || 'Unknown',
+                details: details
+            };
+            
+            const auditLog = JSON.parse(storage.get('auditLog', '[]'));
+            auditLog.push(auditEntry);
+            
+            // Keep only last 1000 entries
+            if (auditLog.length > 1000) {
+                auditLog.splice(0, auditLog.length - 1000);
+            }
+            
+            storage.set('auditLog', JSON.stringify(auditLog));
+        }
+        
+        function getActionDescription(action, details) {
+            switch (action) {
+                case 'user_invited':
+                    return `Invited user ${details.email} with role ${details.role}`;
+                case 'bulk_status_update':
+                    return `Updated ${details.count} users to ${details.status} status`;
+                case 'bulk_role_update':
+                    return `Updated ${details.count} users to ${details.role} role`;
+                case 'bulk_export':
+                    return `Exported ${details.count} users`;
+                case 'user_created':
+                    return `Created user ${details.email}`;
+                case 'user_updated':
+                    return `Updated user ${details.email}`;
+                case 'user_deleted':
+                    return `Deleted user ${details.email}`;
+                case 'role_changed':
+                    return `Changed role for ${details.email} from ${details.oldRole} to ${details.newRole}`;
+                case 'login':
+                    return `User logged in`;
+                case 'logout':
+                    return `User logged out`;
+                default:
+                    return `Performed ${action}`;
+            }
+        }
         
         async function loadAdminsInModal() {
             const adminsList = document.getElementById('adminsList');
@@ -1389,6 +2755,95 @@
             await loadAdminsInModal();
         }
         
+        // ===== USER SELECTION AND FILTERING FUNCTIONS =====
+        
+        function selectAllUsers() {
+            const checkboxes = document.querySelectorAll('.users-table tbody input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+                checkbox.closest('tr').classList.add('selected');
+            });
+            updateBulkActionsCount();
+        }
+        
+        function clearSelection() {
+            const checkboxes = document.querySelectorAll('.users-table tbody input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.closest('tr').classList.remove('selected');
+            });
+            document.getElementById('selectAllCheckbox').checked = false;
+            updateBulkActionsCount();
+        }
+        
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            const checkboxes = document.querySelectorAll('.users-table tbody input[type="checkbox"]');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+                checkbox.closest('tr').classList.toggle('selected', selectAllCheckbox.checked);
+            });
+            updateBulkActionsCount();
+        }
+        
+        function toggleUserSelection(checkbox) {
+            const row = checkbox.closest('tr');
+            row.classList.toggle('selected', checkbox.checked);
+            updateBulkActionsCount();
+            
+            // Update select all checkbox
+            const allCheckboxes = document.querySelectorAll('.users-table tbody input[type="checkbox"]');
+            const checkedCount = document.querySelectorAll('.users-table tbody input[type="checkbox"]:checked').length;
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            
+            if (checkedCount === 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            } else if (checkedCount === allCheckboxes.length) {
+                selectAllCheckbox.checked = true;
+                selectAllCheckbox.indeterminate = false;
+            } else {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = true;
+            }
+        }
+        
+        function filterUsers() {
+            const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+            const roleFilter = document.getElementById('roleFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            const rows = document.querySelectorAll('.users-table tbody tr');
+            
+            rows.forEach(row => {
+                const email = row.cells[2].textContent.toLowerCase();
+                const name = row.cells[1].textContent.toLowerCase();
+                const role = row.cells[3].textContent.toLowerCase();
+                const status = row.cells[4].textContent.toLowerCase();
+                
+                const matchesSearch = !searchTerm || 
+                    email.includes(searchTerm) || 
+                    name.includes(searchTerm);
+                const matchesRole = !roleFilter || role.includes(roleFilter);
+                const matchesStatus = !statusFilter || status.includes(statusFilter);
+                
+                if (matchesSearch && matchesRole && matchesStatus) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        function refreshUsersData() {
+            showToast('Refreshing users data...', 'info', 2000);
+            loadUsers().then(() => {
+                updateDashboardUI();
+                showToast('Users data refreshed!', 'success', 3000);
+            });
+        }
+
         // ===== LOGOUT FUNCTION =====
         
         async function logout() {
@@ -1701,11 +3156,17 @@
             
             // Close modal when clicking outside
             window.addEventListener('click', function(event) {
-                const modals = ['adminsModal'];
+                const modals = ['adminsModal', 'inviteUserModal', 'bulkActionsModal', 'savedFiltersModal', 'auditLogModal'];
                 modals.forEach(modalId => {
                     const modal = document.getElementById(modalId);
                     if (event.target === modal) {
-                        if (modalId === 'adminsModal') closeAdminsModal();
+                        switch(modalId) {
+                            case 'adminsModal': closeAdminsModal(); break;
+                            case 'inviteUserModal': closeInviteUserModal(); break;
+                            case 'bulkActionsModal': closeBulkActionsModal(); break;
+                            case 'savedFiltersModal': closeSavedFiltersModal(); break;
+                            case 'auditLogModal': closeAuditLogModal(); break;
+                        }
                     }
                 });
             });
@@ -1714,6 +3175,10 @@
             document.addEventListener('keydown', function(event) {
                 if (event.key === 'Escape') {
                     closeAdminsModal();
+                    closeInviteUserModal();
+                    closeBulkActionsModal();
+                    closeSavedFiltersModal();
+                    closeAuditLogModal();
                 }
             });
             
