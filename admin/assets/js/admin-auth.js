@@ -18,8 +18,7 @@ let API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
 async function loadConfig() {
     try {
         const response = await fetch('/config.json', {
-            cache: 'no-store',
-            credentials: 'include'
+            cache: 'no-store'
         });
         const config = await response.json();
         API_BASE_URL = config.API_BASE_URL;
@@ -126,7 +125,6 @@ async function apiRequest(url, options = {}) {
                 'Expires': '0',
                 ...options.headers
             },
-            credentials: 'include',
             cache: 'no-store'
         });
         

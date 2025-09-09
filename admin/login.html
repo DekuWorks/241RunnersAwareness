@@ -377,15 +377,14 @@
                     console.log('Sending login request...');
                     console.log('Form data being sent:', formData);
                     
-                    // FIXED: Proper headers and credentials - removed problematic CORS headers
+                    // FIXED: Proper headers without credentials to avoid CORS issues
                     const response = await fetch(`${apiUrl}/auth/login`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-Client': '241RA-Admin/1.0'
                         },
-                        body: JSON.stringify(formData),
-                        credentials: 'include'
+                        body: JSON.stringify(formData)
                     });
                     
                     console.log('Login response status:', response.status);

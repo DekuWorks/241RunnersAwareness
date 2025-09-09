@@ -40,10 +40,13 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins("https://241runnersawareness.org", "https://www.241runnersawareness.org", "http://localhost:8080", "http://localhost:3000")
+        policy.SetIsOriginAllowed(origin => 
+            origin == "https://241runnersawareness.org" ||
+            origin == "https://www.241runnersawareness.org" ||
+            origin == "http://localhost:8080" ||
+            origin == "http://localhost:3000")
               .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
+              .AllowAnyHeader();
     });
 });
 
