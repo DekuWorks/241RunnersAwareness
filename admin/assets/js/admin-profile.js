@@ -45,7 +45,7 @@ class AdminProfileManager {
                 throw new Error('No authentication token found');
             }
 
-            const response = await fetch(`${this.getApiBaseUrl()}/auth/me`, {
+            const response = await fetch(`${this.getApiBaseUrl()}/Auth/me`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -84,7 +84,7 @@ class AdminProfileManager {
                 throw new Error('No authentication token found');
             }
 
-            const response = await fetch(`${this.getApiBaseUrl()}/auth/profile`, {
+            const response = await fetch(`${this.getApiBaseUrl()}/Auth/profile`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -137,7 +137,7 @@ class AdminProfileManager {
                 throw new Error('No authentication token found');
             }
 
-            const response = await fetch(`${this.getApiBaseUrl()}/auth/change-password`, {
+            const response = await fetch(`${this.getApiBaseUrl()}/Auth/change-password`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

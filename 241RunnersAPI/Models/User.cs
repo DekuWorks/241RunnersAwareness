@@ -376,4 +376,21 @@ namespace _241RunnersAPI.Models
         public UserResponseDto? User { get; set; }
         public DateTime ExpiresAt { get; set; }
     }
+
+    /// <summary>
+    /// DTO for password reset (admin only)
+    /// </summary>
+    public class ResetPasswordDto
+    {
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email format")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "New password is required")]
+        [MinLength(8, ErrorMessage = "New password must be at least 8 characters long")]
+        [MaxLength(100, ErrorMessage = "New password cannot exceed 100 characters")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", 
+            ErrorMessage = "New password must contain at least one uppercase letter, one lowercase letter, one number, and one special character")]
+        public string NewPassword { get; set; } = string.Empty;
+    }
 }

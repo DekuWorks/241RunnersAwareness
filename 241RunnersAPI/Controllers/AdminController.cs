@@ -447,6 +447,171 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
+        /// Delete a user (admin only)
+        /// </summary>
+        [HttpDelete("users/{id}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            try
+            {
+                // Get current admin user ID from JWT token
+                var currentUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(currentUserIdClaim) || !int.TryParse(currentUserIdClaim, out var currentUserId))
+                {
+                    return Unauthorized(new { success = false, message = "Invalid authentication token" });
+                }
+
+                // Find the user to delete
+                var userToDelete = await _context.Users.FindAsync(id);
+                if (userToDelete == null)
+                {
+                    return NotFound(new { success = false, message = "User not found" });
+                }
+
+                // Prevent self-deletion
+                if (userToDelete.Id == currentUserId)
+                {
+                    return BadRequest(new { success = false, message = "You cannot delete your own account" });
+                }
+
+                // Prevent deletion of the last admin
+                if (userToDelete.Role == "admin")
+                {
+                    var adminCount = await _context.Users.CountAsync(u => u.Role == "admin" && u.IsActive);
+                    if (adminCount <= 1)
+                    {
+                        return BadRequest(new { success = false, message = "Cannot delete the last active admin user" });
+                    }
+                }
+
+                // Check for related data that might prevent deletion
+                var hasCases = await _context.Cases.AnyAsync(c => c.ReportedByUserId == id);
+                var hasRunners = await _context.Runners.AnyAsync(r => r.UserId == id);
+
+                if (hasCases || hasRunners)
+                {
+                    // Instead of hard delete, mark as inactive
+                    userToDelete.IsActive = false;
+                    userToDelete.UpdatedAt = DateTime.UtcNow;
+                    
+                    await _context.SaveChangesAsync();
+                    
+                    _logger.LogInformation("User {UserId} ({Email}) marked as inactive due to related data", 
+                        userToDelete.Id, userToDelete.Email);
+                    
+                    return Ok(new { 
+                        success = true, 
+                        message = "User marked as inactive due to related data (cases or runners)",
+                        action = "deactivated"
+                    });
+                }
+
+                // Safe to delete - remove from database
+                _context.Users.Remove(userToDelete);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("User {UserId} ({Email}) deleted by admin {AdminId}", 
+                    userToDelete.Id, userToDelete.Email, currentUserId);
+
+                return Ok(new { 
+                    success = true, 
+                    message = "User deleted successfully",
+                    action = "deleted"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting user {UserId}", id);
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
+        /// Delete an admin user (admin only)
+        /// </summary>
+        [HttpDelete("admins/{id}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> DeleteAdmin(int id)
+        {
+            try
+            {
+                // Get current admin user ID from JWT token
+                var currentUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(currentUserIdClaim) || !int.TryParse(currentUserIdClaim, out var currentUserId))
+                {
+                    return Unauthorized(new { success = false, message = "Invalid authentication token" });
+                }
+
+                // Find the admin to delete
+                var adminToDelete = await _context.Users.FindAsync(id);
+                if (adminToDelete == null)
+                {
+                    return NotFound(new { success = false, message = "Admin not found" });
+                }
+
+                // Verify the user is actually an admin
+                if (adminToDelete.Role != "admin")
+                {
+                    return BadRequest(new { success = false, message = "User is not an admin" });
+                }
+
+                // Prevent self-deletion
+                if (adminToDelete.Id == currentUserId)
+                {
+                    return BadRequest(new { success = false, message = "You cannot delete your own admin account" });
+                }
+
+                // Prevent deletion of the last admin
+                var adminCount = await _context.Users.CountAsync(u => u.Role == "admin" && u.IsActive);
+                if (adminCount <= 1)
+                {
+                    return BadRequest(new { success = false, message = "Cannot delete the last active admin user" });
+                }
+
+                // Check for related data that might prevent deletion
+                var hasCases = await _context.Cases.AnyAsync(c => c.ReportedByUserId == id);
+                var hasRunners = await _context.Runners.AnyAsync(r => r.UserId == id);
+
+                if (hasCases || hasRunners)
+                {
+                    // Instead of hard delete, mark as inactive
+                    adminToDelete.IsActive = false;
+                    adminToDelete.UpdatedAt = DateTime.UtcNow;
+                    
+                    await _context.SaveChangesAsync();
+                    
+                    _logger.LogInformation("Admin {AdminId} ({Email}) marked as inactive due to related data", 
+                        adminToDelete.Id, adminToDelete.Email);
+                    
+                    return Ok(new { 
+                        success = true, 
+                        message = "Admin marked as inactive due to related data (cases or runners)",
+                        action = "deactivated"
+                    });
+                }
+
+                // Safe to delete - remove from database
+                _context.Users.Remove(adminToDelete);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Admin {AdminId} ({Email}) deleted by admin {CurrentAdminId}", 
+                    adminToDelete.Id, adminToDelete.Email, currentUserId);
+
+                return Ok(new { 
+                    success = true, 
+                    message = "Admin deleted successfully",
+                    action = "deleted"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting admin {AdminId}", id);
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
         /// Report client-side errors
         /// </summary>
         [HttpPost("errors")]

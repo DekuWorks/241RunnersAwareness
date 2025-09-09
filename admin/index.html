@@ -1183,7 +1183,7 @@
         async function loadUsers() {
             try {
                 console.log('Loading users...');
-                const response = await fetch(`${API_BASE_URL}/auth/users`, {
+                const response = await fetch(`${API_BASE_URL}/Admin/users`, {
                     headers: {
                         ...authHeader(),
                         'Content-Type': 'application/json'
@@ -1217,7 +1217,7 @@
         async function loadRunners() {
             try {
                 console.log('Loading runners...');
-                const response = await fetch(`${API_BASE_URL}/runners`, {
+                const response = await fetch(`${API_BASE_URL}/Runners`, {
                     headers: {
                         ...authHeader(),
                         'Content-Type': 'application/json'
@@ -1244,7 +1244,7 @@
         // Load admins data
         async function loadAdmins() {
             try {
-                const response = await fetch(`${API_BASE_URL}/auth/users`, {
+                const response = await fetch(`${API_BASE_URL}/Admin/users`, {
                     headers: authHeader()
                 });
                 
@@ -1264,7 +1264,7 @@
         async function checkSystemStatus() {
             try {
                 console.log('Checking system status...');
-                const response = await fetch(`${API_BASE_URL}/auth/health`);
+                const response = await fetch(`${API_BASE_URL}/Auth/health`);
                 
                 console.log('Health response status:', response.status);
                 
@@ -1292,7 +1292,7 @@
                     return;
                 }
 
-                const response = await fetch(`${API_BASE_URL}/auth/verify`, {
+                const response = await fetch(`${API_BASE_URL}/Auth/verify`, {
                     headers: authHeader()
                 });
                 
@@ -1585,7 +1585,7 @@
         // Load system stats
         async function loadSystemStats() {
             try {
-                const response = await fetch(`${API_BASE_URL}/auth/health`);
+                const response = await fetch(`${API_BASE_URL}/Auth/health`);
                 
                 if (!response.ok) {
                     throw new Error('Failed to fetch system stats');
@@ -1710,7 +1710,7 @@
                     role: 'admin'
                 };
                 
-                const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                const response = await fetch(`${API_BASE_URL}/Auth/register`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('ra_admin_token')}`,
@@ -1759,7 +1759,7 @@
                     confirmNewPassword: document.getElementById('confirmNewPassword').value
                 };
 
-                const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+                const response = await fetch(`${API_BASE_URL}/Auth/reset-password`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('ra_admin_token')}`,
@@ -1811,7 +1811,7 @@
                     zipCode: document.getElementById('profileZipCode').value
                 };
 
-                const response = await fetch(`${API_BASE_URL}/auth/update-profile`, {
+                const response = await fetch(`${API_BASE_URL}/Auth/profile`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('ra_admin_token')}`,

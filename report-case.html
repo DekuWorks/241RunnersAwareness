@@ -1090,9 +1090,9 @@
         
         console.log('Submitting update:', data);
         
-        // This would need to be implemented in the API
-        const response = await fetch(`${API_BASE_URL}/Runners/update`, {
-          method: 'POST',
+        // Update existing runner profile
+        const response = await fetch(`${API_BASE_URL}/Runners/${data.runnerId}`, {
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },

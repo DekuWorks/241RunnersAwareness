@@ -432,6 +432,41 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
+        /// Reset user password (admin only)
+        /// </summary>
+        [HttpPost("reset-password")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto request)
+        {
+            var adminIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (adminIdClaim == null || !int.TryParse(adminIdClaim, out int adminId))
+            {
+                return Unauthorized(new { Message = "Invalid admin token." });
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            if (user == null)
+            {
+                return NotFound(new { Message = "User not found." });
+            }
+
+            // Hash new password
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Password reset for user {Email} by admin {AdminId}", request.Email, adminId);
+
+            return Ok(new { Message = "Password reset successfully." });
+        }
+
+        /// <summary>
         /// Logout user (client-side token removal)
         /// </summary>
         [HttpPost("logout")]
