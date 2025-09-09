@@ -1020,13 +1020,16 @@
                 // Always use individual loading functions since monitoring system is not available
                 console.log('📊 Loading data using individual functions...');
                 
-                const [usersData, runnersData, adminsData, publicCasesData, healthData] = await Promise.allSettled([
+                // Load users first, then admins (since admins depends on users)
+                const [usersData, runnersData, publicCasesData, healthData] = await Promise.allSettled([
                     loadUsers(),
                     loadRunners(),
-                    loadAdmins(),
                     loadPublicCases(),
                     checkSystemStatus()
                 ]);
+                
+                // Load admins after users are loaded
+                const adminsData = await Promise.allSettled([loadAdmins()]);
                     
                     // Handle results
                     if (usersData.status === 'fulfilled') {
@@ -1157,11 +1160,18 @@
         
         async function loadAdmins() {
             try {
+                // Ensure users data is available before filtering
+                if (!dashboardData.users || !Array.isArray(dashboardData.users)) {
+                    console.warn('⚠️ Users data not available for admin filtering, using empty array');
+                    dashboardData.admins = [];
+                    return;
+                }
+                
                 // Filter admin users from the loaded users
                 dashboardData.admins = dashboardData.users.filter(user => user.role === 'admin');
-                console.log('Loaded admins:', dashboardData.admins.length);
+                console.log('✅ Loaded admins:', dashboardData.admins.length);
             } catch (error) {
-                console.error('Error loading admins:', error);
+                console.error('❌ Error loading admins:', error);
                 dashboardData.admins = [];
             }
         }
@@ -1184,11 +1194,23 @@
         async function checkSystemStatus() {
             try {
                 const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
-                const data = await apiRequest(`${apiUrl}/auth/health`);
-                dashboardData.systemStatus = data.status === 'Healthy' ? 'healthy' : 'error';
-                return data;
+                // Use the cases endpoint as a health check since it's public and always available
+                const response = await fetch(`${apiUrl}/cases`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    dashboardData.systemStatus = 'healthy';
+                    console.log('✅ System status: healthy');
+                    return { status: 'healthy' };
+                } else {
+                    throw new Error(`API returned ${response.status}`);
+                }
             } catch (error) {
-                console.error('Error checking system status:', error);
+                console.error('❌ Error checking system status:', error);
                 dashboardData.systemStatus = 'error';
                 return { status: 'error', error: error.message };
             }
