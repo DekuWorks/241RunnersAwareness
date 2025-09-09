@@ -601,152 +601,27 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
-        /// Get all users (admin only)
+        /// Verify JWT token (for frontend token validation)
         /// </summary>
-        [HttpGet("admin/users")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> GetUsers()
+        [HttpGet("verify")]
+        [Authorize]
+        public IActionResult VerifyToken()
         {
-            try
-            {
-                var users = await _context.Users
-                    .Select(u => new UserResponseDto
-                    {
-                        Id = u.Id,
-                        Email = u.Email,
-                        FirstName = u.FirstName,
-                        LastName = u.LastName,
-                        FullName = $"{u.FirstName} {u.LastName}",
-                        Role = u.Role,
-                        IsActive = u.IsActive,
-                        CreatedAt = u.CreatedAt,
-                        LastLoginAt = u.LastLoginAt,
-                        UpdatedAt = u.UpdatedAt,
-                        PhoneNumber = u.PhoneNumber,
-                        Address = u.Address,
-                        City = u.City,
-                        State = u.State,
-                        ZipCode = u.ZipCode,
-                        Organization = u.Organization,
-                        Title = u.Title,
-                        Credentials = u.Credentials,
-                        Specialization = u.Specialization,
-                        YearsOfExperience = u.YearsOfExperience,
-                        ProfileImageUrl = u.ProfileImageUrl,
-                        EmergencyContactName = u.EmergencyContactName,
-                        EmergencyContactPhone = u.EmergencyContactPhone,
-                        EmergencyContactRelationship = u.EmergencyContactRelationship,
-                        IsEmailVerified = u.IsEmailVerified,
-                        IsPhoneVerified = u.IsPhoneVerified,
-                        EmailVerifiedAt = u.EmailVerifiedAt,
-                        PhoneVerifiedAt = u.PhoneVerifiedAt
-                    })
-                    .ToListAsync();
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var emailClaim = User.FindFirst(ClaimTypes.Email)?.Value;
+            var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
 
-                return Ok(new { success = true, users = users, count = users.Count });
-            }
-            catch (Exception ex)
+            return Ok(new
             {
-                _logger.LogError(ex, "Error retrieving users");
-                return StatusCode(500, new { success = false, message = "Internal server error" });
-            }
-        }
-
-        /// <summary>
-        /// Get all admin users
-        /// </summary>
-        [HttpGet("admin/admins")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> GetAdmins()
-        {
-            try
-            {
-                var admins = await _context.Users
-                    .Where(u => u.Role == "admin")
-                    .Select(u => new UserResponseDto
-                    {
-                        Id = u.Id,
-                        Email = u.Email,
-                        FirstName = u.FirstName,
-                        LastName = u.LastName,
-                        FullName = $"{u.FirstName} {u.LastName}",
-                        Role = u.Role,
-                        IsActive = u.IsActive,
-                        CreatedAt = u.CreatedAt,
-                        LastLoginAt = u.LastLoginAt,
-                        UpdatedAt = u.UpdatedAt,
-                        PhoneNumber = u.PhoneNumber,
-                        Address = u.Address,
-                        City = u.City,
-                        State = u.State,
-                        ZipCode = u.ZipCode,
-                        Organization = u.Organization,
-                        Title = u.Title,
-                        Credentials = u.Credentials,
-                        Specialization = u.Specialization,
-                        YearsOfExperience = u.YearsOfExperience,
-                        ProfileImageUrl = u.ProfileImageUrl,
-                        EmergencyContactName = u.EmergencyContactName,
-                        EmergencyContactPhone = u.EmergencyContactPhone,
-                        EmergencyContactRelationship = u.EmergencyContactRelationship,
-                        IsEmailVerified = u.IsEmailVerified,
-                        IsPhoneVerified = u.IsPhoneVerified,
-                        EmailVerifiedAt = u.EmailVerifiedAt,
-                        PhoneVerifiedAt = u.PhoneVerifiedAt
-                    })
-                    .ToListAsync();
-
-                return Ok(new { success = true, admins = admins, count = admins.Count });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving admins");
-                return StatusCode(500, new { success = false, message = "Internal server error" });
-            }
-        }
-
-        /// <summary>
-        /// Get dashboard statistics
-        /// </summary>
-        [HttpGet("admin/dashboard-stats")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> GetDashboardStats()
-        {
-            try
-            {
-                var totalUsers = await _context.Users.CountAsync();
-                var totalAdmins = await _context.Users.CountAsync(u => u.Role == "admin");
-                var activeAdmins = await _context.Users.CountAsync(u => u.Role == "admin" && u.IsActive);
-                var totalRunners = await _context.Runners.CountAsync();
-                var activeRunners = await _context.Runners.CountAsync(r => r.IsActive);
-                var totalCases = await _context.Cases.CountAsync();
-                var openCases = await _context.Cases.CountAsync(c => c.Status == "Open");
-                var publicCases = await _context.Cases.CountAsync(c => c.IsPublic && c.IsApproved);
-                var verifiedCases = await _context.Cases.CountAsync(c => c.IsVerified);
-
-                return Ok(new
+                success = true,
+                message = "Token is valid",
+                user = new
                 {
-                    success = true,
-                    stats = new
-                    {
-                        totalUsers,
-                        totalAdmins,
-                        activeAdmins,
-                        totalRunners,
-                        activeRunners,
-                        totalCases,
-                        openCases,
-                        publicCases,
-                        verifiedCases,
-                        systemStatus = "healthy"
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving dashboard stats");
-                return StatusCode(500, new { success = false, message = "Internal server error" });
-            }
+                    id = userIdClaim,
+                    email = emailClaim,
+                    role = roleClaim
+                }
+            });
         }
 
         private string GenerateJwtToken(int userId, string email, string role, string firstName, string lastName)

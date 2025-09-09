@@ -7,7 +7,6 @@
     "https://241runnersawareness.org",
     "https://www.241runnersawareness.org"
   ],
-  "HEALTH_CHECK_ENDPOINT": "/api/auth/health",
   "API_TIMEOUT": 10000,
   "RETRY_ATTEMPTS": 3
 }

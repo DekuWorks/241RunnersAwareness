@@ -460,6 +460,84 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
+        /// Get current user's cases (authenticated users)
+        /// </summary>
+        [HttpGet("my-cases")]
+        [Authorize]
+        public async Task<IActionResult> GetMyCases()
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
+                {
+                    return Unauthorized(new { success = false, message = "Invalid user token" });
+                }
+
+                var runner = await _context.Runners.FirstOrDefaultAsync(r => r.UserId == userId);
+                if (runner == null)
+                {
+                    return Ok(new { success = true, cases = new List<object>(), message = "No runner profile found" });
+                }
+
+                var cases = await _context.Cases
+                    .Where(c => c.RunnerId == runner.Id)
+                    .Select(c => new CaseResponseDto
+                    {
+                        Id = c.Id,
+                        RunnerId = c.RunnerId,
+                        ReportedByUserId = c.ReportedByUserId,
+                        Title = c.Title,
+                        Description = c.Description,
+                        LastSeenDate = c.LastSeenDate,
+                        LastSeenLocation = c.LastSeenLocation,
+                        LastSeenTime = c.LastSeenTime,
+                        LastSeenCircumstances = c.LastSeenCircumstances,
+                        ClothingDescription = c.ClothingDescription,
+                        PhysicalCondition = c.PhysicalCondition,
+                        MentalState = c.MentalState,
+                        AdditionalInformation = c.AdditionalInformation,
+                        Status = c.Status,
+                        Priority = c.Priority,
+                        IsPublic = c.IsPublic,
+                        CreatedAt = c.CreatedAt,
+                        UpdatedAt = c.UpdatedAt,
+                        ResolvedAt = c.ResolvedAt,
+                        ResolutionNotes = c.ResolutionNotes,
+                        ResolvedBy = c.ResolvedBy,
+                        ContactPersonName = c.ContactPersonName,
+                        ContactPersonPhone = c.ContactPersonPhone,
+                        ContactPersonEmail = c.ContactPersonEmail,
+                        LastSeenLatitude = c.LastSeenLatitude,
+                        LastSeenLongitude = c.LastSeenLongitude,
+                        CaseImageUrls = c.CaseImageUrls,
+                        DocumentUrls = c.DocumentUrls,
+                        EmergencyContactName = c.EmergencyContactName,
+                        EmergencyContactPhone = c.EmergencyContactPhone,
+                        EmergencyContactRelationship = c.EmergencyContactRelationship,
+                        IsVerified = c.IsVerified,
+                        VerifiedAt = c.VerifiedAt,
+                        VerifiedBy = c.VerifiedBy,
+                        IsApproved = c.IsApproved,
+                        ApprovedAt = c.ApprovedAt,
+                        ApprovedBy = c.ApprovedBy,
+                        ViewCount = c.ViewCount,
+                        ShareCount = c.ShareCount,
+                        TipCount = c.TipCount
+                    })
+                    .OrderByDescending(c => c.CreatedAt)
+                    .ToListAsync();
+
+                return Ok(new { success = true, cases = cases, count = cases.Count });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user's cases");
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
         /// Delete runner profile (admin only)
         /// </summary>
         [HttpDelete("{id}")]

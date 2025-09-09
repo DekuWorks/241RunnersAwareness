@@ -98,10 +98,12 @@ class CasesPage {
     
     async loadCases() {
         try {
+            console.log('🔄 Loading cases from API...');
             this.showLoading();
             
             // Use the configured API base URL
             const apiUrl = window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api.azurewebsites.net';
+            console.log('📡 API URL:', apiUrl);
             
             // Load NamUs public cases for Houston area
             let namusCases = [];
@@ -112,14 +114,29 @@ class CasesPage {
                     pageSize: 100 // Get more cases to combine
                 });
 
+                console.log('🌐 Fetching NamUs cases with params:', params.toString());
                 const namusResponse = await fetch(`${apiUrl}/api/publiccases?${params}`);
+                console.log('📊 NamUs response status:', namusResponse.status);
                 
                 if (namusResponse.ok) {
                     namusCases = await namusResponse.json() || [];
+                    console.log('✅ NamUs cases loaded:', namusCases.length);
                 } else {
                     console.error('❌ NamUs API failed:', namusResponse.status, namusResponse.statusText);
                     if (namusResponse.status === 404) {
                         console.error('🔧 The /publiccases endpoint is not available yet. Backend deployment may still be in progress.');
+                    }
+                    
+                    // Show error UI for API failures
+                    if (window.errorUI) {
+                        window.errorUI.showErrorUI(
+                            'Unable to load cases from the server. Please try again later.',
+                            {
+                                title: 'Cases Loading Error',
+                                retryFunction: () => this.loadCases(),
+                                showRetry: true
+                            }
+                        );
                     }
                 }
             } catch (error) {

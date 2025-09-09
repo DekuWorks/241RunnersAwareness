@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using _241RunnersAPI.Data;
 using _241RunnersAPI.Models;
@@ -19,56 +20,6 @@ namespace _241RunnersAPI.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Get all users (admin only)
-        /// </summary>
-        [HttpGet("users")]
-        public async Task<IActionResult> GetUsers()
-        {
-            try
-            {
-                var users = await _context.Users
-                    .Select(u => new UserResponseDto
-                    {
-                        Id = u.Id,
-                        Email = u.Email,
-                        FirstName = u.FirstName,
-                        LastName = u.LastName,
-                        FullName = $"{u.FirstName} {u.LastName}",
-                        Role = u.Role,
-                        IsActive = u.IsActive,
-                        CreatedAt = u.CreatedAt,
-                        LastLoginAt = u.LastLoginAt,
-                        UpdatedAt = u.UpdatedAt,
-                        PhoneNumber = u.PhoneNumber,
-                        Address = u.Address,
-                        City = u.City,
-                        State = u.State,
-                        ZipCode = u.ZipCode,
-                        Organization = u.Organization,
-                        Title = u.Title,
-                        Credentials = u.Credentials,
-                        Specialization = u.Specialization,
-                        YearsOfExperience = u.YearsOfExperience,
-                        ProfileImageUrl = u.ProfileImageUrl,
-                        EmergencyContactName = u.EmergencyContactName,
-                        EmergencyContactPhone = u.EmergencyContactPhone,
-                        EmergencyContactRelationship = u.EmergencyContactRelationship,
-                        IsEmailVerified = u.IsEmailVerified,
-                        IsPhoneVerified = u.IsPhoneVerified,
-                        EmailVerifiedAt = u.EmailVerifiedAt,
-                        PhoneVerifiedAt = u.PhoneVerifiedAt
-                    })
-                    .ToListAsync();
-
-                return Ok(new { success = true, users = users, count = users.Count });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving users");
-                return StatusCode(500, new { success = false, message = "Internal server error" });
-            }
-        }
 
         /// <summary>
         /// Get all admin users
@@ -361,9 +312,62 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
+        /// Get all users (admin only) - for admin dashboard
+        /// </summary>
+        [HttpGet("users")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetUsers()
+        {
+            try
+            {
+                var users = await _context.Users
+                    .Select(u => new UserResponseDto
+                    {
+                        Id = u.Id,
+                        Email = u.Email,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        FullName = $"{u.FirstName} {u.LastName}",
+                        Role = u.Role,
+                        IsActive = u.IsActive,
+                        CreatedAt = u.CreatedAt,
+                        LastLoginAt = u.LastLoginAt,
+                        UpdatedAt = u.UpdatedAt,
+                        PhoneNumber = u.PhoneNumber,
+                        Address = u.Address,
+                        City = u.City,
+                        State = u.State,
+                        ZipCode = u.ZipCode,
+                        Organization = u.Organization,
+                        Title = u.Title,
+                        Credentials = u.Credentials,
+                        Specialization = u.Specialization,
+                        YearsOfExperience = u.YearsOfExperience,
+                        ProfileImageUrl = u.ProfileImageUrl,
+                        EmergencyContactName = u.EmergencyContactName,
+                        EmergencyContactPhone = u.EmergencyContactPhone,
+                        EmergencyContactRelationship = u.EmergencyContactRelationship,
+                        IsEmailVerified = u.IsEmailVerified,
+                        IsPhoneVerified = u.IsPhoneVerified,
+                        EmailVerifiedAt = u.EmailVerifiedAt,
+                        PhoneVerifiedAt = u.PhoneVerifiedAt
+                    })
+                    .ToListAsync();
+
+                return Ok(new { success = true, users = users, count = users.Count });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving users");
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
         /// Update user status (admin only)
         /// </summary>
         [HttpPut("users/{id}/status")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateUserStatus(int id, [FromBody] UpdateUserStatusDto dto)
         {
             try

@@ -9,6 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
+// Add Application Insights
+builder.Services.AddApplicationInsightsTelemetry();
+
 // Add Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -35,10 +38,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-// Add CORS
+// Add CORS - Production domains only
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("ProductionCORS", policy =>
+    {
+        policy.WithOrigins(
+                "https://241runnersawareness.org",
+                "https://www.241runnersawareness.org")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
+    });
+    
+    // Development CORS policy
+    options.AddPolicy("DevelopmentCORS", policy =>
     {
         policy.SetIsOriginAllowed(origin => 
             origin == "https://241runnersawareness.org" ||
@@ -50,25 +64,78 @@ builder.Services.AddCors(options =>
     });
 });
 
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo 
+    { 
+        Title = "241 Runners Awareness API", 
+        Version = "v1",
+        Description = "API for 241 Runners Awareness missing persons platform"
+    });
+    
+    // Add JWT authentication to Swagger
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+    
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+
+// Force HTTPS redirect in production
+if (!app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "241 Runners Awareness API v1");
-        c.RoutePrefix = "swagger";
-    });
+    app.UseHttpsRedirection();
 }
 
-// Add CORS
-app.UseCors("AllowAll");
+// Add CORS - Use production policy in production, development policy in development
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors("DevelopmentCORS");
+}
+else
+{
+    app.UseCors("ProductionCORS");
+}
+
+// Enable Swagger in both environments
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "241 Runners Awareness API v1");
+    c.RoutePrefix = "swagger";
+    if (!app.Environment.IsDevelopment())
+    {
+        c.DocumentTitle = "241 Runners API - Production";
+    }
+});
+
+// Enable static files for uploaded images
+app.UseStaticFiles();
 
 // Add Authentication & Authorization
 app.UseAuthentication();
@@ -77,10 +144,5 @@ app.UseAuthorization();
 // Map controllers
 app.MapControllers();
 
-// Simple health check endpoint
-app.MapGet("/health", () => new { Status = "Healthy", Timestamp = DateTime.UtcNow });
-
-// Simple test endpoint
-app.MapGet("/api/test", () => new { Message = "API is working!", Timestamp = DateTime.UtcNow });
 
 app.Run();

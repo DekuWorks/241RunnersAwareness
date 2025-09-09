@@ -736,6 +736,7 @@
     
     <!-- Admin Authentication and Real-time Scripts -->
     <script src="/admin/assets/js/admin-auth.js?v=20250107"></script>
+    <script src="/js/error-ui.js?v=20250108"></script>
     <script src="/admin/assets/js/admin-realtime.js?v=20250107"></script>
     <script src="/admin/assets/js/admin-profile.js?v=20250107"></script>
     <script src="/admin/assets/js/admin-monitoring.js?v=20250107"></script>
@@ -1086,20 +1087,55 @@
         
         async function loadUsers() {
             try {
-                // For now, we'll simulate user data since the admin endpoint isn't deployed yet
-                // TODO: Update to use ${API_BASE_URL}/auth/admin/users when deployed
-                dashboardData.users = [
-                    { id: 1, email: "test@example.com", firstName: "Test", lastName: "User", role: "user", isActive: true },
-                    { id: 2, email: "dekuworks1@gmail.com", firstName: "Marcus", lastName: "Brown", role: "admin", isActive: true },
-                    { id: 3, email: "danielcarey9770@yahoo.com", firstName: "Daniel", lastName: "Carey", role: "admin", isActive: true },
-                    { id: 4, email: "lthomas3350@gmail.com", firstName: "Lisa", lastName: "Thomas", role: "admin", isActive: true },
-                    { id: 5, email: "tinaleggins@yahoo.com", firstName: "Tina", lastName: "Matthews", role: "admin", isActive: true },
-                    { id: 6, email: "mmelasky@iplawconsulting.com", firstName: "Mark", lastName: "Melasky", role: "admin", isActive: true },
-                    { id: 7, email: "ralphfrank900@gmail.com", firstName: "Ralph", lastName: "Frank", role: "admin", isActive: true }
-                ];
-                console.log('Loaded users:', dashboardData.users.length);
+                console.log('👥 Loading users from API...');
+                
+                // Try to load from API first, fallback to mock data
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+                console.log('📡 Users API URL:', `${apiUrl}/auth/admin/users`);
+                
+                try {
+                    const response = await fetch(`${apiUrl}/auth/admin/users`, {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('ra_admin_token')}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        dashboardData.users = await response.json();
+                        console.log('✅ Users loaded from API:', dashboardData.users.length);
+                    } else {
+                        throw new Error(`API returned ${response.status}`);
+                    }
+                } catch (apiError) {
+                    console.warn('⚠️ API users endpoint not available, using mock data:', apiError.message);
+                    
+                    // Show error UI for API failures
+                    if (window.errorUI) {
+                        window.errorUI.showErrorUI(
+                            'Unable to load users from the server. Using cached data.',
+                            {
+                                title: 'Users Loading Warning',
+                                retryFunction: () => loadUsers(),
+                                showRetry: true
+                            }
+                        );
+                    }
+                    
+                    // Fallback to mock data
+                    dashboardData.users = [
+                        { id: 1, email: "test@example.com", firstName: "Test", lastName: "User", role: "user", isActive: true },
+                        { id: 2, email: "dekuworks1@gmail.com", firstName: "Marcus", lastName: "Brown", role: "admin", isActive: true },
+                        { id: 3, email: "danielcarey9770@yahoo.com", firstName: "Daniel", lastName: "Carey", role: "admin", isActive: true },
+                        { id: 4, email: "lthomas3350@gmail.com", firstName: "Lisa", lastName: "Thomas", role: "admin", isActive: true },
+                        { id: 5, email: "tinaleggins@yahoo.com", firstName: "Tina", lastName: "Matthews", role: "admin", isActive: true },
+                        { id: 6, email: "mmelasky@iplawconsulting.com", firstName: "Mark", lastName: "Melasky", role: "admin", isActive: true },
+                        { id: 7, email: "ralphfrank900@gmail.com", firstName: "Ralph", lastName: "Frank", role: "admin", isActive: true }
+                    ];
+                    console.log('📊 Using mock users data:', dashboardData.users.length);
+                }
             } catch (error) {
-                console.error('Error loading users:', error);
+                console.error('❌ Error loading users:', error);
                 dashboardData.users = [];
             }
         }
