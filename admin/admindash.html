@@ -525,6 +525,37 @@
             box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
         }
 
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .sla-config-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .sla-config-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .sla-config-section h3 {
+            margin-bottom: 15px;
+            color: #1f2937;
+            font-size: 1.1rem;
+        }
+
+        .bulk-assign-info {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #dc2626;
+        }
+
         /* Bulk Actions Styles */
         .bulk-actions-info {
             background: #f8fafc;
@@ -717,6 +748,307 @@
         .action-badge-logout {
             background: #e5e7eb;
             color: #374151;
+        }
+
+        /* Triage Queue Styles */
+        .triage-queue-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            overflow: hidden;
+        }
+
+        .sla-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .sla-metric {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #dc2626;
+        }
+
+        .sla-metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .sla-metric-header h4 {
+            margin: 0;
+            color: #1f2937;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .sla-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .sla-status.sla-good {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .sla-status.sla-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .sla-status.sla-critical {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .sla-metric-value {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .sla-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #dc2626;
+        }
+
+        .sla-target {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .triage-controls {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            background: #f9fafb;
+        }
+
+        .queue-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        .filter-group select:focus {
+            outline: none;
+            border-color: #dc2626;
+        }
+
+        .queue-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .triage-table-container {
+            overflow-x: auto;
+        }
+
+        .triage-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .triage-table th {
+            background: #f8fafc;
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+            white-space: nowrap;
+        }
+
+        .triage-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid #f3f4f6;
+            vertical-align: middle;
+        }
+
+        .triage-table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .triage-table tbody tr.selected {
+            background: #fef2f2;
+        }
+
+        .case-id {
+            font-family: monospace;
+            font-weight: 600;
+            color: #dc2626;
+        }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .priority-critical {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .priority-high {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .priority-medium {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .priority-low {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .case-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .case-status-new {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .case-status-in_progress {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .case-status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .case-status-resolved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .case-status-closed {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .sla-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .sla-indicator.on_track {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .sla-indicator.at_risk {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .sla-indicator.breached {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .sla-indicator::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .case-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .case-action-btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .case-action-btn-edit {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .case-action-btn-edit:hover {
+            background: #e5e7eb;
+        }
+
+        .case-action-btn-assign {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .case-action-btn-assign:hover {
+            background: #bfdbfe;
+        }
+
+        .case-action-btn-escalate {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .case-action-btn-escalate:hover {
+            background: #fecaca;
         }
     </style>
     
@@ -1270,6 +1602,155 @@
                 <p class="stat-number" id="systemStatus">-</p>
             </div>
         </div>
+
+        <!-- Triage Queue Section -->
+        <div class="triage-queue-section">
+            <div class="section-header">
+                <h2>🚨 Triage Queue & SLA Management</h2>
+                <div class="section-actions">
+                    <button class="btn btn-primary" onclick="openNewCaseModal()">
+                        <span class="btn-icon">➕</span>
+                        New Case
+                    </button>
+                    <button class="btn btn-warning" onclick="openSLAConfigModal()">
+                        <span class="btn-icon">⏱️</span>
+                        SLA Config
+                    </button>
+                    <button class="btn btn-outline" onclick="exportTriageReport()">
+                        <span class="btn-icon">📊</span>
+                        Export Report
+                    </button>
+                    <button class="btn btn-secondary" onclick="refreshTriageQueue()">
+                        <span class="btn-icon">🔄</span>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- SLA Status Overview -->
+            <div class="sla-overview">
+                <div class="sla-metric">
+                    <div class="sla-metric-header">
+                        <h4>Response Time</h4>
+                        <span class="sla-status sla-good" id="responseTimeStatus">Good</span>
+                    </div>
+                    <div class="sla-metric-value">
+                        <span class="sla-number" id="avgResponseTime">2.3h</span>
+                        <span class="sla-target">Target: 4h</span>
+                    </div>
+                </div>
+                <div class="sla-metric">
+                    <div class="sla-metric-header">
+                        <h4>Resolution Time</h4>
+                        <span class="sla-status sla-warning" id="resolutionTimeStatus">Warning</span>
+                    </div>
+                    <div class="sla-metric-value">
+                        <span class="sla-number" id="avgResolutionTime">18.5h</span>
+                        <span class="sla-target">Target: 24h</span>
+                    </div>
+                </div>
+                <div class="sla-metric">
+                    <div class="sla-metric-header">
+                        <h4>Backlog Age</h4>
+                        <span class="sla-status sla-critical" id="backlogAgeStatus">Critical</span>
+                    </div>
+                    <div class="sla-metric-value">
+                        <span class="sla-number" id="avgBacklogAge">3.2d</span>
+                        <span class="sla-target">Target: 2d</span>
+                    </div>
+                </div>
+                <div class="sla-metric">
+                    <div class="sla-metric-header">
+                        <h4>SLA Compliance</h4>
+                        <span class="sla-status sla-good" id="slaComplianceStatus">Good</span>
+                    </div>
+                    <div class="sla-metric-value">
+                        <span class="sla-number" id="slaComplianceRate">87%</span>
+                        <span class="sla-target">Target: 90%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Triage Queue Controls -->
+            <div class="triage-controls">
+                <div class="queue-filters">
+                    <div class="filter-group">
+                        <label>Priority</label>
+                        <select id="priorityFilter" onchange="filterTriageQueue()">
+                            <option value="">All Priorities</option>
+                            <option value="critical">Critical</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select id="caseStatusFilter" onchange="filterTriageQueue()">
+                            <option value="">All Statuses</option>
+                            <option value="new">New</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="pending">Pending</option>
+                            <option value="resolved">Resolved</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Assigned To</label>
+                        <select id="assignedToFilter" onchange="filterTriageQueue()">
+                            <option value="">All Admins</option>
+                            <option value="unassigned">Unassigned</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>SLA Status</label>
+                        <select id="slaStatusFilter" onchange="filterTriageQueue()">
+                            <option value="">All SLA Status</option>
+                            <option value="on_track">On Track</option>
+                            <option value="at_risk">At Risk</option>
+                            <option value="breached">Breached</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="queue-actions">
+                    <button class="btn btn-warning" onclick="bulkAssignCases()">
+                        <span class="btn-icon">👥</span>
+                        Bulk Assign
+                    </button>
+                    <button class="btn btn-primary" onclick="bulkUpdatePriority()">
+                        <span class="btn-icon">⚡</span>
+                        Update Priority
+                    </button>
+                    <button class="btn btn-outline" onclick="bulkEscalateCases()">
+                        <span class="btn-icon">🚨</span>
+                        Escalate
+                    </button>
+                </div>
+            </div>
+
+            <!-- Triage Queue Table -->
+            <div class="triage-table-container">
+                <table class="triage-table" id="triageTable">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAllCases" onchange="toggleSelectAllCases()"></th>
+                            <th>Case ID</th>
+                            <th>Priority</th>
+                            <th>Subject</th>
+                            <th>Reporter</th>
+                            <th>Assigned To</th>
+                            <th>Status</th>
+                            <th>SLA Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="triageTableBody">
+                        <!-- Cases will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
         
         <!-- User Management Section -->
         <div class="user-management-section">
@@ -1538,6 +2019,189 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeAuditLogModal()">Close</button>
                 <button class="btn btn-outline" onclick="exportAuditLog()">Export Log</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Case Modal -->
+    <div id="newCaseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>➕ Create New Case</h2>
+                <button class="modal-close" onclick="closeNewCaseModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="newCaseForm" onsubmit="handleCreateCase(event)">
+                    <div class="form-group">
+                        <label for="caseSubject">Subject *</label>
+                        <input type="text" id="caseSubject" name="subject" required 
+                               placeholder="Brief description of the issue" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="caseDescription">Description *</label>
+                        <textarea id="caseDescription" name="description" rows="4" required 
+                                  placeholder="Detailed description of the issue..." class="form-control"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="casePriority">Priority *</label>
+                            <select id="casePriority" name="priority" required class="form-control">
+                                <option value="">Select Priority</option>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="critical">Critical</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="caseCategory">Category</label>
+                            <select id="caseCategory" name="category" class="form-control">
+                                <option value="">Select Category</option>
+                                <option value="technical">Technical Issue</option>
+                                <option value="user_support">User Support</option>
+                                <option value="security">Security</option>
+                                <option value="feature_request">Feature Request</option>
+                                <option value="bug_report">Bug Report</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="caseReporter">Reporter Email</label>
+                            <input type="email" id="caseReporter" name="reporter" 
+                                   placeholder="reporter@example.com" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="caseAssignee">Assign To</label>
+                            <select id="caseAssignee" name="assignee" class="form-control">
+                                <option value="">Unassigned</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeNewCaseModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="handleCreateCase()">Create Case</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLA Configuration Modal -->
+    <div id="slaConfigModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⏱️ SLA Configuration</h2>
+                <button class="modal-close" onclick="closeSLAConfigModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="sla-config-section">
+                    <h3>Response Time Targets</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="slaResponseCritical">Critical Priority</label>
+                            <input type="number" id="slaResponseCritical" name="responseCritical" 
+                                   value="1" min="0" max="24" class="form-control">
+                            <small>Hours</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="slaResponseHigh">High Priority</label>
+                            <input type="number" id="slaResponseHigh" name="responseHigh" 
+                                   value="4" min="0" max="24" class="form-control">
+                            <small>Hours</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="slaResponseMedium">Medium Priority</label>
+                            <input type="number" id="slaResponseMedium" name="responseMedium" 
+                                   value="8" min="0" max="24" class="form-control">
+                            <small>Hours</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="slaResponseLow">Low Priority</label>
+                            <input type="number" id="slaResponseLow" name="responseLow" 
+                                   value="24" min="0" max="72" class="form-control">
+                            <small>Hours</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="sla-config-section">
+                    <h3>Resolution Time Targets</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="slaResolutionCritical">Critical Priority</label>
+                            <input type="number" id="slaResolutionCritical" name="resolutionCritical" 
+                                   value="4" min="0" max="48" class="form-control">
+                            <small>Hours</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="slaResolutionHigh">High Priority</label>
+                            <input type="number" id="slaResolutionHigh" name="resolutionHigh" 
+                                   value="24" min="0" max="72" class="form-control">
+                            <small>Hours</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="slaResolutionMedium">Medium Priority</label>
+                            <input type="number" id="slaResolutionMedium" name="resolutionMedium" 
+                                   value="72" min="0" max="168" class="form-control">
+                            <small>Hours</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="slaResolutionLow">Low Priority</label>
+                            <input type="number" id="slaResolutionLow" name="resolutionLow" 
+                                   value="168" min="0" max="336" class="form-control">
+                            <small>Hours</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="sla-config-section">
+                    <h3>Escalation Rules</h3>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="slaAutoEscalate" name="autoEscalate" checked>
+                            Auto-escalate cases that breach SLA
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="slaEscalationDelay">Escalation Delay</label>
+                        <input type="number" id="slaEscalationDelay" name="escalationDelay" 
+                               value="2" min="0" max="24" class="form-control">
+                        <small>Hours after SLA breach</small>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeSLAConfigModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveSLAConfig()">Save Configuration</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Assign Cases Modal -->
+    <div id="bulkAssignModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>👥 Bulk Assign Cases</h2>
+                <button class="modal-close" onclick="closeBulkAssignModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="bulk-assign-info">
+                    <p><strong>Selected Cases:</strong> <span id="bulkAssignCount">0</span></p>
+                </div>
+                <div class="form-group">
+                    <label for="bulkAssignTo">Assign To</label>
+                    <select id="bulkAssignTo" name="assignTo" class="form-control">
+                        <option value="">Select Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="bulkAssignNote">Assignment Note (Optional)</label>
+                    <textarea id="bulkAssignNote" name="note" rows="3" 
+                              placeholder="Reason for assignment..." class="form-control"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeBulkAssignModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="executeBulkAssign()">Assign Cases</button>
             </div>
         </div>
     </div>
@@ -2755,6 +3419,617 @@
             await loadAdminsInModal();
         }
         
+        // ===== TRIAGE QUEUE FUNCTIONS =====
+        
+        // Global state for triage queue
+        let triageData = {
+            cases: [],
+            slaConfig: {
+                responseTime: { critical: 1, high: 4, medium: 8, low: 24 },
+                resolutionTime: { critical: 4, high: 24, medium: 72, low: 168 },
+                autoEscalate: true,
+                escalationDelay: 2
+            }
+        };
+
+        async function loadTriageQueue() {
+            try {
+                console.log('Loading triage queue...');
+                
+                // Mock data for now - TODO: Replace with API call
+                triageData.cases = [
+                    {
+                        id: 'CASE-001',
+                        subject: 'Login issues reported by multiple users',
+                        description: 'Users unable to log in to the platform',
+                        priority: 'critical',
+                        status: 'new',
+                        reporter: 'support@241runnersawareness.org',
+                        assignee: null,
+                        category: 'technical',
+                        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+                        updatedAt: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
+                        slaStatus: 'at_risk'
+                    },
+                    {
+                        id: 'CASE-002',
+                        subject: 'Feature request: Dark mode',
+                        description: 'Users requesting dark mode theme option',
+                        priority: 'low',
+                        status: 'in_progress',
+                        reporter: 'user@example.com',
+                        assignee: 'dekuworks1@gmail.com',
+                        category: 'feature_request',
+                        createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
+                        updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+                        slaStatus: 'on_track'
+                    },
+                    {
+                        id: 'CASE-003',
+                        subject: 'Security vulnerability in user upload',
+                        description: 'Potential XSS vulnerability in file upload feature',
+                        priority: 'high',
+                        status: 'pending',
+                        reporter: 'security@241runnersawareness.org',
+                        assignee: 'danielcarey9770@yahoo.com',
+                        category: 'security',
+                        createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 hours ago
+                        updatedAt: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hour ago
+                        slaStatus: 'breached'
+                    }
+                ];
+                
+                updateTriageQueueUI();
+                updateSLAOverview();
+                
+            } catch (error) {
+                console.error('Error loading triage queue:', error);
+                showToast('Failed to load triage queue', 'error');
+            }
+        }
+        
+        function updateTriageQueueUI() {
+            const tbody = document.getElementById('triageTableBody');
+            if (!tbody) return;
+            
+            if (triageData.cases.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" class="text-center text-gray-500">No cases found</td></tr>';
+                return;
+            }
+            
+            const casesHTML = triageData.cases.map(case_ => {
+                const timeSinceCreated = getTimeSince(case_.createdAt);
+                const assigneeName = case_.assignee ? 
+                    dashboardData.users.find(u => u.email === case_.assignee)?.firstName + ' ' + 
+                    dashboardData.users.find(u => u.email === case_.assignee)?.lastName : 
+                    'Unassigned';
+                
+                return `
+                    <tr data-case-id="${case_.id}">
+                        <td>
+                            <input type="checkbox" onchange="toggleCaseSelection(this)">
+                        </td>
+                        <td>
+                            <span class="case-id">${case_.id}</span>
+                        </td>
+                        <td>
+                            <span class="priority-badge priority-${case_.priority}">${case_.priority}</span>
+                        </td>
+                        <td>
+                            <div>
+                                <strong>${case_.subject}</strong>
+                                <br>
+                                <small class="text-gray-500">${case_.category}</small>
+                            </div>
+                        </td>
+                        <td>${case_.reporter}</td>
+                        <td>${assigneeName}</td>
+                        <td>
+                            <span class="case-status case-status-${case_.status}">${case_.status.replace('_', ' ')}</span>
+                        </td>
+                        <td>
+                            <span class="sla-indicator ${case_.slaStatus}">${case_.slaStatus.replace('_', ' ')}</span>
+                        </td>
+                        <td>
+                            <div>
+                                ${timeSinceCreated}
+                                <br>
+                                <small class="text-gray-500">${case_.createdAt.toLocaleDateString()}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="case-actions">
+                                <button class="case-action-btn case-action-btn-edit" onclick="editCase('${case_.id}')" title="Edit Case">
+                                    ✏️
+                                </button>
+                                <button class="case-action-btn case-action-btn-assign" onclick="assignCase('${case_.id}')" title="Assign Case">
+                                    👥
+                                </button>
+                                <button class="case-action-btn case-action-btn-escalate" onclick="escalateCase('${case_.id}')" title="Escalate Case">
+                                    🚨
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = casesHTML;
+        }
+        
+        function updateSLAOverview() {
+            // Calculate SLA metrics
+            const totalCases = triageData.cases.length;
+            const onTrackCases = triageData.cases.filter(c => c.slaStatus === 'on_track').length;
+            const atRiskCases = triageData.cases.filter(c => c.slaStatus === 'at_risk').length;
+            const breachedCases = triageData.cases.filter(c => c.slaStatus === 'breached').length;
+            
+            // Mock calculations - TODO: Replace with real calculations
+            const avgResponseTime = 2.3;
+            const avgResolutionTime = 18.5;
+            const avgBacklogAge = 3.2;
+            const slaComplianceRate = Math.round((onTrackCases / totalCases) * 100);
+            
+            // Update UI
+            updateElement('avgResponseTime', `${avgResponseTime}h`);
+            updateElement('avgResolutionTime', `${avgResolutionTime}h`);
+            updateElement('avgBacklogAge', `${avgBacklogAge}d`);
+            updateElement('slaComplianceRate', `${slaComplianceRate}%`);
+            
+            // Update status indicators
+            updateSLAStatus('responseTimeStatus', avgResponseTime <= 4 ? 'good' : avgResponseTime <= 6 ? 'warning' : 'critical');
+            updateSLAStatus('resolutionTimeStatus', avgResolutionTime <= 24 ? 'good' : avgResolutionTime <= 36 ? 'warning' : 'critical');
+            updateSLAStatus('backlogAgeStatus', avgBacklogAge <= 2 ? 'good' : avgBacklogAge <= 3 ? 'warning' : 'critical');
+            updateSLAStatus('slaComplianceStatus', slaComplianceRate >= 90 ? 'good' : slaComplianceRate >= 80 ? 'warning' : 'critical');
+        }
+        
+        function updateSLAStatus(elementId, status) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.className = `sla-status sla-${status}`;
+                element.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+            }
+        }
+        
+        function getTimeSince(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            const diffDays = Math.floor(diffHours / 24);
+            
+            if (diffDays > 0) {
+                return `${diffDays}d ago`;
+            } else if (diffHours > 0) {
+                return `${diffHours}h ago`;
+            } else {
+                const diffMinutes = Math.floor(diffMs / (1000 * 60));
+                return `${diffMinutes}m ago`;
+            }
+        }
+        
+        // Modal functions for triage queue
+        function openNewCaseModal() {
+            const modal = document.getElementById('newCaseModal');
+            if (modal) {
+                modal.style.display = 'block';
+                populateAssigneeDropdown('caseAssignee');
+                document.getElementById('newCaseForm').reset();
+            }
+        }
+        
+        function closeNewCaseModal() {
+            const modal = document.getElementById('newCaseModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        function openSLAConfigModal() {
+            const modal = document.getElementById('slaConfigModal');
+            if (modal) {
+                modal.style.display = 'block';
+                loadSLAConfig();
+            }
+        }
+        
+        function closeSLAConfigModal() {
+            const modal = document.getElementById('slaConfigModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        function openBulkAssignModal() {
+            const selectedCases = document.querySelectorAll('.triage-table tbody tr.selected');
+            if (selectedCases.length === 0) {
+                showToast('Please select cases first', 'warning');
+                return;
+            }
+            
+            const modal = document.getElementById('bulkAssignModal');
+            if (modal) {
+                modal.style.display = 'block';
+                document.getElementById('bulkAssignCount').textContent = selectedCases.length;
+                populateAssigneeDropdown('bulkAssignTo');
+            }
+        }
+        
+        function closeBulkAssignModal() {
+            const modal = document.getElementById('bulkAssignModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        function populateAssigneeDropdown(selectId) {
+            const select = document.getElementById(selectId);
+            if (!select) return;
+            
+            // Clear existing options except first
+            select.innerHTML = '<option value="">Unassigned</option>';
+            
+            // Add admin users
+            dashboardData.admins.forEach(admin => {
+                const option = document.createElement('option');
+                option.value = admin.email;
+                option.textContent = `${admin.firstName} ${admin.lastName}`;
+                select.appendChild(option);
+            });
+        }
+        
+        async function handleCreateCase(event) {
+            if (event) event.preventDefault();
+            
+            try {
+                const form = document.getElementById('newCaseForm');
+                const formData = new FormData(form);
+                
+                const newCase = {
+                    id: `CASE-${String(triageData.cases.length + 1).padStart(3, '0')}`,
+                    subject: formData.get('subject'),
+                    description: formData.get('description'),
+                    priority: formData.get('priority'),
+                    status: 'new',
+                    reporter: formData.get('reporter') || 'system@241runnersawareness.org',
+                    assignee: formData.get('assignee') || null,
+                    category: formData.get('category') || 'general',
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    slaStatus: 'on_track'
+                };
+                
+                triageData.cases.unshift(newCase);
+                updateTriageQueueUI();
+                updateSLAOverview();
+                
+                showToast(`Case ${newCase.id} created successfully`, 'success');
+                closeNewCaseModal();
+                
+                // Log audit trail
+                logAuditAction('case_created', {
+                    caseId: newCase.id,
+                    subject: newCase.subject,
+                    priority: newCase.priority,
+                    createdBy: currentAdmin?.email || 'Unknown'
+                });
+                
+            } catch (error) {
+                console.error('Error creating case:', error);
+                showToast('Failed to create case', 'error');
+            }
+        }
+        
+        function loadSLAConfig() {
+            const config = triageData.slaConfig;
+            
+            document.getElementById('slaResponseCritical').value = config.responseTime.critical;
+            document.getElementById('slaResponseHigh').value = config.responseTime.high;
+            document.getElementById('slaResponseMedium').value = config.responseTime.medium;
+            document.getElementById('slaResponseLow').value = config.responseTime.low;
+            
+            document.getElementById('slaResolutionCritical').value = config.resolutionTime.critical;
+            document.getElementById('slaResolutionHigh').value = config.resolutionTime.high;
+            document.getElementById('slaResolutionMedium').value = config.resolutionTime.medium;
+            document.getElementById('slaResolutionLow').value = config.resolutionTime.low;
+            
+            document.getElementById('slaAutoEscalate').checked = config.autoEscalate;
+            document.getElementById('slaEscalationDelay').value = config.escalationDelay;
+        }
+        
+        function saveSLAConfig() {
+            const config = {
+                responseTime: {
+                    critical: parseInt(document.getElementById('slaResponseCritical').value),
+                    high: parseInt(document.getElementById('slaResponseHigh').value),
+                    medium: parseInt(document.getElementById('slaResponseMedium').value),
+                    low: parseInt(document.getElementById('slaResponseLow').value)
+                },
+                resolutionTime: {
+                    critical: parseInt(document.getElementById('slaResolutionCritical').value),
+                    high: parseInt(document.getElementById('slaResolutionHigh').value),
+                    medium: parseInt(document.getElementById('slaResolutionMedium').value),
+                    low: parseInt(document.getElementById('slaResolutionLow').value)
+                },
+                autoEscalate: document.getElementById('slaAutoEscalate').checked,
+                escalationDelay: parseInt(document.getElementById('slaEscalationDelay').value)
+            };
+            
+            triageData.slaConfig = config;
+            storage.set('slaConfig', JSON.stringify(config));
+            
+            showToast('SLA configuration saved', 'success');
+            closeSLAConfigModal();
+            
+            // Log audit trail
+            logAuditAction('sla_config_updated', {
+                config: config,
+                updatedBy: currentAdmin?.email || 'Unknown'
+            });
+        }
+        
+        function filterTriageQueue() {
+            const priorityFilter = document.getElementById('priorityFilter').value;
+            const statusFilter = document.getElementById('caseStatusFilter').value;
+            const assigneeFilter = document.getElementById('assignedToFilter').value;
+            const slaStatusFilter = document.getElementById('slaStatusFilter').value;
+            
+            const rows = document.querySelectorAll('.triage-table tbody tr');
+            
+            rows.forEach(row => {
+                const caseId = row.dataset.caseId;
+                const case_ = triageData.cases.find(c => c.id === caseId);
+                
+                if (!case_) return;
+                
+                const matchesPriority = !priorityFilter || case_.priority === priorityFilter;
+                const matchesStatus = !statusFilter || case_.status === statusFilter;
+                const matchesAssignee = !assigneeFilter || 
+                    (assigneeFilter === 'unassigned' && !case_.assignee) ||
+                    (assigneeFilter !== 'unassigned' && case_.assignee === assigneeFilter);
+                const matchesSLA = !slaStatusFilter || case_.slaStatus === slaStatusFilter;
+                
+                if (matchesPriority && matchesStatus && matchesAssignee && matchesSLA) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        function toggleSelectAllCases() {
+            const selectAllCheckbox = document.getElementById('selectAllCases');
+            const checkboxes = document.querySelectorAll('.triage-table tbody input[type="checkbox"]');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+                checkbox.closest('tr').classList.toggle('selected', selectAllCheckbox.checked);
+            });
+        }
+        
+        function toggleCaseSelection(checkbox) {
+            const row = checkbox.closest('tr');
+            row.classList.toggle('selected', checkbox.checked);
+        }
+        
+        function refreshTriageQueue() {
+            showToast('Refreshing triage queue...', 'info', 2000);
+            loadTriageQueue().then(() => {
+                showToast('Triage queue refreshed!', 'success', 3000);
+            });
+        }
+        
+        function exportTriageReport() {
+            const csvContent = [
+                ['Case ID', 'Subject', 'Priority', 'Status', 'Reporter', 'Assignee', 'SLA Status', 'Created', 'Updated'],
+                ...triageData.cases.map(case_ => [
+                    case_.id,
+                    case_.subject,
+                    case_.priority,
+                    case_.status,
+                    case_.reporter,
+                    case_.assignee || 'Unassigned',
+                    case_.slaStatus,
+                    case_.createdAt.toLocaleDateString(),
+                    case_.updatedAt.toLocaleDateString()
+                ])
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `triage_report_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showToast('Triage report exported', 'success');
+        }
+        
+        // Bulk action functions for triage queue
+        function bulkAssignCases() {
+            openBulkAssignModal();
+        }
+        
+        function executeBulkAssign() {
+            const selectedCases = document.querySelectorAll('.triage-table tbody tr.selected');
+            const assignTo = document.getElementById('bulkAssignTo').value;
+            const note = document.getElementById('bulkAssignNote').value;
+            
+            if (selectedCases.length === 0) {
+                showToast('Please select cases first', 'warning');
+                return;
+            }
+            
+            if (!assignTo) {
+                showToast('Please select an assignee', 'warning');
+                return;
+            }
+            
+            try {
+                const caseIds = Array.from(selectedCases).map(row => row.dataset.caseId);
+                
+                // Update cases in triage data
+                caseIds.forEach(caseId => {
+                    const case_ = triageData.cases.find(c => c.id === caseId);
+                    if (case_) {
+                        case_.assignee = assignTo;
+                        case_.updatedAt = new Date();
+                    }
+                });
+                
+                updateTriageQueueUI();
+                showToast(`Assigned ${caseIds.length} cases to ${assignTo}`, 'success');
+                closeBulkAssignModal();
+                
+                // Log audit trail
+                logAuditAction('bulk_case_assignment', {
+                    caseIds: caseIds,
+                    assignee: assignTo,
+                    note: note,
+                    count: caseIds.length,
+                    assignedBy: currentAdmin?.email || 'Unknown'
+                });
+                
+            } catch (error) {
+                console.error('Error assigning cases:', error);
+                showToast('Failed to assign cases', 'error');
+            }
+        }
+        
+        function bulkUpdatePriority() {
+            const selectedCases = document.querySelectorAll('.triage-table tbody tr.selected');
+            if (selectedCases.length === 0) {
+                showToast('Please select cases first', 'warning');
+                return;
+            }
+            
+            const newPriority = prompt('Enter new priority (critical, high, medium, low):');
+            if (!newPriority || !['critical', 'high', 'medium', 'low'].includes(newPriority)) {
+                showToast('Invalid priority level', 'warning');
+                return;
+            }
+            
+            try {
+                const caseIds = Array.from(selectedCases).map(row => row.dataset.caseId);
+                
+                // Update cases in triage data
+                caseIds.forEach(caseId => {
+                    const case_ = triageData.cases.find(c => c.id === caseId);
+                    if (case_) {
+                        case_.priority = newPriority;
+                        case_.updatedAt = new Date();
+                    }
+                });
+                
+                updateTriageQueueUI();
+                showToast(`Updated priority for ${caseIds.length} cases to ${newPriority}`, 'success');
+                
+                // Log audit trail
+                logAuditAction('bulk_priority_update', {
+                    caseIds: caseIds,
+                    newPriority: newPriority,
+                    count: caseIds.length,
+                    updatedBy: currentAdmin?.email || 'Unknown'
+                });
+                
+            } catch (error) {
+                console.error('Error updating priority:', error);
+                showToast('Failed to update priority', 'error');
+            }
+        }
+        
+        function bulkEscalateCases() {
+            const selectedCases = document.querySelectorAll('.triage-table tbody tr.selected');
+            if (selectedCases.length === 0) {
+                showToast('Please select cases first', 'warning');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to escalate ${selectedCases.length} cases?`)) {
+                return;
+            }
+            
+            try {
+                const caseIds = Array.from(selectedCases).map(row => row.dataset.caseId);
+                
+                // Update cases in triage data
+                caseIds.forEach(caseId => {
+                    const case_ = triageData.cases.find(c => c.id === caseId);
+                    if (case_) {
+                        // Escalate priority
+                        if (case_.priority === 'low') case_.priority = 'medium';
+                        else if (case_.priority === 'medium') case_.priority = 'high';
+                        else if (case_.priority === 'high') case_.priority = 'critical';
+                        
+                        case_.updatedAt = new Date();
+                        case_.slaStatus = 'at_risk'; // Reset SLA status
+                    }
+                });
+                
+                updateTriageQueueUI();
+                updateSLAOverview();
+                showToast(`Escalated ${caseIds.length} cases`, 'success');
+                
+                // Log audit trail
+                logAuditAction('bulk_case_escalation', {
+                    caseIds: caseIds,
+                    count: caseIds.length,
+                    escalatedBy: currentAdmin?.email || 'Unknown'
+                });
+                
+            } catch (error) {
+                console.error('Error escalating cases:', error);
+                showToast('Failed to escalate cases', 'error');
+            }
+        }
+        
+        // Individual case action functions
+        function editCase(caseId) {
+            const case_ = triageData.cases.find(c => c.id === caseId);
+            if (case_) {
+                showToast(`Edit case: ${case_.subject}`, 'info');
+                // TODO: Implement edit case modal
+            }
+        }
+        
+        function assignCase(caseId) {
+            const case_ = triageData.cases.find(c => c.id === caseId);
+            if (case_) {
+                showToast(`Assign case: ${case_.subject}`, 'info');
+                // TODO: Implement assign case modal
+            }
+        }
+        
+        function escalateCase(caseId) {
+            const case_ = triageData.cases.find(c => c.id === caseId);
+            if (case_) {
+                if (!confirm(`Are you sure you want to escalate case ${caseId}?`)) {
+                    return;
+                }
+                
+                // Escalate priority
+                if (case_.priority === 'low') case_.priority = 'medium';
+                else if (case_.priority === 'medium') case_.priority = 'high';
+                else if (case_.priority === 'high') case_.priority = 'critical';
+                
+                case_.updatedAt = new Date();
+                case_.slaStatus = 'at_risk';
+                
+                updateTriageQueueUI();
+                updateSLAOverview();
+                showToast(`Case ${caseId} escalated`, 'success');
+                
+                // Log audit trail
+                logAuditAction('case_escalated', {
+                    caseId: caseId,
+                    newPriority: case_.priority,
+                    escalatedBy: currentAdmin?.email || 'Unknown'
+                });
+            }
+        }
+
         // ===== USER SELECTION AND FILTERING FUNCTIONS =====
         
         function selectAllUsers() {
@@ -3124,6 +4399,9 @@
                 // Load dashboard data using individual functions
                 await loadDashboardData();
                 
+                // Load triage queue data
+                await loadTriageQueue();
+                
                 // Start refresh timer (fallback) - reduced frequency for better performance
                 refreshInterval = setInterval(loadDashboardData, 60000); // 60 seconds
                 
@@ -3156,7 +4434,7 @@
             
             // Close modal when clicking outside
             window.addEventListener('click', function(event) {
-                const modals = ['adminsModal', 'inviteUserModal', 'bulkActionsModal', 'savedFiltersModal', 'auditLogModal'];
+                const modals = ['adminsModal', 'inviteUserModal', 'bulkActionsModal', 'savedFiltersModal', 'auditLogModal', 'newCaseModal', 'slaConfigModal', 'bulkAssignModal'];
                 modals.forEach(modalId => {
                     const modal = document.getElementById(modalId);
                     if (event.target === modal) {
@@ -3166,6 +4444,9 @@
                             case 'bulkActionsModal': closeBulkActionsModal(); break;
                             case 'savedFiltersModal': closeSavedFiltersModal(); break;
                             case 'auditLogModal': closeAuditLogModal(); break;
+                            case 'newCaseModal': closeNewCaseModal(); break;
+                            case 'slaConfigModal': closeSLAConfigModal(); break;
+                            case 'bulkAssignModal': closeBulkAssignModal(); break;
                         }
                     }
                 });
@@ -3179,6 +4460,9 @@
                     closeBulkActionsModal();
                     closeSavedFiltersModal();
                     closeAuditLogModal();
+                    closeNewCaseModal();
+                    closeSLAConfigModal();
+                    closeBulkAssignModal();
                 }
             });
             
