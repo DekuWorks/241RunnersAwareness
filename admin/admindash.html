@@ -2592,6 +2592,7 @@
             align-items: center;
             gap: 15px;
             margin-bottom: 10px;
+            justify-content: space-between;
         }
         
         .admin-avatar-small {
@@ -2640,6 +2641,17 @@
         .admin-status.inactive {
             background-color: #fee2e2;
             color: #991b1b;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .admin-actions .btn {
+            padding: 6px 10px;
+            font-size: 0.8rem;
         }
         
         .admin-role {
@@ -4814,13 +4826,113 @@
             }
         }
         
-        function deleteUser(userId) {
+        async function deleteUser(userId) {
             const user = dashboardData.users.find(u => u.id === userId);
-            if (user) {
-                if (confirm(`Are you sure you want to delete user ${user.email}?`)) {
-                    showToast(`Delete user: ${user.email}`, 'warning');
-                    // TODO: Implement delete user API call
+            if (!user) {
+                showToast('User not found', 'error');
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete user ${user.email}? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                showToast('Deleting user...', 'info', 2000);
+                
+                const response = await fetch(`${apiUrl}/admin/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    // Remove user from local data
+                    dashboardData.users = dashboardData.users.filter(u => u.id !== userId);
+                    dashboardData.stats.totalUsers--;
+                    
+                    // Update UI
+                    updateUsersTable();
+                    updateDashboardUI();
+                    
+                    showToast(`User ${user.email} deleted successfully`, 'success');
+                    
+                    // Log audit trail
+                    logAuditAction('user_deleted', {
+                        userId: userId,
+                        userEmail: user.email,
+                        deletedBy: currentAdmin?.email || 'Unknown'
+                    });
+                    
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to delete user');
                 }
+                
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                showToast(`Failed to delete user: ${error.message}`, 'error');
+            }
+        }
+        
+        async function deleteAdmin(adminId) {
+            const admin = dashboardData.admins.find(a => a.id === adminId);
+            if (!admin) {
+                showToast('Admin not found', 'error');
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete admin ${admin.email}? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                showToast('Deleting admin...', 'info', 2000);
+                
+                const response = await fetch(`${apiUrl}/admin/admins/${adminId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    // Remove admin from local data
+                    dashboardData.admins = dashboardData.admins.filter(a => a.id !== adminId);
+                    dashboardData.stats.activeAdmins--;
+                    
+                    // Update UI
+                    updateAdminsList();
+                    updateDashboardUI();
+                    
+                    showToast(`Admin ${admin.email} deleted successfully`, 'success');
+                    
+                    // Log audit trail
+                    logAuditAction('admin_deleted', {
+                        adminId: adminId,
+                        adminEmail: admin.email,
+                        deletedBy: currentAdmin?.email || 'Unknown'
+                    });
+                    
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to delete admin');
+                }
+                
+            } catch (error) {
+                console.error('Error deleting admin:', error);
+                showToast(`Failed to delete admin: ${error.message}`, 'error');
+            }
+        }
+        
+        function editAdmin(adminId) {
+            const admin = dashboardData.admins.find(a => a.id === adminId);
+            if (admin) {
+                showToast(`Edit admin: ${admin.email}`, 'info');
+                // TODO: Implement edit admin modal
             }
         }
         
@@ -5429,6 +5541,14 @@
                                     <span>●</span>
                                     ${admin.isActive !== false ? 'Active' : 'Inactive'}
                                 </div>
+                            </div>
+                            <div class="admin-actions">
+                                <button class="btn btn-sm btn-outline" onclick="editAdmin('${admin.id}')" title="Edit Admin">
+                                    ✏️
+                                </button>
+                                ${!isCurrentAdmin ? `<button class="btn btn-sm btn-danger" onclick="deleteAdmin('${admin.id}')" title="Delete Admin">
+                                    🗑️
+                                </button>` : ''}
                             </div>
                         </div>
                     </div>
