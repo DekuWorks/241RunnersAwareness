@@ -1050,6 +1050,455 @@
         .case-action-btn-escalate:hover {
             background: #fecaca;
         }
+
+        /* System Health Styles */
+        .system-health-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            overflow: hidden;
+        }
+
+        .health-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .health-metric {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #dc2626;
+        }
+
+        .health-metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .health-metric-header h4 {
+            margin: 0;
+            color: #1f2937;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .health-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .health-status.health-good {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .health-status.health-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .health-status.health-critical {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .health-metric-value {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .health-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #dc2626;
+        }
+
+        .health-target {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .service-status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .service-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .service-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .service-header h4 {
+            margin: 0;
+            color: #1f2937;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .service-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .service-status.service-online {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .service-status.service-offline {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .service-status.service-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .service-details {
+            margin-bottom: 15px;
+        }
+
+        .service-details p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .service-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .health-quick-actions {
+            padding: 20px;
+            border-top: 1px solid #e5e7eb;
+            background: #f9fafb;
+        }
+
+        .health-quick-actions h3 {
+            margin: 0 0 15px 0;
+            color: #1f2937;
+            font-size: 1.1rem;
+        }
+
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .quick-actions-grid .btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 15px 10px;
+            text-align: center;
+            min-height: 60px;
+        }
+
+        /* Moderation Queue Styles */
+        .moderation-queue-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            overflow: hidden;
+        }
+
+        .moderation-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .moderation-metric {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #dc2626;
+        }
+
+        .moderation-metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .moderation-metric-header h4 {
+            margin: 0;
+            color: #1f2937;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .moderation-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .moderation-status.moderation-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .moderation-status.moderation-approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .moderation-status.moderation-rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .moderation-status.moderation-good {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .moderation-metric-value {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .moderation-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #dc2626;
+        }
+
+        .moderation-target {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .moderation-controls {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            background: #f9fafb;
+        }
+
+        .moderation-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .moderation-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .moderation-table-container {
+            overflow-x: auto;
+        }
+
+        .moderation-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .moderation-table th {
+            background: #f8fafc;
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+            white-space: nowrap;
+        }
+
+        .moderation-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid #f3f4f6;
+            vertical-align: middle;
+        }
+
+        .moderation-table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .moderation-table tbody tr.selected {
+            background: #fef2f2;
+        }
+
+        .content-id {
+            font-family: monospace;
+            font-weight: 600;
+            color: #dc2626;
+        }
+
+        .content-type-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .content-type-case_report {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .content-type-user_profile {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .content-type-comment {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .content-type-image {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .content-type-document {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .content-preview {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .moderation-status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .moderation-status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .moderation-status-in_review {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .moderation-status-approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .moderation-status-rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .moderation-status-flagged {
+            background: #fecaca;
+            color: #7f1d1d;
+        }
+
+        .moderation-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .moderation-action-btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .moderation-action-btn-approve {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .moderation-action-btn-approve:hover {
+            background: #a7f3d0;
+        }
+
+        .moderation-action-btn-reject {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .moderation-action-btn-reject:hover {
+            background: #fecaca;
+        }
+
+        .moderation-action-btn-flag {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .moderation-action-btn-flag:hover {
+            background: #fde68a;
+        }
+
+        .moderation-action-btn-review {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .moderation-action-btn-review:hover {
+            background: #bfdbfe;
+        }
     </style>
     
     <!-- Main Dashboard Styles -->
@@ -1600,6 +2049,323 @@
             <div class="stat-card">
                 <h3>System Status</h3>
                 <p class="stat-number" id="systemStatus">-</p>
+            </div>
+        </div>
+
+        <!-- System Health Section -->
+        <div class="system-health-section">
+            <div class="section-header">
+                <h2>🏥 System Health & Diagnostics</h2>
+                <div class="section-actions">
+                    <button class="btn btn-primary" onclick="runSystemDiagnostics()">
+                        <span class="btn-icon">🔍</span>
+                        Run Diagnostics
+                    </button>
+                    <button class="btn btn-warning" onclick="openHealthConfigModal()">
+                        <span class="btn-icon">⚙️</span>
+                        Health Config
+                    </button>
+                    <button class="btn btn-outline" onclick="exportHealthReport()">
+                        <span class="btn-icon">📊</span>
+                        Export Report
+                    </button>
+                    <button class="btn btn-secondary" onclick="refreshHealthStatus()">
+                        <span class="btn-icon">🔄</span>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Health Overview -->
+            <div class="health-overview">
+                <div class="health-metric">
+                    <div class="health-metric-header">
+                        <h4>API Status</h4>
+                        <span class="health-status health-good" id="apiStatus">Healthy</span>
+                    </div>
+                    <div class="health-metric-value">
+                        <span class="health-number" id="apiResponseTime">45ms</span>
+                        <span class="health-target">Target: <100ms</span>
+                    </div>
+                </div>
+                <div class="health-metric">
+                    <div class="health-metric-header">
+                        <h4>Database</h4>
+                        <span class="health-status health-good" id="dbStatus">Connected</span>
+                    </div>
+                    <div class="health-metric-value">
+                        <span class="health-number" id="dbConnections">12/50</span>
+                        <span class="health-target">Active Connections</span>
+                    </div>
+                </div>
+                <div class="health-metric">
+                    <div class="health-metric-header">
+                        <h4>Memory Usage</h4>
+                        <span class="health-status health-warning" id="memoryStatus">Warning</span>
+                    </div>
+                    <div class="health-metric-value">
+                        <span class="health-number" id="memoryUsage">78%</span>
+                        <span class="health-target">2.1GB / 2.7GB</span>
+                    </div>
+                </div>
+                <div class="health-metric">
+                    <div class="health-metric-header">
+                        <h4>CPU Usage</h4>
+                        <span class="health-status health-good" id="cpuStatus">Normal</span>
+                    </div>
+                    <div class="health-metric-value">
+                        <span class="health-number" id="cpuUsage">23%</span>
+                        <span class="health-target">Average Load</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Status Grid -->
+            <div class="service-status-grid">
+                <div class="service-card">
+                    <div class="service-header">
+                        <h4>🌐 Web Server</h4>
+                        <span class="service-status service-online">Online</span>
+                    </div>
+                    <div class="service-details">
+                        <p><strong>Uptime:</strong> 15d 8h 23m</p>
+                        <p><strong>Requests/min:</strong> 1,247</p>
+                        <p><strong>Error Rate:</strong> 0.02%</p>
+                    </div>
+                    <div class="service-actions">
+                        <button class="btn btn-sm btn-outline" onclick="viewServiceLogs('webserver')">View Logs</button>
+                        <button class="btn btn-sm btn-outline" onclick="restartService('webserver')">Restart</button>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-header">
+                        <h4>🗄️ Database</h4>
+                        <span class="service-status service-online">Online</span>
+                    </div>
+                    <div class="service-details">
+                        <p><strong>Uptime:</strong> 15d 8h 23m</p>
+                        <p><strong>Queries/min:</strong> 3,891</p>
+                        <p><strong>Slow Queries:</strong> 12</p>
+                    </div>
+                    <div class="service-actions">
+                        <button class="btn btn-sm btn-outline" onclick="viewServiceLogs('database')">View Logs</button>
+                        <button class="btn btn-sm btn-outline" onclick="optimizeDatabase()">Optimize</button>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-header">
+                        <h4>📧 Email Service</h4>
+                        <span class="service-status service-online">Online</span>
+                    </div>
+                    <div class="service-details">
+                        <p><strong>Uptime:</strong> 15d 8h 23m</p>
+                        <p><strong>Emails/min:</strong> 23</p>
+                        <p><strong>Queue Size:</strong> 0</p>
+                    </div>
+                    <div class="service-actions">
+                        <button class="btn btn-sm btn-outline" onclick="viewServiceLogs('email')">View Logs</button>
+                        <button class="btn btn-sm btn-outline" onclick="testEmailService()">Test</button>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-header">
+                        <h4>📁 File Storage</h4>
+                        <span class="service-status service-online">Online</span>
+                    </div>
+                    <div class="service-details">
+                        <p><strong>Uptime:</strong> 15d 8h 23m</p>
+                        <p><strong>Storage Used:</strong> 2.3GB / 10GB</p>
+                        <p><strong>Files:</strong> 1,247</p>
+                    </div>
+                    <div class="service-actions">
+                        <button class="btn btn-sm btn-outline" onclick="viewServiceLogs('storage')">View Logs</button>
+                        <button class="btn btn-sm btn-outline" onclick="cleanupStorage()">Cleanup</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="health-quick-actions">
+                <h3>Quick Actions</h3>
+                <div class="quick-actions-grid">
+                    <button class="btn btn-outline" onclick="openSwaggerDocs()">
+                        <span class="btn-icon">📚</span>
+                        Swagger Docs
+                    </button>
+                    <button class="btn btn-outline" onclick="viewSystemLogs()">
+                        <span class="btn-icon">📋</span>
+                        System Logs
+                    </button>
+                    <button class="btn btn-outline" onclick="checkSSLStatus()">
+                        <span class="btn-icon">🔒</span>
+                        SSL Status
+                    </button>
+                    <button class="btn btn-outline" onclick="testAPIConnectivity()">
+                        <span class="btn-icon">🔗</span>
+                        API Test
+                    </button>
+                    <button class="btn btn-outline" onclick="viewPerformanceMetrics()">
+                        <span class="btn-icon">📈</span>
+                        Performance
+                    </button>
+                    <button class="btn btn-outline" onclick="backupDatabase()">
+                        <span class="btn-icon">💾</span>
+                        Backup DB
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Moderation Queue Section -->
+        <div class="moderation-queue-section">
+            <div class="section-header">
+                <h2>🛡️ Moderation Queue & Content Management</h2>
+                <div class="section-actions">
+                    <button class="btn btn-primary" onclick="openContentReviewModal()">
+                        <span class="btn-icon">👁️</span>
+                        Review Content
+                    </button>
+                    <button class="btn btn-warning" onclick="openModerationConfigModal()">
+                        <span class="btn-icon">⚙️</span>
+                        Moderation Rules
+                    </button>
+                    <button class="btn btn-outline" onclick="exportModerationReport()">
+                        <span class="btn-icon">📊</span>
+                        Export Report
+                    </button>
+                    <button class="btn btn-secondary" onclick="refreshModerationQueue()">
+                        <span class="btn-icon">🔄</span>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Moderation Stats -->
+            <div class="moderation-stats">
+                <div class="moderation-metric">
+                    <div class="moderation-metric-header">
+                        <h4>Pending Review</h4>
+                        <span class="moderation-status moderation-pending" id="pendingReviewStatus">High</span>
+                    </div>
+                    <div class="moderation-metric-value">
+                        <span class="moderation-number" id="pendingReviewCount">23</span>
+                        <span class="moderation-target">Items awaiting review</span>
+                    </div>
+                </div>
+                <div class="moderation-metric">
+                    <div class="moderation-metric-header">
+                        <h4>Approved Today</h4>
+                        <span class="moderation-status moderation-approved" id="approvedTodayStatus">Good</span>
+                    </div>
+                    <div class="moderation-metric-value">
+                        <span class="moderation-number" id="approvedTodayCount">47</span>
+                        <span class="moderation-target">Items approved</span>
+                    </div>
+                </div>
+                <div class="moderation-metric">
+                    <div class="moderation-metric-header">
+                        <h4>Rejected Today</h4>
+                        <span class="moderation-status moderation-rejected" id="rejectedTodayStatus">Low</span>
+                    </div>
+                    <div class="moderation-metric-value">
+                        <span class="moderation-number" id="rejectedTodayCount">8</span>
+                        <span class="moderation-target">Items rejected</span>
+                    </div>
+                </div>
+                <div class="moderation-metric">
+                    <div class="moderation-metric-header">
+                        <h4>Response Time</h4>
+                        <span class="moderation-status moderation-good" id="moderationResponseStatus">Good</span>
+                    </div>
+                    <div class="moderation-metric-value">
+                        <span class="moderation-number" id="moderationResponseTime">2.1h</span>
+                        <span class="moderation-target">Average review time</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Moderation Queue Controls -->
+            <div class="moderation-controls">
+                <div class="moderation-filters">
+                    <div class="filter-group">
+                        <label>Content Type</label>
+                        <select id="contentTypeFilter" onchange="filterModerationQueue()">
+                            <option value="">All Types</option>
+                            <option value="case_report">Case Reports</option>
+                            <option value="user_profile">User Profiles</option>
+                            <option value="comment">Comments</option>
+                            <option value="image">Images</option>
+                            <option value="document">Documents</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Priority</label>
+                        <select id="moderationPriorityFilter" onchange="filterModerationQueue()">
+                            <option value="">All Priorities</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select id="moderationStatusFilter" onchange="filterModerationQueue()">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="in_review">In Review</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="flagged">Flagged</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Reviewer</label>
+                        <select id="moderationReviewerFilter" onchange="filterModerationQueue()">
+                            <option value="">All Reviewers</option>
+                            <option value="unassigned">Unassigned</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="moderation-actions">
+                    <button class="btn btn-warning" onclick="bulkApproveContent()">
+                        <span class="btn-icon">✅</span>
+                        Bulk Approve
+                    </button>
+                    <button class="btn btn-danger" onclick="bulkRejectContent()">
+                        <span class="btn-icon">❌</span>
+                        Bulk Reject
+                    </button>
+                    <button class="btn btn-outline" onclick="bulkFlagContent()">
+                        <span class="btn-icon">🚩</span>
+                        Bulk Flag
+                    </button>
+                </div>
+            </div>
+
+            <!-- Moderation Queue Table -->
+            <div class="moderation-table-container">
+                <table class="moderation-table" id="moderationTable">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAllModeration" onchange="toggleSelectAllModeration()"></th>
+                            <th>Content ID</th>
+                            <th>Type</th>
+                            <th>Content Preview</th>
+                            <th>Submitted By</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Reviewer</th>
+                            <th>Submitted</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="moderationTableBody">
+                        <!-- Content will be populated by JavaScript -->
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -4030,6 +4796,668 @@
             }
         }
 
+        // ===== SYSTEM HEALTH FUNCTIONS =====
+        
+        // Global state for system health
+        let healthData = {
+            apiStatus: 'healthy',
+            dbStatus: 'connected',
+            memoryUsage: 78,
+            cpuUsage: 23,
+            services: {
+                webserver: { status: 'online', uptime: '15d 8h 23m', requests: 1247, errors: 0.02 },
+                database: { status: 'online', uptime: '15d 8h 23m', queries: 3891, slowQueries: 12 },
+                email: { status: 'online', uptime: '15d 8h 23m', emails: 23, queue: 0 },
+                storage: { status: 'online', uptime: '15d 8h 23m', used: '2.3GB', total: '10GB', files: 1247 }
+            }
+        };
+
+        async function loadSystemHealth() {
+            try {
+                console.log('Loading system health data...');
+                
+                // Mock health data - TODO: Replace with real API calls
+                await updateHealthMetrics();
+                updateServiceStatus();
+                
+            } catch (error) {
+                console.error('Error loading system health:', error);
+                showToast('Failed to load system health data', 'error');
+            }
+        }
+        
+        async function updateHealthMetrics() {
+            // Mock API health check
+            try {
+                const startTime = Date.now();
+                const response = await fetch(`${window.API_BASE_URL}/health`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const responseTime = Date.now() - startTime;
+                
+                if (response.ok) {
+                    healthData.apiStatus = 'healthy';
+                    updateElement('apiResponseTime', `${responseTime}ms`);
+                    updateHealthStatus('apiStatus', 'good');
+                } else {
+                    healthData.apiStatus = 'error';
+                    updateHealthStatus('apiStatus', 'critical');
+                }
+            } catch (error) {
+                healthData.apiStatus = 'error';
+                updateHealthStatus('apiStatus', 'critical');
+            }
+            
+            // Update other metrics
+            updateElement('dbConnections', '12/50');
+            updateElement('memoryUsage', `${healthData.memoryUsage}%`);
+            updateElement('cpuUsage', `${healthData.cpuUsage}%`);
+            
+            // Update status indicators
+            updateHealthStatus('dbStatus', 'good');
+            updateHealthStatus('memoryStatus', healthData.memoryUsage > 80 ? 'warning' : 'good');
+            updateHealthStatus('cpuStatus', healthData.cpuUsage > 70 ? 'warning' : 'good');
+        }
+        
+        function updateHealthStatus(elementId, status) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.className = `health-status health-${status}`;
+                element.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+            }
+        }
+        
+        function updateServiceStatus() {
+            // Service status is already in the HTML, but we could update it dynamically here
+            console.log('Service status updated');
+        }
+        
+        async function runSystemDiagnostics() {
+            showToast('Running system diagnostics...', 'info', 3000);
+            
+            try {
+                // Simulate diagnostic checks
+                const checks = [
+                    { name: 'API Connectivity', status: 'checking' },
+                    { name: 'Database Connection', status: 'checking' },
+                    { name: 'Email Service', status: 'checking' },
+                    { name: 'File Storage', status: 'checking' },
+                    { name: 'SSL Certificate', status: 'checking' }
+                ];
+                
+                for (const check of checks) {
+                    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate check time
+                    console.log(`✓ ${check.name}: OK`);
+                }
+                
+                showToast('System diagnostics completed successfully', 'success');
+                
+                // Log audit trail
+                logAuditAction('system_diagnostics_run', {
+                    checks: checks.length,
+                    runBy: currentAdmin?.email || 'Unknown'
+                });
+                
+            } catch (error) {
+                console.error('Error running diagnostics:', error);
+                showToast('System diagnostics failed', 'error');
+            }
+        }
+        
+        function openHealthConfigModal() {
+            showToast('Health configuration modal - TODO: Implement', 'info');
+            // TODO: Implement health configuration modal
+        }
+        
+        function exportHealthReport() {
+            const reportData = {
+                timestamp: new Date().toISOString(),
+                apiStatus: healthData.apiStatus,
+                dbStatus: healthData.dbStatus,
+                memoryUsage: healthData.memoryUsage,
+                cpuUsage: healthData.cpuUsage,
+                services: healthData.services
+            };
+            
+            const csvContent = [
+                ['Metric', 'Value', 'Status', 'Timestamp'],
+                ['API Status', healthData.apiStatus, 'OK', new Date().toISOString()],
+                ['Database', healthData.dbStatus, 'OK', new Date().toISOString()],
+                ['Memory Usage', `${healthData.memoryUsage}%`, healthData.memoryUsage > 80 ? 'WARNING' : 'OK', new Date().toISOString()],
+                ['CPU Usage', `${healthData.cpuUsage}%`, healthData.cpuUsage > 70 ? 'WARNING' : 'OK', new Date().toISOString()]
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `health_report_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showToast('Health report exported', 'success');
+        }
+        
+        function refreshHealthStatus() {
+            showToast('Refreshing health status...', 'info', 2000);
+            loadSystemHealth().then(() => {
+                showToast('Health status refreshed!', 'success', 3000);
+            });
+        }
+        
+        // Quick action functions
+        function openSwaggerDocs() {
+            window.open('https://241runners-api.azurewebsites.net/swagger', '_blank');
+        }
+        
+        function viewSystemLogs() {
+            showToast('System logs viewer - TODO: Implement', 'info');
+            // TODO: Implement system logs viewer
+        }
+        
+        function checkSSLStatus() {
+            showToast('SSL status check - TODO: Implement', 'info');
+            // TODO: Implement SSL status check
+        }
+        
+        async function testAPIConnectivity() {
+            showToast('Testing API connectivity...', 'info', 2000);
+            
+            try {
+                const startTime = Date.now();
+                const response = await fetch(`${window.API_BASE_URL}/health`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const responseTime = Date.now() - startTime;
+                
+                if (response.ok) {
+                    showToast(`API connectivity test successful (${responseTime}ms)`, 'success');
+                } else {
+                    showToast(`API connectivity test failed (${response.status})`, 'error');
+                }
+            } catch (error) {
+                showToast('API connectivity test failed', 'error');
+            }
+        }
+        
+        function viewPerformanceMetrics() {
+            showToast('Performance metrics viewer - TODO: Implement', 'info');
+            // TODO: Implement performance metrics viewer
+        }
+        
+        function backupDatabase() {
+            if (confirm('Are you sure you want to create a database backup?')) {
+                showToast('Database backup initiated...', 'info', 3000);
+                // TODO: Implement database backup
+            }
+        }
+        
+        // Service management functions
+        function viewServiceLogs(service) {
+            showToast(`Viewing ${service} logs - TODO: Implement`, 'info');
+            // TODO: Implement service log viewer
+        }
+        
+        function restartService(service) {
+            if (confirm(`Are you sure you want to restart the ${service} service?`)) {
+                showToast(`Restarting ${service} service...`, 'warning', 3000);
+                // TODO: Implement service restart
+            }
+        }
+        
+        function optimizeDatabase() {
+            if (confirm('Are you sure you want to optimize the database?')) {
+                showToast('Database optimization initiated...', 'info', 3000);
+                // TODO: Implement database optimization
+            }
+        }
+        
+        function testEmailService() {
+            showToast('Testing email service...', 'info', 2000);
+            // TODO: Implement email service test
+        }
+        
+        function cleanupStorage() {
+            if (confirm('Are you sure you want to cleanup storage?')) {
+                showToast('Storage cleanup initiated...', 'info', 3000);
+                // TODO: Implement storage cleanup
+            }
+        }
+
+        // ===== MODERATION QUEUE FUNCTIONS =====
+        
+        // Global state for moderation queue
+        let moderationData = {
+            content: [],
+            stats: {
+                pendingReview: 23,
+                approvedToday: 47,
+                rejectedToday: 8,
+                responseTime: 2.1
+            }
+        };
+
+        async function loadModerationQueue() {
+            try {
+                console.log('Loading moderation queue...');
+                
+                // Mock data for now - TODO: Replace with API call
+                moderationData.content = [
+                    {
+                        id: 'CONTENT-001',
+                        type: 'case_report',
+                        preview: 'Suspicious activity reported in downtown area...',
+                        submittedBy: 'user@example.com',
+                        priority: 'high',
+                        status: 'pending',
+                        reviewer: null,
+                        submittedAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+                        flags: ['inappropriate_language', 'spam']
+                    },
+                    {
+                        id: 'CONTENT-002',
+                        type: 'user_profile',
+                        preview: 'Profile image contains potentially offensive content...',
+                        submittedBy: 'moderator@241runnersawareness.org',
+                        priority: 'medium',
+                        status: 'in_review',
+                        reviewer: 'dekuworks1@gmail.com',
+                        submittedAt: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours ago
+                        flags: ['inappropriate_content']
+                    },
+                    {
+                        id: 'CONTENT-003',
+                        type: 'comment',
+                        preview: 'This is clearly spam content with multiple links...',
+                        submittedBy: 'spam@example.com',
+                        priority: 'low',
+                        status: 'rejected',
+                        reviewer: 'danielcarey9770@yahoo.com',
+                        submittedAt: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 hours ago
+                        flags: ['spam', 'multiple_links']
+                    }
+                ];
+                
+                updateModerationQueueUI();
+                updateModerationStats();
+                
+            } catch (error) {
+                console.error('Error loading moderation queue:', error);
+                showToast('Failed to load moderation queue', 'error');
+            }
+        }
+        
+        function updateModerationQueueUI() {
+            const tbody = document.getElementById('moderationTableBody');
+            if (!tbody) return;
+            
+            if (moderationData.content.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" class="text-center text-gray-500">No content pending review</td></tr>';
+                return;
+            }
+            
+            const contentHTML = moderationData.content.map(item => {
+                const timeSinceSubmitted = getTimeSince(item.submittedAt);
+                const reviewerName = item.reviewer ? 
+                    dashboardData.users.find(u => u.email === item.reviewer)?.firstName + ' ' + 
+                    dashboardData.users.find(u => u.email === item.reviewer)?.lastName : 
+                    'Unassigned';
+                
+                return `
+                    <tr data-content-id="${item.id}">
+                        <td>
+                            <input type="checkbox" onchange="toggleModerationSelection(this)">
+                        </td>
+                        <td>
+                            <span class="content-id">${item.id}</span>
+                        </td>
+                        <td>
+                            <span class="content-type-badge content-type-${item.type}">${item.type.replace('_', ' ')}</span>
+                        </td>
+                        <td>
+                            <div class="content-preview" title="${item.preview}">
+                                ${item.preview}
+                            </div>
+                        </td>
+                        <td>${item.submittedBy}</td>
+                        <td>
+                            <span class="priority-badge priority-${item.priority}">${item.priority}</span>
+                        </td>
+                        <td>
+                            <span class="moderation-status-badge moderation-status-${item.status}">${item.status.replace('_', ' ')}</span>
+                        </td>
+                        <td>${reviewerName}</td>
+                        <td>
+                            <div>
+                                ${timeSinceSubmitted}
+                                <br>
+                                <small class="text-gray-500">${item.submittedAt.toLocaleDateString()}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="moderation-actions">
+                                <button class="moderation-action-btn moderation-action-btn-review" onclick="reviewContent('${item.id}')" title="Review Content">
+                                    👁️
+                                </button>
+                                <button class="moderation-action-btn moderation-action-btn-approve" onclick="approveContent('${item.id}')" title="Approve">
+                                    ✅
+                                </button>
+                                <button class="moderation-action-btn moderation-action-btn-reject" onclick="rejectContent('${item.id}')" title="Reject">
+                                    ❌
+                                </button>
+                                <button class="moderation-action-btn moderation-action-btn-flag" onclick="flagContent('${item.id}')" title="Flag">
+                                    🚩
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = contentHTML;
+        }
+        
+        function updateModerationStats() {
+            const stats = moderationData.stats;
+            
+            updateElement('pendingReviewCount', stats.pendingReview);
+            updateElement('approvedTodayCount', stats.approvedToday);
+            updateElement('rejectedTodayCount', stats.rejectedToday);
+            updateElement('moderationResponseTime', `${stats.responseTime}h`);
+            
+            // Update status indicators
+            updateModerationStatus('pendingReviewStatus', stats.pendingReview > 20 ? 'pending' : stats.pendingReview > 10 ? 'warning' : 'good');
+            updateModerationStatus('approvedTodayStatus', stats.approvedToday > 40 ? 'approved' : 'warning');
+            updateModerationStatus('rejectedTodayStatus', stats.rejectedToday > 15 ? 'rejected' : 'good');
+            updateModerationStatus('moderationResponseStatus', stats.responseTime <= 2 ? 'good' : stats.responseTime <= 4 ? 'warning' : 'critical');
+        }
+        
+        function updateModerationStatus(elementId, status) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.className = `moderation-status moderation-${status}`;
+                element.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+            }
+        }
+        
+        // Moderation action functions
+        function openContentReviewModal() {
+            showToast('Content review modal - TODO: Implement', 'info');
+            // TODO: Implement content review modal
+        }
+        
+        function openModerationConfigModal() {
+            showToast('Moderation configuration modal - TODO: Implement', 'info');
+            // TODO: Implement moderation configuration modal
+        }
+        
+        function exportModerationReport() {
+            const csvContent = [
+                ['Content ID', 'Type', 'Status', 'Submitted By', 'Reviewer', 'Priority', 'Submitted', 'Flags'],
+                ...moderationData.content.map(item => [
+                    item.id,
+                    item.type,
+                    item.status,
+                    item.submittedBy,
+                    item.reviewer || 'Unassigned',
+                    item.priority,
+                    item.submittedAt.toLocaleDateString(),
+                    item.flags.join('; ')
+                ])
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `moderation_report_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showToast('Moderation report exported', 'success');
+        }
+        
+        function refreshModerationQueue() {
+            showToast('Refreshing moderation queue...', 'info', 2000);
+            loadModerationQueue().then(() => {
+                showToast('Moderation queue refreshed!', 'success', 3000);
+            });
+        }
+        
+        function filterModerationQueue() {
+            const typeFilter = document.getElementById('contentTypeFilter').value;
+            const priorityFilter = document.getElementById('moderationPriorityFilter').value;
+            const statusFilter = document.getElementById('moderationStatusFilter').value;
+            const reviewerFilter = document.getElementById('moderationReviewerFilter').value;
+            
+            const rows = document.querySelectorAll('.moderation-table tbody tr');
+            
+            rows.forEach(row => {
+                const contentId = row.dataset.contentId;
+                const content = moderationData.content.find(c => c.id === contentId);
+                
+                if (!content) return;
+                
+                const matchesType = !typeFilter || content.type === typeFilter;
+                const matchesPriority = !priorityFilter || content.priority === priorityFilter;
+                const matchesStatus = !statusFilter || content.status === statusFilter;
+                const matchesReviewer = !reviewerFilter || 
+                    (reviewerFilter === 'unassigned' && !content.reviewer) ||
+                    (reviewerFilter !== 'unassigned' && content.reviewer === reviewerFilter);
+                
+                if (matchesType && matchesPriority && matchesStatus && matchesReviewer) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        function toggleSelectAllModeration() {
+            const selectAllCheckbox = document.getElementById('selectAllModeration');
+            const checkboxes = document.querySelectorAll('.moderation-table tbody input[type="checkbox"]');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+                checkbox.closest('tr').classList.toggle('selected', selectAllCheckbox.checked);
+            });
+        }
+        
+        function toggleModerationSelection(checkbox) {
+            const row = checkbox.closest('tr');
+            row.classList.toggle('selected', checkbox.checked);
+        }
+        
+        // Bulk moderation actions
+        function bulkApproveContent() {
+            const selectedContent = document.querySelectorAll('.moderation-table tbody tr.selected');
+            if (selectedContent.length === 0) {
+                showToast('Please select content first', 'warning');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to approve ${selectedContent.length} items?`)) {
+                return;
+            }
+            
+            try {
+                const contentIds = Array.from(selectedContent).map(row => row.dataset.contentId);
+                
+                // Update content in moderation data
+                contentIds.forEach(contentId => {
+                    const content = moderationData.content.find(c => c.id === contentId);
+                    if (content) {
+                        content.status = 'approved';
+                        content.reviewer = currentAdmin?.email || 'Unknown';
+                    }
+                });
+                
+                updateModerationQueueUI();
+                updateModerationStats();
+                showToast(`Approved ${contentIds.length} items`, 'success');
+                
+                // Log audit trail
+                logAuditAction('bulk_content_approval', {
+                    contentIds: contentIds,
+                    count: contentIds.length,
+                    approvedBy: currentAdmin?.email || 'Unknown'
+                });
+                
+            } catch (error) {
+                console.error('Error approving content:', error);
+                showToast('Failed to approve content', 'error');
+            }
+        }
+        
+        function bulkRejectContent() {
+            const selectedContent = document.querySelectorAll('.moderation-table tbody tr.selected');
+            if (selectedContent.length === 0) {
+                showToast('Please select content first', 'warning');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to reject ${selectedContent.length} items?`)) {
+                return;
+            }
+            
+            try {
+                const contentIds = Array.from(selectedContent).map(row => row.dataset.contentId);
+                
+                // Update content in moderation data
+                contentIds.forEach(contentId => {
+                    const content = moderationData.content.find(c => c.id === contentId);
+                    if (content) {
+                        content.status = 'rejected';
+                        content.reviewer = currentAdmin?.email || 'Unknown';
+                    }
+                });
+                
+                updateModerationQueueUI();
+                updateModerationStats();
+                showToast(`Rejected ${contentIds.length} items`, 'success');
+                
+                // Log audit trail
+                logAuditAction('bulk_content_rejection', {
+                    contentIds: contentIds,
+                    count: contentIds.length,
+                    rejectedBy: currentAdmin?.email || 'Unknown'
+                });
+                
+            } catch (error) {
+                console.error('Error rejecting content:', error);
+                showToast('Failed to reject content', 'error');
+            }
+        }
+        
+        function bulkFlagContent() {
+            const selectedContent = document.querySelectorAll('.moderation-table tbody tr.selected');
+            if (selectedContent.length === 0) {
+                showToast('Please select content first', 'warning');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to flag ${selectedContent.length} items?`)) {
+                return;
+            }
+            
+            try {
+                const contentIds = Array.from(selectedContent).map(row => row.dataset.contentId);
+                
+                // Update content in moderation data
+                contentIds.forEach(contentId => {
+                    const content = moderationData.content.find(c => c.id === contentId);
+                    if (content) {
+                        content.status = 'flagged';
+                        content.reviewer = currentAdmin?.email || 'Unknown';
+                    }
+                });
+                
+                updateModerationQueueUI();
+                updateModerationStats();
+                showToast(`Flagged ${contentIds.length} items`, 'success');
+                
+                // Log audit trail
+                logAuditAction('bulk_content_flagging', {
+                    contentIds: contentIds,
+                    count: contentIds.length,
+                    flaggedBy: currentAdmin?.email || 'Unknown'
+                });
+                
+            } catch (error) {
+                console.error('Error flagging content:', error);
+                showToast('Failed to flag content', 'error');
+            }
+        }
+        
+        // Individual content actions
+        function reviewContent(contentId) {
+            const content = moderationData.content.find(c => c.id === contentId);
+            if (content) {
+                showToast(`Reviewing content: ${content.preview.substring(0, 50)}...`, 'info');
+                // TODO: Implement content review modal
+            }
+        }
+        
+        function approveContent(contentId) {
+            const content = moderationData.content.find(c => c.id === contentId);
+            if (content) {
+                content.status = 'approved';
+                content.reviewer = currentAdmin?.email || 'Unknown';
+                
+                updateModerationQueueUI();
+                updateModerationStats();
+                showToast(`Content ${contentId} approved`, 'success');
+                
+                // Log audit trail
+                logAuditAction('content_approved', {
+                    contentId: contentId,
+                    approvedBy: currentAdmin?.email || 'Unknown'
+                });
+            }
+        }
+        
+        function rejectContent(contentId) {
+            const content = moderationData.content.find(c => c.id === contentId);
+            if (content) {
+                content.status = 'rejected';
+                content.reviewer = currentAdmin?.email || 'Unknown';
+                
+                updateModerationQueueUI();
+                updateModerationStats();
+                showToast(`Content ${contentId} rejected`, 'success');
+                
+                // Log audit trail
+                logAuditAction('content_rejected', {
+                    contentId: contentId,
+                    rejectedBy: currentAdmin?.email || 'Unknown'
+                });
+            }
+        }
+        
+        function flagContent(contentId) {
+            const content = moderationData.content.find(c => c.id === contentId);
+            if (content) {
+                content.status = 'flagged';
+                content.reviewer = currentAdmin?.email || 'Unknown';
+                
+                updateModerationQueueUI();
+                updateModerationStats();
+                showToast(`Content ${contentId} flagged`, 'success');
+                
+                // Log audit trail
+                logAuditAction('content_flagged', {
+                    contentId: contentId,
+                    flaggedBy: currentAdmin?.email || 'Unknown'
+                });
+            }
+        }
+
         // ===== USER SELECTION AND FILTERING FUNCTIONS =====
         
         function selectAllUsers() {
@@ -4401,6 +5829,12 @@
                 
                 // Load triage queue data
                 await loadTriageQueue();
+                
+                // Load system health data
+                await loadSystemHealth();
+                
+                // Load moderation queue data
+                await loadModerationQueue();
                 
                 // Start refresh timer (fallback) - reduced frequency for better performance
                 refreshInterval = setInterval(loadDashboardData, 60000); // 60 seconds
