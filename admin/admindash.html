@@ -4849,20 +4849,31 @@
                 });
 
                 if (response.ok) {
-                    // Remove user from local data
-                    dashboardData.users = dashboardData.users.filter(u => u.id !== userId);
-                    dashboardData.stats.totalUsers--;
+                    const result = await response.json();
+                    
+                    if (result.action === 'deactivated') {
+                        // User was deactivated instead of deleted
+                        const userIndex = dashboardData.users.findIndex(u => u.id === userId);
+                        if (userIndex !== -1) {
+                            dashboardData.users[userIndex].isActive = false;
+                        }
+                        showToast(`User ${user.email} deactivated (has related data)`, 'warning');
+                    } else {
+                        // User was actually deleted
+                        dashboardData.users = dashboardData.users.filter(u => u.id !== userId);
+                        dashboardData.stats.totalUsers--;
+                        showToast(`User ${user.email} deleted successfully`, 'success');
+                    }
                     
                     // Update UI
                     updateUsersTable();
                     updateDashboardUI();
                     
-                    showToast(`User ${user.email} deleted successfully`, 'success');
-                    
                     // Log audit trail
-                    logAuditAction('user_deleted', {
+                    logAuditAction(result.action === 'deactivated' ? 'user_deactivated' : 'user_deleted', {
                         userId: userId,
                         userEmail: user.email,
+                        action: result.action,
                         deletedBy: currentAdmin?.email || 'Unknown'
                     });
                     
@@ -4900,20 +4911,31 @@
                 });
 
                 if (response.ok) {
-                    // Remove admin from local data
-                    dashboardData.admins = dashboardData.admins.filter(a => a.id !== adminId);
-                    dashboardData.stats.activeAdmins--;
+                    const result = await response.json();
+                    
+                    if (result.action === 'deactivated') {
+                        // Admin was deactivated instead of deleted
+                        const adminIndex = dashboardData.admins.findIndex(a => a.id === adminId);
+                        if (adminIndex !== -1) {
+                            dashboardData.admins[adminIndex].isActive = false;
+                        }
+                        showToast(`Admin ${admin.email} deactivated (has related data)`, 'warning');
+                    } else {
+                        // Admin was actually deleted
+                        dashboardData.admins = dashboardData.admins.filter(a => a.id !== adminId);
+                        dashboardData.stats.activeAdmins--;
+                        showToast(`Admin ${admin.email} deleted successfully`, 'success');
+                    }
                     
                     // Update UI
                     updateAdminsList();
                     updateDashboardUI();
                     
-                    showToast(`Admin ${admin.email} deleted successfully`, 'success');
-                    
                     // Log audit trail
-                    logAuditAction('admin_deleted', {
+                    logAuditAction(result.action === 'deactivated' ? 'admin_deactivated' : 'admin_deleted', {
                         adminId: adminId,
                         adminEmail: admin.email,
+                        action: result.action,
                         deletedBy: currentAdmin?.email || 'Unknown'
                     });
                     
