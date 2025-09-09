@@ -1856,6 +1856,382 @@
         .notification-action-btn-view:hover {
             background: #bfdbfe;
         }
+
+        /* Data Quality & Duplicate Detection Styles */
+        .data-quality-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            overflow: hidden;
+        }
+
+        .data-quality-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .quality-metric {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #dc2626;
+        }
+
+        .quality-metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .quality-metric-header h4 {
+            margin: 0;
+            color: #1f2937;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .quality-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .quality-status.quality-good {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .quality-status.quality-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .quality-status.quality-critical {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .quality-metric-value {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .quality-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #dc2626;
+        }
+
+        .quality-target {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .data-quality-issues {
+            padding: 20px;
+        }
+
+        .data-quality-issues h3 {
+            margin: 0 0 20px 0;
+            color: #1f2937;
+            font-size: 1.1rem;
+        }
+
+        .issues-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            color: #6b7280;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            color: #dc2626;
+        }
+
+        .tab-btn.active {
+            color: #dc2626;
+            border-bottom-color: #dc2626;
+        }
+
+        .quality-tab-content {
+            display: none;
+        }
+
+        .quality-tab-content.active {
+            display: block;
+        }
+
+        .duplicates-controls,
+        .incomplete-controls,
+        .invalid-controls,
+        .inconsistent-controls {
+            margin-bottom: 20px;
+        }
+
+        .duplicate-filters,
+        .incomplete-filters,
+        .invalid-filters,
+        .inconsistent-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .duplicate-actions,
+        .incomplete-actions,
+        .invalid-actions,
+        .inconsistent-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .duplicates-table-container,
+        .incomplete-table-container,
+        .invalid-table-container,
+        .inconsistent-table-container {
+            overflow-x: auto;
+        }
+
+        .duplicates-table,
+        .incomplete-table,
+        .invalid-table,
+        .inconsistent-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .duplicates-table th,
+        .incomplete-table th,
+        .invalid-table th,
+        .inconsistent-table th {
+            background: #f8fafc;
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+            white-space: nowrap;
+        }
+
+        .duplicates-table td,
+        .incomplete-table td,
+        .invalid-table td,
+        .inconsistent-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid #f3f4f6;
+            vertical-align: middle;
+        }
+
+        .duplicates-table tbody tr:hover,
+        .incomplete-table tbody tr:hover,
+        .invalid-table tbody tr:hover,
+        .inconsistent-table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .duplicates-table tbody tr.selected,
+        .incomplete-table tbody tr.selected,
+        .invalid-table tbody tr.selected,
+        .inconsistent-table tbody tr.selected {
+            background: #fef2f2;
+        }
+
+        .record-type-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .record-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .record-info strong {
+            color: #dc2626;
+            font-family: monospace;
+        }
+
+        .record-info small {
+            color: #6b7280;
+        }
+
+        .similarity-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .similarity-badge.similarity-high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .similarity-badge.similarity-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .similarity-badge.similarity-low {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .confidence-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .confidence-badge.confidence-high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .confidence-badge.confidence-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .confidence-badge.confidence-low {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .completeness-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .completeness-badge.completeness-good {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .completeness-badge.completeness-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .completeness-badge.completeness-critical {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .severity-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .severity-badge.severity-critical {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .severity-badge.severity-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .severity-badge.severity-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .impact-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .impact-badge.impact-high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .impact-badge.impact-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .impact-badge.impact-low {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .missing-fields {
+            color: #6b7280;
+            font-size: 0.8rem;
+        }
+
+        .validation-rule,
+        .consistency-rule {
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .issue-description {
+            color: #6b7280;
+            font-size: 0.8rem;
+        }
+
+        .duplicate-actions,
+        .incomplete-actions,
+        .invalid-actions,
+        .inconsistent-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.8rem;
+        }
     </style>
     
     <!-- Main Dashboard Styles -->
@@ -6753,6 +7129,844 @@
             // TODO: Implement in-app channel configuration
         }
 
+        // ===== DATA QUALITY & DUPLICATE DETECTION FUNCTIONS =====
+        
+        // Global state for data quality
+        let dataQualityData = {
+            duplicates: [],
+            incomplete: [],
+            invalid: [],
+            inconsistent: [],
+            stats: {
+                dataCompleteness: 94.2,
+                duplicateRecords: 23,
+                dataAccuracy: 97.8,
+                dataConsistency: 96.5
+            }
+        };
+
+        async function loadDataQuality() {
+            try {
+                console.log('Loading data quality data...');
+                
+                // Mock data for duplicates
+                dataQualityData.duplicates = [
+                    {
+                        id: 'DUP-001',
+                        type: 'users',
+                        primaryRecord: { id: 'USR-001', name: 'John Doe', email: 'john@example.com' },
+                        duplicateRecord: { id: 'USR-002', name: 'John Doe', email: 'john.doe@example.com' },
+                        similarity: 95,
+                        confidence: 'high'
+                    },
+                    {
+                        id: 'DUP-002',
+                        type: 'cases',
+                        primaryRecord: { id: 'CASE-001', title: 'Missing Person Report', location: 'Downtown' },
+                        duplicateRecord: { id: 'CASE-002', title: 'Missing Person Report', location: 'Downtown Area' },
+                        similarity: 88,
+                        confidence: 'medium'
+                    }
+                ];
+                
+                // Mock data for incomplete records
+                dataQualityData.incomplete = [
+                    {
+                        id: 'INC-001',
+                        type: 'users',
+                        missingFields: ['phone', 'address'],
+                        completeness: 75,
+                        lastUpdated: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) // 2 days ago
+                    },
+                    {
+                        id: 'INC-002',
+                        type: 'cases',
+                        missingFields: ['description'],
+                        completeness: 90,
+                        lastUpdated: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000) // 1 day ago
+                    }
+                ];
+                
+                // Mock data for invalid records
+                dataQualityData.invalid = [
+                    {
+                        id: 'INV-001',
+                        type: 'users',
+                        validationRule: 'email_format',
+                        issue: 'Invalid email format: user@invalid',
+                        severity: 'critical'
+                    },
+                    {
+                        id: 'INV-002',
+                        type: 'cases',
+                        validationRule: 'date_range',
+                        issue: 'Future date in past incident',
+                        severity: 'warning'
+                    }
+                ];
+                
+                // Mock data for inconsistent records
+                dataQualityData.inconsistent = [
+                    {
+                        id: 'CON-001',
+                        type: 'users',
+                        consistencyRule: 'data_format',
+                        issue: 'Phone number format inconsistency',
+                        impact: 'medium'
+                    },
+                    {
+                        id: 'CON-002',
+                        type: 'cases',
+                        consistencyRule: 'reference_integrity',
+                        issue: 'Referenced user does not exist',
+                        impact: 'high'
+                    }
+                ];
+                
+                updateDataQualityUI();
+                updateDataQualityStats();
+                
+            } catch (error) {
+                console.error('Error loading data quality data:', error);
+                showToast('Failed to load data quality data', 'error');
+            }
+        }
+        
+        function updateDataQualityUI() {
+            updateDuplicatesTable();
+            updateIncompleteTable();
+            updateInvalidTable();
+            updateInconsistentTable();
+        }
+        
+        function updateDataQualityStats() {
+            const stats = dataQualityData.stats;
+            
+            updateElement('dataCompletenessRate', `${stats.dataCompleteness}%`);
+            updateElement('duplicateRecordsCount', stats.duplicateRecords);
+            updateElement('dataAccuracyRate', `${stats.dataAccuracy}%`);
+            updateElement('dataConsistencyRate', `${stats.dataConsistency}%`);
+            
+            // Update status indicators
+            updateDataQualityStatus('dataCompletenessStatus', stats.dataCompleteness >= 95 ? 'good' : stats.dataCompleteness >= 85 ? 'warning' : 'critical');
+            updateDataQualityStatus('duplicateRecordsStatus', stats.duplicateRecords <= 10 ? 'good' : stats.duplicateRecords <= 25 ? 'warning' : 'critical');
+            updateDataQualityStatus('dataAccuracyStatus', stats.dataAccuracy >= 95 ? 'good' : stats.dataAccuracy >= 85 ? 'warning' : 'critical');
+            updateDataQualityStatus('dataConsistencyStatus', stats.dataConsistency >= 95 ? 'good' : stats.dataConsistency >= 85 ? 'warning' : 'critical');
+        }
+        
+        function updateDataQualityStatus(elementId, status) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.className = `quality-status quality-${status}`;
+                element.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+            }
+        }
+        
+        function updateDuplicatesTable() {
+            const tbody = document.getElementById('duplicatesTableBody');
+            if (!tbody) return;
+            
+            if (dataQualityData.duplicates.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-gray-500">No duplicates found</td></tr>';
+                return;
+            }
+            
+            const duplicatesHTML = dataQualityData.duplicates.map(duplicate => {
+                return `
+                    <tr data-duplicate-id="${duplicate.id}">
+                        <td>
+                            <input type="checkbox" onchange="toggleDuplicateSelection(this)">
+                        </td>
+                        <td>
+                            <span class="record-type-badge">${duplicate.type}</span>
+                        </td>
+                        <td>
+                            <div class="record-info">
+                                <strong>${duplicate.primaryRecord.id}</strong>
+                                <br>
+                                <small>${duplicate.primaryRecord.name || duplicate.primaryRecord.title}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="record-info">
+                                <strong>${duplicate.duplicateRecord.id}</strong>
+                                <br>
+                                <small>${duplicate.duplicateRecord.name || duplicate.duplicateRecord.title}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="similarity-badge similarity-${duplicate.similarity >= 90 ? 'high' : duplicate.similarity >= 70 ? 'medium' : 'low'}">
+                                ${duplicate.similarity}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="confidence-badge confidence-${duplicate.confidence}">
+                                ${duplicate.confidence}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="duplicate-actions">
+                                <button class="btn btn-sm btn-primary" onclick="mergeDuplicate('${duplicate.id}')" title="Merge Records">
+                                    🔗
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteDuplicate('${duplicate.id}')" title="Delete Duplicate">
+                                    🗑️
+                                </button>
+                                <button class="btn btn-sm btn-outline" onclick="viewDuplicate('${duplicate.id}')" title="View Details">
+                                    👁️
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = duplicatesHTML;
+        }
+        
+        function updateIncompleteTable() {
+            const tbody = document.getElementById('incompleteTableBody');
+            if (!tbody) return;
+            
+            if (dataQualityData.incomplete.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-gray-500">No incomplete records found</td></tr>';
+                return;
+            }
+            
+            const incompleteHTML = dataQualityData.incomplete.map(record => {
+                return `
+                    <tr data-incomplete-id="${record.id}">
+                        <td>
+                            <input type="checkbox" onchange="toggleIncompleteSelection(this)">
+                        </td>
+                        <td>
+                            <span class="record-id">${record.id}</span>
+                        </td>
+                        <td>
+                            <span class="record-type-badge">${record.type}</span>
+                        </td>
+                        <td>
+                            <span class="missing-fields">${record.missingFields.join(', ')}</span>
+                        </td>
+                        <td>
+                            <span class="completeness-badge completeness-${record.completeness >= 90 ? 'good' : record.completeness >= 75 ? 'warning' : 'critical'}">
+                                ${record.completeness}%
+                            </span>
+                        </td>
+                        <td>
+                            ${getTimeSince(record.lastUpdated)}
+                        </td>
+                        <td>
+                            <div class="incomplete-actions">
+                                <button class="btn btn-sm btn-primary" onclick="editIncomplete('${record.id}')" title="Edit Record">
+                                    ✏️
+                                </button>
+                                <button class="btn btn-sm btn-outline" onclick="viewIncomplete('${record.id}')" title="View Details">
+                                    👁️
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = incompleteHTML;
+        }
+        
+        function updateInvalidTable() {
+            const tbody = document.getElementById('invalidTableBody');
+            if (!tbody) return;
+            
+            if (dataQualityData.invalid.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-gray-500">No invalid records found</td></tr>';
+                return;
+            }
+            
+            const invalidHTML = dataQualityData.invalid.map(record => {
+                return `
+                    <tr data-invalid-id="${record.id}">
+                        <td>
+                            <input type="checkbox" onchange="toggleInvalidSelection(this)">
+                        </td>
+                        <td>
+                            <span class="record-id">${record.id}</span>
+                        </td>
+                        <td>
+                            <span class="record-type-badge">${record.type}</span>
+                        </td>
+                        <td>
+                            <span class="validation-rule">${record.validationRule}</span>
+                        </td>
+                        <td>
+                            <span class="issue-description">${record.issue}</span>
+                        </td>
+                        <td>
+                            <span class="severity-badge severity-${record.severity}">
+                                ${record.severity}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="invalid-actions">
+                                <button class="btn btn-sm btn-warning" onclick="fixInvalid('${record.id}')" title="Fix Issue">
+                                    🔧
+                                </button>
+                                <button class="btn btn-sm btn-outline" onclick="viewInvalid('${record.id}')" title="View Details">
+                                    👁️
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = invalidHTML;
+        }
+        
+        function updateInconsistentTable() {
+            const tbody = document.getElementById('inconsistentTableBody');
+            if (!tbody) return;
+            
+            if (dataQualityData.inconsistent.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-gray-500">No inconsistent records found</td></tr>';
+                return;
+            }
+            
+            const inconsistentHTML = dataQualityData.inconsistent.map(record => {
+                return `
+                    <tr data-inconsistent-id="${record.id}">
+                        <td>
+                            <input type="checkbox" onchange="toggleInconsistentSelection(this)">
+                        </td>
+                        <td>
+                            <span class="record-id">${record.id}</span>
+                        </td>
+                        <td>
+                            <span class="record-type-badge">${record.type}</span>
+                        </td>
+                        <td>
+                            <span class="consistency-rule">${record.consistencyRule}</span>
+                        </td>
+                        <td>
+                            <span class="issue-description">${record.issue}</span>
+                        </td>
+                        <td>
+                            <span class="impact-badge impact-${record.impact}">
+                                ${record.impact}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="inconsistent-actions">
+                                <button class="btn btn-sm btn-primary" onclick="resolveInconsistent('${record.id}')" title="Resolve Issue">
+                                    ✅
+                                </button>
+                                <button class="btn btn-sm btn-outline" onclick="viewInconsistent('${record.id}')" title="View Details">
+                                    👁️
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = inconsistentHTML;
+        }
+        
+        // Data Quality action functions
+        function runDataQualityScan() {
+            showToast('Running data quality scan...', 'info', 3000);
+            // TODO: Implement actual data quality scan
+            setTimeout(() => {
+                showToast('Data quality scan completed!', 'success');
+                loadDataQuality();
+            }, 3000);
+        }
+        
+        function openDataQualityConfig() {
+            showToast('Data quality configuration modal - TODO: Implement', 'info');
+            // TODO: Implement data quality configuration modal
+        }
+        
+        function exportDataQualityReport() {
+            const csvContent = [
+                ['Issue Type', 'Record ID', 'Type', 'Issue', 'Severity/Impact', 'Status'],
+                ...dataQualityData.duplicates.map(dup => ['Duplicate', dup.id, dup.type, `${dup.primaryRecord.id} vs ${dup.duplicateRecord.id}`, dup.confidence, 'Pending']),
+                ...dataQualityData.incomplete.map(inc => ['Incomplete', inc.id, inc.type, `Missing: ${inc.missingFields.join(', ')}`, `${inc.completeness}%`, 'Pending']),
+                ...dataQualityData.invalid.map(inv => ['Invalid', inv.id, inv.type, inv.issue, inv.severity, 'Pending']),
+                ...dataQualityData.inconsistent.map(con => ['Inconsistent', con.id, con.type, con.issue, con.impact, 'Pending'])
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `data_quality_report_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showToast('Data quality report exported', 'success');
+        }
+        
+        function refreshDataQuality() {
+            showToast('Refreshing data quality...', 'info', 2000);
+            loadDataQuality().then(() => {
+                showToast('Data quality refreshed!', 'success', 3000);
+            });
+        }
+        
+        // Tab switching functions
+        function switchQualityTab(tabName) {
+            // Remove active class from all tabs and content
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.quality-tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab and content
+            document.querySelector(`[onclick="switchQualityTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+        
+        // Filter functions
+        function filterDuplicates() {
+            const typeFilter = document.getElementById('duplicateTypeFilter').value;
+            const similarityFilter = document.getElementById('duplicateSimilarityFilter').value;
+            
+            const rows = document.querySelectorAll('.duplicates-table tbody tr');
+            
+            rows.forEach(row => {
+                const duplicateId = row.dataset.duplicateId;
+                const duplicate = dataQualityData.duplicates.find(d => d.id === duplicateId);
+                
+                if (!duplicate) return;
+                
+                const matchesType = !typeFilter || duplicate.type === typeFilter;
+                const matchesSimilarity = !similarityFilter || 
+                    (similarityFilter === 'high' && duplicate.similarity >= 90) ||
+                    (similarityFilter === 'medium' && duplicate.similarity >= 70 && duplicate.similarity < 90) ||
+                    (similarityFilter === 'low' && duplicate.similarity < 70);
+                
+                if (matchesType && matchesSimilarity) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        function filterIncomplete() {
+            const fieldFilter = document.getElementById('missingFieldFilter').value;
+            const typeFilter = document.getElementById('incompleteTypeFilter').value;
+            
+            const rows = document.querySelectorAll('.incomplete-table tbody tr');
+            
+            rows.forEach(row => {
+                const incompleteId = row.dataset.incompleteId;
+                const record = dataQualityData.incomplete.find(r => r.id === incompleteId);
+                
+                if (!record) return;
+                
+                const matchesField = !fieldFilter || record.missingFields.includes(fieldFilter);
+                const matchesType = !typeFilter || record.type === typeFilter;
+                
+                if (matchesField && matchesType) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        function filterInvalid() {
+            const ruleFilter = document.getElementById('validationRuleFilter').value;
+            const severityFilter = document.getElementById('invalidSeverityFilter').value;
+            
+            const rows = document.querySelectorAll('.invalid-table tbody tr');
+            
+            rows.forEach(row => {
+                const invalidId = row.dataset.invalidId;
+                const record = dataQualityData.invalid.find(r => r.id === invalidId);
+                
+                if (!record) return;
+                
+                const matchesRule = !ruleFilter || record.validationRule === ruleFilter;
+                const matchesSeverity = !severityFilter || record.severity === severityFilter;
+                
+                if (matchesRule && matchesSeverity) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        function filterInconsistent() {
+            const ruleFilter = document.getElementById('consistencyRuleFilter').value;
+            const impactFilter = document.getElementById('inconsistentImpactFilter').value;
+            
+            const rows = document.querySelectorAll('.inconsistent-table tbody tr');
+            
+            rows.forEach(row => {
+                const inconsistentId = row.dataset.inconsistentId;
+                const record = dataQualityData.inconsistent.find(r => r.id === inconsistentId);
+                
+                if (!record) return;
+                
+                const matchesRule = !ruleFilter || record.consistencyRule === ruleFilter;
+                const matchesImpact = !impactFilter || record.impact === impactFilter;
+                
+                if (matchesRule && matchesImpact) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        // Selection functions
+        function toggleSelectAllDuplicates() {
+            const selectAllCheckbox = document.getElementById('selectAllDuplicates');
+            const checkboxes = document.querySelectorAll('.duplicates-table tbody input[type="checkbox"]');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+                checkbox.closest('tr').classList.toggle('selected', selectAllCheckbox.checked);
+            });
+        }
+        
+        function toggleSelectAllIncomplete() {
+            const selectAllCheckbox = document.getElementById('selectAllIncomplete');
+            const checkboxes = document.querySelectorAll('.incomplete-table tbody input[type="checkbox"]');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+                checkbox.closest('tr').classList.toggle('selected', selectAllCheckbox.checked);
+            });
+        }
+        
+        function toggleSelectAllInvalid() {
+            const selectAllCheckbox = document.getElementById('selectAllInvalid');
+            const checkboxes = document.querySelectorAll('.invalid-table tbody input[type="checkbox"]');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+                checkbox.closest('tr').classList.toggle('selected', selectAllCheckbox.checked);
+            });
+        }
+        
+        function toggleSelectAllInconsistent() {
+            const selectAllCheckbox = document.getElementById('selectAllInconsistent');
+            const checkboxes = document.querySelectorAll('.inconsistent-table tbody input[type="checkbox"]');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+                checkbox.closest('tr').classList.toggle('selected', selectAllCheckbox.checked);
+            });
+        }
+        
+        function toggleDuplicateSelection(checkbox) {
+            const row = checkbox.closest('tr');
+            row.classList.toggle('selected', checkbox.checked);
+        }
+        
+        function toggleIncompleteSelection(checkbox) {
+            const row = checkbox.closest('tr');
+            row.classList.toggle('selected', checkbox.checked);
+        }
+        
+        function toggleInvalidSelection(checkbox) {
+            const row = checkbox.closest('tr');
+            row.classList.toggle('selected', checkbox.checked);
+        }
+        
+        function toggleInconsistentSelection(checkbox) {
+            const row = checkbox.closest('tr');
+            row.classList.toggle('selected', checkbox.checked);
+        }
+        
+        // Bulk action functions
+        function bulkMergeDuplicates() {
+            const selectedDuplicates = document.querySelectorAll('.duplicates-table tbody tr.selected');
+            if (selectedDuplicates.length === 0) {
+                showToast('Please select duplicates first', 'warning');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to merge ${selectedDuplicates.length} duplicate pairs?`)) {
+                return;
+            }
+            
+            try {
+                const duplicateIds = Array.from(selectedDuplicates).map(row => row.dataset.duplicateId);
+                
+                // Remove merged duplicates from data
+                dataQualityData.duplicates = dataQualityData.duplicates.filter(d => !duplicateIds.includes(d.id));
+                dataQualityData.stats.duplicateRecords -= duplicateIds.length;
+                
+                updateDuplicatesTable();
+                updateDataQualityStats();
+                showToast(`Merged ${duplicateIds.length} duplicate pairs`, 'success');
+                
+                // Log audit trail
+                logAuditAction('bulk_merge_duplicates', {
+                    duplicateIds: duplicateIds,
+                    count: duplicateIds.length,
+                    mergedBy: currentAdmin?.email || 'Unknown'
+                });
+                
+            } catch (error) {
+                console.error('Error merging duplicates:', error);
+                showToast('Failed to merge duplicates', 'error');
+            }
+        }
+        
+        function bulkDeleteDuplicates() {
+            const selectedDuplicates = document.querySelectorAll('.duplicates-table tbody tr.selected');
+            if (selectedDuplicates.length === 0) {
+                showToast('Please select duplicates first', 'warning');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to delete ${selectedDuplicates.length} duplicate records?`)) {
+                return;
+            }
+            
+            try {
+                const duplicateIds = Array.from(selectedDuplicates).map(row => row.dataset.duplicateId);
+                
+                // Remove deleted duplicates from data
+                dataQualityData.duplicates = dataQualityData.duplicates.filter(d => !duplicateIds.includes(d.id));
+                dataQualityData.stats.duplicateRecords -= duplicateIds.length;
+                
+                updateDuplicatesTable();
+                updateDataQualityStats();
+                showToast(`Deleted ${duplicateIds.length} duplicate records`, 'success');
+                
+                // Log audit trail
+                logAuditAction('bulk_delete_duplicates', {
+                    duplicateIds: duplicateIds,
+                    count: duplicateIds.length,
+                    deletedBy: currentAdmin?.email || 'Unknown'
+                });
+                
+            } catch (error) {
+                console.error('Error deleting duplicates:', error);
+                showToast('Failed to delete duplicates', 'error');
+            }
+        }
+        
+        function bulkUpdateIncomplete() {
+            const selectedIncomplete = document.querySelectorAll('.incomplete-table tbody tr.selected');
+            if (selectedIncomplete.length === 0) {
+                showToast('Please select incomplete records first', 'warning');
+                return;
+            }
+            
+            showToast(`Bulk update for ${selectedIncomplete.length} incomplete records - TODO: Implement`, 'info');
+            // TODO: Implement bulk update modal
+        }
+        
+        function bulkFixInvalid() {
+            const selectedInvalid = document.querySelectorAll('.invalid-table tbody tr.selected');
+            if (selectedInvalid.length === 0) {
+                showToast('Please select invalid records first', 'warning');
+                return;
+            }
+            
+            showToast(`Bulk fix for ${selectedInvalid.length} invalid records - TODO: Implement`, 'info');
+            // TODO: Implement bulk fix modal
+        }
+        
+        function bulkResolveInconsistent() {
+            const selectedInconsistent = document.querySelectorAll('.inconsistent-table tbody tr.selected');
+            if (selectedInconsistent.length === 0) {
+                showToast('Please select inconsistent records first', 'warning');
+                return;
+            }
+            
+            showToast(`Bulk resolve for ${selectedInconsistent.length} inconsistent records - TODO: Implement`, 'info');
+            // TODO: Implement bulk resolve modal
+        }
+        
+        // Export functions
+        function exportDuplicatesReport() {
+            const csvContent = [
+                ['Duplicate ID', 'Type', 'Primary Record', 'Duplicate Record', 'Similarity', 'Confidence'],
+                ...dataQualityData.duplicates.map(dup => [
+                    dup.id,
+                    dup.type,
+                    dup.primaryRecord.id,
+                    dup.duplicateRecord.id,
+                    dup.similarity,
+                    dup.confidence
+                ])
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `duplicates_report_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showToast('Duplicates report exported', 'success');
+        }
+        
+        function exportIncompleteReport() {
+            const csvContent = [
+                ['Record ID', 'Type', 'Missing Fields', 'Completeness', 'Last Updated'],
+                ...dataQualityData.incomplete.map(inc => [
+                    inc.id,
+                    inc.type,
+                    inc.missingFields.join(';'),
+                    inc.completeness,
+                    inc.lastUpdated.toLocaleDateString()
+                ])
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `incomplete_records_report_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showToast('Incomplete records report exported', 'success');
+        }
+        
+        function exportInvalidReport() {
+            const csvContent = [
+                ['Record ID', 'Type', 'Validation Rule', 'Issue', 'Severity'],
+                ...dataQualityData.invalid.map(inv => [
+                    inv.id,
+                    inv.type,
+                    inv.validationRule,
+                    inv.issue,
+                    inv.severity
+                ])
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `invalid_records_report_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showToast('Invalid records report exported', 'success');
+        }
+        
+        function exportInconsistentReport() {
+            const csvContent = [
+                ['Record ID', 'Type', 'Consistency Rule', 'Issue', 'Impact'],
+                ...dataQualityData.inconsistent.map(con => [
+                    con.id,
+                    con.type,
+                    con.consistencyRule,
+                    con.issue,
+                    con.impact
+                ])
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `inconsistent_records_report_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showToast('Inconsistent records report exported', 'success');
+        }
+        
+        // Individual action functions
+        function mergeDuplicate(duplicateId) {
+            const duplicate = dataQualityData.duplicates.find(d => d.id === duplicateId);
+            if (duplicate) {
+                showToast(`Merging duplicate: ${duplicate.primaryRecord.id} with ${duplicate.duplicateRecord.id}`, 'info');
+                // TODO: Implement merge modal
+            }
+        }
+        
+        function deleteDuplicate(duplicateId) {
+            const duplicate = dataQualityData.duplicates.find(d => d.id === duplicateId);
+            if (duplicate) {
+                if (confirm(`Are you sure you want to delete duplicate ${duplicateId}?`)) {
+                    dataQualityData.duplicates = dataQualityData.duplicates.filter(d => d.id !== duplicateId);
+                    dataQualityData.stats.duplicateRecords--;
+                    updateDuplicatesTable();
+                    updateDataQualityStats();
+                    showToast(`Deleted duplicate ${duplicateId}`, 'success');
+                }
+            }
+        }
+        
+        function viewDuplicate(duplicateId) {
+            const duplicate = dataQualityData.duplicates.find(d => d.id === duplicateId);
+            if (duplicate) {
+                showToast(`Viewing duplicate details: ${duplicateId}`, 'info');
+                // TODO: Implement duplicate details modal
+            }
+        }
+        
+        function editIncomplete(recordId) {
+            const record = dataQualityData.incomplete.find(r => r.id === recordId);
+            if (record) {
+                showToast(`Editing incomplete record: ${recordId}`, 'info');
+                // TODO: Implement edit modal
+            }
+        }
+        
+        function viewIncomplete(recordId) {
+            const record = dataQualityData.incomplete.find(r => r.id === recordId);
+            if (record) {
+                showToast(`Viewing incomplete record: ${recordId}`, 'info');
+                // TODO: Implement view modal
+            }
+        }
+        
+        function fixInvalid(recordId) {
+            const record = dataQualityData.invalid.find(r => r.id === recordId);
+            if (record) {
+                showToast(`Fixing invalid record: ${recordId}`, 'info');
+                // TODO: Implement fix modal
+            }
+        }
+        
+        function viewInvalid(recordId) {
+            const record = dataQualityData.invalid.find(r => r.id === recordId);
+            if (record) {
+                showToast(`Viewing invalid record: ${recordId}`, 'info');
+                // TODO: Implement view modal
+            }
+        }
+        
+        function resolveInconsistent(recordId) {
+            const record = dataQualityData.inconsistent.find(r => r.id === recordId);
+            if (record) {
+                showToast(`Resolving inconsistent record: ${recordId}`, 'info');
+                // TODO: Implement resolve modal
+            }
+        }
+        
+        function viewInconsistent(recordId) {
+            const record = dataQualityData.inconsistent.find(r => r.id === recordId);
+            if (record) {
+                showToast(`Viewing inconsistent record: ${recordId}`, 'info');
+                // TODO: Implement view modal
+            }
+        }
+
         // ===== USER SELECTION AND FILTERING FUNCTIONS =====
         
         function selectAllUsers() {
@@ -7133,6 +8347,9 @@
                 
                 // Load notifications data
                 await loadNotifications();
+                
+                // Load data quality data
+                await loadDataQuality();
                 
                 // Start refresh timer (fallback) - reduced frequency for better performance
                 refreshInterval = setInterval(loadDashboardData, 60000); // 60 seconds
