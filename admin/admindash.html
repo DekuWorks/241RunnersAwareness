@@ -4840,6 +4840,8 @@
             try {
                 showToast('Deleting user...', 'info', 2000);
                 
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+                const token = storage.get('ra_admin_token');
                 const response = await fetch(`${apiUrl}/admin/users/${userId}`, {
                     method: 'DELETE',
                     headers: {
@@ -4902,6 +4904,8 @@
             try {
                 showToast('Deleting admin...', 'info', 2000);
                 
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+                const token = storage.get('ra_admin_token');
                 const response = await fetch(`${apiUrl}/admin/admins/${adminId}`, {
                     method: 'DELETE',
                     headers: {
@@ -6231,7 +6235,7 @@
             // Mock API health check
             try {
                 const startTime = Date.now();
-                const response = await fetch(`${window.API_BASE_URL}/health`, {
+                const response = await fetch(`${window.API_BASE_URL.replace('/api', '')}/api/health`, {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' }
                 });
@@ -6369,7 +6373,7 @@
             
             try {
                 const startTime = Date.now();
-                const response = await fetch(`${window.API_BASE_URL}/health`, {
+                const response = await fetch(`${window.API_BASE_URL.replace('/api', '')}/api/health`, {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' }
                 });
