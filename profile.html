@@ -896,7 +896,7 @@
           return;
         }
 
-        const response = await fetch(`${API_BASE_URL}/Auth/profile`, {
+        const response = await fetch(`${API_BASE_URL}/Auth/me`, {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${userData.token}`,
@@ -906,10 +906,9 @@
 
         if (response.ok) {
           const result = await response.json();
-          if (result.success) {
-            currentUser = result.user;
-            updateProfileImage(result.user.profileImageUrl);
-          }
+          // /me endpoint returns user data directly, not wrapped in success/user
+          currentUser = result;
+          updateProfileImage(result.profileImageUrl);
         } else {
           console.error("Failed to load profile:", response.statusText);
         }

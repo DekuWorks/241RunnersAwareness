@@ -601,6 +601,28 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
+        /// Get available user roles
+        /// </summary>
+        [HttpGet("roles")]
+        public IActionResult GetRoles()
+        {
+            var roles = new[]
+            {
+                new { value = "user", label = "General User", description = "General user with basic access" },
+                new { value = "parent", label = "Parent/Guardian", description = "Parent or legal guardian of a child" },
+                new { value = "caregiver", label = "Caregiver", description = "Professional caregiver or support worker" },
+                new { value = "therapist", label = "ABA Therapist", description = "Applied Behavior Analysis therapist" },
+                new { value = "adoptiveparent", label = "Adoptive Parent", description = "Adoptive parent or foster parent" }
+            };
+
+            return Ok(new
+            {
+                success = true,
+                roles = roles
+            });
+        }
+
+        /// <summary>
         /// Verify JWT token (for frontend token validation)
         /// </summary>
         [HttpGet("verify")]
