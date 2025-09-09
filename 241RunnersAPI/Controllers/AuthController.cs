@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using _241RunnersAPI.Models;
 using _241RunnersAPI.Data;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.SignalR;
+using _241RunnersAPI.Hubs;
 
 namespace _241RunnersAPI.Controllers
 {
@@ -18,12 +20,14 @@ namespace _241RunnersAPI.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthController> _logger;
+        private readonly IHubContext<AdminHub> _hubContext;
 
-        public AuthController(ApplicationDbContext context, IConfiguration configuration, ILogger<AuthController> logger)
+        public AuthController(ApplicationDbContext context, IConfiguration configuration, ILogger<AuthController> logger, IHubContext<AdminHub> hubContext)
         {
             _context = context;
             _configuration = configuration;
             _logger = logger;
+            _hubContext = hubContext;
         }
 
         /// <summary>
@@ -109,6 +113,39 @@ namespace _241RunnersAPI.Controllers
                 IsEmailVerified = user.IsEmailVerified,
                 IsPhoneVerified = user.IsPhoneVerified
             };
+
+            // Send real-time notification to admins about new user registration
+            try
+            {
+                await _hubContext.Clients.Group("Admins").SendAsync("NewUserRegistration", new
+                {
+                    Type = "new_user_registration",
+                    UserData = new
+                    {
+                        Id = user.Id,
+                        Email = user.Email,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        FullName = user.FullName,
+                        Role = user.Role,
+                        CreatedAt = user.CreatedAt,
+                        PhoneNumber = user.PhoneNumber,
+                        City = user.City,
+                        State = user.State,
+                        Organization = user.Organization,
+                        Title = user.Title
+                    },
+                    Timestamp = DateTime.UtcNow,
+                    NotificationId = Guid.NewGuid().ToString()
+                });
+                
+                _logger.LogInformation("New user registration notification sent to admins for user {Email}", request.Email);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send new user registration notification to admins");
+                // Don't fail the registration if notification fails
+            }
 
             return Ok(new AuthResponseDto
             {

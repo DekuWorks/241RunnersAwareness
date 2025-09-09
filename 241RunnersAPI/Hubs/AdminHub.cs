@@ -283,6 +283,33 @@ namespace _241RunnersAPI.Hubs
         }
 
         /// <summary>
+        /// Notify admins about new user registration
+        /// </summary>
+        public async Task NotifyNewUserRegistration(object userData)
+        {
+            try
+            {
+                var notificationData = new
+                {
+                    Type = "new_user_registration",
+                    UserData = userData,
+                    Timestamp = DateTime.UtcNow,
+                    NotificationId = Guid.NewGuid().ToString()
+                };
+
+                // Broadcast to all connected admins
+                await Clients.Group("Admins").SendAsync("NewUserRegistration", notificationData);
+
+                _logger.LogInformation("New user registration notification sent to admins");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error broadcasting new user registration notification");
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Get current online admins
         /// </summary>
         public async Task GetOnlineAdmins()

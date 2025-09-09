@@ -180,6 +180,13 @@ class AdminRealtime {
             this.notifyAdminActivityCallbacks(activityData);
         });
 
+        // New user registration notification
+        this.connection.on('NewUserRegistration', (notificationData) => {
+            console.log('🎉 New user registration:', notificationData);
+            this.triggerEvent('newUserRegistration', notificationData);
+            this.showNewUserRegistrationNotification(notificationData);
+        });
+
         // Ping/Pong
         this.connection.on('Pong', (timestamp) => {
             console.log('🏓 Pong received:', new Date(timestamp));
@@ -416,6 +423,31 @@ class AdminRealtime {
             showToast(message, type, 5000);
         } else {
             console.log(`📢 ${type.toUpperCase()}: ${message}`);
+        }
+    }
+
+    showNewUserRegistrationNotification(notificationData) {
+        const userData = notificationData.userData;
+        const message = `🎉 New user registered: ${userData.fullName} (${userData.role})`;
+        
+        // Show enhanced notification with user details
+        if (typeof showToast === 'function') {
+            showToast(message, 'success', 8000);
+        } else {
+            console.log(`🎉 NEW USER REGISTRATION: ${message}`);
+        }
+
+        // Trigger custom event for dashboard updates
+        this.triggerEvent('newUserRegistration', notificationData);
+        
+        // Update user count if dashboard is visible
+        if (typeof updateUserCount === 'function') {
+            updateUserCount();
+        }
+
+        // Refresh user list if it's currently displayed
+        if (typeof refreshUserList === 'function') {
+            setTimeout(() => refreshUserList(), 1000);
         }
     }
 
