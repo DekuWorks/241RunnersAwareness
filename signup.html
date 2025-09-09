@@ -450,8 +450,12 @@
                 const config = await response.json();
                 API_BASE_URL = config.API_BASE_URL;
                 window.API_BASE_URL = API_BASE_URL;
+                console.log('Config loaded, API_BASE_URL:', API_BASE_URL);
             } catch (error) {
                 console.warn('Failed to load config.json, using default API URL');
+                // Ensure we have the correct API URL even if config fails
+                API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+                window.API_BASE_URL = API_BASE_URL;
             }
         }
 
@@ -623,7 +627,9 @@
         // Load available roles from API
         async function loadAvailableRoles() {
             try {
+                console.log('Loading roles from:', `${API_BASE_URL}/Auth/roles`);
                 const response = await fetch(`${API_BASE_URL}/Auth/roles`);
+                console.log('Roles response status:', response.status);
                 const result = await response.json();
                 
                 if (result.success && result.roles) {
@@ -811,10 +817,10 @@
         }
         
         // Initialize everything when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            loadConfig();
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadConfig();
             setupRealTimeValidation();
-            loadAvailableRoles();
+            await loadAvailableRoles();
             
             const signupForm = document.getElementById('signupForm');
             const signupBtn = document.getElementById('signupBtn');
