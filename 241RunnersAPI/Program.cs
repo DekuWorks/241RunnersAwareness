@@ -9,6 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
+// Add SignalR for real-time communication
+builder.Services.AddSignalR();
+
 // Add Application Insights
 builder.Services.AddApplicationInsightsTelemetry();
 
@@ -16,10 +19,10 @@ builder.Services.AddApplicationInsightsTelemetry();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add JWT Authentication
-var jwtKey = builder.Configuration["Jwt:Key"] ?? Environment.GetEnvironmentVariable("JWT_KEY") ?? "your-super-secret-key-that-is-at-least-32-characters-long-for-241-runners";
-var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "241RunnersAwareness";
-var jwtAudience = builder.Configuration["Jwt:Audience"] ?? Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "241RunnersAwareness";
+// Add JWT Authentication - Environment variables take precedence
+var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? builder.Configuration["Jwt:Key"] ?? "your-super-secret-key-that-is-at-least-32-characters-long-for-241-runners";
+var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? builder.Configuration["Jwt:Issuer"] ?? "241RunnersAwareness";
+var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? builder.Configuration["Jwt:Audience"] ?? "241RunnersAwareness";
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -37,6 +40,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+
+// Add Health Checks
+builder.Services.AddHealthChecks();
 
 // Add CORS - Production domains only
 builder.Services.AddCors(options =>
@@ -104,6 +110,15 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+// Configure port for Azure App Service (Linux)
+// For Linux App Service, use the PORT environment variable
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+if (Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME") != null)
+{
+    // Running on Azure App Service
+    app.Urls.Add($"http://0.0.0.0:{port}");
+}
+
 // Configure the HTTP request pipeline.
 
 // Force HTTPS redirect in production
@@ -122,17 +137,21 @@ else
     app.UseCors("ProductionCORS");
 }
 
-// Enable Swagger in both environments
-app.UseSwagger();
-app.UseSwaggerUI(c =>
+// Enable Swagger based on configuration
+var swaggerEnabled = builder.Configuration.GetValue<bool>("Swagger:Enabled", true);
+if (swaggerEnabled)
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "241 Runners Awareness API v1");
-    c.RoutePrefix = "swagger";
-    if (!app.Environment.IsDevelopment())
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
     {
-        c.DocumentTitle = "241 Runners API - Production";
-    }
-});
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "241 Runners Awareness API v1");
+        c.RoutePrefix = "swagger";
+        if (!app.Environment.IsDevelopment())
+        {
+            c.DocumentTitle = "241 Runners API - Production";
+        }
+    });
+}
 
 // Enable static files for uploaded images
 app.UseStaticFiles();
@@ -143,6 +162,20 @@ app.UseAuthorization();
 
 // Map controllers
 app.MapControllers();
+
+// Map health check endpoints
+app.MapHealthChecks("/health");
+app.MapHealthChecks("/api/auth/health");
+
+// Add a simple health endpoint that doesn't require database
+app.MapGet("/api/health", () => new { 
+    status = "healthy", 
+    timestamp = DateTime.UtcNow,
+    environment = app.Environment.EnvironmentName 
+});
+
+// Map SignalR hubs
+app.MapHub<_241RunnersAPI.Hubs.AdminHub>("/adminHub");
 
 
 app.Run();
