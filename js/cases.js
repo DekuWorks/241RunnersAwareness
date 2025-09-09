@@ -102,7 +102,7 @@ class CasesPage {
             this.showLoading();
             
             // Use the configured API base URL
-            const apiUrl = window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api.azurewebsites.net';
+            const apiUrl = window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
             console.log('📡 API URL:', apiUrl);
             
             // Load NamUs public cases for Houston area
@@ -115,7 +115,7 @@ class CasesPage {
                 });
 
                 console.log('🌐 Fetching NamUs cases with params:', params.toString());
-                const namusResponse = await fetch(`${apiUrl}/api/publiccases?${params}`);
+                const namusResponse = await fetch(`${apiUrl}/PublicCases?${params}`);
                 console.log('📊 NamUs response status:', namusResponse.status);
                 
                 if (namusResponse.ok) {

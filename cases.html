@@ -63,13 +63,42 @@
         .cases-hero {
             text-align: center;
             width: 100%;
-            padding: 2rem 0;
+            padding: 3rem 0;
             background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
         }
         
         /* Hero content centering */
         .cases-hero .container {
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Hero title styling */
+        .hero-title {
+            color: white;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            margin: 0 0 1rem 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Hero subtitle styling */
+        .hero-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            margin: 0 0 2rem 0;
+            max-width: 600px;
+            line-height: 1.6;
         }
         
         /* Enhanced stats grid with better mobile layout */
@@ -82,6 +111,8 @@
             max-width: 800px;
             margin-left: auto;
             margin-right: auto;
+            justify-content: center;
+            align-items: center;
         }
         
         .stat-item {
