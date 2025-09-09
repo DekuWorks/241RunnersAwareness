@@ -114,15 +114,15 @@ class CasesPage {
                     pageSize: 100 // Get more cases to combine
                 });
 
-                console.log('🌐 Fetching NamUs cases with params:', params.toString());
-                const namusResponse = await fetch(`${apiUrl}/PublicCases?${params}`);
-                console.log('📊 NamUs response status:', namusResponse.status);
+                console.log('🌐 Fetching public cases with params:', params.toString());
+                const namusResponse = await fetch(`${apiUrl}/cases/publiccases?${params}`);
+                console.log('📊 Public cases response status:', namusResponse.status);
                 
                 if (namusResponse.ok) {
                     namusCases = await namusResponse.json() || [];
-                    console.log('✅ NamUs cases loaded:', namusCases.length);
+                    console.log('✅ Public cases loaded:', namusCases.length);
                 } else {
-                    console.error('❌ NamUs API failed:', namusResponse.status, namusResponse.statusText);
+                    console.error('❌ Public cases API failed:', namusResponse.status, namusResponse.statusText);
                     if (namusResponse.status === 404) {
                         console.error('🔧 The /publiccases endpoint is not available yet. Backend deployment may still be in progress.');
                     }
@@ -702,118 +702,6 @@ class CasesPage {
         `;
     }
     
-    getSampleData() {
-        return []; // Return empty array - no mock data for live site
-    }
-    
-    renderCases() {
-        const grid = document.getElementById('casesGrid');
-        const startIndex = 0;
-        const endIndex = this.currentPage * this.itemsPerPage;
-        const casesToShow = this.filteredCases.slice(startIndex, endIndex);
-        
-        if (this.filteredCases.length === 0) {
-            this.showEmpty();
-            return;
-        }
-        
-        this.hideEmpty();
-        
-        grid.innerHTML = casesToShow.map(caseItem => this.createCaseCard(caseItem)).join('');
-        
-        // Show/hide load more button
-        const loadMoreContainer = document.getElementById('loadMoreContainer');
-        if (endIndex < this.filteredCases.length) {
-            loadMoreContainer.style.display = 'block';
-        } else {
-            loadMoreContainer.style.display = 'none';
-        }
-        
-        // Update count
-        document.getElementById('showingCount').textContent = Math.min(endIndex, this.filteredCases.length);
-        document.getElementById('totalCount').textContent = this.filteredCases.length;
-    }
-    
-    createCaseCard(caseItem) {
-        const urgencyClass = caseItem.isUrgent ? 'urgent' : '';
-        const statusClass = caseItem.status.toLowerCase().replace(' ', '-');
-        const dateReported = new Date(caseItem.dateReported).toLocaleDateString();
-        
-        return `
-            <div class="case-card ${urgencyClass}">
-                <div class="case-header">
-                    <div class="case-status ${statusClass}">${caseItem.status}</div>
-                    ${caseItem.isUrgent ? '<div class="urgent-badge">URGENT</div>' : ''}
-                </div>
-                
-                <div class="case-content">
-                    <h3 class="case-name">${caseItem.firstName} ${caseItem.lastName}</h3>
-                    <div class="case-id">ID: ${caseItem.runnerId}</div>
-                    
-                    <div class="case-details">
-                        <div class="detail-item">
-                            <span class="detail-label">Age:</span>
-                            <span class="detail-value">${caseItem.age} years</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Gender:</span>
-                            <span class="detail-value">${caseItem.gender}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Location:</span>
-                            <span class="detail-value">${caseItem.city}, ${caseItem.state}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Reported:</span>
-                            <span class="detail-value">${dateReported}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="case-description">
-                        <p>${caseItem.description}</p>
-                    </div>
-                    
-                    <div class="case-physical">
-                        <div class="physical-item">
-                            <span class="physical-label">Height:</span>
-                            <span class="physical-value">${caseItem.height}</span>
-                        </div>
-                        <div class="physical-item">
-                            <span class="physical-label">Weight:</span>
-                            <span class="physical-value">${caseItem.weight}</span>
-                        </div>
-                        <div class="physical-item">
-                            <span class="physical-label">Hair:</span>
-                            <span class="physical-value">${caseItem.hairColor}</span>
-                        </div>
-                        <div class="physical-item">
-                            <span class="physical-label">Eyes:</span>
-                            <span class="physical-value">${caseItem.eyeColor}</span>
-                        </div>
-                    </div>
-                    
-                    ${caseItem.identifyingMarks ? `
-                        <div class="case-marks">
-                            <strong>Identifying Marks:</strong>
-                            <p>${caseItem.identifyingMarks}</p>
-                        </div>
-                    ` : ''}
-                    
-                    ${caseItem.medicalConditions ? `
-                        <div class="case-medical">
-                            <strong>Medical Conditions:</strong>
-                            <p>${caseItem.medicalConditions}</p>
-                        </div>
-                    ` : ''}
-                </div>
-                
-                <div class="case-actions">
-                    <a href="https://241runnersawareness.org/runner.html?id=${caseItem.id}" class="btn-primary">View Details</a>
-                    <a href="https://241runnersawareness.org/map.html?case=${caseItem.id}" class="btn-secondary">View on Map</a>
-                </div>
-            </div>
-        `;
-    }
     
     loadMore() {
         this.currentPage++;
