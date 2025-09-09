@@ -95,7 +95,6 @@ async function apiRequest(url, options = {}, retryCount = 0) {
                 'Expires': '0',
                 ...options.headers
             },
-            credentials: 'include',
             cache: 'no-store'
         });
         
@@ -506,8 +505,7 @@ async function initializeAdminAuth() {
 async function loadConfig() {
     try {
         const response = await fetch('/config.json', {
-            cache: 'no-store',
-            credentials: 'include'
+            cache: 'no-store'
         });
         const config = await response.json();
         

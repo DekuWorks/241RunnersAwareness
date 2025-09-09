@@ -107,8 +107,7 @@ self.addEventListener('fetch', (event) => {
         console.log('Auth endpoint detected, bypassing cache:', url.href);
         event.respondWith(
             fetch(request, {
-                cache: 'no-store',
-                credentials: 'include'
+                cache: 'no-store'
             }).catch(error => {
                 console.error('Auth fetch failed:', error);
                 throw error;
