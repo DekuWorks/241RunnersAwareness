@@ -119,7 +119,8 @@ class CasesPage {
                 console.log('📊 Public cases response status:', namusResponse.status);
                 
                 if (namusResponse.ok) {
-                    namusCases = await namusResponse.json() || [];
+                    const responseData = await namusResponse.json() || {};
+                    namusCases = responseData.cases || [];
                     console.log('✅ Public cases loaded:', namusCases.length);
                 } else {
                     console.error('❌ Public cases API failed:', namusResponse.status, namusResponse.statusText);
@@ -266,57 +267,130 @@ class CasesPage {
                date1.getDate() === date2.getDate();
     }
 
-    // Normalize NamUs cases to standard format
-    normalizeNamusCases(namusCases) {
-        if (!namusCases || namusCases.length === 0) {
+    // Normalize API cases to standard format
+    normalizeNamusCases(apiCases) {
+        if (!apiCases || apiCases.length === 0) {
             return [];
         }
 
-        return namusCases.map(caseItem => ({
-            id: caseItem.id || `namus-${Date.now()}-${Math.random()}`,
-            source: 'namus',
-            runnerId: caseItem.namusCaseNumber || 'N/A',
-            firstName: '',
-            lastName: '',
-            fullName: caseItem.fullName || 'Unknown',
-            age: caseItem.ageAtMissing || null,
-            gender: caseItem.sex || 'Unknown',
-            height: 'Unknown',
-            weight: 'Unknown',
-            eyeColor: 'Unknown',
-            hairColor: 'Unknown',
-            city: caseItem.city || 'Houston',
-            state: caseItem.state || 'TX',
-            status: this.mapNamusStatus(caseItem.status),
-            isUrgent: caseItem.status === 'missing',
-            dateReported: caseItem.dateMissing ? 
-                new Date(caseItem.dateMissing).toISOString() : 
-                new Date().toISOString(),
-            description: caseItem.statusNote || 'Case from NamUs database',
-            identifyingMarks: 'See NamUs for details',
-            medicalConditions: 'See NamUs for details',
-            photoUrl: caseItem.photoUrl,
-            agency: caseItem.agency || 'NamUs',
-            namusCaseNumber: caseItem.namusCaseNumber,
-            namusSourceUrl: caseItem.sourceUrl
-        })).sort((a, b) => new Date(b.dateReported) - new Date(a.dateReported));
+        return apiCases.map(caseItem => {
+            // Extract runner information if available
+            const runner = caseItem.Runner || {};
+            const fullName = runner.Name || 'Unknown';
+            const nameParts = fullName.split(' ');
+            
+            return {
+                id: caseItem.Id || `case-${Date.now()}-${Math.random()}`,
+                source: 'api',
+                runnerId: caseItem.RunnerId || 'N/A',
+                firstName: nameParts[0] || '',
+                lastName: nameParts.slice(1).join(' ') || '',
+                fullName: fullName,
+                age: this.calculateAge(runner.DateOfBirth),
+                gender: runner.Gender || 'Unknown',
+                height: this.extractHeight(runner.PhysicalDescription),
+                weight: this.extractWeight(runner.PhysicalDescription),
+                eyeColor: this.extractEyeColor(runner.PhysicalDescription),
+                hairColor: this.extractHairColor(runner.PhysicalDescription),
+                city: this.extractCity(caseItem.LastSeenLocation),
+                state: this.extractState(caseItem.LastSeenLocation),
+                status: caseItem.Status || 'Open',
+                isUrgent: caseItem.Priority === 'High' || caseItem.Priority === 'Urgent',
+                dateReported: caseItem.CreatedAt ? 
+                    new Date(caseItem.CreatedAt).toISOString() : 
+                    new Date().toISOString(),
+                description: caseItem.Description || 'No description available',
+                identifyingMarks: runner.PhysicalDescription || 'No identifying marks available',
+                medicalConditions: runner.MedicalConditions || 'No medical conditions reported',
+                photoUrl: runner.ProfileImageUrl,
+                agency: '241 Runners Awareness',
+                contactPerson: caseItem.ContactPersonName,
+                contactPhone: caseItem.ContactPersonPhone,
+                contactEmail: caseItem.ContactPersonEmail
+            };
+        }).sort((a, b) => new Date(b.dateReported) - new Date(a.dateReported));
     }
 
-    // Map NamUs status to our standard status
-    mapNamusStatus(namusStatus) {
-        switch (namusStatus) {
-            case 'missing':
+    // Helper functions for data extraction
+    calculateAge(dateOfBirth) {
+        if (!dateOfBirth) return null;
+        const birthDate = new Date(dateOfBirth);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    extractHeight(physicalDescription) {
+        if (!physicalDescription) return 'Unknown';
+        const heightMatch = physicalDescription.match(/(\d+['"]?\s*\d*["']?)/i);
+        return heightMatch ? heightMatch[1] : 'Unknown';
+    }
+
+    extractWeight(physicalDescription) {
+        if (!physicalDescription) return 'Unknown';
+        const weightMatch = physicalDescription.match(/(\d+)\s*lbs?/i);
+        return weightMatch ? `${weightMatch[1]} lbs` : 'Unknown';
+    }
+
+    extractEyeColor(physicalDescription) {
+        if (!physicalDescription) return 'Unknown';
+        const eyeColors = ['brown', 'blue', 'green', 'hazel', 'gray', 'grey'];
+        for (const color of eyeColors) {
+            if (physicalDescription.toLowerCase().includes(color)) {
+                return color.charAt(0).toUpperCase() + color.slice(1);
+            }
+        }
+        return 'Unknown';
+    }
+
+    extractHairColor(physicalDescription) {
+        if (!physicalDescription) return 'Unknown';
+        const hairColors = ['black', 'brown', 'blonde', 'red', 'gray', 'grey', 'white'];
+        for (const color of hairColors) {
+            if (physicalDescription.toLowerCase().includes(color)) {
+                return color.charAt(0).toUpperCase() + color.slice(1);
+            }
+        }
+        return 'Unknown';
+    }
+
+    extractCity(location) {
+        if (!location) return 'Unknown';
+        // Try to extract city from location string
+        const parts = location.split(',');
+        return parts[0] ? parts[0].trim() : 'Unknown';
+    }
+
+    extractState(location) {
+        if (!location) return 'TX';
+        // Try to extract state from location string
+        const parts = location.split(',');
+        if (parts.length > 1) {
+            const state = parts[1].trim();
+            return state.length === 2 ? state.toUpperCase() : 'TX';
+        }
+        return 'TX';
+    }
+
+    // Map API status to our standard status
+    mapNamusStatus(apiStatus) {
+        switch (apiStatus) {
+            case 'Open':
                 return 'Missing';
-            case 'found':
+            case 'Found':
                 return 'Found';
-            case 'safe':
+            case 'Safe':
                 return 'Safe';
-            case 'deceased':
-                return 'Deceased';
-            case 'resolved_pending_verify':
-                return 'Pending Verification';
+            case 'Closed':
+                return 'Closed';
+            case 'Resolved':
+                return 'Resolved';
             default:
-                return 'Unknown';
+                return 'Open';
         }
     }
     
