@@ -80,6 +80,9 @@
         }
         
         .secondary-btn:hover {
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%) !important;
+            box-shadow: 0 6px 20px rgba(55, 65, 81, 0.4) !important;
+        }
         
         /* Report Runner Button */
         .report-runner-btn {
@@ -105,8 +108,6 @@
         .report-runner-btn:focus {
             outline: 3px solid rgba(220, 38, 38, 0.3) !important;
             outline-offset: 2px !important;
-        }            background: linear-gradient(135deg, #1f2937 0%, #111827 100%) !important;
-            box-shadow: 0 6px 20px rgba(55, 65, 81, 0.4) !important;
         }
         
         .map-controls select, .map-controls input {
@@ -478,9 +479,10 @@
                         </button>
                         <button id="heatmapBtn" class="secondary-btn">
                             🔥 Heat Map
+                        </button>
                         <button id="reportRunnerBtn" class="report-runner-btn">
                             🚨 Report Runner
-                        </button>                        </button>
+                        </button>
                     </div>
                 </div>
 
@@ -622,6 +624,90 @@
             }
         }
 
+        // Create custom marker with status-based styling
+        function createCustomMarker(lat, lng, status, runner) {
+            const colors = {
+                missing: '#f59e0b',
+                found: '#dc2626', 
+                safe: '#10b981',
+                urgent: '#ef4444',
+                deceased: '#6b7280'
+            };
+            
+            const color = colors[status] || '#6b7280';
+            
+            return L.circleMarker([lat, lng], {
+                radius: 8,
+                fillColor: color,
+                color: '#fff',
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.8
+            });
+        }
+        
+        // Create popup content for markers
+        function createPopupContent(runner) {
+            return `
+                <div class="runner-popup">
+                    <h3>${runner.fullName || 'Unknown'}</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Status</div>
+                            <div class="info-value">
+                                <span class="status-badge status-${runner.currentStatus}">${runner.currentStatus}</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Age</div>
+                            <div class="info-value">${runner.age || 'Unknown'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Gender</div>
+                            <div class="info-value">${runner.gender || 'Unknown'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Location</div>
+                            <div class="info-value">${runner.city || 'Unknown'}, ${runner.state || 'Unknown'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Date Added</div>
+                            <div class="info-value">${new Date(runner.dateAdded).toLocaleDateString()}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Display runners on the map
+        function displayRunners(runners) {
+            // Clear existing markers
+            markerClusterGroup.clearLayers();
+            markers = [];
+            
+            if (!runners || runners.length === 0) {
+                console.log("No runners data to display");
+                return;
+            }
+            
+            runners.forEach(runner => {
+                if (runner.latitude && runner.longitude) {
+                    const marker = createCustomMarker(
+                        runner.latitude, 
+                        runner.longitude, 
+                        runner.currentStatus,
+                        runner
+                    );
+                    
+                    const popupContent = createPopupContent(runner);
+                    marker.bindPopup(popupContent);
+                    
+                    markerClusterGroup.addLayer(marker);
+                    markers.push(marker);
+                }
+            });
+        }
+
         // Enhanced data loading with real-time updates
         async function loadRunnersData() {
             console.log("Loading runners data...");
@@ -635,11 +721,11 @@
 
             try {
                 // Fetch real data from API
-                // Fetch real data from API
                 let apiData = [];
                 try {
-                    if (window.apiHelpers && window.apiHelpers.getWithRetry) {
-                        const runners = await window.apiHelpers.getWithRetry("/api/Runners");
+                    if (window.apiUtils && window.apiUtils.fetchWithRetry) {
+                        const response = await window.apiUtils.fetchWithRetry("/Runners");
+                        const runners = await response.json();
                         if (runners && Array.isArray(runners)) {
                             apiData = runners;
                         }
@@ -650,49 +736,9 @@
                 
                 // Also try to get public cases data
                 try {
-                    if (window.apiHelpers && window.apiHelpers.getWithRetry) {
-                        const publicCases = await window.apiHelpers.getWithRetry("/api/PublicCases");
-                        if (publicCases && Array.isArray(publicCases)) {
-                            // Convert public cases to runner format if needed
-                            const convertedCases = publicCases.map(case => ({
-                                id: case.id,
-                                fullName: case.fullName || case.name || "Unknown",
-                                currentStatus: case.currentStatus || case.status || "missing",
-                                latitude: case.latitude || case.lat,
-                                longitude: case.longitude || case.lng,
-                                city: case.city,
-                                state: case.state,
-                                dateAdded: case.dateAdded || case.createdAt || new Date(),
-                                address: case.address,
-                                age: case.age,
-                                gender: case.gender,
-                                dateOfBirth: case.dateOfBirth
-                            }));
-                            apiData = [...apiData, ...convertedCases];
-                        }
-                    }
-                } catch (publicCasesError) {
-                    console.log("Public cases data not available:", publicCasesError);
-                }
-                
-                currentData = apiData;                
-                // Fetch real data from API
-                let apiData = [];
-                try {
-                    if (window.apiHelpers && window.apiHelpers.getWithRetry) {
-                        const runners = await window.apiHelpers.getWithRetry("/api/Runners");
-                        if (runners && Array.isArray(runners)) {
-                            apiData = runners;
-                        }
-                    }
-                } catch (apiError) {
-                    console.log("API data not available, using empty dataset:", apiError);
-                }
-                
-                // Also try to get public cases data
-                try {
-                    if (window.apiHelpers && window.apiHelpers.getWithRetry) {
-                        const publicCases = await window.apiHelpers.getWithRetry("/api/PublicCases");
+                    if (window.apiUtils && window.apiUtils.fetchWithRetry) {
+                        const response = await window.apiUtils.fetchWithRetry("/PublicCases");
+                        const publicCases = await response.json();
                         if (publicCases && Array.isArray(publicCases)) {
                             // Convert public cases to runner format if needed
                             const convertedCases = publicCases.map(case => ({
@@ -717,20 +763,65 @@
                 }
                 
                 currentData = apiData;
-            runners.forEach(runner => {
-                const marker = createCustomMarker(
-                    runner.latitude, 
-                    runner.longitude, 
-                    runner.currentStatus,
-                    runner
-                );
                 
-                const popupContent = createPopupContent(runner);
-                marker.bindPopup(popupContent);
+                // If no data from API, show sample data for demonstration
+                if (apiData.length === 0) {
+                    console.log("No API data available, showing sample data for demonstration");
+                    const sampleData = [
+                        {
+                            id: 1,
+                            fullName: "Sample Missing Person",
+                            currentStatus: "missing",
+                            latitude: 29.7604,
+                            longitude: -95.3698,
+                            city: "Houston",
+                            state: "TX",
+                            age: 25,
+                            gender: "Male",
+                            dateAdded: new Date().toISOString(),
+                            address: "123 Main St, Houston, TX"
+                        },
+                        {
+                            id: 2,
+                            fullName: "Sample Found Person",
+                            currentStatus: "found",
+                            latitude: 29.7614,
+                            longitude: -95.3598,
+                            city: "Houston",
+                            state: "TX",
+                            age: 30,
+                            gender: "Female",
+                            dateAdded: new Date(Date.now() - 86400000).toISOString(),
+                            address: "456 Oak Ave, Houston, TX"
+                        }
+                    ];
+                    currentData = sampleData;
+                }
                 
-                markerClusterGroup.addLayer(marker);
-                markers.push(marker);
-            });
+                // Display the data on the map
+                displayRunners(currentData);
+                updateStatistics(currentData);
+                
+                // Hide loading state
+                if (loadingEl) loadingEl.style.display = "none";
+                
+                // Show no data message if still no data
+                if (currentData.length === 0) {
+                    if (noDataEl) noDataEl.style.display = "block";
+                }
+                
+            } catch (error) {
+                console.error("Error loading runners data:", error);
+                
+                // Hide loading state
+                if (loadingEl) loadingEl.style.display = "none";
+                
+                // Show error state
+                if (errorEl) {
+                    errorEl.style.display = "block";
+                    errorEl.textContent = `Error loading map data: ${error.message}`;
+                }
+            }
         }
 
         // Update statistics display

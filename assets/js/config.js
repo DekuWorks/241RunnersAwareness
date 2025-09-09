@@ -7,12 +7,12 @@
  */
 
 window.APP_CONFIG = {
-    API_BASE_URL: "https://241runners-api.azurewebsites.net",
+    API_BASE_URL: "https://241runners-api.azurewebsites.net/api",
     APP_NAME: "241 Runners Awareness",
     APP_VERSION: "1.0.0",
     ENVIRONMENT: "production",
     DEBUG: false,
-    HEALTH_CHECK_ENDPOINT: "/api/auth/health",
+    HEALTH_CHECK_ENDPOINT: "/Auth/health",
     API_TIMEOUT: 10000,
     RETRY_ATTEMPTS: 3
 };
