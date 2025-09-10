@@ -4842,12 +4842,26 @@
                 
                 const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
                 const token = storage.get('ra_admin_token');
+                
+                console.log('🔍 Delete User Debug:', {
+                    userId: userId,
+                    apiUrl: apiUrl,
+                    hasToken: !!token,
+                    tokenLength: token ? token.length : 0
+                });
+                
                 const response = await fetch(`${apiUrl}/admin/users/${userId}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }
+                });
+
+                console.log('🔍 Delete Response:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    ok: response.ok
                 });
 
                 if (response.ok) {
@@ -4879,9 +4893,16 @@
                         deletedBy: currentAdmin?.email || 'Unknown'
                     });
                     
+                } else if (response.status === 401) {
+                    showToast('Authentication failed. Please log in again.', 'error');
+                    // Redirect to login
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
                 } else {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Failed to delete user');
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error('Delete user error response:', errorData);
+                    showToast(`Failed to delete user: ${errorData.message || response.statusText}`, 'error');
                 }
                 
             } catch (error) {
@@ -4906,12 +4927,26 @@
                 
                 const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
                 const token = storage.get('ra_admin_token');
+                
+                console.log('🔍 Delete Admin Debug:', {
+                    adminId: adminId,
+                    apiUrl: apiUrl,
+                    hasToken: !!token,
+                    tokenLength: token ? token.length : 0
+                });
+                
                 const response = await fetch(`${apiUrl}/admin/admins/${adminId}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }
+                });
+
+                console.log('🔍 Delete Admin Response:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    ok: response.ok
                 });
 
                 if (response.ok) {
@@ -8390,6 +8425,109 @@
             }
         }
         
+        // ===== REAL-TIME UPDATES =====
+        let realTimeConnection = null;
+        let isRealTimeEnabled = false;
+        
+        // Initialize SignalR connection for real-time updates
+        async function initializeRealTimeUpdates() {
+            try {
+                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+                const hubUrl = apiBaseUrl.replace('/api', '/adminHub');
+                
+                realTimeConnection = new signalR.HubConnectionBuilder()
+                    .withUrl(hubUrl, {
+                        accessTokenFactory: () => storage.get('ra_admin_token')
+                    })
+                    .withAutomaticReconnect()
+                    .build();
+
+                // Handle user updates
+                realTimeConnection.on("UserUpdated", (userData) => {
+                    console.log('🔄 Real-time user update:', userData);
+                    updateUserInList(userData);
+                    updateDashboardUI();
+                });
+
+                // Handle user deletion
+                realTimeConnection.on("UserDeleted", (userId) => {
+                    console.log('🗑️ Real-time user deletion:', userId);
+                    dashboardData.users = dashboardData.users.filter(u => u.id !== userId);
+                    dashboardData.stats.totalUsers--;
+                    updateUsersTable();
+                    updateDashboardUI();
+                });
+
+                // Handle admin updates
+                realTimeConnection.on("AdminUpdated", (adminData) => {
+                    console.log('🔄 Real-time admin update:', adminData);
+                    updateAdminInList(adminData);
+                    updateDashboardUI();
+                });
+
+                // Handle admin deletion
+                realTimeConnection.on("AdminDeleted", (adminId) => {
+                    console.log('🗑️ Real-time admin deletion:', adminId);
+                    dashboardData.admins = dashboardData.admins.filter(a => a.id !== adminId);
+                    updateAdminsTable();
+                    updateDashboardUI();
+                });
+
+                // Handle case updates
+                realTimeConnection.on("CaseUpdated", (caseData) => {
+                    console.log('🔄 Real-time case update:', caseData);
+                    updateCaseInList(caseData);
+                    updateDashboardUI();
+                });
+
+                // Start connection
+                await realTimeConnection.start();
+                isRealTimeEnabled = true;
+                console.log('✅ Real-time updates connected');
+                showToast('Real-time updates enabled', 'success', 2000);
+                
+            } catch (error) {
+                console.error('❌ Real-time connection failed:', error);
+                isRealTimeEnabled = false;
+                showToast('Real-time updates unavailable', 'warning', 3000);
+            }
+        }
+
+        // Update user in the list
+        function updateUserInList(userData) {
+            const userIndex = dashboardData.users.findIndex(u => u.id === userData.id);
+            if (userIndex !== -1) {
+                dashboardData.users[userIndex] = { ...dashboardData.users[userIndex], ...userData };
+            } else {
+                dashboardData.users.push(userData);
+                dashboardData.stats.totalUsers++;
+            }
+            updateUsersTable();
+        }
+
+        // Update admin in the list
+        function updateAdminInList(adminData) {
+            const adminIndex = dashboardData.admins.findIndex(a => a.id === adminData.id);
+            if (adminIndex !== -1) {
+                dashboardData.admins[adminIndex] = { ...dashboardData.admins[adminIndex], ...adminData };
+            } else {
+                dashboardData.admins.push(adminData);
+            }
+            updateAdminsTable();
+        }
+
+        // Update case in the list
+        function updateCaseInList(caseData) {
+            const caseIndex = dashboardData.cases.findIndex(c => c.id === caseData.id);
+            if (caseIndex !== -1) {
+                dashboardData.cases[caseIndex] = { ...dashboardData.cases[caseIndex], ...caseData };
+            } else {
+                dashboardData.cases.push(caseData);
+                dashboardData.stats.totalCases++;
+            }
+            updateCasesTable();
+        }
+
         // ===== INITIALIZATION =====
         
         async function initializeDashboard() {
@@ -8400,6 +8538,9 @@
                 if (!requireAdmin()) {
                     return;
                 }
+                
+                // Initialize real-time updates
+                await initializeRealTimeUpdates();
                 
                 // Initialize admin profile manager (optional)
                 if (typeof AdminProfileManager !== 'undefined' && AdminProfileManager.initialize) {
