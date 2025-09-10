@@ -842,29 +842,29 @@
 
     // Check authentication
     function checkAuth() {
-      const user = localStorage.getItem('user');
-      if (!user) {
+      const authData = localStorage.getItem('ra_auth');
+      if (!authData) {
         window.location.href = 'login.html';
         return false;
       }
-      return JSON.parse(user);
+      return JSON.parse(authData);
     }
 
     // Get auth token
     function getAuthToken() {
-      const user = localStorage.getItem('user');
-      if (user) {
-        const userData = JSON.parse(user);
-        return userData.token;
+      const authData = localStorage.getItem('ra_auth');
+      if (authData) {
+        const auth = JSON.parse(authData);
+        return auth.token;
       }
       return null;
     }
 
     // Load user profile information
     function loadUserProfile() {
-      const userData = checkAuth();
-      if (userData) {
-        const user = userData.user;
+      const authData = checkAuth();
+      if (authData) {
+        const user = authData.user;
         
         // Update header
         document.getElementById('profileName').textContent = `${user.firstName} ${user.lastName}`;
@@ -997,7 +997,7 @@
           throw new Error('No authentication token');
         }
 
-        const userData = checkAuth();
+        const authData = checkAuth();
         
         // First get runner profile to get runner ID
         const runnerData = await loadRunnerProfile();
@@ -1155,7 +1155,7 @@
       
       try {
         const token = getAuthToken();
-        const userData = checkAuth();
+        const authData = checkAuth();
         
         const response = await fetch(`${API_BASE_URL}/Auth/profile`, {
           method: 'PUT',
@@ -1168,9 +1168,9 @@
         
         if (response.ok) {
           // Update local storage
-          const updatedUser = { ...userData.user, ...data };
-          const updatedUserData = { ...userData, user: updatedUser };
-          localStorage.setItem('user', JSON.stringify(updatedUserData));
+          const updatedUser = { ...authData.user, ...data };
+          const updatedAuthData = { ...authData, user: updatedUser };
+          localStorage.setItem('ra_auth', JSON.stringify(updatedAuthData));
           
           // Reload profile
           loadUserProfile();
