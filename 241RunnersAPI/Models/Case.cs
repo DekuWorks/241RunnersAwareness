@@ -58,8 +58,8 @@ namespace _241RunnersAPI.Models
 
         [Required(ErrorMessage = "Case status is required")]
         [MaxLength(50, ErrorMessage = "Case status cannot exceed 50 characters")]
-        [RegularExpression("^(Open|Investigating|Found|Closed|Cancelled)$", ErrorMessage = "Case status must be one of: Open, Investigating, Found, Closed, Cancelled")]
-        public string Status { get; set; } = "Open";
+        [RegularExpression("^(Active|Safe|Missing|Found|Investigating|Closed|Cancelled)$", ErrorMessage = "Case status must be one of: Active, Safe, Missing, Found, Investigating, Closed, Cancelled")]
+        public string Status { get; set; } = "Active";
 
         [Required(ErrorMessage = "Case priority is required")]
         [MaxLength(20, ErrorMessage = "Case priority cannot exceed 20 characters")]
@@ -245,8 +245,8 @@ namespace _241RunnersAPI.Models
 
         [Required(ErrorMessage = "Case status is required")]
         [MaxLength(50, ErrorMessage = "Case status cannot exceed 50 characters")]
-        [RegularExpression("^(Open|Investigating|Found|Closed|Cancelled)$", ErrorMessage = "Case status must be one of: Open, Investigating, Found, Closed, Cancelled")]
-        public string Status { get; set; } = "Open";
+        [RegularExpression("^(Active|Safe|Missing|Found|Investigating|Closed|Cancelled)$", ErrorMessage = "Case status must be one of: Active, Safe, Missing, Found, Investigating, Closed, Cancelled")]
+        public string Status { get; set; } = "Active";
 
         [Required(ErrorMessage = "Case priority is required")]
         [MaxLength(20, ErrorMessage = "Case priority cannot exceed 20 characters")]

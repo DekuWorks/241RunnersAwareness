@@ -379,18 +379,22 @@ class CasesPage {
     // Map API status to our standard status
     mapNamusStatus(apiStatus) {
         switch (apiStatus) {
-            case 'Open':
+            case 'Active':
+                return 'Active';
+            case 'Safe':
+                return 'Safe';
+            case 'Missing':
                 return 'Missing';
             case 'Found':
                 return 'Found';
-            case 'Safe':
-                return 'Safe';
+            case 'Investigating':
+                return 'Investigating';
             case 'Closed':
                 return 'Closed';
-            case 'Resolved':
-                return 'Resolved';
+            case 'Cancelled':
+                return 'Cancelled';
             default:
-                return 'Open';
+                return 'Active';
         }
     }
     

@@ -264,6 +264,45 @@ namespace _241RunnersAPI.Controllers
 
                 _logger.LogInformation("Runner profile created for user {UserId} with ID {RunnerId}", userId, runner.Id);
 
+                // Automatically create a case for the new runner
+                var user = await _context.Users.FindAsync(userId);
+                if (user != null)
+                {
+                    var newCase = new Case
+                    {
+                        RunnerId = runner.Id,
+                        ReportedByUserId = userId,
+                        Title = $"Runner Profile - {runner.Name}",
+                        Description = $"Active runner profile for {runner.Name}. {runner.PhysicalDescription ?? "No additional description available."}",
+                        LastSeenDate = DateTime.UtcNow,
+                        LastSeenLocation = runner.LastKnownLocation ?? "Location not specified",
+                        LastSeenTime = "Profile created",
+                        LastSeenCircumstances = "Runner profile created",
+                        ClothingDescription = "Not specified",
+                        PhysicalCondition = "Good",
+                        MentalState = "Stable",
+                        AdditionalInformation = runner.MedicalConditions ?? "No medical conditions reported",
+                        Status = "Active", // Default to Active status for new runners
+                        Priority = "Low",
+                        IsPublic = true,
+                        IsApproved = true,
+                        IsVerified = false,
+                        ContactPersonName = user.FirstName + " " + user.LastName,
+                        ContactPersonPhone = user.PhoneNumber,
+                        ContactPersonEmail = user.Email,
+                        EmergencyContactName = user.EmergencyContactName,
+                        EmergencyContactPhone = user.EmergencyContactPhone,
+                        EmergencyContactRelationship = user.EmergencyContactRelationship,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    };
+
+                    _context.Cases.Add(newCase);
+                    await _context.SaveChangesAsync();
+
+                    _logger.LogInformation("Case created for runner {RunnerId} with case ID {CaseId}", runner.Id, newCase.Id);
+                }
+
                 var runnerResponse = new RunnerResponseDto
                 {
                     Id = runner.Id,

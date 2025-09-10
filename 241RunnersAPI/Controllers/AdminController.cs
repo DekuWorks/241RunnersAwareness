@@ -20,6 +20,91 @@ namespace _241RunnersAPI.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Create cases for all existing runners
+        /// </summary>
+        [HttpPost("create-cases-for-runners")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> CreateCasesForRunners()
+        {
+            try
+            {
+                // Get all runners that don't have cases yet
+                var runnersWithoutCases = await _context.Runners
+                    .Where(r => !_context.Cases.Any(c => c.RunnerId == r.Id))
+                    .Include(r => r.User)
+                    .ToListAsync();
+
+                if (!runnersWithoutCases.Any())
+                {
+                    return Ok(new { success = true, message = "All runners already have cases", count = 0 });
+                }
+
+                // Get the first admin user to be the reporter
+                var adminUser = await _context.Users
+                    .Where(u => u.Role == "admin")
+                    .FirstOrDefaultAsync();
+
+                if (adminUser == null)
+                {
+                    return BadRequest(new { success = false, message = "No admin user found to create cases" });
+                }
+
+                var cases = new List<Case>();
+
+                foreach (var runner in runnersWithoutCases)
+                {
+                    var newCase = new Case
+                    {
+                        RunnerId = runner.Id,
+                        ReportedByUserId = adminUser.Id,
+                        Title = $"Missing Person Case - {runner.Name}",
+                        Description = $"Case for missing person {runner.Name}. {runner.PhysicalDescription ?? "No additional description available."}",
+                        LastSeenDate = DateTime.UtcNow.AddDays(-1), // Default to yesterday
+                        LastSeenLocation = runner.LastKnownLocation ?? "Location unknown",
+                        LastSeenTime = "Unknown",
+                        LastSeenCircumstances = "Reported missing",
+                        ClothingDescription = "Unknown",
+                        PhysicalCondition = "Unknown",
+                        MentalState = "Unknown",
+                        AdditionalInformation = runner.MedicalConditions ?? "No additional information",
+                        Status = "Active",
+                        Priority = "Medium",
+                        IsPublic = true,
+                        IsApproved = true,
+                        IsVerified = false,
+                        ContactPersonName = adminUser.FirstName + " " + adminUser.LastName,
+                        ContactPersonPhone = adminUser.PhoneNumber,
+                        ContactPersonEmail = adminUser.Email,
+                        EmergencyContactName = runner.User?.EmergencyContactName,
+                        EmergencyContactPhone = runner.User?.EmergencyContactPhone,
+                        EmergencyContactRelationship = runner.User?.EmergencyContactRelationship,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    };
+
+                    cases.Add(newCase);
+                }
+
+                _context.Cases.AddRange(cases);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Created {Count} cases for existing runners", cases.Count);
+
+                return Ok(new { 
+                    success = true, 
+                    message = $"Successfully created {cases.Count} cases for runners",
+                    count = cases.Count,
+                    cases = cases.Select(c => new { c.Id, c.Title, RunnerName = c.Runner.Name })
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating cases for runners");
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
 
         /// <summary>
         /// Get all admin users

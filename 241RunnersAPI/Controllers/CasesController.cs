@@ -593,6 +593,116 @@ namespace _241RunnersAPI.Controllers
                 return StatusCode(500, new { success = false, message = "Internal server error" });
             }
         }
+
+        /// <summary>
+        /// Update case status for a specific runner (authenticated users can update their own cases)
+        /// </summary>
+        [HttpPut("runner/{runnerId}/status")]
+        [Authorize]
+        public async Task<IActionResult> UpdateRunnerCaseStatus(int runnerId, [FromBody] UpdateCaseStatusDto dto)
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
+                {
+                    return Unauthorized(new { success = false, message = "Invalid user token" });
+                }
+
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+
+                // Find the case for this runner
+                var caseEntity = await _context.Cases
+                    .Include(c => c.Runner)
+                    .FirstOrDefaultAsync(c => c.RunnerId == runnerId);
+
+                if (caseEntity == null)
+                {
+                    return NotFound(new { success = false, message = "Case not found for this runner" });
+                }
+
+                // Check if user owns the runner or is admin
+                if (caseEntity.Runner.UserId != userId && userRole != "admin")
+                {
+                    return Forbid("You can only update cases for your own runners");
+                }
+
+                // Validate status
+                var validStatuses = new[] { "Active", "Safe", "Missing", "Found", "Investigating", "Closed", "Cancelled" };
+                if (!validStatuses.Contains(dto.Status))
+                {
+                    return BadRequest(new { success = false, message = "Invalid status. Must be one of: Active, Safe, Missing, Found, Investigating, Closed, Cancelled" });
+                }
+
+                caseEntity.Status = dto.Status;
+                caseEntity.UpdatedAt = DateTime.UtcNow;
+
+                // If status is Found or Closed, set resolved date
+                if (dto.Status == "Found" || dto.Status == "Closed")
+                {
+                    caseEntity.ResolvedAt = DateTime.UtcNow;
+                    caseEntity.ResolvedBy = User.FindFirst(ClaimTypes.Email)?.Value ?? "Unknown";
+                }
+
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Case {CaseId} status updated to {Status} by user {UserId}", caseEntity.Id, dto.Status, userId);
+
+                return Ok(new { 
+                    success = true, 
+                    message = $"Case status updated to {dto.Status}",
+                    caseId = caseEntity.Id,
+                    runnerId = runnerId,
+                    status = dto.Status
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating case status for runner {RunnerId}", runnerId);
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
+        /// Get case status for a specific runner (public endpoint)
+        /// </summary>
+        [HttpGet("runner/{runnerId}/status")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetRunnerCaseStatus(int runnerId)
+        {
+            try
+            {
+                var caseEntity = await _context.Cases
+                    .Include(c => c.Runner)
+                    .Where(c => c.RunnerId == runnerId && c.IsPublic && c.IsApproved)
+                    .Select(c => new
+                    {
+                        c.Id,
+                        c.Status,
+                        c.Priority,
+                        c.UpdatedAt,
+                        c.CreatedAt,
+                        RunnerName = c.Runner.Name,
+                        RunnerId = c.RunnerId
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (caseEntity == null)
+                {
+                    return NotFound(new { success = false, message = "Case not found or not public" });
+                }
+
+                return Ok(new { 
+                    success = true, 
+                    caseData = caseEntity
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving case status for runner {RunnerId}", runnerId);
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
     }
 
     public class UpdateCaseStatusDto
