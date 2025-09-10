@@ -4446,6 +4446,7 @@
                 const response = await fetch(url, {
                     ...options,
                     signal: controller.signal,
+                    credentials: 'include', // Include credentials for CORS with JWT tokens
                     headers: {
                         'Content-Type': 'application/json',
                         'X-Client': '241RA-Admin/1.0',
@@ -8429,7 +8430,7 @@
         async function apiFetch(url, options = {}) {
             const defaultOptions = {
                 mode: 'cors',
-                credentials: 'omit',
+                credentials: 'include', // Include credentials for CORS with JWT tokens
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
