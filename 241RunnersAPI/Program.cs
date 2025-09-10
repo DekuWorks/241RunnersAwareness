@@ -181,6 +181,7 @@ app.MapGet("/api/health", () => new {
 
 // Map SignalR hubs
 app.MapHub<_241RunnersAPI.Hubs.AdminHub>("/adminHub");
+app.MapHub<_241RunnersAPI.Hubs.UserHub>("/userHub");
 
 
 app.Run();

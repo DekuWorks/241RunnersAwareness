@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="https://241runnersawareness.org/styles.css?v=20250905">
   <link rel="stylesheet" href="https://241runnersawareness.org/forms.css">
   <script src="https://241runnersawareness.org/js/auth.js?v=20250905" defer></script>
+  <!-- SignalR Client Library -->
+  <script src="https://unpkg.com/@microsoft/signalr@latest/dist/browser/signalr.min.js"></script>
   <style>
     .profile-container {
       max-width: 1000px;
@@ -572,6 +574,254 @@
         gap: 1rem;
       }
     }
+
+    /* Real-time Notifications Styles */
+    .notification-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      max-width: 400px;
+      pointer-events: none;
+    }
+
+    .notification {
+      background: white;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      border-left: 4px solid;
+      animation: slideInRight 0.3s ease;
+      pointer-events: auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .notification.emergency {
+      border-left-color: #dc2626;
+      background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+    }
+
+    .notification.case-update {
+      border-left-color: #2563eb;
+      background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+    }
+
+    .notification.profile-update {
+      border-left-color: #059669;
+      background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%);
+    }
+
+    .notification.system {
+      border-left-color: #7c3aed;
+      background: linear-gradient(135deg, #f3e8ff 0%, #ffffff 100%);
+    }
+
+    .notification.weather {
+      border-left-color: #ea580c;
+      background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
+    }
+
+    .notification.safety {
+      border-left-color: #ca8a04;
+      background: linear-gradient(135deg, #fefce8 0%, #ffffff 100%);
+    }
+
+    .notification-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .notification-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .notification-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: white;
+    }
+
+    .notification.emergency .notification-icon {
+      background: #dc2626;
+    }
+
+    .notification.case-update .notification-icon {
+      background: #2563eb;
+    }
+
+    .notification.profile-update .notification-icon {
+      background: #059669;
+    }
+
+    .notification.system .notification-icon {
+      background: #7c3aed;
+    }
+
+    .notification.weather .notification-icon {
+      background: #ea580c;
+    }
+
+    .notification.safety .notification-icon {
+      background: #ca8a04;
+    }
+
+    .notification-close {
+      background: none;
+      border: none;
+      color: #6b7280;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .notification-close:hover {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .notification-message {
+      font-size: 14px;
+      color: #4b5563;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .notification-time {
+      font-size: 12px;
+      color: #9ca3af;
+      text-align: right;
+    }
+
+    .notification-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .notification-btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: none;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .notification-btn.primary {
+      background: #dc2626;
+      color: white;
+    }
+
+    .notification-btn.primary:hover {
+      background: #b91c1c;
+    }
+
+    .notification-btn.secondary {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .notification-btn.secondary:hover {
+      background: #e5e7eb;
+    }
+
+    .connection-status {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: white;
+      border-radius: 8px;
+      padding: 8px 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 9999;
+    }
+
+    .connection-status.connected {
+      color: #059669;
+    }
+
+    .connection-status.disconnected {
+      color: #dc2626;
+    }
+
+    .connection-status.connecting {
+      color: #ca8a04;
+    }
+
+    .connection-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .connection-status.connected .connection-dot {
+      background: #059669;
+    }
+
+    .connection-status.disconnected .connection-dot {
+      background: #dc2626;
+    }
+
+    .connection-status.connecting .connection-dot {
+      background: #ca8a04;
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    /* Auto-hide notifications after 5 seconds */
+    .notification.auto-hide {
+      animation: slideInRight 0.3s ease, slideOutRight 0.3s ease 4.7s forwards;
+    }
+
+    @keyframes slideOutRight {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -825,9 +1075,21 @@
     </div>
   </footer>
 
+  <!-- Real-time Notifications Container -->
+  <div id="notificationContainer" class="notification-container"></div>
+
+  <!-- Connection Status Indicator -->
+  <div id="connectionStatus" class="connection-status connecting">
+    <div class="connection-dot"></div>
+    <span>Connecting...</span>
+  </div>
+
   <script>
     // API Configuration - use existing from auth.js
     let PROFILE_PROFILE_API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+    
+    // SignalR Connection
+    let userHubConnection = null;
     
     // Load API configuration
     async function loadConfig() {
@@ -838,6 +1100,246 @@
       } catch (error) {
         console.warn('Failed to load config.json, using default API URL');
       }
+    }
+
+    // Initialize SignalR connection for real-time notifications
+    async function initializeRealTimeNotifications() {
+      try {
+        const apiBaseUrl = PROFILE_PROFILE_API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+        const hubUrl = apiBaseUrl.replace('/api', '/userHub');
+        
+        console.log('🔌 Connecting to User SignalR hub:', hubUrl);
+        
+        const token = getAuthToken();
+        if (!token) {
+          console.warn('No auth token available for SignalR connection');
+          updateConnectionStatus('disconnected', 'No authentication');
+          return;
+        }
+        
+        console.log('🔑 Using token for SignalR:', token ? 'Present' : 'Missing');
+        
+        userHubConnection = new signalR.HubConnectionBuilder()
+          .withUrl(`${hubUrl}?access_token=${encodeURIComponent(token)}`, {
+            transport: signalR.HttpTransportType.WebSockets,
+            skipNegotiation: false,
+            withCredentials: true
+          })
+          .withAutomaticReconnect([0, 2000, 10000, 30000])
+          .configureLogging(signalR.LogLevel.Information)
+          .build();
+
+        // Handle welcome message
+        userHubConnection.on("Welcome", (data) => {
+          console.log('👋 Welcome message received:', data);
+          showNotification('system', 'Connected to Real-time Notifications', 
+            'You will now receive live updates about your profile and cases.', false);
+        });
+
+        // Handle case updates
+        userHubConnection.on("CaseUpdate", (data) => {
+          console.log('📋 Case update received:', data);
+          showNotification('case-update', 'Case Update', 
+            `Your case status has been updated. Check your cases for more details.`, true);
+          
+          // Refresh case data
+          loadUserCases();
+        });
+
+        // Handle emergency alerts
+        userHubConnection.on("EmergencyAlert", (data) => {
+          console.log('🚨 Emergency alert received:', data);
+          showNotification('emergency', 'Emergency Alert', 
+            data.AlertData.message || 'An emergency alert has been issued. Please check your status immediately.', false);
+        });
+
+        // Handle profile updates
+        userHubConnection.on("ProfileUpdate", (data) => {
+          console.log('👤 Profile update received:', data);
+          showNotification('profile-update', 'Profile Updated', 
+            'Your profile information has been updated successfully.', true);
+          
+          // Refresh profile data
+          loadUserProfile();
+          loadRunnerProfile();
+        });
+
+        // Handle system notifications
+        userHubConnection.on("SystemNotification", (data) => {
+          console.log('📢 System notification received:', data);
+          showNotification('system', 'System Notification', 
+            data.NotificationData.message || 'A system notification has been sent.', true);
+        });
+
+        // Handle safety check reminders
+        userHubConnection.on("SafetyCheckReminder", (data) => {
+          console.log('🛡️ Safety check reminder received:', data);
+          showNotification('safety', 'Safety Check Reminder', 
+            'Please update your safety status to let others know you are safe.', false);
+        });
+
+        // Handle weather alerts
+        userHubConnection.on("WeatherAlert", (data) => {
+          console.log('🌤️ Weather alert received:', data);
+          showNotification('weather', 'Weather Alert', 
+            `Weather alert for ${data.Area}: ${data.WeatherData.message || 'Please check current conditions.'}`, true);
+        });
+
+        // Handle pong responses
+        userHubConnection.on("Pong", (timestamp) => {
+          console.log('🏓 Pong received:', timestamp);
+        });
+
+        // Connection event handlers
+        userHubConnection.onclose((error) => {
+          console.log('🔌 SignalR connection closed:', error);
+          updateConnectionStatus('disconnected', 'Connection lost');
+          
+          if (error) {
+            showNotification('system', 'Connection Lost', 
+              'Real-time notifications have been disconnected. Attempting to reconnect...', true);
+          }
+        });
+
+        userHubConnection.onreconnecting((error) => {
+          console.log('🔄 SignalR reconnecting:', error);
+          updateConnectionStatus('connecting', 'Reconnecting...');
+        });
+
+        userHubConnection.onreconnected((connectionId) => {
+          console.log('✅ SignalR reconnected:', connectionId);
+          updateConnectionStatus('connected', 'Connected');
+          showNotification('system', 'Reconnected', 
+            'Real-time notifications have been restored.', true);
+        });
+
+        // Start the connection
+        await userHubConnection.start();
+        console.log('✅ SignalR connection established');
+        updateConnectionStatus('connected', 'Connected');
+
+        // Start ping interval to keep connection alive
+        setInterval(async () => {
+          if (userHubConnection && userHubConnection.state === signalR.HubConnectionState.Connected) {
+            try {
+              await userHubConnection.invoke("Ping");
+            } catch (error) {
+              console.error('Ping failed:', error);
+            }
+          }
+        }, 30000); // Ping every 30 seconds
+
+      } catch (error) {
+        console.error('❌ Failed to initialize SignalR connection:', error);
+        updateConnectionStatus('disconnected', 'Connection failed');
+        showNotification('system', 'Connection Failed', 
+          'Unable to connect to real-time notifications. Some features may not work properly.', true);
+      }
+    }
+
+    // Update connection status indicator
+    function updateConnectionStatus(status, message) {
+      const statusElement = document.getElementById('connectionStatus');
+      if (statusElement) {
+        statusElement.className = `connection-status ${status}`;
+        statusElement.querySelector('span').textContent = message;
+      }
+    }
+
+    // Show notification
+    function showNotification(type, title, message, autoHide = true) {
+      const container = document.getElementById('notificationContainer');
+      if (!container) return;
+
+      const notificationId = `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const notification = document.createElement('div');
+      notification.id = notificationId;
+      notification.className = `notification ${type} ${autoHide ? 'auto-hide' : ''}`;
+      
+      const iconMap = {
+        'emergency': '🚨',
+        'case-update': '📋',
+        'profile-update': '👤',
+        'system': '📢',
+        'weather': '🌤️',
+        'safety': '🛡️'
+      };
+
+      notification.innerHTML = `
+        <div class="notification-header">
+          <div class="notification-title">
+            <div class="notification-icon">${iconMap[type] || '📢'}</div>
+            ${title}
+          </div>
+          <button class="notification-close" onclick="closeNotification('${notificationId}')">×</button>
+        </div>
+        <div class="notification-message">${message}</div>
+        <div class="notification-time">${new Date().toLocaleTimeString()}</div>
+        ${type === 'emergency' ? `
+          <div class="notification-actions">
+            <button class="notification-btn primary" onclick="handleEmergencyAlert('${notificationId}')">Mark Safe</button>
+            <button class="notification-btn secondary" onclick="closeNotification('${notificationId}')">Dismiss</button>
+          </div>
+        ` : ''}
+      `;
+
+      container.appendChild(notification);
+
+      // Auto-hide after 5 seconds if enabled
+      if (autoHide) {
+        setTimeout(() => {
+          closeNotification(notificationId);
+        }, 5000);
+      }
+
+      // Play notification sound (if supported)
+      try {
+        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTQQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScT');
+        audio.volume = 0.3;
+        audio.play().catch(() => {}); // Ignore errors if audio fails
+      } catch (error) {
+        // Ignore audio errors
+      }
+    }
+
+    // Close notification
+    function closeNotification(notificationId) {
+      const notification = document.getElementById(notificationId);
+      if (notification) {
+        notification.style.animation = 'slideOutRight 0.3s ease forwards';
+        setTimeout(() => {
+          notification.remove();
+        }, 300);
+      }
+    }
+
+    // Handle emergency alert
+    async function handleEmergencyAlert(notificationId) {
+      try {
+        // Update user status to safe
+        const response = await fetch(`${PROFILE_PROFILE_API_BASE_URL}/users/status`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getAuthToken()}`
+          },
+          body: JSON.stringify({ status: 'safe' })
+        });
+
+        if (response.ok) {
+          showNotification('profile-update', 'Status Updated', 
+            'Your safety status has been updated to "Safe".', true);
+        } else {
+          showNotification('system', 'Update Failed', 
+            'Failed to update your safety status. Please try again.', true);
+        }
+      } catch (error) {
+        console.error('Failed to update safety status:', error);
+        showNotification('system', 'Update Failed', 
+          'Failed to update your safety status. Please try again.', true);
+      }
+      
+      closeNotification(notificationId);
     }
 
     // Check authentication
@@ -1537,6 +2039,16 @@
       await loadUserCases();
       await loadUserProfileData();
       setupImageUpload();
+      
+      // Initialize real-time notifications
+      await initializeRealTimeNotifications();
+    });
+
+    // Cleanup SignalR connection on page unload
+    window.addEventListener('beforeunload', function() {
+      if (userHubConnection) {
+        userHubConnection.stop();
+      }
     });
   </script>
 </body>
