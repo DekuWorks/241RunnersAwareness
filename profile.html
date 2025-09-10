@@ -185,6 +185,133 @@
       color: #92400e;
     }
 
+    .status-active {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .status-safe {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-missing {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status-found {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-closed {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .status-cancelled {
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .runner-info-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .runner-info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .runner-info-item:last-child {
+      border-bottom: none;
+    }
+
+    .runner-info-label {
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .runner-info-value {
+      color: #6b7280;
+      text-align: right;
+      max-width: 60%;
+    }
+
+    .case-status-card {
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .case-status-card:hover {
+      border-color: #dc2626;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+    }
+
+    .case-status-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .case-status-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .case-status-badge {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .case-status-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .case-detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .case-detail-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .case-detail-value {
+      font-size: 0.9rem;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .case-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+    }
+
     .case-details {
       color: #6b7280;
       font-size: 0.9rem;
@@ -287,7 +414,8 @@
     }
 
     .form-group input,
-    .form-group select {
+    .form-group select,
+    .form-group textarea {
       width: 100%;
       padding: 0.75rem;
       border: 2px solid #e5e7eb;
@@ -295,10 +423,12 @@
       font-size: 1rem;
       transition: border-color 0.3s ease;
       box-sizing: border-box;
+      font-family: inherit;
     }
 
     .form-group input:focus,
-    .form-group select:focus {
+    .form-group select:focus,
+    .form-group textarea:focus {
       outline: none;
       border-color: #dc2626;
       box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
@@ -612,16 +742,72 @@
         </div>
       </div>
 
+      <!-- Runner Profile Section -->
+      <div class="profile-section my-cases-section">
+        <h2 class="section-title">
+          <span>🏃</span>
+          Runner Profile
+          <button class="edit-btn" onclick="toggleEditForm('runnerProfile')">Edit Runner</button>
+        </h2>
+        
+        <div id="runnerProfileInfo">
+          <div class="loading">Loading runner profile...</div>
+        </div>
+
+        <!-- Edit Runner Profile Form -->
+        <div class="edit-form" id="runnerProfileForm">
+          <form id="updateRunnerForm">
+            <div class="form-group">
+              <label for="editRunnerName">Runner Name</label>
+              <input type="text" id="editRunnerName" name="name" required>
+            </div>
+            <div class="form-group">
+              <label for="editDateOfBirth">Date of Birth</label>
+              <input type="date" id="editDateOfBirth" name="dateOfBirth" required>
+            </div>
+            <div class="form-group">
+              <label for="editGender">Gender</label>
+              <select id="editGender" name="gender" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="editPhysicalDescription">Physical Description</label>
+              <textarea id="editPhysicalDescription" name="physicalDescription" rows="3" placeholder="Height, weight, hair color, eye color, etc."></textarea>
+            </div>
+            <div class="form-group">
+              <label for="editMedicalConditions">Medical Conditions</label>
+              <textarea id="editMedicalConditions" name="medicalConditions" rows="2" placeholder="Any medical conditions or medications"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="editPreferredRunningLocations">Preferred Running Locations</label>
+              <textarea id="editPreferredRunningLocations" name="preferredRunningLocations" rows="2" placeholder="Where do you typically run?"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="editTypicalRunningTimes">Typical Running Times</label>
+              <textarea id="editTypicalRunningTimes" name="typicalRunningTimes" rows="2" placeholder="When do you typically run?"></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" onclick="toggleEditForm('runnerProfile')">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save Runner Profile</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
       <!-- My Cases -->
       <div class="profile-section my-cases-section">
         <h2 class="section-title">
           <span>📋</span>
-          My Recent Cases
+          My Case Status
           <a href="my-cases.html" class="btn-small btn-primary-small" style="margin-left: auto;">View All</a>
         </h2>
         
         <div id="myCasesList">
-          <div class="loading">Loading your cases...</div>
+          <div class="loading">Loading your case status...</div>
         </div>
       </div>
     </div>
@@ -701,7 +887,109 @@
       }
     }
 
-    // Load user's cases
+    // Load runner profile
+    async function loadRunnerProfile() {
+      try {
+        const token = getAuthToken();
+        if (!token) {
+          throw new Error('No authentication token');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/runners/profile`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const runnerData = await response.json();
+          displayRunnerProfile(runnerData);
+          return runnerData;
+        } else if (response.status === 404) {
+          // No runner profile exists yet
+          displayNoRunnerProfile();
+          return null;
+        } else {
+          throw new Error('Failed to load runner profile');
+        }
+
+      } catch (error) {
+        console.error('Error loading runner profile:', error);
+        showError('Failed to load runner profile. Please try again.');
+        return null;
+      }
+    }
+
+    // Display runner profile
+    function displayRunnerProfile(runner) {
+      const container = document.getElementById('runnerProfileInfo');
+      
+      container.innerHTML = `
+        <div class="runner-info-grid">
+          <div class="runner-info-item">
+            <span class="runner-info-label">Runner Name</span>
+            <span class="runner-info-value">${runner.name || 'Not provided'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Age</span>
+            <span class="runner-info-value">${runner.age || 'Not provided'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Gender</span>
+            <span class="runner-info-value">${runner.gender || 'Not provided'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Physical Description</span>
+            <span class="runner-info-value">${runner.physicalDescription || 'Not provided'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Medical Conditions</span>
+            <span class="runner-info-value">${runner.medicalConditions || 'None reported'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Preferred Running Locations</span>
+            <span class="runner-info-value">${runner.preferredRunningLocations || 'Not specified'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Typical Running Times</span>
+            <span class="runner-info-value">${runner.typicalRunningTimes || 'Not specified'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Experience Level</span>
+            <span class="runner-info-value">${runner.experienceLevel || 'Not specified'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Profile Complete</span>
+            <span class="runner-info-value">${runner.isProfileComplete ? 'Yes' : 'No'}</span>
+          </div>
+        </div>
+      `;
+
+      // Populate edit form
+      document.getElementById('editRunnerName').value = runner.name || '';
+      document.getElementById('editDateOfBirth').value = runner.dateOfBirth ? runner.dateOfBirth.split('T')[0] : '';
+      document.getElementById('editGender').value = runner.gender || '';
+      document.getElementById('editPhysicalDescription').value = runner.physicalDescription || '';
+      document.getElementById('editMedicalConditions').value = runner.medicalConditions || '';
+      document.getElementById('editPreferredRunningLocations').value = runner.preferredRunningLocations || '';
+      document.getElementById('editTypicalRunningTimes').value = runner.typicalRunningTimes || '';
+    }
+
+    // Display no runner profile message
+    function displayNoRunnerProfile() {
+      const container = document.getElementById('runnerProfileInfo');
+      
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">🏃</div>
+          <h3>No Runner Profile</h3>
+          <p>You haven't created a runner profile yet. Create one to get started with case tracking.</p>
+          <button class="btn btn-primary" onclick="toggleEditForm('runnerProfile')">Create Runner Profile</button>
+        </div>
+      `;
+    }
+
+    // Load user's case status
     async function loadUserCases() {
       try {
         const token = getAuthToken();
@@ -711,32 +999,86 @@
 
         const userData = checkAuth();
         
-        // Get all runners (this would need to be filtered by user in the API)
-        const response = await fetch(`${API_BASE_URL}/runners`, {
+        // First get runner profile to get runner ID
+        const runnerData = await loadRunnerProfile();
+        if (!runnerData) {
+          // No runner profile, show message
+          displayNoCaseStatus();
+          return;
+        }
+
+        // Get case status for this runner
+        const response = await fetch(`${API_BASE_URL}/cases/runner/${runnerData.id}/status`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
 
-        if (!response.ok) {
-          throw new Error('Failed to load cases');
+        if (response.ok) {
+          const caseData = await response.json();
+          displayCaseStatus(caseData.caseData);
+        } else if (response.status === 404) {
+          // No case exists yet
+          displayNoCaseStatus();
+        } else {
+          throw new Error('Failed to load case status');
         }
-
-        const cases = await response.json();
-        
-        // Filter cases by current user (this is a client-side filter for now)
-        const userCases = cases.filter(caseItem => 
-          caseItem.reportedByUserId === userData.user.id || 
-          caseItem.contactInfo?.includes(userData.user.email)
-        );
-
-        updateCaseStatistics(userCases);
-        displayUserCases(userCases);
 
       } catch (error) {
         console.error('Error loading user cases:', error);
-        showError('Failed to load your cases. Please try again.');
+        showError('Failed to load your case status. Please try again.');
       }
+    }
+
+    // Display case status
+    function displayCaseStatus(caseData) {
+      const container = document.getElementById('myCasesList');
+      
+      const statusClass = `status-${caseData.status.toLowerCase()}`;
+      
+      container.innerHTML = `
+        <div class="case-status-card">
+          <div class="case-status-header">
+            <div class="case-status-title">My Case Status</div>
+            <div class="case-status-badge ${statusClass}">${caseData.status}</div>
+          </div>
+          <div class="case-status-details">
+            <div class="case-detail-item">
+              <span class="case-detail-label">Case ID</span>
+              <span class="case-detail-value">#${caseData.id}</span>
+            </div>
+            <div class="case-detail-item">
+              <span class="case-detail-label">Priority</span>
+              <span class="case-detail-value">${caseData.priority}</span>
+            </div>
+            <div class="case-detail-item">
+              <span class="case-detail-label">Created</span>
+              <span class="case-detail-value">${new Date(caseData.createdAt).toLocaleDateString()}</span>
+            </div>
+            <div class="case-detail-item">
+              <span class="case-detail-label">Last Updated</span>
+              <span class="case-detail-value">${new Date(caseData.updatedAt).toLocaleDateString()}</span>
+            </div>
+          </div>
+          <div class="case-actions">
+            <button class="btn-small btn-primary-small" onclick="updateCaseStatus()">Update Status</button>
+            <a href="my-cases.html" class="btn-small btn-secondary-small">View Details</a>
+          </div>
+        </div>
+      `;
+    }
+
+    // Display no case status message
+    function displayNoCaseStatus() {
+      const container = document.getElementById('myCasesList');
+      
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">📋</div>
+          <h3>No Case Yet</h3>
+          <p>Your runner profile doesn't have a case yet. Cases are automatically created when you sign up as a runner.</p>
+        </div>
+      `;
     }
 
     // Update case statistics
@@ -842,6 +1184,43 @@
         
       } catch (error) {
         console.error('Error updating profile:', error);
+        showMessage('error', 'Network error. Please try again.');
+      }
+    });
+
+    // Update runner profile
+    document.getElementById('updateRunnerForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData.entries());
+      
+      try {
+        const token = getAuthToken();
+        
+        const response = await fetch(`${API_BASE_URL}/runners`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+          // Reload runner profile
+          await loadRunnerProfile();
+          await loadUserCases(); // Reload cases too
+          toggleEditForm('runnerProfile');
+          
+          showMessage('success', 'Runner profile updated successfully!');
+        } else {
+          const result = await response.json();
+          showMessage('error', result.message || 'Failed to update runner profile');
+        }
+        
+      } catch (error) {
+        console.error('Error updating runner profile:', error);
         showMessage('error', 'Network error. Please try again.');
       }
     });
@@ -1102,10 +1481,55 @@
       }
     }
 
+    // Update case status
+    async function updateCaseStatus() {
+      const newStatus = prompt('Update your case status:\n\nActive - You are active and safe\nSafe - You are confirmed safe\nMissing - You are missing\nFound - You have been found\nInvestigating - Case is under investigation\nClosed - Case is closed\nCancelled - Case is cancelled\n\nEnter new status:');
+      
+      if (!newStatus) return;
+      
+      const validStatuses = ['Active', 'Safe', 'Missing', 'Found', 'Investigating', 'Closed', 'Cancelled'];
+      if (!validStatuses.includes(newStatus)) {
+        alert('Invalid status. Please enter one of: Active, Safe, Missing, Found, Investigating, Closed, Cancelled');
+        return;
+      }
+      
+      try {
+        const token = getAuthToken();
+        const runnerData = await loadRunnerProfile();
+        
+        if (!runnerData) {
+          alert('No runner profile found. Please create a runner profile first.');
+          return;
+        }
+        
+        const response = await fetch(`${API_BASE_URL}/cases/runner/${runnerData.id}/status`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ status: newStatus })
+        });
+        
+        if (response.ok) {
+          showMessage('success', `Case status updated to ${newStatus}`);
+          await loadUserCases(); // Reload case status
+        } else {
+          const result = await response.json();
+          showMessage('error', result.message || 'Failed to update case status');
+        }
+        
+      } catch (error) {
+        console.error('Error updating case status:', error);
+        showMessage('error', 'Network error. Please try again.');
+      }
+    }
+
     // Initialize profile
     document.addEventListener('DOMContentLoaded', async function() {
       await loadConfig();
       loadUserProfile();
+      await loadRunnerProfile();
       await loadUserCases();
       await loadUserProfileData();
       setupImageUpload();
