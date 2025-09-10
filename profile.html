@@ -826,15 +826,15 @@
   </footer>
 
   <script>
-    // API Configuration
-    let API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+    // API Configuration - use existing from auth.js
+    let PROFILE_PROFILE_API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
     
     // Load API configuration
     async function loadConfig() {
       try {
         const response = await fetch('/config.json');
         const config = await response.json();
-        API_BASE_URL = config.API_BASE_URL;
+        PROFILE_PROFILE_API_BASE_URL = config.PROFILE_API_BASE_URL;
       } catch (error) {
         console.warn('Failed to load config.json, using default API URL');
       }
@@ -863,27 +863,31 @@
     // Load user profile information
     function loadUserProfile() {
       const authData = checkAuth();
-      if (authData) {
+      if (authData && authData.user) {
         const user = authData.user;
         
         // Update header
-        document.getElementById('profileName').textContent = `${user.firstName} ${user.lastName}`;
-        document.getElementById('profileEmail').textContent = user.email;
-        document.getElementById('profileRole').textContent = user.role;
+        document.getElementById('profileName').textContent = `${user.firstName || 'User'} ${user.lastName || ''}`;
+        document.getElementById('profileEmail').textContent = user.email || 'No email';
+        document.getElementById('profileRole').textContent = user.role || 'user';
         
         // Update personal information
-        document.getElementById('firstName').textContent = user.firstName;
-        document.getElementById('lastName').textContent = user.lastName;
-        document.getElementById('email').textContent = user.email;
-        document.getElementById('phone').textContent = user.phone || 'Not provided';
-        document.getElementById('role').textContent = user.role;
-        document.getElementById('memberSince').textContent = new Date(user.createdAt).toLocaleDateString();
+        document.getElementById('firstName').textContent = user.firstName || 'Not provided';
+        document.getElementById('lastName').textContent = user.lastName || 'Not provided';
+        document.getElementById('email').textContent = user.email || 'Not provided';
+        document.getElementById('phone').textContent = user.phoneNumber || 'Not provided';
+        document.getElementById('role').textContent = user.role || 'user';
+        document.getElementById('memberSince').textContent = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown';
         
         // Update edit form
-        document.getElementById('editFirstName').value = user.firstName;
-        document.getElementById('editLastName').value = user.lastName;
-        document.getElementById('editPhone').value = user.phone || '';
-        document.getElementById('editRole').value = user.role;
+        document.getElementById('editFirstName').value = user.firstName || '';
+        document.getElementById('editLastName').value = user.lastName || '';
+        document.getElementById('editPhone').value = user.phoneNumber || '';
+        document.getElementById('editRole').value = user.role || 'user';
+      } else {
+        console.error('No user data found in auth data:', authData);
+        // Show error or redirect to login
+        window.location.href = 'login.html';
       }
     }
 
@@ -895,7 +899,7 @@
           throw new Error('No authentication token');
         }
 
-        const response = await fetch(`${API_BASE_URL}/runners/profile`, {
+        const response = await fetch(`${PROFILE_PROFILE_API_BASE_URL}/runners/profile`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -1008,7 +1012,7 @@
         }
 
         // Get case status for this runner
-        const response = await fetch(`${API_BASE_URL}/cases/runner/${runnerData.id}/status`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/cases/runner/${runnerData.id}/status`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -1157,7 +1161,7 @@
         const token = getAuthToken();
         const authData = checkAuth();
         
-        const response = await fetch(`${API_BASE_URL}/Auth/profile`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/Auth/profile`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -1198,7 +1202,7 @@
       try {
         const token = getAuthToken();
         
-        const response = await fetch(`${API_BASE_URL}/runners`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/runners`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1269,13 +1273,13 @@
     // Load user profile data
     async function loadUserProfileData() {
       try {
-        const userData = JSON.parse(localStorage.getItem("user"));
+        const userData = JSON.parse(localStorage.getItem("ra_auth"));
         if (!userData || !userData.token) {
           window.location.href = "login.html";
           return;
         }
 
-        const response = await fetch(`${API_BASE_URL}/Auth/me`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/Auth/me`, {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${userData.token}`,
@@ -1387,7 +1391,7 @@
           progressFill.style.width = `${progress}%`;
         }, 200);
 
-        const response = await fetch(`${API_BASE_URL}/ImageUpload/upload`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/ImageUpload/upload`, {
           method: "POST",
           headers: {
             "Authorization": `Bearer ${userData.token}`
@@ -1427,8 +1431,8 @@
     // Update user profile with new image URL
     async function updateUserProfileImage(imageUrl) {
       try {
-        const userData = JSON.parse(localStorage.getItem("user"));
-        const response = await fetch(`${API_BASE_URL}/ImageUpload/entity/user/${currentUser.id}`, {
+        const userData = JSON.parse(localStorage.getItem("ra_auth"));
+        const response = await fetch(`${PROFILE_API_BASE_URL}/ImageUpload/entity/user/${currentUser.id}`, {
           method: "POST",
           headers: {
             "Authorization": `Bearer ${userData.token}`,
@@ -1458,8 +1462,8 @@
       }
 
       try {
-        const userData = JSON.parse(localStorage.getItem("user"));
-        const response = await fetch(`${API_BASE_URL}/ImageUpload/delete`, {
+        const userData = JSON.parse(localStorage.getItem("ra_auth"));
+        const response = await fetch(`${PROFILE_API_BASE_URL}/ImageUpload/delete`, {
           method: "DELETE",
           headers: {
             "Authorization": `Bearer ${userData.token}`,
@@ -1502,7 +1506,7 @@
           return;
         }
         
-        const response = await fetch(`${API_BASE_URL}/cases/runner/${runnerData.id}/status`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/cases/runner/${runnerData.id}/status`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
