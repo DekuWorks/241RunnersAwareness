@@ -49,7 +49,8 @@ builder.Services.AddCors(o =>
     o.AddPolicy("ProdCors", p => p
         .WithOrigins("https://241runnersawareness.org","https://www.241runnersawareness.org")
         .AllowAnyHeader()
-        .AllowAnyMethod()));
+        .AllowAnyMethod()
+        .AllowCredentials())); // Required for SignalR
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
