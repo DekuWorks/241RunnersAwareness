@@ -78,7 +78,8 @@ builder.Services.AddCors(o =>
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials() // Required for SignalR
-        .SetIsOriginAllowedToAllowWildcardSubdomains())); // Allow subdomains
+        .SetIsOriginAllowedToAllowWildcardSubdomains() // Allow subdomains
+        .SetPreflightMaxAge(TimeSpan.FromSeconds(86400)))); // Cache preflight for 24 hours
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -139,6 +140,23 @@ if (!app.Environment.IsDevelopment())
 
 app.UseCors("ProdCors");   // put this BEFORE auth
 
+// Add explicit CORS handling for OPTIONS requests
+app.Use(async (context, next) =>
+{
+    if (context.Request.Method == "OPTIONS")
+    {
+        context.Response.Headers["Access-Control-Allow-Origin"] = "https://241runnersawareness.org";
+        context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+        context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With";
+        context.Response.Headers["Access-Control-Allow-Credentials"] = "true";
+        context.Response.Headers["Access-Control-Max-Age"] = "86400";
+        context.Response.StatusCode = 200;
+        await context.Response.WriteAsync("");
+        return;
+    }
+    await next();
+});
+
 // Enable Swagger based on configuration
 var swaggerEnabled = builder.Configuration.GetValue<bool>("Swagger:Enabled", true);
 if (swaggerEnabled)
@@ -189,9 +207,11 @@ app.MapGet("/api/health", () => new {
     environment = app.Environment.EnvironmentName 
 });
 
-// Map SignalR hubs
-app.MapHub<_241RunnersAPI.Hubs.AdminHub>("/adminHub");
-app.MapHub<_241RunnersAPI.Hubs.UserHub>("/userHub");
+// Map SignalR hubs with explicit CORS
+app.MapHub<_241RunnersAPI.Hubs.AdminHub>("/adminHub")
+    .RequireCors("ProdCors");
+app.MapHub<_241RunnersAPI.Hubs.UserHub>("/userHub")
+    .RequireCors("ProdCors");
 
 
 app.Run();
