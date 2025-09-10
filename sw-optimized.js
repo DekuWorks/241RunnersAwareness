@@ -35,8 +35,8 @@ const STATIC_FILES = [
 const AUTH_ENDPOINTS = [
     '/api/auth/',
     '/api/Auth/',
-    '/admin/login.html',
-    '/admin/admindash.html'
+    '/admin/login.html'
+    // Removed /admin/admindash.html to prevent service worker interference with SignalR
 ];
 
 // Install event - cache static files and skip waiting
@@ -101,6 +101,13 @@ function isAuthEndpoint(url) {
 self.addEventListener('fetch', (event) => {
     const { request } = event;
     const url = new URL(request.url);
+
+    // CRITICAL: Never intercept SignalR requests - let them pass through
+    if (url.pathname.includes('/adminHub') || url.pathname.includes('/userHub') || 
+        url.hostname.includes('241runners-api.azurewebsites.net')) {
+        // Let SignalR requests pass through without service worker interference
+        return;
+    }
 
     // CRITICAL: Never cache auth endpoints - always fetch fresh
     if (isAuthEndpoint(url.href)) {
