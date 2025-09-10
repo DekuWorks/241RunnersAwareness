@@ -4850,11 +4850,10 @@
                     tokenLength: token ? token.length : 0
                 });
                 
-                const response = await fetch(`${apiUrl}/admin/users/${userId}`, {
+                const response = await apiFetch(`${apiUrl}/admin/users/${userId}`, {
                     method: 'DELETE',
                     headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
+                        'Authorization': `Bearer ${token}`
                     }
                 });
 
@@ -4935,11 +4934,10 @@
                     tokenLength: token ? token.length : 0
                 });
                 
-                const response = await fetch(`${apiUrl}/admin/admins/${adminId}`, {
+                const response = await apiFetch(`${apiUrl}/admin/admins/${adminId}`, {
                     method: 'DELETE',
                     headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
+                        'Authorization': `Bearer ${token}`
                     }
                 });
 
@@ -8425,9 +8423,42 @@
             }
         }
         
+        // ===== API UTILITIES =====
+        
+        // Enhanced fetch wrapper with CORS handling
+        async function apiFetch(url, options = {}) {
+            const defaultOptions = {
+                mode: 'cors',
+                credentials: 'omit',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    ...options.headers
+                }
+            };
+            
+            const mergedOptions = { ...defaultOptions, ...options };
+            
+            try {
+                const response = await fetch(url, mergedOptions);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+                
+                return response;
+            } catch (error) {
+                console.error('API fetch error:', error);
+                throw error;
+            }
+        }
+
         // ===== REAL-TIME UPDATES =====
         let realTimeConnection = null;
         let isRealTimeEnabled = false;
+        let pollingInterval = null;
+        let pollingMode = false;
         
         // Initialize SignalR connection for real-time updates
         async function initializeRealTimeUpdates() {
@@ -8437,7 +8468,9 @@
                 
                 realTimeConnection = new signalR.HubConnectionBuilder()
                     .withUrl(hubUrl, {
-                        accessTokenFactory: () => storage.get('ra_admin_token')
+                        accessTokenFactory: () => storage.get('ra_admin_token'),
+                        skipNegotiation: true,
+                        transport: signalR.HttpTransportType.WebSockets
                     })
                     .withAutomaticReconnect()
                     .build();
@@ -8489,7 +8522,10 @@
             } catch (error) {
                 console.error('❌ Real-time connection failed:', error);
                 isRealTimeEnabled = false;
-                showToast('Real-time updates unavailable', 'warning', 3000);
+                showToast('Real-time updates unavailable - using polling mode', 'warning', 3000);
+                
+                // Fallback to polling mode
+                startPollingMode();
             }
         }
 
@@ -8526,6 +8562,58 @@
                 dashboardData.stats.totalCases++;
             }
             updateCasesTable();
+        }
+
+        // Polling mode fallback when SignalR fails
+        function startPollingMode() {
+            if (pollingMode) return; // Already in polling mode
+            
+            pollingMode = true;
+            console.log('🔄 Starting polling mode for data updates');
+            
+            // Poll every 30 seconds for updates
+            pollingInterval = setInterval(async () => {
+                try {
+                    await refreshDashboardData();
+                } catch (error) {
+                    console.error('Polling error:', error);
+                }
+            }, 30000);
+            
+            updateConnectionStatus(false, true);
+        }
+
+        // Stop polling mode
+        function stopPollingMode() {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+            pollingMode = false;
+            console.log('🛑 Stopped polling mode');
+        }
+
+        // Refresh dashboard data
+        async function refreshDashboardData() {
+            try {
+                console.log('🔄 Refreshing dashboard data...');
+                
+                // Load users
+                await loadUsers();
+                
+                // Load admins
+                await loadAdmins();
+                
+                // Load cases
+                await loadCases();
+                
+                // Update UI
+                updateDashboardUI();
+                
+                console.log('✅ Dashboard data refreshed');
+            } catch (error) {
+                console.error('❌ Failed to refresh dashboard data:', error);
+            }
         }
 
         // ===== INITIALIZATION =====
@@ -8708,6 +8796,14 @@
                 console.log('🚀 Starting dashboard initialization...');
                 initializeDashboard();
             }, 200);
+            
+            // Cleanup on page unload
+            window.addEventListener('beforeunload', () => {
+                if (realTimeConnection) {
+                    realTimeConnection.stop();
+                }
+                stopPollingMode();
+            });
         });
         
     </script>
