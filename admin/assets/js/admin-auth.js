@@ -117,7 +117,7 @@ async function apiRequest(url, options = {}) {
         const response = await fetch(url, {
             ...options,
             signal: controller.signal,
-            credentials: 'include', // Include credentials for CORS with JWT tokens
+            credentials: 'omit', // Don't include credentials for regular API calls - use Authorization header instead
             headers: {
                 'Content-Type': 'application/json',
                 'X-Client': '241RA-Admin/1.0',
