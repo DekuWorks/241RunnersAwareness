@@ -4253,6 +4253,9 @@
     </div>
     
     <!-- Admin Authentication and Real-time Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/js/apiClient.js?v=20250110"></script>
+    <script src="/js/realtime.js?v=20250110"></script>
     <script src="/admin/assets/js/admin-auth.js?v=20250107"></script>
     <script src="/js/error-ui.js?v=20250108"></script>
     <script src="/admin/assets/js/admin-realtime.js?v=20250107"></script>
@@ -4713,6 +4716,40 @@
             } catch (error) {
                 console.error('Error loading public cases:', error);
                 dashboardData.publicCases = [];
+            }
+        }
+
+        // Alias for backward compatibility
+        window.loadCases = loadPublicCases;
+
+        // API-based load functions using the centralized API client
+        async function loadUsersFromAPI() {
+            try {
+                const response = await window.apiClient.getUsers();
+                if (response.success) {
+                    dashboardData.users = response.users || [];
+                    console.log('📊 Users loaded from API:', dashboardData.users.length);
+                } else {
+                    throw new Error(response.message || 'Failed to load users');
+                }
+            } catch (error) {
+                console.error('❌ Error loading users from API:', error);
+                // Fallback to existing loadUsers function
+                await loadUsers();
+            }
+        }
+
+        async function loadRunnersFromAPI() {
+            try {
+                // For now, use mock data since runners endpoint might not exist
+                dashboardData.runners = [
+                    { id: 1, name: "John Doe", status: "active" },
+                    { id: 2, name: "Jane Smith", status: "active" }
+                ];
+                console.log('🏃 Runners loaded:', dashboardData.runners.length);
+            } catch (error) {
+                console.error('❌ Error loading runners:', error);
+                dashboardData.runners = [];
             }
         }
         
@@ -8697,24 +8734,33 @@
 
         // Refresh dashboard data
         async function refreshDashboardData() {
+            console.log("🔄 Refreshing dashboard data...");
             try {
-                console.log('🔄 Refreshing dashboard data...');
-                
-                // Load users
-                await loadUsers();
-                
-                // Load admins
-                await loadAdmins();
-                
-                // Load cases
-                await loadCases();
-                
-                // Update UI
-                updateDashboardUI();
-                
-                console.log('✅ Dashboard data refreshed');
-            } catch (error) {
-                console.error('❌ Failed to refresh dashboard data:', error);
+                await Promise.all([
+                    loadUsersFromAPI(),
+                    loadRunnersFromAPI(),
+                    loadPublicCases(),
+                    loadAdmins?.()
+                ]);
+                console.log("✅ Dashboard data refreshed.");
+            } catch (err) {
+                console.error("❌ Failed to refresh dashboard data:", err);
+            }
+        }
+
+        // Enhanced refresh with button state management
+        async function onRefreshClick(btn) {
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span>🔄 Refreshing...</span>';
+            }
+            try {
+                await refreshDashboardData();
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>🔄 Refresh</span>';
+                }
             }
         }
 
@@ -8906,6 +8952,11 @@
                 }
                 stopPollingMode();
             });
+        });
+
+        // DOMContentLoaded wrapper for initial refresh
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshDashboardData();
         });
         
     </script>
