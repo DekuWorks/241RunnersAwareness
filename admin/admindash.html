@@ -8460,100 +8460,112 @@
         let pollingInterval = null;
         let pollingMode = false;
         
-        // Initialize real-time updates (using polling mode for reliability)
+        // Initialize SignalR connection for real-time updates
         async function initializeRealTimeUpdates() {
             try {
-                console.log('🔄 Initializing real-time updates...');
-                
-                // Check if SignalR hub endpoint exists
                 const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
                 const hubUrl = apiBaseUrl.replace('/api', '/adminHub');
                 
-                // Test if the hub endpoint is available
-                const testResponse = await fetch(`${hubUrl}/negotiate`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${storage.get('ra_admin_token')}`,
-                        'Content-Type': 'application/json'
-                    },
-                    mode: 'cors',
-                    credentials: 'omit'
-                }).catch(() => null);
+                console.log('🔌 Connecting to SignalR hub:', hubUrl);
                 
-                if (testResponse && testResponse.ok) {
-                    // Hub exists, try SignalR connection
-                    console.log('✅ SignalR hub detected, attempting connection...');
-                    
-                    realTimeConnection = new signalR.HubConnectionBuilder()
-                        .withUrl(hubUrl, {
-                            accessTokenFactory: () => storage.get('ra_admin_token'),
-                            skipNegotiation: true,
-                            transport: signalR.HttpTransportType.WebSockets
-                        })
-                        .withAutomaticReconnect()
-                        .build();
+                realTimeConnection = new signalR.HubConnectionBuilder()
+                    .withUrl(hubUrl, {
+                        accessTokenFactory: () => {
+                            const token = storage.get('ra_admin_token');
+                            console.log('🔑 Using token for SignalR:', token ? 'Present' : 'Missing');
+                            return token;
+                        },
+                        transport: signalR.HttpTransportType.WebSockets,
+                        skipNegotiation: false, // Let SignalR handle negotiation
+                        withCredentials: true // Enable credentials for CORS
+                    })
+                    .withAutomaticReconnect([0, 2000, 10000, 30000])
+                    .configureLogging(signalR.LogLevel.Information)
+                    .build();
 
-                    // Handle user updates
-                    realTimeConnection.on("UserUpdated", (userData) => {
-                        console.log('🔄 Real-time user update:', userData);
-                        updateUserInList(userData);
-                        updateDashboardUI();
-                    });
+                // Handle user updates
+                realTimeConnection.on("UserUpdated", (userData) => {
+                    console.log('🔄 Real-time user update:', userData);
+                    updateUserInList(userData);
+                    updateDashboardUI();
+                });
 
-                    // Handle user deletion
-                    realTimeConnection.on("UserDeleted", (userId) => {
-                        console.log('🗑️ Real-time user deletion:', userId);
-                        dashboardData.users = dashboardData.users.filter(u => u.id !== userId);
-                        dashboardData.stats.totalUsers--;
-                        updateUsersTable();
-                        updateDashboardUI();
-                    });
+                // Handle user deletion
+                realTimeConnection.on("UserDeleted", (userId) => {
+                    console.log('🗑️ Real-time user deletion:', userId);
+                    dashboardData.users = dashboardData.users.filter(u => u.id !== userId);
+                    dashboardData.stats.totalUsers--;
+                    updateUsersTable();
+                    updateDashboardUI();
+                });
 
-                    // Handle admin updates
-                    realTimeConnection.on("AdminUpdated", (adminData) => {
-                        console.log('🔄 Real-time admin update:', adminData);
-                        updateAdminInList(adminData);
-                        updateDashboardUI();
-                    });
+                // Handle admin updates
+                realTimeConnection.on("AdminUpdated", (adminData) => {
+                    console.log('🔄 Real-time admin update:', adminData);
+                    updateAdminInList(adminData);
+                    updateDashboardUI();
+                });
 
-                    // Handle admin deletion
-                    realTimeConnection.on("AdminDeleted", (adminId) => {
-                        console.log('🗑️ Real-time admin deletion:', adminId);
-                        dashboardData.admins = dashboardData.admins.filter(a => a.id !== adminId);
-                        updateAdminsTable();
-                        updateDashboardUI();
-                    });
+                // Handle admin deletion
+                realTimeConnection.on("AdminDeleted", (adminId) => {
+                    console.log('🗑️ Real-time admin deletion:', adminId);
+                    dashboardData.admins = dashboardData.admins.filter(a => a.id !== adminId);
+                    updateAdminsTable();
+                    updateDashboardUI();
+                });
 
-                    // Handle case updates
-                    realTimeConnection.on("CaseUpdated", (caseData) => {
-                        console.log('🔄 Real-time case update:', caseData);
-                        updateCaseInList(caseData);
-                        updateDashboardUI();
-                    });
+                // Handle case updates
+                realTimeConnection.on("CaseUpdated", (caseData) => {
+                    console.log('🔄 Real-time case update:', caseData);
+                    updateCaseInList(caseData);
+                    updateDashboardUI();
+                });
 
-                    // Start connection with timeout
-                    const connectionPromise = realTimeConnection.start();
-                    const timeoutPromise = new Promise((_, reject) => 
-                        setTimeout(() => reject(new Error('Connection timeout')), 5000)
-                    );
-                    
-                    await Promise.race([connectionPromise, timeoutPromise]);
-                    
+                // Handle admin connections
+                realTimeConnection.on("AdminConnected", (adminData) => {
+                    console.log('👤 Admin connected:', adminData);
+                    showToast(`${adminData.adminName} connected`, 'info', 2000);
+                });
+
+                realTimeConnection.on("AdminDisconnected", (adminData) => {
+                    console.log('👤 Admin disconnected:', adminData);
+                    showToast(`${adminData.adminName} disconnected`, 'info', 2000);
+                });
+
+                // Handle connection events
+                realTimeConnection.onclose((error) => {
+                    console.log('🔌 SignalR connection closed:', error);
+                    isRealTimeEnabled = false;
+                    updateConnectionStatus(false, false);
+                    if (error) {
+                        showToast('Real-time connection lost', 'warning', 3000);
+                    }
+                });
+
+                realTimeConnection.onreconnecting((error) => {
+                    console.log('🔄 SignalR reconnecting:', error);
+                    updateConnectionStatus(false, true);
+                    showToast('Reconnecting to real-time updates...', 'info', 2000);
+                });
+
+                realTimeConnection.onreconnected((connectionId) => {
+                    console.log('✅ SignalR reconnected:', connectionId);
                     isRealTimeEnabled = true;
-                    console.log('✅ Real-time updates connected');
-                    showToast('Real-time updates enabled', 'success', 2000);
-                    updateConnectionStatus(true);
-                    
-                } else {
-                    // Hub doesn't exist, use polling mode
-                    console.log('⚠️ SignalR hub not available, using polling mode');
-                    throw new Error('SignalR hub not available');
-                }
+                    updateConnectionStatus(true, false);
+                    showToast('Real-time updates restored', 'success', 2000);
+                });
+
+                // Start connection
+                await realTimeConnection.start();
+                isRealTimeEnabled = true;
+                console.log('✅ Real-time updates connected');
+                updateConnectionStatus(true, false);
+                showToast('Real-time updates enabled', 'success', 2000);
                 
             } catch (error) {
-                console.log('🔄 SignalR connection failed, falling back to polling mode:', error.message);
+                console.error('❌ Real-time connection failed:', error);
                 isRealTimeEnabled = false;
-                showToast('Using polling mode for updates', 'info', 3000);
+                showToast('Real-time updates unavailable - using polling mode', 'warning', 3000);
                 
                 // Fallback to polling mode
                 startPollingMode();
@@ -8602,19 +8614,16 @@
             pollingMode = true;
             console.log('🔄 Starting polling mode for data updates');
             
-            // Poll every 15 seconds for updates (more frequent)
+            // Poll every 30 seconds for updates
             pollingInterval = setInterval(async () => {
                 try {
                     await refreshDashboardData();
                 } catch (error) {
                     console.error('Polling error:', error);
                 }
-            }, 15000);
+            }, 30000);
             
             updateConnectionStatus(false, true);
-            
-            // Add manual refresh button
-            addManualRefreshButton();
         }
 
         // Stop polling mode
@@ -8648,48 +8657,6 @@
             } catch (error) {
                 console.error('❌ Failed to refresh dashboard data:', error);
             }
-        }
-
-        // Add manual refresh button
-        function addManualRefreshButton() {
-            // Check if button already exists
-            if (document.getElementById('manualRefreshBtn')) return;
-            
-            const refreshBtn = document.createElement('button');
-            refreshBtn.id = 'manualRefreshBtn';
-            refreshBtn.innerHTML = '🔄 Refresh Now';
-            refreshBtn.className = 'action-btn action-btn-primary';
-            refreshBtn.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 1000;
-                padding: 10px 15px;
-                background: #007bff;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: 14px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            `;
-            
-            refreshBtn.onclick = async () => {
-                refreshBtn.disabled = true;
-                refreshBtn.innerHTML = '🔄 Refreshing...';
-                
-                try {
-                    await refreshDashboardData();
-                    showToast('Dashboard refreshed successfully', 'success', 2000);
-                } catch (error) {
-                    showToast('Failed to refresh dashboard', 'error', 3000);
-                } finally {
-                    refreshBtn.disabled = false;
-                    refreshBtn.innerHTML = '🔄 Refresh Now';
-                }
-            };
-            
-            document.body.appendChild(refreshBtn);
         }
 
         // ===== INITIALIZATION =====
