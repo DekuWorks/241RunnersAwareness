@@ -155,7 +155,7 @@
                     const result = await response.json();
                     
                     if (result.success) {
-                        authUtils.setAuth(response);
+                        authUtils.setAuth(result);
                         authUtils.showToast('Login successful!', 'success');
                         
                         // Redirect based on user role
