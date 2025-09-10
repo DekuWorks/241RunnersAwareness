@@ -8464,7 +8464,7 @@
         async function initializeRealTimeUpdates() {
             try {
                 const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
-                const hubUrl = apiBaseUrl.replace('/api', '/adminHub');
+                const hubUrl = apiBaseUrl.replace('/api', '') + '/adminHub';
                 
                 console.log('🔌 Connecting to SignalR hub:', hubUrl);
                 
@@ -8472,8 +8472,9 @@
                 console.log('🔑 Using token for SignalR:', token ? 'Present' : 'Missing');
                 
                 realTimeConnection = new signalR.HubConnectionBuilder()
-                    .withUrl(`${hubUrl}?access_token=${encodeURIComponent(token || '')}`, {
-                        transport: signalR.HttpTransportType.WebSockets,
+                    .withUrl(hubUrl, {
+                        accessTokenFactory: () => token || '',
+                        transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
                         skipNegotiation: false, // Let SignalR handle negotiation
                         withCredentials: true // Enable credentials for CORS
                     })

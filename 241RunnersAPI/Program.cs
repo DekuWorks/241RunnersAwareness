@@ -52,6 +52,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     // Read the token out of the query string
                     context.Token = accessToken;
                 }
+                // Also check Authorization header for SignalR connections
+                else if (path.StartsWithSegments("/adminHub") || path.StartsWithSegments("/userHub"))
+                {
+                    var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
+                    if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
+                    {
+                        context.Token = authHeader.Substring("Bearer ".Length).Trim();
+                    }
+                }
                 return Task.CompletedTask;
             }
         };
@@ -68,7 +77,8 @@ builder.Services.AddCors(o =>
         .WithOrigins("https://241runnersawareness.org","https://www.241runnersawareness.org")
         .AllowAnyHeader()
         .AllowAnyMethod()
-        .AllowCredentials())); // Required for SignalR
+        .AllowCredentials() // Required for SignalR
+        .SetIsOriginAllowedToAllowWildcardSubdomains())); // Allow subdomains
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

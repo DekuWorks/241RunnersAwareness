@@ -19,7 +19,7 @@ class AdminRealtime {
         
         // API Configuration
         this.apiBaseUrl = window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
-        this.signalRUrl = this.apiBaseUrl.replace('/api', '/hubs/admin');
+        this.signalRUrl = this.apiBaseUrl.replace('/api', '') + '/adminHub';
         
         console.log('🔌 AdminRealtime initialized with SignalR URL:', this.signalRUrl);
     }
@@ -53,7 +53,8 @@ class AdminRealtime {
                 .withUrl(this.signalRUrl, {
                     accessTokenFactory: () => token,
                     transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
-                    skipNegotiation: false
+                    skipNegotiation: false,
+                    withCredentials: true // Enable credentials for CORS
                 })
                 .withAutomaticReconnect({
                     nextRetryDelayInMilliseconds: (retryContext) => {
