@@ -8468,13 +8468,11 @@
                 
                 console.log('🔌 Connecting to SignalR hub:', hubUrl);
                 
+                const token = storage.get('ra_admin_token');
+                console.log('🔑 Using token for SignalR:', token ? 'Present' : 'Missing');
+                
                 realTimeConnection = new signalR.HubConnectionBuilder()
-                    .withUrl(hubUrl, {
-                        accessTokenFactory: () => {
-                            const token = storage.get('ra_admin_token');
-                            console.log('🔑 Using token for SignalR:', token ? 'Present' : 'Missing');
-                            return token;
-                        },
+                    .withUrl(`${hubUrl}?access_token=${encodeURIComponent(token || '')}`, {
                         transport: signalR.HttpTransportType.WebSockets,
                         skipNegotiation: false, // Let SignalR handle negotiation
                         withCredentials: true // Enable credentials for CORS
