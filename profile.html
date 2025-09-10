@@ -1122,8 +1122,8 @@
         userHubConnection = new signalR.HubConnectionBuilder()
           .withUrl(`${hubUrl}?access_token=${encodeURIComponent(token)}`, {
             transport: signalR.HttpTransportType.WebSockets,
-            skipNegotiation: false,
-            withCredentials: true
+            skipNegotiation: false
+            // No withCredentials - using JWT tokens only
           })
           .withAutomaticReconnect([0, 2000, 10000, 30000])
           .configureLogging(signalR.LogLevel.Information)

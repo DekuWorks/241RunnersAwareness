@@ -53,8 +53,8 @@ class AdminRealtime {
                 .withUrl(this.signalRUrl, {
                     accessTokenFactory: () => token,
                     transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
-                    skipNegotiation: false,
-                    withCredentials: true // Enable credentials for CORS
+                    skipNegotiation: false
+                    // No withCredentials - using JWT tokens only
                 })
                 .withAutomaticReconnect({
                     nextRetryDelayInMilliseconds: (retryContext) => {

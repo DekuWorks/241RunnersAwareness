@@ -8573,7 +8573,7 @@
                         accessTokenFactory: () => token || '',
                         transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
                         skipNegotiation: false, // Let SignalR handle negotiation
-                        withCredentials: true // Enable credentials for CORS
+                        // No withCredentials - using JWT tokens only
                     })
                     .withAutomaticReconnect([0, 2000, 10000, 30000])
                     .configureLogging(signalR.LogLevel.Information)
