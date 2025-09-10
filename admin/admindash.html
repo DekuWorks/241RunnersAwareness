@@ -4258,6 +4258,7 @@
     <script src="/admin/assets/js/admin-realtime.js?v=20250107"></script>
     <script src="/admin/assets/js/admin-profile.js?v=20250107"></script>
     <script src="/admin/assets/js/admin-monitoring.js?v=20250107"></script>
+    <script src="/admin/assets/js/admin-validation.js?v=20250110"></script>
     <script src="/js/error-tracking.js?v=20250107"></script>
     
     <!-- Enhanced JavaScript with All Admin Functions -->
@@ -4834,8 +4835,49 @@
                 return;
             }
 
-            if (!confirm(`Are you sure you want to delete user ${user.email}? This action cannot be undone.`)) {
+            // Get current admin ID for validation
+            const currentAdminId = currentAdmin?.id;
+            if (!currentAdminId) {
+                showToast('Unable to verify admin identity', 'error');
                 return;
+            }
+
+            // Validate deletion with comprehensive checks
+            try {
+                showToast('Validating deletion...', 'info', 2000);
+                
+                const validationResult = await window.adminValidation.validateDeletion('user', userId, currentAdminId);
+                
+                if (!validationResult.isValid) {
+                    // Show validation errors
+                    const errorMessage = validationResult.errors.join(', ');
+                    showToast(`Cannot delete user: ${errorMessage}`, 'error');
+                    
+                    // Show detailed validation errors in a modal or alert
+                    if (validationResult.errors.length > 0) {
+                        alert(`Validation Errors:\n${validationResult.errors.join('\n')}`);
+                    }
+                    return;
+                }
+
+                // Show warnings if any
+                if (validationResult.warnings.length > 0) {
+                    const warningMessage = validationResult.warnings.join('\n');
+                    if (!confirm(`⚠️ Warnings:\n${warningMessage}\n\nAre you sure you want to proceed with deleting user ${user.email}?`)) {
+                        return;
+                    }
+                } else {
+                    // Standard confirmation
+                    if (!confirm(`Are you sure you want to delete user ${user.email}? This action cannot be undone.`)) {
+                        return;
+                    }
+                }
+
+            } catch (validationError) {
+                console.warn('Validation check failed, proceeding with standard confirmation:', validationError);
+                if (!confirm(`Are you sure you want to delete user ${user.email}? This action cannot be undone.`)) {
+                    return;
+                }
             }
 
             try {
@@ -4873,7 +4915,13 @@
                         if (userIndex !== -1) {
                             dashboardData.users[userIndex].isActive = false;
                         }
-                        showToast(`User ${user.email} deactivated (has related data)`, 'warning');
+                        
+                        // Show warnings from server if any
+                        let warningMessage = `User ${user.email} deactivated (has related data)`;
+                        if (result.warnings && result.warnings.length > 0) {
+                            warningMessage += `\n\nWarnings:\n${result.warnings.map(w => w.message).join('\n')}`;
+                        }
+                        showToast(warningMessage, 'warning');
                     } else {
                         // User was actually deleted
                         dashboardData.users = dashboardData.users.filter(u => u.id !== userId);
@@ -4890,7 +4938,8 @@
                         userId: userId,
                         userEmail: user.email,
                         action: result.action,
-                        deletedBy: currentAdmin?.email || 'Unknown'
+                        deletedBy: currentAdmin?.email || 'Unknown',
+                        warnings: result.warnings || []
                     });
                     
                 } else if (response.status === 401) {
@@ -4902,7 +4951,17 @@
                 } else {
                     const errorData = await response.json().catch(() => ({}));
                     console.error('Delete user error response:', errorData);
-                    showToast(`Failed to delete user: ${errorData.message || response.statusText}`, 'error');
+                    
+                    // Show detailed error information
+                    let errorMessage = errorData.message || response.statusText;
+                    if (errorData.errors && errorData.errors.length > 0) {
+                        errorMessage += `\n\nErrors:\n${errorData.errors.map(e => e.message).join('\n')}`;
+                    }
+                    if (errorData.warnings && errorData.warnings.length > 0) {
+                        errorMessage += `\n\nWarnings:\n${errorData.warnings.map(w => w.message).join('\n')}`;
+                    }
+                    
+                    showToast(`Failed to delete user: ${errorMessage}`, 'error');
                 }
                 
             } catch (error) {
