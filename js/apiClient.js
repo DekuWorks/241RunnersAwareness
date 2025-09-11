@@ -21,13 +21,20 @@ axios.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            // Token expired or invalid
-            console.warn('Authentication failed, redirecting to login...');
-            localStorage.removeItem("jwtToken");
-            localStorage.removeItem("ra_admin_token");
-            localStorage.removeItem("ra_admin_role");
-            localStorage.removeItem("ra_admin_user");
-            window.location.href = '/admin/login.html';
+            // Only redirect for authentication endpoints, not for data loading endpoints
+            const url = error.config?.url || '';
+            const isAuthEndpoint = url.includes('/auth/login') || url.includes('/auth/me');
+            
+            if (isAuthEndpoint) {
+                console.warn('Authentication failed on auth endpoint, redirecting to login...');
+                localStorage.removeItem("jwtToken");
+                localStorage.removeItem("ra_admin_token");
+                localStorage.removeItem("ra_admin_role");
+                localStorage.removeItem("ra_admin_user");
+                window.location.href = '/admin/login.html';
+            } else {
+                console.warn('401 error on data endpoint, not redirecting:', url);
+            }
         }
         return Promise.reject(error);
     }

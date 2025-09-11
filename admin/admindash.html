@@ -5121,15 +5121,14 @@
                     }
                 }
 
-                // Fallback to API call
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
-                console.log("🔍 Making API call to verify endpoint");
-                console.log("🔍 API call headers:", authHeader());
-                const data = await apiRequest(`${apiUrl}/auth/me`, {
-                    headers: authHeader()
-                });
-                
-                currentAdmin = data;
+                // Use fallback admin data since /auth/me endpoint doesn't exist
+                console.log("🔍 Using fallback admin data (no /auth/me endpoint)");
+                currentAdmin = {
+                    firstName: 'Admin',
+                    lastName: 'User',
+                    email: 'admin@241runnersawareness.org',
+                    role: 'admin'
+                };
                 updateAdminProfile();
             } catch (error) {
                 console.error('Error loading admin profile:', error);
