@@ -4725,6 +4725,8 @@
         // API-based load functions using the centralized API client
         async function loadUsersFromAPI() {
             try {
+                console.log('🔍 loadUsersFromAPI: API client available:', typeof window.apiClient);
+                console.log('🔍 loadUsersFromAPI: getUsers method available:', typeof window.apiClient?.getUsers);
                 const response = await window.apiClient.getUsers();
                 if (response.success) {
                     dashboardData.users = response.users || [];
@@ -8734,6 +8736,7 @@
         // Refresh dashboard data
         async function refreshDashboardData() {
             console.log("🔄 Refreshing dashboard data...");
+            console.log("🔍 API client available:", typeof window.apiClient);
             try {
                 await Promise.all([
                     loadUsersFromAPI(),
@@ -8744,6 +8747,7 @@
                 console.log("✅ Dashboard data refreshed.");
             } catch (err) {
                 console.error("❌ Failed to refresh dashboard data:", err);
+                console.error("❌ Error details:", err.message, err.stack);
             }
         }
 

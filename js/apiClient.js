@@ -151,6 +151,11 @@ class ApiClient {
 // Create global instance
 window.apiClient = new ApiClient();
 
+// Debug: Log API client initialization
+console.log('🔧 API Client initialized:', window.apiClient);
+console.log('🔧 Axios available:', typeof axios !== 'undefined');
+console.log('🔧 Base URL:', axios.defaults.baseURL);
+
 // Export for module usage
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = ApiClient;
