@@ -4258,7 +4258,7 @@
     <script src="/js/realtime.js?v=20250110"></script>
     <script src="/admin/assets/js/admin-auth.js?v=20250107"></script>
     <script src="/js/error-ui.js?v=20250108"></script>
-    <script src="/admin/assets/js/admin-realtime.js?v=20250107"></script>
+    <!-- Removed old admin-realtime.js to prevent conflicts with new realtime.js -->
     <script src="/admin/assets/js/admin-profile.js?v=20250107"></script>
     <script src="/admin/assets/js/admin-monitoring.js?v=20250107"></script>
     <script src="/admin/assets/js/admin-validation.js?v=20250110"></script>
@@ -8340,9 +8340,9 @@
                 console.log('🚪 Logout initiated...');
                 
                 // Disconnect real-time system
-                if (typeof AdminRealtime !== 'undefined' && AdminRealtime.disconnect) {
+                if (typeof window.realtimeClient !== 'undefined' && window.realtimeClient.stop) {
                     try {
-                        await AdminRealtime.disconnect();
+                        window.realtimeClient.stop();
                     } catch (error) {
                         console.warn('Error disconnecting real-time system:', error);
                     }
@@ -8562,7 +8562,7 @@
         async function initializeRealTimeUpdates() {
             try {
                 const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
-                const hubUrl = apiBaseUrl.replace('/api', '') + '/adminHub';
+                const hubUrl = apiBaseUrl.replace('/api', '') + '/hubs/notifications';
                 
                 console.log('🔌 Connecting to SignalR hub:', hubUrl);
                 
@@ -8834,31 +8834,39 @@
                     console.log('AdminMonitoringSystem not available, skipping initialization');
                 }
                 
-                // Initialize real-time system (optional)
-                if (typeof AdminRealtime !== 'undefined' && AdminRealtime.initialize) {
+                // Initialize real-time system using new realtime client
+                if (typeof window.realtimeClient !== 'undefined' && window.realtimeClient.start) {
                     try {
-                        await AdminRealtime.initialize();
+                        await window.realtimeClient.start();
+                        console.log('✅ New realtime client initialized successfully');
                         
                         // Set up connection status callbacks
-                        if (AdminRealtime.onConnectionStatusChange) {
-                            AdminRealtime.onConnectionStatusChange((isConnected, isPolling) => {
-                                updateConnectionStatus(isConnected, isPolling);
+                        if (window.realtimeClient.connection) {
+                            window.realtimeClient.connection.onreconnecting(() => {
+                                updateConnectionStatus(false, true);
+                            });
+                            
+                            window.realtimeClient.connection.onreconnected(() => {
+                                updateConnectionStatus(true, false);
+                            });
+                            
+                            window.realtimeClient.connection.onclose(() => {
+                                updateConnectionStatus(false, false);
                             });
                         }
                         
                         // Set up real-time event handlers
-                        if (AdminRealtime.on) {
-                            AdminRealtime.on('userChanged', handleUserChanged);
-                            AdminRealtime.on('runnerChanged', handleRunnerChanged);
-                            AdminRealtime.on('adminProfileChanged', handleAdminChanged);
-                            AdminRealtime.on('dataVersionChanged', handleDataVersionChanged);
-                            AdminRealtime.on('adminActivity', handleAdminActivity);
+                        if (window.realtimeClient.connection) {
+                            window.realtimeClient.connection.on("ReceiveNotification", (message) => {
+                                console.log("🔔 Real-time notification received:", message);
+                                // Handle notifications as needed
+                            });
                         }
                     } catch (error) {
-                        console.warn('AdminRealtime initialization failed:', error);
+                        console.warn('New realtime client initialization failed:', error);
                     }
                 } else {
-                    console.log('AdminRealtime not available, skipping initialization');
+                    console.log('New realtime client not available, skipping initialization');
                 }
                 
                 // Load current admin profile
