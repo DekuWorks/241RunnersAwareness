@@ -4387,7 +4387,7 @@
             console.log('🔐 requireAdmin() called');
             
             // Debug authentication step by step
-            const token = storage.get('ra_admin_token') || storage.get('jwtToken') || storage.get('jwtToken');
+            const token = storage.get('ra_admin_token') || storage.get('jwtToken');
             const role = storage.get('ra_admin_role');
             const user = storage.get('ra_admin_user');
             
@@ -8775,6 +8775,11 @@
                     return;
                 }
                 
+                console.log('✅ Authentication verified, initializing dashboard...');
+                
+                // Load initial dashboard data after authentication is confirmed
+                await refreshDashboardData();
+                
                 // Initialize real-time updates
                 await initializeRealTimeUpdates();
                 
@@ -8954,10 +8959,7 @@
             });
         });
 
-        // DOMContentLoaded wrapper for initial refresh
-        document.addEventListener('DOMContentLoaded', () => {
-            refreshDashboardData();
-        });
+        // Initial refresh is now handled in initializeDashboard() after authentication check
         
     </script>
 </body>
