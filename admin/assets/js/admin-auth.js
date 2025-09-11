@@ -53,7 +53,7 @@ function saveAuthData(token, user) {
  */
 function getAuthData() {
     return {
-        token: localStorage.getItem(tokenKey),
+        token: localStorage.getItem(tokenKey) || localStorage.getItem('jwtToken'),
         role: localStorage.getItem(roleKey),
         user: JSON.parse(localStorage.getItem(userKey) || 'null')
     };
@@ -99,7 +99,7 @@ function requireAdmin() {
  * @returns {Object} Authorization header object
  */
 function authHeader() {
-    const token = localStorage.getItem(tokenKey);
+    const token = localStorage.getItem(tokenKey) || localStorage.getItem('jwtToken');
     return token ? { "Authorization": `Bearer ${token}` } : {};
 }
 

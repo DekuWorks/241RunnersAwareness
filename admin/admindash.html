@@ -4370,7 +4370,7 @@
         
         function isAuthenticated() {
             console.log("🔍 isAuthenticated() called");
-            const token = storage.get('ra_admin_token');
+            const token = storage.get('ra_admin_token') || storage.get('jwtToken') || storage.get('jwtToken');
             console.log("🔍 Retrieved token:", token ? "Present (length: " + token.length + ")" : "Missing");
             const role = storage.get('ra_admin_role');
             
@@ -4387,7 +4387,7 @@
             console.log('🔐 requireAdmin() called');
             
             // Debug authentication step by step
-            const token = storage.get('ra_admin_token');
+            const token = storage.get('ra_admin_token') || storage.get('jwtToken') || storage.get('jwtToken');
             const role = storage.get('ra_admin_role');
             const user = storage.get('ra_admin_user');
             
@@ -4397,7 +4397,7 @@
             console.log('  - User:', user ? 'Present' : 'Missing');
             
             // Also check direct localStorage for debugging
-            const directToken = localStorage.getItem('ra_admin_token');
+            const directToken = localStorage.getItem('ra_admin_token') || localStorage.getItem('jwtToken');
             const directRole = localStorage.getItem('ra_admin_role');
             console.log('🔍 Direct localStorage Debug:');
             console.log('  - Direct Token:', directToken ? `Present (length: ${directToken.length})` : 'Missing');
@@ -4434,7 +4434,7 @@
         
         function authHeader() {
             console.log("🔍 authHeader() called");
-            const token = storage.get('ra_admin_token');
+            const token = storage.get('ra_admin_token') || storage.get('jwtToken') || storage.get('jwtToken');
             console.log("🔍 Retrieved token:", token ? "Present (length: " + token.length + ")" : "Missing");
             return token ? { "Authorization": `Bearer ${token}` } : {};
         }
@@ -4921,7 +4921,7 @@
                 showToast('Deleting user...', 'info', 2000);
                 
                 const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
-                const token = storage.get('ra_admin_token');
+                const token = storage.get('ra_admin_token') || storage.get('jwtToken');
                 
                 console.log('🔍 Delete User Debug:', {
                     userId: userId,
@@ -5022,7 +5022,7 @@
                 showToast('Deleting admin...', 'info', 2000);
                 
                 const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
-                const token = storage.get('ra_admin_token');
+                const token = storage.get('ra_admin_token') || storage.get('jwtToken');
                 
                 console.log('🔍 Delete Admin Debug:', {
                     adminId: adminId,
@@ -8565,7 +8565,7 @@
                 
                 console.log('🔌 Connecting to SignalR hub:', hubUrl);
                 
-                const token = storage.get('ra_admin_token');
+                const token = storage.get('ra_admin_token') || storage.get('jwtToken');
                 console.log('🔑 Using token for SignalR:', token ? 'Present' : 'Missing');
                 
                 realTimeConnection = new signalR.HubConnectionBuilder()

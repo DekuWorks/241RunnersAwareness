@@ -403,7 +403,7 @@ class AdminRealtime {
      * Utility methods
      */
     getAuthToken() {
-        return localStorage.getItem('ra_admin_token');
+        return localStorage.getItem('ra_admin_token') || localStorage.getItem('jwtToken');
     }
 
     getCurrentAdminName() {
