@@ -19,12 +19,14 @@ namespace _241RunnersAPI.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ILogger<AuthController> _logger;
         private readonly IConfiguration _configuration;
+        private readonly PerformanceMonitoringService _performanceService;
 
-        public AuthController(ApplicationDbContext context, ILogger<AuthController> logger, IConfiguration configuration)
+        public AuthController(ApplicationDbContext context, ILogger<AuthController> logger, IConfiguration configuration, PerformanceMonitoringService performanceService)
         {
             _context = context;
             _logger = logger;
             _configuration = configuration;
+            _performanceService = performanceService;
         }
 
         /// <summary>
@@ -109,6 +111,7 @@ namespace _241RunnersAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
+            var startTime = DateTime.UtcNow;
             try
             {
                 if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
@@ -157,6 +160,11 @@ namespace _241RunnersAPI.Controllers
 
                 _logger.LogInformation("User logged in: {Email}", user.Email);
 
+                // Track successful login
+                var duration = DateTime.UtcNow - startTime;
+                _performanceService.TrackAuthentication("Login", user.Id.ToString(), true);
+                _performanceService.TrackApiEndpoint("/api/auth/login", "POST", duration, 200, true);
+                
                 return Ok(new
                 {
                     accessToken = token,
@@ -172,6 +180,11 @@ namespace _241RunnersAPI.Controllers
             }
             catch (Exception ex)
             {
+                var duration = DateTime.UtcNow - startTime;
+                _performanceService.TrackAuthentication("Login", request.Email, false, ex.Message);
+                _performanceService.TrackApiEndpoint("/api/auth/login", "POST", duration, 500, false);
+                _performanceService.TrackException(ex);
+                
                 _logger.LogError(ex, "Error during login");
                 return StatusCode(500, new
                 {
