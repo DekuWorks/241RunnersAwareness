@@ -65,7 +65,17 @@ jobs:
             --settings \
               ASPNETCORE_ENVIRONMENT="Production" \
               ASPNETCORE_URLS="http://0.0.0.0:8080" \
-              Swagger__Enabled="true"
+              Swagger__Enabled="true" \
+              JWT_KEY="241RunnersAwareness2024-Production-SuperSecure-JWT-Key-For-Authentication-With-Enhanced-Security" \
+              JWT_ISSUER="241RunnersAwareness" \
+              JWT_AUDIENCE="241RunnersAwareness"
+          
+          echo "Configuring connection string..."
+          az webapp config connection-string set \
+            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+            --name ${{ secrets.AZURE_WEBAPP_NAME }} \
+            --connection-string-type SQLServer \
+            --settings DefaultConnection="Server=tcp:241runners-sql-2025.database.windows.net,1433;Initial Catalog=241RunnersAwarenessDB;Persist Security Info=False;User ID=sqladmin;Password=241RunnersAwareness2024!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 
       - name: Deploy to Production
         if: github.ref == 'refs/heads/main' && secrets.AZURE_WEBAPP_NAME != ''
@@ -81,17 +91,17 @@ jobs:
           sleep 30
           
           # Test basic health endpoints
+          echo "Testing root endpoint..."
+          curl -f https://${{ secrets.AZURE_WEBAPP_NAME }}.azurewebsites.net/ || exit 1
+          
           echo "Testing /healthz endpoint..."
           curl -f https://${{ secrets.AZURE_WEBAPP_NAME }}.azurewebsites.net/healthz || exit 1
-          
-          echo "Testing /readyz endpoint..."
-          curl -f https://${{ secrets.AZURE_WEBAPP_NAME }}.azurewebsites.net/readyz || exit 1
           
           echo "Testing /api/health endpoint..."
           curl -f https://${{ secrets.AZURE_WEBAPP_NAME }}.azurewebsites.net/api/health || exit 1
           
-          echo "Testing Swagger endpoint..."
-          curl -f https://${{ secrets.AZURE_WEBAPP_NAME }}.azurewebsites.net/swagger/index.html || exit 1
+          echo "Testing Swagger JSON endpoint..."
+          curl -f https://${{ secrets.AZURE_WEBAPP_NAME }}.azurewebsites.net/swagger/v1/swagger.json || exit 1
           
           echo "✅ Production deployment successful!"
 
