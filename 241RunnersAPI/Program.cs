@@ -180,6 +180,13 @@ app.MapGet("/api/test-ef", async (ApplicationDbContext db) => {
     }
 });
 
+// Simple test endpoint to verify deployment
+app.MapGet("/api/simple-test", () => Results.Ok(new { 
+    message = "Simple test working", 
+    timestamp = DateTime.UtcNow,
+    environment = app.Environment.EnvironmentName
+}));
+
 // Health check endpoints
 app.MapGet("/healthz", () => Results.Ok(new { 
     status = "ok", 
