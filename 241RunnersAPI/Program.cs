@@ -13,9 +13,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add Entity Framework
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Add Entity Framework - TEMPORARILY DISABLED FOR TESTING
+// builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -94,6 +94,8 @@ app.MapGet("/healthz", () => Results.Ok(new {
     environment = app.Environment.EnvironmentName
 }));
 
+// Database readiness check - TEMPORARILY DISABLED
+/*
 app.MapGet("/readyz", async (ApplicationDbContext db) =>
 {
     try
@@ -115,6 +117,7 @@ app.MapGet("/readyz", async (ApplicationDbContext db) =>
         }, statusCode: 503);
     }
 });
+*/
 
 app.MapGet("/api/health", () => Results.Ok(new { 
     status = "healthy", 
@@ -122,7 +125,8 @@ app.MapGet("/api/health", () => Results.Ok(new {
     environment = app.Environment.EnvironmentName
 }));
 
-// Database initialization
+// Database initialization - TEMPORARILY DISABLED
+/*
 using (var scope = app.Services.CreateScope())
 {
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
@@ -138,5 +142,6 @@ using (var scope = app.Services.CreateScope())
         // Don't throw - let the app start even if migrations fail
     }
 }
+*/
 
 app.Run();
