@@ -135,6 +135,13 @@ app.MapGet("/api/test-db", async (ApplicationDbContext db) => {
     }
 });
 
+// Test endpoint to check if controllers are accessible
+app.MapGet("/api/test-controllers", () => Results.Ok(new { 
+    message = "Controllers are accessible", 
+    timestamp = DateTime.UtcNow,
+    environment = app.Environment.EnvironmentName
+}));
+
 // Health check endpoints
 app.MapGet("/healthz", () => Results.Ok(new { 
     status = "ok", 
