@@ -28,9 +28,9 @@ builder.Services.AddSignalR();
 // Add Application Insights
 builder.Services.AddApplicationInsightsTelemetry();
 
-// Add Entity Framework
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Add Entity Framework - TEMPORARILY DISABLED FOR TESTING
+// builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add validation service
 builder.Services.AddScoped<ValidationService>();
@@ -239,7 +239,8 @@ app.MapGet("/healthz", () => Results.Ok(new {
     time = DateTime.UtcNow
 }));
 
-// /readyz hits DB for readiness
+// /readyz hits DB for readiness - TEMPORARILY DISABLED FOR TESTING
+/*
 app.MapGet("/readyz", async (ApplicationDbContext db) =>
 {
     var sw = System.Diagnostics.Stopwatch.StartNew();
@@ -264,6 +265,7 @@ app.MapGet("/readyz", async (ApplicationDbContext db) =>
         }, statusCode: 503);
     }
 });
+*/
 
 // Add a simple health endpoint that doesn't require database
 app.MapGet("/api/health", () => new { 
