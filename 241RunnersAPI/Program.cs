@@ -166,6 +166,35 @@ if (!app.Environment.IsDevelopment())
 app.UseRouting();
 app.UseCors("web");   // put this BEFORE auth
 
+// Security headers
+app.Use(async (ctx, next) =>
+{
+    ctx.Response.Headers.TryAdd("X-Content-Type-Options", "nosniff");
+    ctx.Response.Headers.TryAdd("X-Frame-Options", "DENY");
+    ctx.Response.Headers.TryAdd("Referrer-Policy", "no-referrer");
+    await next();
+});
+
+// Rate limiting for auth endpoints
+app.Use(async (ctx, next) =>
+{
+    if (ctx.Request.Path.StartsWithSegments("/api/auth/login"))
+    {
+        // Simple in-memory rate limiting (for production, use Redis)
+        var clientIp = ctx.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        var key = $"rate_limit_{clientIp}";
+        
+        // Check if we have a rate limit entry (simplified - in production use proper rate limiting)
+        // For now, we'll just log the attempt
+        var logger = ctx.RequestServices.GetRequiredService<ILogger<Program>>();
+        logger.LogInformation("Login attempt from IP: {ClientIp}", clientIp);
+        
+        // In production, implement proper rate limiting with Redis or similar
+        // await rateLimiter.AssertWithinLimitAsync(ctx.Connection.RemoteIpAddress);
+    }
+    await next();
+});
+
 // CORS is handled by the policy above
 
 // Swagger visibility
@@ -260,7 +289,7 @@ using (var scope = app.Services.CreateScope())
         await db.Database.MigrateAsync();
         logger.LogInformation("EF migrations applied.");
 
-        // Seed admin user if it doesn't exist
+        // Seed admin user if it doesn't exist (only when SEED_ADMIN_PWD is set)
         var adminEmail = "admin@241runnersawareness.org";
         var adminPassword = Environment.GetEnvironmentVariable("SEED_ADMIN_PWD");
         
@@ -290,10 +319,12 @@ using (var scope = app.Services.CreateScope())
                 db.Users.Add(adminUser);
                 await db.SaveChangesAsync();
                 logger.LogInformation("Admin user seeded successfully: {Email}", adminEmail);
+                logger.LogWarning("⚠️ IMPORTANT: Remove SEED_ADMIN_PWD from Azure App Service Configuration after first admin login!");
             }
             else
             {
                 logger.LogInformation("Admin user already exists: {Email}", adminEmail);
+                logger.LogWarning("⚠️ Consider removing SEED_ADMIN_PWD from Azure App Service Configuration for security");
             }
         }
         else

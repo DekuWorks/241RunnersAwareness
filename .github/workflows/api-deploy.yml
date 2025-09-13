@@ -55,14 +55,31 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Deploy to Azure Web App
+      - name: Deploy to Staging Slot
+        if: github.ref == 'refs/heads/main' && secrets.AZURE_WEBAPP_NAME != ''
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          slot-name: 'staging'
+          package: 241RunnersAPI/publish
+
+      - name: Smoke Test Staging
+        if: github.ref == 'refs/heads/main' && secrets.AZURE_WEBAPP_NAME != ''
+        run: |
+          echo "Testing staging deployment..."
+          sleep 30
+          curl -f https://${{ secrets.AZURE_WEBAPP_NAME }}-staging.azurewebsites.net/healthz || exit 1
+          curl -f https://${{ secrets.AZURE_WEBAPP_NAME }}-staging.azurewebsites.net/readyz || exit 1
+          echo "✅ Staging deployment successful!"
+
+      - name: Deploy to Production
         if: github.ref == 'refs/heads/main' && secrets.AZURE_WEBAPP_NAME != ''
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
           package: 241RunnersAPI/publish
 
-      - name: Smoke Test
+      - name: Smoke Test Production
         if: github.ref == 'refs/heads/main' && secrets.AZURE_WEBAPP_NAME != ''
         run: |
           sleep 30  # Wait for deployment

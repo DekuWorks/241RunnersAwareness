@@ -36,6 +36,78 @@ node scripts/integration-tests.js
 - **API Documentation:** [https://241runners-api.azurewebsites.net/swagger](https://241runners-api.azurewebsites.net/swagger)
 - **Health Monitoring:** [https://241runners-api.azurewebsites.net/api/auth/health](https://241runners-api.azurewebsites.net/api/auth/health)
 
+## 🏥 Health Monitoring
+
+### Health Endpoints
+- **Liveness Check:** `/healthz` - Basic app health (stays green while DB boots)
+- **Readiness Check:** `/readyz` - Database connectivity with latency metrics
+- **API Health:** `/api/health` - Comprehensive API status
+
+### Quick Health Commands
+```bash
+# Basic health checks
+curl -sS -I https://241runners-api.azurewebsites.net/healthz
+curl -sS https://241runners-api.azurewebsites.net/readyz | jq .
+
+# API health
+curl -sS https://241runners-api.azurewebsites.net/api/health | jq .
+```
+
+## 🌍 Environments
+
+### Production
+- **API:** https://241runners-api.azurewebsites.net
+- **Frontend:** https://241runnersawareness.org
+- **Database:** Azure SQL (Production)
+- **Monitoring:** Application Insights
+
+### Staging
+- **API:** https://241runners-api-staging.azurewebsites.net
+- **Database:** Azure SQL (Staging)
+- **Purpose:** Safe deployment testing before production
+
+## 🔒 Security Configuration
+
+### CORS Origins
+- `https://241runnersawareness.org`
+- `https://www.241runnersawareness.org`
+- `http://localhost:5173` (development only)
+
+### Admin Seeding
+- Set `SEED_ADMIN_PWD` in Azure App Service Configuration for initial admin
+- **⚠️ IMPORTANT:** Remove `SEED_ADMIN_PWD` after first admin login for security
+- Default admin email: `admin@241runnersawareness.org`
+
+### JWT Configuration
+- `JWT_ISSUER`: JWT token issuer
+- `JWT_AUDIENCE`: JWT token audience  
+- `JWT_KEY`: 256-bit JWT signing key
+
+## 📊 Monitoring & Operations
+
+### Application Insights
+- **Live Metrics:** Real-time request, dependency, and exception tracking
+- **KQL Queries:** Custom queries for performance analysis
+- **Alerts:** Automated alerts for health check failures, latency spikes, and exceptions
+
+### Smoke Tests
+```bash
+# Authentication test
+curl -sS -X POST https://241runners-api.azurewebsites.net/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@241runnersawareness.org","password":"<REDACTED>"}' | jq .
+
+# Admin stats (requires valid token)
+curl -sS -H "Authorization: Bearer <ACCESS_TOKEN>" \
+  https://241runners-api.azurewebsites.net/api/admin/stats | jq .
+```
+
+### Operations Runbook
+- **Emergency Procedures:** See [docs/ops-runbook.md](./docs/ops-runbook.md)
+- **Deployment Procedures:** Staging slot deployment and rollback
+- **Common Issues:** Database, authentication, and migration troubleshooting
+- **Performance Optimization:** Database and API optimization guidelines
+
 ## 🚀 Features
 
 ### Public Features
