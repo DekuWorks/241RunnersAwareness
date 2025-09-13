@@ -115,29 +115,38 @@ class CasesPage {
                 });
 
                 console.log('🌐 Fetching public cases with params:', params.toString());
-                const namusResponse = await fetch(`${apiUrl}/cases/publiccases?${params}`);
-                console.log('📊 Public cases response status:', namusResponse.status);
                 
-                if (namusResponse.ok) {
-                    const responseData = await namusResponse.json() || {};
+                // Use new API client if available
+                if (window.casesApi) {
+                    const responseData = await window.casesApi.getPublicCases('houston', '', '', 1, 100);
                     namusCases = responseData.cases || [];
-                    console.log('✅ Public cases loaded:', namusCases.length);
+                    console.log('✅ Public cases loaded via API client:', namusCases.length);
                 } else {
-                    console.error('❌ Public cases API failed:', namusResponse.status, namusResponse.statusText);
-                    if (namusResponse.status === 404) {
-                        console.error('🔧 The /publiccases endpoint is not available yet. Backend deployment may still be in progress.');
-                    }
+                    // Fallback to direct fetch
+                    const namusResponse = await fetch(`${apiUrl}/cases/publiccases?${params}`);
+                    console.log('📊 Public cases response status:', namusResponse.status);
                     
-                    // Show error UI for API failures
-                    if (window.errorUI) {
-                        window.errorUI.showErrorUI(
-                            'Unable to load cases from the server. Please try again later.',
-                            {
-                                title: 'Cases Loading Error',
-                                retryFunction: () => this.loadCases(),
-                                showRetry: true
-                            }
-                        );
+                    if (namusResponse.ok) {
+                        const responseData = await namusResponse.json() || {};
+                        namusCases = responseData.cases || [];
+                        console.log('✅ Public cases loaded:', namusCases.length);
+                    } else {
+                        console.error('❌ Public cases API failed:', namusResponse.status, namusResponse.statusText);
+                        if (namusResponse.status === 404) {
+                            console.error('🔧 The /publiccases endpoint is not available yet. Backend deployment may still be in progress.');
+                        }
+                        
+                        // Show error UI for API failures
+                        if (window.errorUI) {
+                            window.errorUI.showErrorUI(
+                                'Unable to load cases from the server. Please try again later.',
+                                {
+                                    title: 'Cases Loading Error',
+                                    retryFunction: () => this.loadCases(),
+                                    showRetry: true
+                                }
+                            );
+                        }
                     }
                 }
             } catch (error) {

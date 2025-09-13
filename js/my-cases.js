@@ -34,20 +34,26 @@ class MyCasesPage {
                 return false;
             }
             
-            // Verify token is valid
-            const response = await fetch('https://241runners-api.azurewebsites.net/api/auth/verify', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
+            // Verify token is valid using new API client
+            if (window.authApi) {
+                const userData = await window.authApi.verify();
+                this.currentUser = userData.user;
+            } else {
+                // Fallback to direct fetch
+                const response = await fetch('https://241runners-api.azurewebsites.net/api/auth/verify', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    localStorage.removeItem('token');
+                    return false;
                 }
-            });
-            
-            if (!response.ok) {
-                localStorage.removeItem('token');
-                return false;
+                
+                const userData = await response.json();
+                this.currentUser = userData.user;
             }
-            
-            const userData = await response.json();
-            this.currentUser = userData.user;
             return true;
             
         } catch (error) {
@@ -99,19 +105,27 @@ class MyCasesPage {
         try {
             this.showLoading();
             
-            const token = localStorage.getItem('token');
-            const response = await fetch('https://241runners-api.azurewebsites.net/api/runners/my-cases', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
+            // Use new API client if available
+            if (window.individualsApi) {
+                const data = await window.individualsApi.getMyCases();
+                this.cases = data;
+            } else {
+                // Fallback to direct fetch
+                const token = localStorage.getItem('token');
+                const response = await fetch('https://241runners-api.azurewebsites.net/api/runners/my-cases', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                
+                const data = await response.json();
+                this.cases = data;
             }
             
-            const data = await response.json();
-            this.cases = data;
             this.filteredCases = [...this.cases];
             
             this.hideLoading();
