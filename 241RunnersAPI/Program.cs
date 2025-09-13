@@ -82,6 +82,10 @@ builder.Services.AddScoped<ValidationService>();
 // Add performance monitoring service
 builder.Services.AddScoped<PerformanceMonitoringService>();
 
+// Add caching service
+builder.Services.AddMemoryCache();
+builder.Services.AddScoped<CachingService>();
+
 // Add comprehensive health checks
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<ApplicationDbContext>("database", tags: new[] { "ready" })

@@ -15,12 +15,14 @@ namespace _241RunnersAPI.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ILogger<AdminController> _logger;
         private readonly ValidationService _validationService;
+        private readonly CachingService _cachingService;
 
-        public AdminController(ApplicationDbContext context, ILogger<AdminController> logger, ValidationService validationService)
+        public AdminController(ApplicationDbContext context, ILogger<AdminController> logger, ValidationService validationService, CachingService cachingService)
         {
             _context = context;
             _logger = logger;
             _validationService = validationService;
+            _cachingService = cachingService;
         }
 
         /// <summary>
@@ -474,7 +476,7 @@ namespace _241RunnersAPI.Controllers
         {
             try
             {
-                var users = await _context.Users
+                var users = await _cachingService.GetOrSetAdminDataAsync("users", async () => await _context.Users
                     .Select(u => new UserResponseDto
                     {
                         Id = u.Id,
@@ -506,7 +508,7 @@ namespace _241RunnersAPI.Controllers
                         EmailVerifiedAt = u.EmailVerifiedAt,
                         PhoneVerifiedAt = u.PhoneVerifiedAt
                     })
-                    .ToListAsync();
+                    .ToListAsync(), TimeSpan.FromMinutes(5));
 
                 return Ok(new { success = true, users = users, count = users.Count });
             }
