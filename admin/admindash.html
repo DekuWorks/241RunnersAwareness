@@ -4374,6 +4374,33 @@
             console.log("🔍 Retrieved token:", token ? "Present (length: " + token.length + ")" : "Missing");
             const role = storage.get('ra_admin_role');
             
+            // Check if token is valid JWT format and not expired
+            if (token) {
+                const parts = token.split('.');
+                console.log("🔍 Token parts count:", parts.length);
+                if (parts.length === 3) {
+                    try {
+                        const payload = JSON.parse(atob(parts[1]));
+                        console.log("🔍 Token payload:", payload);
+                        const now = Math.floor(Date.now() / 1000);
+                        console.log("🔍 Token exp:", payload.exp, "Current time:", now);
+                        if (payload.exp && payload.exp < now) {
+                            console.log("❌ Token has expired!");
+                            clearAuthData();
+                            return false;
+                        }
+                    } catch (e) {
+                        console.log("❌ Invalid token format:", e.message);
+                        clearAuthData();
+                        return false;
+                    }
+                } else {
+                    console.log("❌ Token is not a valid JWT format");
+                    clearAuthData();
+                    return false;
+                }
+            }
+            
             console.log('🔐 Authentication check:', {
                 hasToken: !!token,
                 role: role,
@@ -4432,6 +4459,13 @@
             return true;
         }
         
+        // Function to handle authentication failures
+        function handleAuthFailure() {
+            console.log('❌ Authentication failed, clearing data and redirecting to login');
+            clearAuthData();
+            window.location.href = "/admin/login.html";
+        }
+        
         function authHeader() {
             console.log("🔍 authHeader() called");
             const token = storage.get('ra_admin_token') || storage.get('jwtToken') || storage.get('jwtToken');
@@ -4461,6 +4495,12 @@
                 clearTimeout(timeout);
                 
                 if (!response.ok) {
+                    // Handle 401 Unauthorized
+                    if (response.status === 401) {
+                        console.log('❌ 401 Unauthorized - token may be expired or invalid');
+                        handleAuthFailure();
+                        throw new Error('Session expired. Please sign in again.');
+                    }
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
                 
