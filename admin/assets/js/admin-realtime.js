@@ -53,8 +53,8 @@ class AdminRealtime {
                 .withUrl(this.signalRUrl, {
                     accessTokenFactory: () => token,
                     transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
-                    skipNegotiation: false
-                    // No withCredentials - using JWT tokens only
+                    skipNegotiation: false,
+                    withCredentials: true // Required for CORS with AllowCredentials()
                 })
                 .withAutomaticReconnect({
                     nextRetryDelayInMilliseconds: (retryContext) => {
@@ -72,8 +72,13 @@ class AdminRealtime {
             // Set up event handlers
             this.setupEventHandlers();
 
-            // Start connection
-            await this.connection.start();
+            // Start connection with state guard
+            if (this.connection.state === signalR.HubConnectionState.Disconnected) {
+                await this.connection.start();
+            } else {
+                console.log('⚠️ Connection already in state:', this.connection.state);
+                return;
+            }
             
             this.isConnected = true;
             this.isConnecting = false;

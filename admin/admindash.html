@@ -8574,7 +8574,7 @@
                         accessTokenFactory: () => token || '',
                         transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
                         skipNegotiation: false, // Let SignalR handle negotiation
-                        // No withCredentials - using JWT tokens only
+                        withCredentials: true // Required for CORS with AllowCredentials()
                     })
                     .withAutomaticReconnect([0, 2000, 10000, 30000])
                     .configureLogging(signalR.LogLevel.Information)
@@ -8652,8 +8652,13 @@
                     showToast('Real-time updates restored', 'success', 2000);
                 });
 
-                // Start connection
-                await realTimeConnection.start();
+                // Start connection with state guard
+                if (realTimeConnection.state === signalR.HubConnectionState.Disconnected) {
+                    await realTimeConnection.start();
+                } else {
+                    console.log('⚠️ Connection already in state:', realTimeConnection.state);
+                    return;
+                }
                 isRealTimeEnabled = true;
                 console.log('✅ Real-time updates connected');
                 updateConnectionStatus(true, false);

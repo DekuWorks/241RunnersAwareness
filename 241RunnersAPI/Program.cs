@@ -75,15 +75,15 @@ builder.Services.AddAuthorization();
 // Add Health Checks
 builder.Services.AddHealthChecks();
 
-// Add CORS - Production domains only (no credentials for JWT auth)
+// Add CORS - Production domains only with proper SignalR support
 var allowedOrigin = "https://241runnersawareness.org";
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("WebApp", p => p
+    options.AddPolicy("SpaPolicy", p => p
         .WithOrigins(allowedOrigin)
         .AllowAnyHeader()
-        .AllowAnyMethod());
-        // No AllowCredentials() - using JWT tokens instead
+        .AllowAnyMethod()
+        .AllowCredentials()); // Required for SignalR connections
 });
 
 
@@ -143,7 +143,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-app.UseCors("WebApp");   // put this BEFORE auth
+app.UseRouting();
+app.UseCors("SpaPolicy");   // put this BEFORE auth
 
 // CORS is handled by the policy above
 
@@ -171,7 +172,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Map controllers
-app.MapControllers();
+app.MapControllers().RequireCors("SpaPolicy");
 
 // Map health check endpoints
 app.MapHealthChecks("/health");
@@ -199,9 +200,9 @@ app.MapGet("/api/health", () => new {
 
 // Map SignalR hubs with explicit CORS
 app.MapHub<_241RunnersAPI.Hubs.AdminHub>("/hubs/notifications")
-    .RequireCors("WebApp");
+    .RequireCors("SpaPolicy");
 app.MapHub<_241RunnersAPI.Hubs.UserHub>("/hubs/user")
-    .RequireCors("WebApp");
+    .RequireCors("SpaPolicy");
 
 
 app.Run();
