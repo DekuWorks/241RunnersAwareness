@@ -92,6 +92,24 @@ app.UseAuthorization();
 // Map controllers
 app.MapControllers();
 
+// Add API info endpoint
+app.MapGet("/api", () => Results.Ok(new { 
+    message = "241 Runners Awareness API", 
+    version = "1.0",
+    status = "operational",
+    timestamp = DateTime.UtcNow,
+    environment = app.Environment.EnvironmentName,
+    endpoints = new {
+        health = "/api/health",
+        auth = "/api/auth/*",
+        cases = "/api/cases/*",
+        users = "/api/users/*",
+        admin = "/api/Admin/*",
+        runner = "/api/Runner/*",
+        swagger = "/swagger"
+    }
+}));
+
 // Health check endpoints
 app.MapGet("/healthz", () => Results.Ok(new { 
     status = "ok", 
