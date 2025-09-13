@@ -1,13 +1,3 @@
 {
-  "API_BASE_URL": "https://241runners-api.azurewebsites.net/api",
-  "APP_NAME": "241 Runners Awareness",
-  "APP_VERSION": "1.0.0",
-  "ENVIRONMENT": "production",
-  "HEALTH_CHECK_ENDPOINT": "/Auth/health",
-  "CORS_ORIGINS": [
-    "https://241runnersawareness.org",
-    "https://www.241runnersawareness.org"
-  ],
-  "API_TIMEOUT": 10000,
-  "RETRY_ATTEMPTS": 3
+  "API_BASE_URL": "https://241runners-api.azurewebsites.net"
 }

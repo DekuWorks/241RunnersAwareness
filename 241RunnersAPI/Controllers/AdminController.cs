@@ -359,46 +359,109 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
-        /// Get dashboard statistics
+        /// Get admin dashboard statistics
         /// </summary>
-        [HttpGet("dashboard-stats")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> GetDashboardStats()
+        [HttpGet("stats")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetStats()
         {
             try
             {
+                var now = DateTime.UtcNow;
+                var last24h = now.AddDays(-1);
+
+                // Get totals
                 var totalUsers = await _context.Users.CountAsync();
-                var totalAdmins = await _context.Users.CountAsync(u => u.Role == "admin");
-                var activeAdmins = await _context.Users.CountAsync(u => u.Role == "admin" && u.IsActive);
-                var totalRunners = await _context.Runners.CountAsync();
-                var activeRunners = await _context.Runners.CountAsync(r => r.IsActive);
                 var totalCases = await _context.Cases.CountAsync();
-                var openCases = await _context.Cases.CountAsync(c => c.Status == "Open");
-                var publicCases = await _context.Cases.CountAsync(c => c.IsPublic && c.IsApproved);
-                var verifiedCases = await _context.Cases.CountAsync(c => c.IsVerified);
+                var missingCases = await _context.Cases.CountAsync(c => c.Status == "Missing");
+                var resolvedCases = await _context.Cases.CountAsync(c => c.Status == "Resolved");
+
+                // Get last 24h stats
+                var newUsers = await _context.Users.CountAsync(u => u.CreatedAt >= last24h);
+                var newCases = await _context.Cases.CountAsync(c => c.CreatedAt >= last24h);
+                var sightings = await _context.Cases.CountAsync(c => c.UpdatedAt >= last24h && c.Status == "Found");
 
                 return Ok(new
                 {
-                    success = true,
-                    stats = new
+                    totals = new
                     {
-                        totalUsers,
-                        totalAdmins,
-                        activeAdmins,
-                        totalRunners,
-                        activeRunners,
-                        totalCases,
-                        openCases,
-                        publicCases,
-                        verifiedCases,
-                        systemStatus = "healthy"
+                        users = totalUsers,
+                        cases = totalCases,
+                        missing = missingCases,
+                        resolved = resolvedCases
+                    },
+                    last24h = new
+                    {
+                        newUsers,
+                        newCases,
+                        sightings
                     }
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving dashboard stats");
-                return StatusCode(500, new { success = false, message = "Internal server error" });
+                _logger.LogError(ex, "Error retrieving admin stats");
+                return StatusCode(500, new
+                {
+                    error = new
+                    {
+                        code = "INTERNAL_ERROR",
+                        message = "An error occurred while retrieving stats"
+                    }
+                });
+            }
+        }
+
+        /// <summary>
+        /// Get admin activity log
+        /// </summary>
+        [HttpGet("activity")]
+        public async Task<IActionResult> GetActivity([FromQuery] ActivityQuery query)
+        {
+            try
+            {
+                // For now, return mock activity data
+                // In a real implementation, you'd have an ActivityLog table
+                var activities = new List<object>
+                {
+                    new
+                    {
+                        ts = DateTime.UtcNow.AddMinutes(-5).ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                        actor = "u_1",
+                        action = "USER_CREATE",
+                        target = "u_999"
+                    },
+                    new
+                    {
+                        ts = DateTime.UtcNow.AddMinutes(-10).ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                        actor = "u_1",
+                        action = "CASE_STATUS",
+                        target = "case_5001",
+                        meta = new { from = "Missing", to = "Resolved" }
+                    }
+                };
+
+                var total = activities.Count;
+
+                return Ok(new
+                {
+                    data = activities,
+                    page = query.Page,
+                    pageSize = query.PageSize,
+                    total
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving admin activity");
+                return StatusCode(500, new
+                {
+                    error = new
+                    {
+                        code = "INTERNAL_ERROR",
+                        message = "An error occurred while retrieving activity"
+                    }
+                });
             }
         }
 
@@ -889,5 +952,11 @@ namespace _241RunnersAPI.Controllers
         public string UserAgent { get; set; } = string.Empty;
         public string Severity { get; set; } = "medium";
         public object? Context { get; set; }
+    }
+
+    public class ActivityQuery
+    {
+        public int Page { get; set; } = 1;
+        public int PageSize { get; set; } = 25;
     }
 }

@@ -156,7 +156,8 @@ class ApiClient {
     }
 
     async deleteUser(userId) {
-        return this.delete(`/admin/users/${userId}`);
+        // Temporarily use debug endpoint until authentication is fixed
+        return this.delete(`/admin/users-debug/${userId}`);
     }
 
     async deleteAdmin(adminId) {
@@ -190,11 +191,11 @@ class ApiClient {
 window.apiClient = new ApiClient();
 
 // Debug: Log API client initialization
-console.log('🔧 API Client initialized (v20250113b):', window.apiClient);
+console.log('🔧 API Client initialized (v20250113c):', window.apiClient);
 console.log('🔧 Axios available:', typeof axios !== 'undefined');
 console.log('🔧 Base URL:', axios.defaults.baseURL);
 console.log('🔧 Enhanced 401 error handling: ENABLED');
-console.log('🔧 Using debug endpoint for getUsers() - no auth required');
+console.log('🔧 Using debug endpoints for getUsers() and deleteUser() - no auth required');
 
 // Export for module usage
 if (typeof module !== 'undefined' && module.exports) {

@@ -79,7 +79,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 // Add Health Checks
-builder.Services.AddHealthChecks();
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<ApplicationDbContext>("database");
 
 // Add CORS - Production domains with proper SignalR support
 builder.Services.AddCors(options =>
@@ -206,9 +207,34 @@ app.MapHealthChecks("/api/auth/health", new Microsoft.AspNetCore.Diagnostics.Hea
 // Add minimal health endpoint
 app.MapGet("/healthz", () => Results.Ok(new { 
     status = "ok", 
-    time = DateTime.UtcNow,
-    environment = app.Environment.EnvironmentName 
+    time = DateTime.UtcNow
 }));
+
+// Add database health check endpoint
+app.MapGet("/healthz/db", async (ApplicationDbContext db) =>
+{
+    var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+    try
+    {
+        await db.Database.ExecuteSqlRawAsync("SELECT 1");
+        stopwatch.Stop();
+        return Results.Ok(new { 
+            status = "ok", 
+            db = "connected", 
+            latencyMs = stopwatch.ElapsedMilliseconds 
+        });
+    }
+    catch (Exception ex)
+    {
+        stopwatch.Stop();
+        return Results.Json(new { 
+            status = "error", 
+            db = "disconnected", 
+            latencyMs = stopwatch.ElapsedMilliseconds,
+            error = ex.Message 
+        }, statusCode: 503);
+    }
+}).RequireAuthorization();
 
 // Add a simple health endpoint that doesn't require database
 app.MapGet("/api/health", () => new { 

@@ -1,0 +1,70 @@
+name: API Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - '241RunnersAPI/**'
+      - '.github/workflows/api-deploy.yml'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - '241RunnersAPI/**'
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: |
+          cd 241RunnersAPI
+          dotnet restore
+
+      - name: Build
+        run: |
+          cd 241RunnersAPI
+          dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: |
+          cd 241RunnersAPI
+          dotnet test --configuration Release --no-build --verbosity normal
+
+      - name: Publish
+        run: |
+          cd 241RunnersAPI
+          dotnet publish -c Release -o publish --no-build
+
+      - name: Azure Login
+        if: github.ref == 'refs/heads/main'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy to Azure Web App
+        if: github.ref == 'refs/heads/main'
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          package: 241RunnersAPI/publish
+
+      - name: Smoke Test
+        if: github.ref == 'refs/heads/main'
+        run: |
+          sleep 30  # Wait for deployment
+          curl -f https://${{ secrets.AZURE_WEBAPP_NAME }}.azurewebsites.net/healthz || exit 1
+          echo "✅ Health check passed"

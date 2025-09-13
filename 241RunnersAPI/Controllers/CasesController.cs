@@ -1,15 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 using _241RunnersAPI.Data;
 using _241RunnersAPI.Models;
 
 namespace _241RunnersAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class CasesController : ControllerBase
+    [Route("api/cases")]
+    [Authorize]
+    public class CasesController : BaseController
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<CasesController> _logger;
@@ -21,697 +21,383 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
-        /// Get all cases (anonymous access for public site)
+        /// Get all cases with pagination and filtering
         /// </summary>
         [HttpGet]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetCases([FromQuery] string? status = null, [FromQuery] string? priority = null, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+        public async Task<IActionResult> GetCases([FromQuery] CaseQuery query)
         {
             try
             {
-                var query = _context.Cases
-                    .Include(c => c.Runner)
-                    .Include(c => c.ReportedByUser)
-                    .Where(c => c.IsPublic && c.IsApproved); // Only public and approved cases
+                var casesQuery = _context.Cases.AsQueryable();
 
-                // Apply filters
-                if (!string.IsNullOrEmpty(status))
+                // Apply status filter
+                if (!string.IsNullOrEmpty(query.Status))
                 {
-                    query = query.Where(c => c.Status == status);
+                    casesQuery = casesQuery.Where(c => c.Status == query.Status);
                 }
 
-                if (!string.IsNullOrEmpty(priority))
+                // Apply search filter
+                if (!string.IsNullOrEmpty(query.Q))
                 {
-                    query = query.Where(c => c.Priority == priority);
+                    var searchTerm = query.Q.ToLower();
+                    casesQuery = casesQuery.Where(c => 
+                        c.Title.ToLower().Contains(searchTerm) ||
+                        c.Description.ToLower().Contains(searchTerm));
+                }
+
+                // Apply owner filter for regular users
+                if (!IsStaff())
+                {
+                    var currentUserId = GetCurrentUserId();
+                    if (int.TryParse(currentUserId, out var userId))
+                    {
+                        casesQuery = casesQuery.Where(c => c.ReportedByUserId == userId);
+                    }
                 }
 
                 // Get total count
-                var totalCount = await query.CountAsync();
+                var total = await casesQuery.CountAsync();
 
                 // Apply pagination
-                var cases = await query
+                var casesData = await casesQuery
+                    .Include(c => c.Runner)
                     .OrderByDescending(c => c.CreatedAt)
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize)
-                    .Select(c => new
-                    {
-                        c.Id,
-                        c.Title,
-                        c.Description,
-                        c.Status,
-                        c.Priority,
-                        c.LastSeenLocation,
-                        c.LastSeenLatitude,
-                        c.LastSeenLongitude,
-                        c.CreatedAt,
-                        c.UpdatedAt,
-                        c.IsPublic,
-                        c.IsApproved,
-                        c.IsVerified,
-                        Runner = c.Runner != null ? new
-                        {
-                            c.Runner.Id,
-                            c.Runner.Name,
-                            c.Runner.Age,
-                            c.Runner.Gender,
-                            c.Runner.PhysicalDescription,
-                            c.Runner.LastKnownLocation,
-                            c.Runner.LastLocationUpdate,
-                            c.Runner.PreferredContactMethod,
-                            c.Runner.IsActive
-                        } : null,
-                        ReportedBy = c.ReportedByUser != null ? new
-                        {
-                            c.ReportedByUser.Id,
-                            c.ReportedByUser.FirstName,
-                            c.ReportedByUser.LastName,
-                            c.ReportedByUser.Email
-                        } : null
-                    })
+                    .Skip((query.Page - 1) * query.PageSize)
+                    .Take(query.PageSize)
                     .ToListAsync();
+
+                var cases = casesData.Select(c => new
+                {
+                    id = $"case_{c.Id}",
+                    individualId = $"ind_{c.RunnerId}",
+                    title = c.Title,
+                    status = c.Status,
+                    createdAt = c.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                    updatedAt = c.UpdatedAt?.ToString("yyyy-MM-ddTHH:mm:ssZ")
+                }).ToList();
 
                 return Ok(new
                 {
-                    success = true,
-                    cases = cases,
-                    pagination = new
-                    {
-                        page = page,
-                        pageSize = pageSize,
-                        totalCount = totalCount,
-                        totalPages = (int)Math.Ceiling((double)totalCount / pageSize)
-                    }
+                    data = cases,
+                    page = query.Page,
+                    pageSize = query.PageSize,
+                    total
                 });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving cases");
-                return StatusCode(500, new { success = false, message = "Internal server error" });
-            }
-        }
-
-        /// <summary>
-        /// Get map data (anonymous access for public site)
-        /// </summary>
-        [HttpGet("map")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetMapData()
-        {
-            try
-            {
-                var cases = await _context.Cases
-                    .Include(c => c.Runner)
-                    .Where(c => c.IsPublic && c.IsApproved && c.LastSeenLatitude.HasValue && c.LastSeenLongitude.HasValue)
-                    .Select(c => new
-                    {
-                        c.Id,
-                        c.Title,
-                        c.Status,
-                        c.Priority,
-                        c.LastSeenLatitude,
-                        c.LastSeenLongitude,
-                        c.LastSeenLocation,
-                        c.CreatedAt,
-                        Runner = c.Runner != null ? new
-                        {
-                            c.Runner.Id,
-                            c.Runner.Name,
-                            c.Runner.Age,
-                            c.Runner.Gender,
-                            c.Runner.LastKnownLocation,
-                            c.Runner.LastLocationUpdate
-                        } : null
-                    })
-                    .ToListAsync();
-
-                return Ok(new
+                return StatusCode(500, new
                 {
-                    success = true,
-                    cases = cases,
-                    count = cases.Count
+                    error = new
+                    {
+                        code = "INTERNAL_ERROR",
+                        message = "An error occurred while retrieving cases"
+                    }
                 });
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving map data");
-                return StatusCode(500, new { success = false, message = "Internal server error" });
-            }
         }
 
         /// <summary>
-        /// Get public cases (no authentication required)
+        /// Get case by ID
         /// </summary>
-        [HttpGet("publiccases")]
-        public async Task<IActionResult> GetPublicCases([FromQuery] string? status = null, [FromQuery] string? priority = null, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCase(string id)
         {
             try
             {
-                var query = _context.Cases
+                if (!int.TryParse(id.Replace("case_", ""), out var caseId))
+                {
+                    return NotFoundResponse("Case not found");
+                }
+
+                var caseEntity = await _context.Cases
                     .Include(c => c.Runner)
-                    .Include(c => c.ReportedByUser)
-                    .Where(c => c.IsPublic && c.IsApproved);
+                    .FirstOrDefaultAsync(c => c.Id == caseId);
 
-                // Apply filters
-                if (!string.IsNullOrEmpty(status))
+                if (caseEntity == null)
                 {
-                    query = query.Where(c => c.Status == status);
+                    return NotFoundResponse("Case not found");
                 }
 
-                if (!string.IsNullOrEmpty(priority))
+                // Check permissions for regular users
+                if (!IsStaff())
                 {
-                    query = query.Where(c => c.Priority == priority);
-                }
-
-                // Get total count
-                var totalCount = await query.CountAsync();
-
-                // Apply pagination
-                var cases = await query
-                    .OrderByDescending(c => c.CreatedAt)
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize)
-                    .Select(c => new CaseResponseDto
+                    var currentUserId = GetCurrentUserId();
+                    if (int.TryParse(currentUserId, out var userId) && caseEntity.ReportedByUserId != userId)
                     {
-                        Id = c.Id,
-                        RunnerId = c.RunnerId,
-                        ReportedByUserId = c.ReportedByUserId,
-                        Title = c.Title,
-                        Description = c.Description,
-                        LastSeenDate = c.LastSeenDate,
-                        LastSeenLocation = c.LastSeenLocation,
-                        LastSeenTime = c.LastSeenTime,
-                        LastSeenCircumstances = c.LastSeenCircumstances,
-                        ClothingDescription = c.ClothingDescription,
-                        PhysicalCondition = c.PhysicalCondition,
-                        MentalState = c.MentalState,
-                        AdditionalInformation = c.AdditionalInformation,
-                        Status = c.Status,
-                        Priority = c.Priority,
-                        IsPublic = c.IsPublic,
-                        CreatedAt = c.CreatedAt,
-                        UpdatedAt = c.UpdatedAt,
-                        ResolvedAt = c.ResolvedAt,
-                        ResolutionNotes = c.ResolutionNotes,
-                        ResolvedBy = c.ResolvedBy,
-                        ContactPersonName = c.ContactPersonName,
-                        ContactPersonPhone = c.ContactPersonPhone,
-                        ContactPersonEmail = c.ContactPersonEmail,
-                        LastSeenLatitude = c.LastSeenLatitude,
-                        LastSeenLongitude = c.LastSeenLongitude,
-                        CaseImageUrls = c.CaseImageUrls,
-                        DocumentUrls = c.DocumentUrls,
-                        EmergencyContactName = c.EmergencyContactName,
-                        EmergencyContactPhone = c.EmergencyContactPhone,
-                        EmergencyContactRelationship = c.EmergencyContactRelationship,
-                        IsVerified = c.IsVerified,
-                        VerifiedAt = c.VerifiedAt,
-                        VerifiedBy = c.VerifiedBy,
-                        IsApproved = c.IsApproved,
-                        ApprovedAt = c.ApprovedAt,
-                        ApprovedBy = c.ApprovedBy,
-                        ViewCount = c.ViewCount,
-                        ShareCount = c.ShareCount,
-                        TipCount = c.TipCount,
-                        Runner = new RunnerResponseDto
+                        return UnauthorizedResponse("Access denied");
+                    }
+                }
+
+                var result = new
+                {
+                    id = $"case_{caseEntity.Id}",
+                    individualId = $"ind_{caseEntity.RunnerId}",
+                    status = caseEntity.Status,
+                    events = new[]
+                    {
+                        new
                         {
-                            Id = c.Runner.Id,
-                            UserId = c.Runner.UserId,
-                            Name = c.Runner.Name,
-                            DateOfBirth = c.Runner.DateOfBirth,
-                            Gender = c.Runner.Gender,
-                            PhysicalDescription = c.Runner.PhysicalDescription,
-                            MedicalConditions = c.Runner.MedicalConditions,
-                            Medications = c.Runner.Medications,
-                            Allergies = c.Runner.Allergies,
-                            EmergencyInstructions = c.Runner.EmergencyInstructions,
-                            PreferredRunningLocations = c.Runner.PreferredRunningLocations,
-                            TypicalRunningTimes = c.Runner.TypicalRunningTimes,
-                            ExperienceLevel = c.Runner.ExperienceLevel,
-                            SpecialNeeds = c.Runner.SpecialNeeds,
-                            AdditionalNotes = c.Runner.AdditionalNotes,
-                            IsActive = c.Runner.IsActive,
-                            CreatedAt = c.Runner.CreatedAt,
-                            UpdatedAt = c.Runner.UpdatedAt,
-                            LastKnownLocation = c.Runner.LastKnownLocation,
-                            LastLocationUpdate = c.Runner.LastLocationUpdate,
-                            PreferredContactMethod = c.Runner.PreferredContactMethod,
-                            ProfileImageUrl = c.Runner.ProfileImageUrl,
-                            IsProfileComplete = c.Runner.IsProfileComplete,
-                            IsVerified = c.Runner.IsVerified,
-                            VerifiedAt = c.Runner.VerifiedAt,
-                            VerifiedBy = c.Runner.VerifiedBy
+                            type = "Created",
+                            at = caseEntity.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ssZ")
                         },
-                        ReportedByUserName = $"{c.ReportedByUser.FirstName} {c.ReportedByUser.LastName}",
-                        ReportedByUserEmail = c.ReportedByUser.Email
-                    })
-                    .ToListAsync();
+                        caseEntity.UpdatedAt.HasValue ? new
+                        {
+                            type = "Updated",
+                            at = caseEntity.UpdatedAt.Value.ToString("yyyy-MM-ddTHH:mm:ssZ")
+                        } : null
+                    }.Where(e => e != null)
+                };
 
-                return Ok(new
-                {
-                    success = true,
-                    cases = cases,
-                    pagination = new
-                    {
-                        page = page,
-                        pageSize = pageSize,
-                        totalCount = totalCount,
-                        totalPages = (int)Math.Ceiling((double)totalCount / pageSize)
-                    }
-                });
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving public cases");
-                return StatusCode(500, new { success = false, message = "Internal server error" });
+                _logger.LogError(ex, "Error retrieving case {CaseId}", id);
+                return StatusCode(500, new
+                {
+                    error = new
+                    {
+                        code = "INTERNAL_ERROR",
+                        message = "An error occurred while retrieving case"
+                    }
+                });
             }
         }
 
         /// <summary>
-        /// Get public case statistics
-        /// </summary>
-        [HttpGet("publiccases/stats/houston")]
-        public async Task<IActionResult> GetPublicCaseStats()
-        {
-            try
-            {
-                var totalCases = await _context.Cases.CountAsync(c => c.IsPublic && c.IsApproved);
-                var openCases = await _context.Cases.CountAsync(c => c.IsPublic && c.IsApproved && c.Status == "Open");
-                var verifiedCases = await _context.Cases.CountAsync(c => c.IsPublic && c.IsApproved && c.IsVerified);
-
-                return Ok(new
-                {
-                    success = true,
-                    stats = new
-                    {
-                        totalCases = totalCases,
-                        openCases = openCases,
-                        verifiedCases = verifiedCases,
-                        region = "Houston Area"
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving public case statistics");
-                return StatusCode(500, new { success = false, message = "Internal server error" });
-            }
-        }
-
-        /// <summary>
-        /// Create a new case (authenticated users)
+        /// Create a new case
         /// </summary>
         [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> CreateCase([FromBody] CaseCreationDto request)
+        public async Task<IActionResult> CreateCase([FromBody] CreateCaseRequest request)
         {
             try
             {
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
+                // Validate request
+                if (string.IsNullOrEmpty(request.IndividualId) || string.IsNullOrEmpty(request.Title))
                 {
-                    return Unauthorized(new { success = false, message = "Invalid user token" });
+                    return ValidationErrorResponse(new Dictionary<string, string[]>
+                    {
+                        { "individualId", new[] { "Individual ID is required" } },
+                        { "title", new[] { "Title is required" } }
+                    });
                 }
 
-                // Validate the request
-                if (!ModelState.IsValid)
+                // Parse individual ID
+                if (!int.TryParse(request.IndividualId.Replace("ind_", ""), out var individualId))
                 {
-                    return BadRequest(ModelState);
+                    return BadRequest(new
+                    {
+                        error = new
+                        {
+                            code = "INVALID_INDIVIDUAL_ID",
+                            message = "Invalid individual ID"
+                        }
+                    });
                 }
 
-                // Verify the runner exists and belongs to the user (or user is admin)
-                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
-                var runner = await _context.Runners.FirstOrDefaultAsync(r => r.Id == request.RunnerId);
-                if (runner == null)
+                // Verify individual exists
+                var individual = await _context.Runners.FindAsync(individualId);
+                if (individual == null)
                 {
-                    return BadRequest(new { success = false, message = "Runner not found" });
+                    return BadRequest(new
+                    {
+                        error = new
+                        {
+                            code = "INDIVIDUAL_NOT_FOUND",
+                            message = "Individual not found"
+                        }
+                    });
                 }
 
-                if (runner.UserId != userId && userRole != "admin")
+                var currentUserId = GetCurrentUserId();
+                if (!int.TryParse(currentUserId, out var userId))
                 {
-                    return Forbid("You can only create cases for your own runners");
+                    return UnauthorizedResponse("Invalid user");
                 }
 
                 // Create new case
                 var caseEntity = new Case
                 {
-                    RunnerId = request.RunnerId,
+                    RunnerId = individualId,
                     ReportedByUserId = userId,
                     Title = request.Title,
                     Description = request.Description,
-                    LastSeenDate = request.LastSeenDate,
-                    LastSeenLocation = request.LastSeenLocation,
-                    LastSeenTime = request.LastSeenTime,
-                    LastSeenCircumstances = request.LastSeenCircumstances,
-                    ClothingDescription = request.ClothingDescription,
-                    PhysicalCondition = request.PhysicalCondition,
-                    MentalState = request.MentalState,
-                    AdditionalInformation = request.AdditionalInformation,
-                    Priority = request.Priority,
-                    IsPublic = request.IsPublic,
-                    ContactPersonName = request.ContactPersonName,
-                    ContactPersonPhone = request.ContactPersonPhone,
-                    ContactPersonEmail = request.ContactPersonEmail,
-                    LastSeenLatitude = request.LastSeenLatitude,
-                    LastSeenLongitude = request.LastSeenLongitude,
-                    EmergencyContactName = request.EmergencyContactName,
-                    EmergencyContactPhone = request.EmergencyContactPhone,
-                    EmergencyContactRelationship = request.EmergencyContactRelationship,
-                    Status = "Open",
-                    CreatedAt = DateTime.UtcNow
+                    Status = request.Status ?? "Missing",
+                    Priority = "Medium",
+                    IsPublic = true,
+                    IsApproved = IsStaff(),
+                    IsVerified = false,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 };
 
                 _context.Cases.Add(caseEntity);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation("Case created with ID {CaseId} by user {UserId}", caseEntity.Id, userId);
+                _logger.LogInformation("Case created: {Title} for individual {IndividualId} by user {UserId}", 
+                    caseEntity.Title, individualId, userId);
 
-                return Ok(new { success = true, message = "Case created successfully", caseId = caseEntity.Id });
+                return CreatedAtAction(nameof(GetCase), new { id = caseEntity.Id }, new
+                {
+                    id = $"case_{caseEntity.Id}",
+                    individualId = request.IndividualId,
+                    title = caseEntity.Title,
+                    description = caseEntity.Description,
+                    status = caseEntity.Status
+                });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating case");
-                return StatusCode(500, new { success = false, message = "Internal server error" });
-            }
-        }
-
-        /// <summary>
-        /// Get all cases (admin only)
-        /// </summary>
-        [HttpGet("admin")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> GetAllCases([FromQuery] string? status = null, [FromQuery] string? priority = null, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
-        {
-            try
-            {
-                var baseQuery = _context.Cases.AsQueryable();
-
-                // Apply filters
-                if (!string.IsNullOrEmpty(status))
+                return StatusCode(500, new
                 {
-                    baseQuery = baseQuery.Where(c => c.Status == status);
-                }
-
-                if (!string.IsNullOrEmpty(priority))
-                {
-                    baseQuery = baseQuery.Where(c => c.Priority == priority);
-                }
-
-                var query = baseQuery
-                    .Include(c => c.Runner)
-                    .Include(c => c.ReportedByUser);
-
-                // Get total count
-                var totalCount = await query.CountAsync();
-
-                // Apply pagination
-                var cases = await query
-                    .OrderByDescending(c => c.CreatedAt)
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize)
-                    .Select(c => new CaseResponseDto
+                    error = new
                     {
-                        Id = c.Id,
-                        RunnerId = c.RunnerId,
-                        ReportedByUserId = c.ReportedByUserId,
-                        Title = c.Title,
-                        Description = c.Description,
-                        LastSeenDate = c.LastSeenDate,
-                        LastSeenLocation = c.LastSeenLocation,
-                        LastSeenTime = c.LastSeenTime,
-                        LastSeenCircumstances = c.LastSeenCircumstances,
-                        ClothingDescription = c.ClothingDescription,
-                        PhysicalCondition = c.PhysicalCondition,
-                        MentalState = c.MentalState,
-                        AdditionalInformation = c.AdditionalInformation,
-                        Status = c.Status,
-                        Priority = c.Priority,
-                        IsPublic = c.IsPublic,
-                        CreatedAt = c.CreatedAt,
-                        UpdatedAt = c.UpdatedAt,
-                        ResolvedAt = c.ResolvedAt,
-                        ResolutionNotes = c.ResolutionNotes,
-                        ResolvedBy = c.ResolvedBy,
-                        ContactPersonName = c.ContactPersonName,
-                        ContactPersonPhone = c.ContactPersonPhone,
-                        ContactPersonEmail = c.ContactPersonEmail,
-                        LastSeenLatitude = c.LastSeenLatitude,
-                        LastSeenLongitude = c.LastSeenLongitude,
-                        CaseImageUrls = c.CaseImageUrls,
-                        DocumentUrls = c.DocumentUrls,
-                        EmergencyContactName = c.EmergencyContactName,
-                        EmergencyContactPhone = c.EmergencyContactPhone,
-                        EmergencyContactRelationship = c.EmergencyContactRelationship,
-                        IsVerified = c.IsVerified,
-                        VerifiedAt = c.VerifiedAt,
-                        VerifiedBy = c.VerifiedBy,
-                        IsApproved = c.IsApproved,
-                        ApprovedAt = c.ApprovedAt,
-                        ApprovedBy = c.ApprovedBy,
-                        ViewCount = c.ViewCount,
-                        ShareCount = c.ShareCount,
-                        TipCount = c.TipCount,
-                        Runner = new RunnerResponseDto
-                        {
-                            Id = c.Runner.Id,
-                            UserId = c.Runner.UserId,
-                            Name = c.Runner.Name,
-                            DateOfBirth = c.Runner.DateOfBirth,
-                            Gender = c.Runner.Gender,
-                            PhysicalDescription = c.Runner.PhysicalDescription,
-                            MedicalConditions = c.Runner.MedicalConditions,
-                            Medications = c.Runner.Medications,
-                            Allergies = c.Runner.Allergies,
-                            EmergencyInstructions = c.Runner.EmergencyInstructions,
-                            PreferredRunningLocations = c.Runner.PreferredRunningLocations,
-                            TypicalRunningTimes = c.Runner.TypicalRunningTimes,
-                            ExperienceLevel = c.Runner.ExperienceLevel,
-                            SpecialNeeds = c.Runner.SpecialNeeds,
-                            AdditionalNotes = c.Runner.AdditionalNotes,
-                            IsActive = c.Runner.IsActive,
-                            CreatedAt = c.Runner.CreatedAt,
-                            UpdatedAt = c.Runner.UpdatedAt,
-                            LastKnownLocation = c.Runner.LastKnownLocation,
-                            LastLocationUpdate = c.Runner.LastLocationUpdate,
-                            PreferredContactMethod = c.Runner.PreferredContactMethod,
-                            ProfileImageUrl = c.Runner.ProfileImageUrl,
-                            IsProfileComplete = c.Runner.IsProfileComplete,
-                            IsVerified = c.Runner.IsVerified,
-                            VerifiedAt = c.Runner.VerifiedAt,
-                            VerifiedBy = c.Runner.VerifiedBy
-                        },
-                        ReportedByUserName = $"{c.ReportedByUser.FirstName} {c.ReportedByUser.LastName}",
-                        ReportedByUserEmail = c.ReportedByUser.Email
-                    })
-                    .ToListAsync();
-
-                return Ok(new
-                {
-                    success = true,
-                    cases = cases,
-                    pagination = new
-                    {
-                        page = page,
-                        pageSize = pageSize,
-                        totalCount = totalCount,
-                        totalPages = (int)Math.Ceiling((double)totalCount / pageSize)
+                        code = "INTERNAL_ERROR",
+                        message = "An error occurred while creating case"
                     }
                 });
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving all cases");
-                return StatusCode(500, new { success = false, message = "Internal server error" });
-            }
         }
 
         /// <summary>
-        /// Update case status (admin only)
+        /// Update a case
         /// </summary>
-        [HttpPut("{id}/status")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> UpdateCaseStatus(int id, [FromBody] UpdateCaseStatusDto dto)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCase(string id, [FromBody] UpdateCaseRequest request)
         {
             try
             {
-                var caseEntity = await _context.Cases.FindAsync(id);
+                if (!int.TryParse(id.Replace("case_", ""), out var caseId))
+                {
+                    return NotFoundResponse("Case not found");
+                }
+
+                var caseEntity = await _context.Cases.FindAsync(caseId);
                 if (caseEntity == null)
                 {
-                    return NotFound(new { success = false, message = "Case not found" });
+                    return NotFoundResponse("Case not found");
                 }
 
-                caseEntity.Status = dto.Status;
-                caseEntity.UpdatedAt = DateTime.UtcNow;
-
-                if (dto.Status == "Found" || dto.Status == "Closed")
+                // Check permissions
+                if (!IsStaff())
                 {
-                    caseEntity.ResolvedAt = DateTime.UtcNow;
-                    caseEntity.ResolvedBy = User.FindFirst(ClaimTypes.Email)?.Value ?? "Unknown";
-                }
-
-                await _context.SaveChangesAsync();
-
-                _logger.LogInformation("Case {CaseId} status updated to {Status}", id, dto.Status);
-
-                return Ok(new { success = true, message = "Case status updated successfully" });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error updating case status for case {CaseId}", id);
-                return StatusCode(500, new { success = false, message = "Internal server error" });
-            }
-        }
-
-        /// <summary>
-        /// Approve case for public viewing (admin only)
-        /// </summary>
-        [HttpPut("{id}/approve")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> ApproveCase(int id, [FromBody] ApproveCaseDto dto)
-        {
-            try
-            {
-                var caseEntity = await _context.Cases.FindAsync(id);
-                if (caseEntity == null)
-                {
-                    return NotFound(new { success = false, message = "Case not found" });
-                }
-
-                caseEntity.IsApproved = dto.IsApproved;
-                caseEntity.ApprovedAt = dto.IsApproved ? DateTime.UtcNow : null;
-                caseEntity.ApprovedBy = dto.IsApproved ? User.FindFirst(ClaimTypes.Email)?.Value ?? "Unknown" : null;
-                caseEntity.UpdatedAt = DateTime.UtcNow;
-
-                await _context.SaveChangesAsync();
-
-                _logger.LogInformation("Case {CaseId} approval status updated to {Approved}", id, dto.IsApproved);
-
-                return Ok(new { success = true, message = $"Case {(dto.IsApproved ? "approved" : "unapproved")} successfully" });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error updating case approval for case {CaseId}", id);
-                return StatusCode(500, new { success = false, message = "Internal server error" });
-            }
-        }
-
-        /// <summary>
-        /// Update case status for a specific runner (authenticated users can update their own cases)
-        /// </summary>
-        [HttpPut("runner/{runnerId}/status")]
-        [Authorize]
-        public async Task<IActionResult> UpdateRunnerCaseStatus(int runnerId, [FromBody] UpdateCaseStatusDto dto)
-        {
-            try
-            {
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
-                {
-                    return Unauthorized(new { success = false, message = "Invalid user token" });
-                }
-
-                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
-
-                // Find the case for this runner
-                var caseEntity = await _context.Cases
-                    .Include(c => c.Runner)
-                    .FirstOrDefaultAsync(c => c.RunnerId == runnerId);
-
-                if (caseEntity == null)
-                {
-                    return NotFound(new { success = false, message = "Case not found for this runner" });
-                }
-
-                // Check if user owns the runner or is admin
-                if (caseEntity.Runner.UserId != userId && userRole != "admin")
-                {
-                    return Forbid("You can only update cases for your own runners");
-                }
-
-                // Validate status
-                var validStatuses = new[] { "Active", "Safe", "Missing", "Found", "Investigating", "Closed", "Cancelled" };
-                if (!validStatuses.Contains(dto.Status))
-                {
-                    return BadRequest(new { success = false, message = "Invalid status. Must be one of: Active, Safe, Missing, Found, Investigating, Closed, Cancelled" });
-                }
-
-                caseEntity.Status = dto.Status;
-                caseEntity.UpdatedAt = DateTime.UtcNow;
-
-                // If status is Found or Closed, set resolved date
-                if (dto.Status == "Found" || dto.Status == "Closed")
-                {
-                    caseEntity.ResolvedAt = DateTime.UtcNow;
-                    caseEntity.ResolvedBy = User.FindFirst(ClaimTypes.Email)?.Value ?? "Unknown";
-                }
-
-                await _context.SaveChangesAsync();
-
-                _logger.LogInformation("Case {CaseId} status updated to {Status} by user {UserId}", caseEntity.Id, dto.Status, userId);
-
-                return Ok(new { 
-                    success = true, 
-                    message = $"Case status updated to {dto.Status}",
-                    caseId = caseEntity.Id,
-                    runnerId = runnerId,
-                    status = dto.Status
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error updating case status for runner {RunnerId}", runnerId);
-                return StatusCode(500, new { success = false, message = "Internal server error" });
-            }
-        }
-
-        /// <summary>
-        /// Get case status for a specific runner (public endpoint)
-        /// </summary>
-        [HttpGet("runner/{runnerId}/status")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetRunnerCaseStatus(int runnerId)
-        {
-            try
-            {
-                var caseEntity = await _context.Cases
-                    .Include(c => c.Runner)
-                    .Where(c => c.RunnerId == runnerId && c.IsPublic && c.IsApproved)
-                    .Select(c => new
+                    var currentUserId = GetCurrentUserId();
+                    if (int.TryParse(currentUserId, out var userId) && caseEntity.ReportedByUserId != userId)
                     {
-                        c.Id,
-                        c.Status,
-                        c.Priority,
-                        c.UpdatedAt,
-                        c.CreatedAt,
-                        RunnerName = c.Runner.Name,
-                        RunnerId = c.RunnerId
-                    })
-                    .FirstOrDefaultAsync();
-
-                if (caseEntity == null)
-                {
-                    return NotFound(new { success = false, message = "Case not found or not public" });
+                        return UnauthorizedResponse("Access denied");
+                    }
                 }
 
-                return Ok(new { 
-                    success = true, 
-                    caseData = caseEntity
+                // Update case fields
+                if (request.Status != null)
+                {
+                    caseEntity.Status = request.Status;
+                }
+
+                if (request.Description != null)
+                {
+                    caseEntity.Description = request.Description;
+                }
+
+                if (request.Title != null)
+                {
+                    caseEntity.Title = request.Title;
+                }
+
+                caseEntity.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Case updated: {Title}", caseEntity.Title);
+
+                return Ok(new
+                {
+                    id = $"case_{caseEntity.Id}",
+                    individualId = $"ind_{caseEntity.RunnerId}",
+                    title = caseEntity.Title,
+                    description = caseEntity.Description,
+                    status = caseEntity.Status
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving case status for runner {RunnerId}", runnerId);
-                return StatusCode(500, new { success = false, message = "Internal server error" });
+                _logger.LogError(ex, "Error updating case {CaseId}", id);
+                return StatusCode(500, new
+                {
+                    error = new
+                    {
+                        code = "INTERNAL_ERROR",
+                        message = "An error occurred while updating case"
+                    }
+                });
+            }
+        }
+
+        /// <summary>
+        /// Delete a case
+        /// </summary>
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteCase(string id)
+        {
+            try
+            {
+                if (!int.TryParse(id.Replace("case_", ""), out var caseId))
+                {
+                    return NotFoundResponse("Case not found");
+                }
+
+                var caseEntity = await _context.Cases.FindAsync(caseId);
+                if (caseEntity == null)
+                {
+                    return NotFoundResponse("Case not found");
+                }
+
+                _context.Cases.Remove(caseEntity);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Case deleted: {Title}", caseEntity.Title);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting case {CaseId}", id);
+                return StatusCode(500, new
+                {
+                    error = new
+                    {
+                        code = "INTERNAL_ERROR",
+                        message = "An error occurred while deleting case"
+                    }
+                });
             }
         }
     }
 
-    public class UpdateCaseStatusDto
+    public class CaseQuery
     {
-        public string Status { get; set; } = string.Empty;
+        public string? Status { get; set; }
+        public string? Q { get; set; }
+        public int Page { get; set; } = 1;
+        public int PageSize { get; set; } = 25;
     }
 
-    public class ApproveCaseDto
+    public class CreateCaseRequest
     {
-        public bool IsApproved { get; set; }
+        public string IndividualId { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public string? Status { get; set; }
+    }
+
+    public class UpdateCaseRequest
+    {
+        public string? Title { get; set; }
+        public string? Description { get; set; }
+        public string? Status { get; set; }
     }
 }

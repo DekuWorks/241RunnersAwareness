@@ -1,0 +1,50 @@
+name: Static Site Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - '*.html'
+      - 'js/**'
+      - 'admin/**'
+      - 'assets/**'
+      - 'config.json'
+      - '.github/workflows/static-deploy.yml'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - '*.html'
+      - 'js/**'
+      - 'admin/**'
+      - 'assets/**'
+      - 'config.json'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Smoke Test
+        run: |
+          sleep 10  # Wait for deployment
+          curl -f https://241runnersawareness.org/ || exit 1
+          echo "✅ Site is accessible"
