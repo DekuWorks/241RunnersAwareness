@@ -4545,22 +4545,9 @@
             const dashboard = document.getElementById('adminDashboard');
             if (dashboard) {
                 dashboard.classList.add('loading');
-<<<<<<< HEAD
                 // Prevent flashing by ensuring smooth transition
                 dashboard.style.transition = 'opacity 0.2s ease';
             }
-=======
-            }
-            
-            const elements = ['totalUsers', 'totalRunners', 'activeAdmins', 'systemStatus'];
-            elements.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.textContent = 'Loading...';
-                    element.classList.add('loading');
-                }
-            });
->>>>>>> 9c2d1e41b85bf8c3fae80a326c037596b48feb6c
         }
         
         function hideLoadingState() {
@@ -4568,21 +4555,9 @@
             if (dashboard) {
                 dashboard.classList.remove('loading');
                 dashboard.classList.add('loaded');
-<<<<<<< HEAD
                 // Ensure smooth transition
                 dashboard.style.transition = 'opacity 0.3s ease';
             }
-=======
-            }
-            
-            const elements = ['totalUsers', 'totalRunners', 'activeAdmins', 'systemStatus'];
-            elements.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.classList.remove('loading');
-                }
-            });
->>>>>>> 9c2d1e41b85bf8c3fae80a326c037596b48feb6c
         }
         
         // ===== DASHBOARD FUNCTIONS =====
@@ -4592,7 +4567,6 @@
                 console.log('📊 Loading dashboard data...');
                 showLoadingState();
                 
-<<<<<<< HEAD
                 // Load all data in parallel for better performance
                 const [usersData, runnersData, publicCasesData, healthData, adminsData] = await Promise.allSettled([
                     loadUsers(),
@@ -4601,21 +4575,6 @@
                     checkSystemStatus(),
                     loadAdmins()
                 ]);
-=======
-                // Always use individual loading functions since monitoring system is not available
-                console.log('📊 Loading data using individual functions...');
-                
-                // Load users first, then admins (since admins depends on users)
-                const [usersData, runnersData, publicCasesData, healthData] = await Promise.allSettled([
-                    loadUsers(),
-                    loadRunners(),
-                    loadPublicCases(),
-                    checkSystemStatus()
-                ]);
-                
-                // Load admins after users are loaded
-                const adminsData = await Promise.allSettled([loadAdmins()]);
->>>>>>> 9c2d1e41b85bf8c3fae80a326c037596b48feb6c
                     
                     // Handle results
                     if (usersData.status === 'fulfilled') {
@@ -8813,20 +8772,9 @@
         // Refresh dashboard data
         async function refreshDashboardData() {
             console.log("🔄 Refreshing dashboard data...");
-<<<<<<< HEAD
             try {
                 // Use the main loadDashboardData function to avoid duplication
                 await loadDashboardData();
-=======
-            console.log("🔍 API client available:", typeof window.apiClient);
-            try {
-                await Promise.all([
-                    loadUsersFromAPI(),
-                    loadRunnersFromAPI(),
-                    loadPublicCases(),
-                    loadAdmins?.()
-                ]);
->>>>>>> 9c2d1e41b85bf8c3fae80a326c037596b48feb6c
                 console.log("✅ Dashboard data refreshed.");
             } catch (err) {
                 console.error("❌ Failed to refresh dashboard data:", err);
@@ -8864,11 +8812,7 @@
                 console.log('✅ Authentication verified, initializing dashboard...');
                 
                 // Load initial dashboard data after authentication is confirmed
-<<<<<<< HEAD
                 await loadDashboardData();
-=======
-                await refreshDashboardData();
->>>>>>> 9c2d1e41b85bf8c3fae80a326c037596b48feb6c
                 
                 // Initialize real-time updates
                 await initializeRealTimeUpdates();
@@ -8959,27 +8903,6 @@
                 // Load current admin profile
                 await loadCurrentAdmin();
                 
-<<<<<<< HEAD
-=======
-                // Load dashboard data using individual functions
-                await loadDashboardData();
-                
-                // Load triage queue data
-                await loadTriageQueue();
-                
-                // Load system health data
-                await loadSystemHealth();
-                
-                // Load moderation queue data
-                await loadModerationQueue();
-                
-                // Load notifications data
-                await loadNotifications();
-                
-                // Load data quality data
-                await loadDataQuality();
-                
->>>>>>> 9c2d1e41b85bf8c3fae80a326c037596b48feb6c
                 // Start refresh timer (fallback) - reduced frequency for better performance
                 refreshInterval = setInterval(loadDashboardData, 60000); // 60 seconds
                 
