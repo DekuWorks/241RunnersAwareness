@@ -160,6 +160,26 @@ app.MapPost("/api/test-auth", (HttpContext context) => {
     }
 });
 
+// Test endpoint to check Entity Framework with simple query
+app.MapGet("/api/test-ef", async (ApplicationDbContext db) => {
+    try {
+        var userCount = await db.Users.CountAsync();
+        var firstUser = await db.Users.FirstOrDefaultAsync();
+        return Results.Ok(new { 
+            message = "EF test working", 
+            userCount = userCount,
+            firstUserEmail = firstUser?.Email ?? "No users",
+            timestamp = DateTime.UtcNow
+        });
+    } catch (Exception ex) {
+        return Results.Ok(new { 
+            message = "EF test error", 
+            error = ex.Message,
+            timestamp = DateTime.UtcNow
+        });
+    }
+});
+
 // Health check endpoints
 app.MapGet("/healthz", () => Results.Ok(new { 
     status = "ok", 
