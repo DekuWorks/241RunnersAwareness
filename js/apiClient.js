@@ -80,7 +80,7 @@ axios.interceptors.response.use(
 // API Client class
 class ApiClient {
     constructor() {
-        this.baseURL = "https://241runners-api.azurewebsites.net/api";
+        this.baseURL = "https://241runners-api-v2.azurewebsites.net/api";
     }
 
     // Generic request method

@@ -248,7 +248,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Override API_BASE_URL if needed (admin-auth.js will load from config.json)
             if (typeof API_BASE_URL === 'undefined') {
-                window.API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+                window.API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
             }
         });
         
@@ -372,7 +372,7 @@
                 };
                 
                 try {
-                    const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+                    const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
                     console.log('Attempting login with API URL:', apiUrl);
                     console.log('Sending login request...');
                     console.log('Form data being sent:', formData);
