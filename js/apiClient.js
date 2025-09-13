@@ -21,7 +21,6 @@ axios.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            // Only redirect for authentication endpoints, not for data loading endpoints
             const url = error.config?.url || '';
             const isAuthEndpoint = url.includes('/auth/login') || url.includes('/auth/me');
             
@@ -33,7 +32,45 @@ axios.interceptors.response.use(
                 localStorage.removeItem("ra_admin_user");
                 window.location.href = '/admin/login.html';
             } else {
-                console.warn('401 error on data endpoint, not redirecting:', url);
+                console.warn('401 error on data endpoint:', url);
+                console.warn('Token may be expired or invalid. Checking token validity...');
+                
+                // Check if token is expired
+                const token = localStorage.getItem("jwtToken") || localStorage.getItem("ra_admin_token");
+                if (token) {
+                    try {
+                        const parts = token.split('.');
+                        if (parts.length === 3) {
+                            const payload = JSON.parse(atob(parts[1]));
+                            const now = Math.floor(Date.now() / 1000);
+                            if (payload.exp && payload.exp < now) {
+                                console.warn('Token has expired, redirecting to login...');
+                                localStorage.removeItem("jwtToken");
+                                localStorage.removeItem("ra_admin_token");
+                                localStorage.removeItem("ra_admin_role");
+                                localStorage.removeItem("ra_admin_user");
+                                window.location.href = '/admin/login.html';
+                                return Promise.reject(error);
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('Invalid token format, redirecting to login...');
+                        localStorage.removeItem("jwtToken");
+                        localStorage.removeItem("ra_admin_token");
+                        localStorage.removeItem("ra_admin_role");
+                        localStorage.removeItem("ra_admin_user");
+                        window.location.href = '/admin/login.html';
+                        return Promise.reject(error);
+                    }
+                }
+                
+                // If token seems valid but still getting 401, redirect anyway
+                console.warn('Valid token but still getting 401, redirecting to login...');
+                localStorage.removeItem("jwtToken");
+                localStorage.removeItem("ra_admin_token");
+                localStorage.removeItem("ra_admin_role");
+                localStorage.removeItem("ra_admin_user");
+                window.location.href = '/admin/login.html';
             }
         }
         return Promise.reject(error);
