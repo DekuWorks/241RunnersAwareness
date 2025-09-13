@@ -1,65 +1,9 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using _241RunnersAPI.Data;
-using _241RunnersAPI.Services;
-using _241RunnersAPI.Models;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-// Add Entity Framework - TEMPORARILY DISABLED FOR TESTING
-// builder.Services.AddDbContext<ApplicationDbContext>(options =>
-//     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// Add JWT Authentication
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? 
-                    builder.Configuration["Jwt:Key"] ?? 
-                    "your-super-secret-key-that-is-at-least-32-characters-long-for-241-runners";
-        
-        var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? 
-                       builder.Configuration["Jwt:Issuer"] ?? 
-                       "241RunnersAwareness";
-        
-        var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? 
-                         builder.Configuration["Jwt:Audience"] ?? 
-                         "241RunnersAwareness";
-
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtIssuer,
-            ValidAudience = jwtAudience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
-        };
-    });
-
-builder.Services.AddAuthorization();
-
-// Add CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
-
-// Add validation service
-builder.Services.AddScoped<ValidationService>();
 
 var app = builder.Build();
 
@@ -80,44 +24,16 @@ if (swaggerEnabled)
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAll");
-app.UseAuthentication();
-app.UseAuthorization();
 
 // Map controllers
 app.MapControllers();
 
-// Health check endpoints
+// Simple health check endpoints
 app.MapGet("/healthz", () => Results.Ok(new { 
     status = "ok", 
     timestamp = DateTime.UtcNow,
     environment = app.Environment.EnvironmentName
 }));
-
-// Database readiness check - TEMPORARILY DISABLED
-/*
-app.MapGet("/readyz", async (ApplicationDbContext db) =>
-{
-    try
-    {
-        await db.Database.CanConnectAsync();
-        return Results.Ok(new { 
-            status = "ok", 
-            database = "connected",
-            timestamp = DateTime.UtcNow
-        });
-    }
-    catch (Exception ex)
-    {
-        return Results.Json(new { 
-            status = "error", 
-            database = "disconnected",
-            error = ex.Message,
-            timestamp = DateTime.UtcNow
-        }, statusCode: 503);
-    }
-});
-*/
 
 app.MapGet("/api/health", () => Results.Ok(new { 
     status = "healthy", 
@@ -125,23 +41,11 @@ app.MapGet("/api/health", () => Results.Ok(new {
     environment = app.Environment.EnvironmentName
 }));
 
-// Database initialization - TEMPORARILY DISABLED
-/*
-using (var scope = app.Services.CreateScope())
-{
-    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-    try
-    {
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        await db.Database.MigrateAsync();
-        logger.LogInformation("Database migrations applied successfully");
-    }
-    catch (Exception ex)
-    {
-        logger.LogError(ex, "Failed to apply database migrations");
-        // Don't throw - let the app start even if migrations fail
-    }
-}
-*/
+// Simple test endpoint
+app.MapGet("/", () => Results.Ok(new { 
+    message = "Hello from 241 Runners API!",
+    timestamp = DateTime.UtcNow,
+    environment = app.Environment.EnvironmentName
+}));
 
 app.Run();
