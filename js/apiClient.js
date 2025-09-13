@@ -189,9 +189,10 @@ class ApiClient {
 window.apiClient = new ApiClient();
 
 // Debug: Log API client initialization
-console.log('🔧 API Client initialized:', window.apiClient);
+console.log('🔧 API Client initialized (v20250113):', window.apiClient);
 console.log('🔧 Axios available:', typeof axios !== 'undefined');
 console.log('🔧 Base URL:', axios.defaults.baseURL);
+console.log('🔧 Enhanced 401 error handling: ENABLED');
 
 // Export for module usage
 if (typeof module !== 'undefined' && module.exports) {
