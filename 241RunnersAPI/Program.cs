@@ -4,8 +4,14 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using _241RunnersAPI.Data;
 using _241RunnersAPI.Services;
+using _241RunnersAPI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Enable detailed startup logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -75,12 +81,17 @@ builder.Services.AddAuthorization();
 // Add Health Checks
 builder.Services.AddHealthChecks();
 
-// Add CORS - Production domains only with proper SignalR support
-var allowedOrigin = "https://241runnersawareness.org";
+// Add CORS - Production domains with proper SignalR support
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("SpaPolicy", p => p
-        .WithOrigins(allowedOrigin)
+        .WithOrigins(
+            "https://241runnersawareness.org",
+            "https://www.241runnersawareness.org", 
+            "http://localhost:5173",
+            "http://localhost:3000",
+            "http://localhost:8080"
+        )
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials()); // Required for SignalR connections
@@ -148,20 +159,21 @@ app.UseCors("SpaPolicy");   // put this BEFORE auth
 
 // CORS is handled by the policy above
 
-// Enable Swagger based on configuration
-var swaggerEnabled = builder.Configuration.GetValue<bool>("Swagger:Enabled", true);
-if (swaggerEnabled)
+// Configure Swagger for production
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "241 Runners Awareness API v1");
         c.RoutePrefix = "swagger";
-        if (!app.Environment.IsDevelopment())
-        {
-            c.DocumentTitle = "241 Runners API - Production";
-        }
     });
+}
+else
+{
+    // In production, expose Swagger behind auth
+    app.UseSwagger();
+    app.MapSwagger().RequireAuthorization();
 }
 
 // Enable static files for uploaded images
@@ -191,6 +203,13 @@ app.MapHealthChecks("/api/auth/health", new Microsoft.AspNetCore.Diagnostics.Hea
     }
 });
 
+// Add minimal health endpoint
+app.MapGet("/healthz", () => Results.Ok(new { 
+    status = "ok", 
+    time = DateTime.UtcNow,
+    environment = app.Environment.EnvironmentName 
+}));
+
 // Add a simple health endpoint that doesn't require database
 app.MapGet("/api/health", () => new { 
     status = "healthy", 
@@ -204,5 +223,56 @@ app.MapHub<_241RunnersAPI.Hubs.AdminHub>("/hubs/notifications")
 app.MapHub<_241RunnersAPI.Hubs.UserHub>("/hubs/user")
     .RequireCors("SpaPolicy");
 
+// Migrations on startup (safe pattern with try/catch + logs)
+using (var scope = app.Services.CreateScope())
+{
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        logger.LogInformation("Starting database migration...");
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await db.Database.MigrateAsync();
+        logger.LogInformation("Database migration completed successfully");
+
+        // Seed admin user if it doesn't exist
+        var adminEmail = "admin@241runnersawareness.org";
+        var adminPassword = Environment.GetEnvironmentVariable("SEED_ADMIN_PWD") ?? "Admin2025!";
+        
+        var existingAdmin = await db.Users.FirstOrDefaultAsync(u => u.Email == adminEmail);
+        if (existingAdmin == null)
+        {
+            logger.LogInformation("Seeding admin user...");
+            var adminUser = new User
+            {
+                Email = adminEmail,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(adminPassword),
+                FirstName = "System",
+                LastName = "Administrator",
+                Role = "admin",
+                IsActive = true,
+                IsEmailVerified = true,
+                IsPhoneVerified = true,
+                CreatedAt = DateTime.UtcNow,
+                EmailVerifiedAt = DateTime.UtcNow,
+                PhoneVerifiedAt = DateTime.UtcNow,
+                Organization = "241 Runners Awareness",
+                Title = "System Administrator"
+            };
+            
+            db.Users.Add(adminUser);
+            await db.SaveChangesAsync();
+            logger.LogInformation("Admin user seeded successfully: {Email}", adminEmail);
+        }
+        else
+        {
+            logger.LogInformation("Admin user already exists: {Email}", adminEmail);
+        }
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred during database migration or seeding");
+        throw; // Re-throw to prevent app startup if critical
+    }
+}
 
 app.Run();
