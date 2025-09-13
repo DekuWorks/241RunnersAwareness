@@ -35,6 +35,7 @@ namespace _241RunnersAPI.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
+            var startTime = DateTime.UtcNow;
             try
             {
                 // Validate request
@@ -83,6 +84,11 @@ namespace _241RunnersAPI.Controllers
 
                 _logger.LogInformation("New user registered: {Email} with role {Role}", user.Email, user.Role);
 
+                // Track successful registration
+                var duration = DateTime.UtcNow - startTime;
+                _performanceService.TrackUserRegistration(user.Email, user.Role, true);
+                _performanceService.TrackApiEndpoint("/api/auth/register", "POST", duration, 201, true);
+
                 return CreatedAtAction(nameof(Register), new { id = user.Id }, new
                 {
                     id = $"u_{user.Id}",
@@ -93,6 +99,11 @@ namespace _241RunnersAPI.Controllers
             }
             catch (Exception ex)
             {
+                var duration = DateTime.UtcNow - startTime;
+                _performanceService.TrackUserRegistration(request.Email, request.Role ?? "unknown", false, ex.Message);
+                _performanceService.TrackApiEndpoint("/api/auth/register", "POST", duration, 500, false);
+                _performanceService.TrackException(ex);
+                
                 _logger.LogError(ex, "Error during user registration");
                 return StatusCode(500, new
                 {

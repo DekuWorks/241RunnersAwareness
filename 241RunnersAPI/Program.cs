@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Diagnostics;
 using _241RunnersAPI.Data;
 using _241RunnersAPI.Services;
 using _241RunnersAPI.Models;
@@ -86,6 +87,14 @@ builder.Services.AddScoped<PerformanceMonitoringService>();
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<CachingService>();
 
+// Add response compression
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<Microsoft.AspNetCore.ResponseCompression.BrotliCompressionProvider>();
+    options.Providers.Add<Microsoft.AspNetCore.ResponseCompression.GzipCompressionProvider>();
+});
+
 // Add comprehensive health checks
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<ApplicationDbContext>("database", tags: new[] { "ready" })
@@ -142,6 +151,7 @@ app.Use(async (context, next) =>
     }
 });
 
+app.UseResponseCompression();
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.UseAuthentication();
