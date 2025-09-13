@@ -161,11 +161,15 @@ using (var scope = app.Services.CreateScope())
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         await db.Database.MigrateAsync();
         logger.LogInformation("Database migrations applied successfully");
+        
+        // Initialize database with seed data
+        await _241RunnersAPI.Data.DbInitializer.Initialize(db, logger);
+        logger.LogInformation("Database initialization completed successfully");
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "Failed to apply database migrations");
-        // Don't throw - let the app start even if migrations fail
+        logger.LogError(ex, "Failed to initialize database");
+        // Don't throw - let the app start even if initialization fails
     }
 }
 
