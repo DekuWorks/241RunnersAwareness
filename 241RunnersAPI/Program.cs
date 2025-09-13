@@ -40,8 +40,6 @@ builder.Services
   .AddAuthentication("Bearer")
   .AddJwtBearer(o =>
   {
-    o.Authority = builder.Configuration["JWT_ISSUER"];
-    o.Audience  = builder.Configuration["JWT_AUDIENCE"];
     o.RequireHttpsMetadata = true;
     
     // Fallback to environment variables if config is not set
