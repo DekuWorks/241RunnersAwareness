@@ -197,8 +197,9 @@ app.Use(async (ctx, next) =>
 
 // CORS is handled by the policy above
 
-// Swagger visibility
-if (app.Environment.IsDevelopment())
+// Swagger visibility - enable based on configuration
+var swaggerEnabled = builder.Configuration.GetValue<bool>("Swagger:Enabled", false);
+if (app.Environment.IsDevelopment() || swaggerEnabled)
 {
     app.UseSwagger();
     app.UseSwaggerUI();
