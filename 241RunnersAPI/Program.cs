@@ -278,7 +278,8 @@ app.MapHub<_241RunnersAPI.Hubs.AdminHub>("/hubs/notifications")
 app.MapHub<_241RunnersAPI.Hubs.UserHub>("/hubs/user")
     .RequireCors("web");
 
-// EF Core migrations run safely on startup
+// EF Core migrations run safely on startup - TEMPORARILY DISABLED FOR TESTING
+/*
 using (var scope = app.Services.CreateScope())
 {
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
@@ -338,5 +339,6 @@ using (var scope = app.Services.CreateScope())
         // Do not throw; keep app up for /healthz visibility.
     }
 }
+*/
 
 app.Run();
