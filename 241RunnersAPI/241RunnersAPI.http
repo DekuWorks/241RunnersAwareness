@@ -1,0 +1,50 @@
+@_241RunnersAPI_HostAddress = https://241runners-api.azurewebsites.net
+
+### Health Check
+GET {{_241RunnersAPI_HostAddress}}/api/health
+Accept: application/json
+
+### Auth Health Check
+GET {{_241RunnersAPI_HostAddress}}/api/auth/health
+Accept: application/json
+
+### Get Available Roles
+GET {{_241RunnersAPI_HostAddress}}/api/auth/roles
+Accept: application/json
+
+### User Registration
+POST {{_241RunnersAPI_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "TestPassword123!",
+  "confirmPassword": "TestPassword123!",
+  "firstName": "Test",
+  "lastName": "User",
+  "role": "user",
+  "phoneNumber": "15551234567"
+}
+
+### User Login
+POST {{_241RunnersAPI_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "dekuworks1@gmail.com",
+  "password": "marcus2025"
+}
+
+### Get Public Cases
+GET {{_241RunnersAPI_HostAddress}}/api/cases/publiccases
+Accept: application/json
+
+### Get Map Data
+GET {{_241RunnersAPI_HostAddress}}/api/cases/map
+Accept: application/json
+
+### Get Public Case Stats
+GET {{_241RunnersAPI_HostAddress}}/api/cases/publiccases/stats/houston
+Accept: application/json
+
+###

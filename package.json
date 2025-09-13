@@ -1,0 +1,34 @@
+{
+  "name": "241runnersawareness",
+  "version": "2.0.0",
+  "description": "241 Runners Awareness - Missing Persons Case Management System",
+  "scripts": {
+    "lint:html": "htmlhint \"**/*.html\"",
+    "lint:js": "eslint \"**/*.js\"",
+    "lint:css": "csslint \"**/*.css\"",
+    "lint": "npm run lint:html && npm run lint:js && npm run lint:css"
+  },
+  "devDependencies": {
+    "csslint": "^1.0.5",
+    "eslint": "^8.0.0",
+    "htmlhint": "^1.1.4"
+  },
+  "keywords": [
+    "missing-persons",
+    "case-management",
+    "admin-dashboard",
+    "real-time",
+    "signalr",
+    "pwa"
+  ],
+  "author": "241 Runners Awareness Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/241RunnersAwareness.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/241RunnersAwareness/issues"
+  },
+  "homepage": "https://241runnersawareness.org"
+}

@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cases - 241 Runners Awareness</title>
+    <meta name="description" content="View active missing persons cases and help bring families closure through community awareness and support.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="https://241runnersawareness.org/241-logo.jpg">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://241runnersawareness.org/styles.css?v=20250109">
+    <link rel="stylesheet" href="https://241runnersawareness.org/forms.css">
+    
+    <!-- Custom CSS for Cases Page -->
+    <style>
+        /* Ensure body and html are properly set up for centering */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: hidden;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background: #f5f5f5;
+        }
+        
+        /* Ensure header is also centered */
+        header {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        /* Global responsive container - Full width stretch with centered content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            overflow-x: hidden;
+            min-height: 100vh;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Container centering - Fixed */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto !important;
+            padding: 0 20px;
+            box-sizing: border-box;
+            display: block;
+            position: relative;
+        }
+        
+        /* Override any external CSS that might be interfering */
+        .main-content .container,
+        .cases-hero .container,
+        .filters-section .container,
+        .search-features .container,
+        .cases-section .container,
+        .cta-section .container {
+            margin-left: auto !important;
+            margin-right: auto !important;
+            max-width: 1200px !important;
+        }
+        
+        /* Remove the complex calc positioning that was causing issues */
+        @media (min-width: 1201px) {
+            .container {
+                margin-left: auto !important;
+                margin-right: auto !important;
+            }
+        }
+        
+        /* Ensure all sections stretch full width but content is centered */
+        .cases-hero, .filters-section, .search-features, .cases-section, .cta-section {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* Additional centering fixes */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        
+        /* Debug: Temporary visual indicator for container boundaries */
+        .container {
+            /* border: 2px solid rgba(220, 38, 38, 0.3); */
+            /* background: rgba(220, 38, 38, 0.05); */
+        }
+        
+        /* Hero section with full width stretch */
+        .cases-hero {
+            text-align: center;
+            width: 100%;
+            padding: 3rem 0;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+        }
+        
+        /* Hero content centering */
+        .cases-hero .container {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Hero title styling */
+        .hero-title {
+            color: white;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            margin: 0 0 1rem 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Hero subtitle styling */
+        .hero-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            margin: 0 0 2rem 0;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+        /* Enhanced stats grid with better mobile layout */
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .stat-item {
+            background: white;
+            color: #333;
+            padding: 1.5rem 1rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            border: 2px solid #f0f0f0;
+            transition: transform 0.2s ease;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-2px);
+        }
+        
+        .stat-number {
+            font-size: clamp(2rem, 5vw, 2.5rem);
+            font-weight: bold;
+            color: #dc2626;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            color: #666;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Filters section with full width stretch */
+        .filters-section {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 2rem 0;
+            background: #f8fafc;
+        }
+        
+        .filters-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            width: 100%;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .filter-group label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+        
+        .filter-select, .filter-input {
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: white;
+            transition: border-color 0.2s;
+        }
+        
+        .filter-select:focus, .filter-input:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+        
+        /* Cases section with responsive grid */
+        .cases-section {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+        
+        .cases-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .cases-header h2 {
+            margin: 0;
+            color: #1f2937;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+        }
+        
+        .cases-count {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        /* Enhanced search features with better grid */
+        .search-features {
+            background: #f8fafc;
+            padding: 2rem 0;
+            border-bottom: 1px solid #e5e7eb;
+            width: 100%;
+        }
+        
+        .search-features .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto !important;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+        
+        .search-features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .search-history, .saved-searches {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+        }
+        
+        .search-history h4, .saved-searches h4 {
+            color: #1f2937;
+            margin: 0 0 1rem 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .history-items, .saved-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .history-item, .saved-name {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .history-item:hover, .saved-name:hover {
+            background: #dc2626;
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        .saved-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .saved-delete {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: #dc2626;
+            transition: all 0.2s;
+        }
+        
+        .saved-delete:hover {
+            background: #fecaca;
+            transform: scale(1.1);
+        }
+        
+        .filter-summary {
+            background: #dbeafe;
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .clear-all-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+        
+        .clear-all-btn:hover {
+            background: #b91c1c;
+        }
+        
+        .search-container {
+            position: relative;
+            width: 100%;
+        }
+        
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .suggestion-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #f3f4f6;
+            transition: background-color 0.2s;
+        }
+        
+        .suggestion-item:hover {
+            background: #f3f4f6;
+        }
+        
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            grid-column: 1 / -1;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        
+        .message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .message-success {
+            background: #d1fae5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+        }
+        
+        .message-info {
+            background: #dbeafe;
+            border: 1px solid #93c5fd;
+            color: #1e40af;
+        }
+        
+        .message-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: inherit;
+            padding: 0;
+            margin-left: 1rem;
+        }
+        
+        /* CTA section with improved layout */
+        .cta-section {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 3rem 0;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+        
+        .cta-content {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .cta-content h2 {
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-content p {
+            font-size: 1.1rem;
+            color: #4b5563;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .cta-buttons .btn {
+            min-width: 200px;
+        }
+        
+        /* Loading and error states */
+        .loading-state, .error-state, .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            width: 100%;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #dc2626;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-icon,         .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+
+        
+        /* Responsive design improvements */
+        @media (max-width: 1200px) {
+            .container {
+                padding: 0 30px;
+            }
+            
+            .hero-stats {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 1rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 0;
+            }
+            
+            .hero-stats {
+                grid-template-columns: 1fr;
+                max-width: 300px;
+            }
+            
+            .stat-item {
+                padding: 1rem;
+            }
+            
+            .container {
+                padding: 0 20px;
+            }
+            
+            .search-features-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .filters-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .filter-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-actions .btn {
+                width: 100%;
+            }
+            
+            .cases-header {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: center;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .cta-buttons .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .hero-stats {
+                gap: 0.75rem;
+            }
+            
+            .stat-item {
+                padding: 0.75rem;
+            }
+            
+            .stat-number {
+                font-size: 1.8rem;
+            }
+            
+            .stat-label {
+                font-size: 0.75rem;
+            }
+            
+            .filters-container {
+                gap: 0.75rem;
+            }
+            
+            .filter-group label {
+                font-size: 0.8rem;
+            }
+            
+            .filter-select, .filter-input {
+                padding: 0.5rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://241runnersawareness.org/241-logo.jpg" as="image">
+    <link rel="preload" href="https://241runnersawareness.org/js/cases.js" as="script">
+
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-bar">
+            <img src="assets/images/241-logo.jpg" alt="241 Runners Awareness" class="logo">
+            <h1>241 Runners Awareness</h1>
+        </div>
+        
+        <nav>
+            <a href="https://241runnersawareness.org">Home</a>
+            <a href="https://241runnersawareness.org/aboutus.html">About</a>
+            <a href="https://241runnersawareness.org/cases.html" aria-current="page">Cases</a>
+            <a href="https://241runnersawareness.org/map.html">Map</a>
+            <a href="https://241runnersawareness.org/dna-tracking.html">DNA Tracking</a>
+            <a href="https://241runnersawareness.org/report-case.html">Report Case</a>
+            <a href="https://241runnersawareness.org/login.html">Login</a>
+        </nav>
+        
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+        <button class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="cases-hero hero-section">
+            <div class="container">
+                <h1 class="hero-title">Active Cases</h1>
+                <p class="hero-subtitle">Help bring families closure by staying informed about missing persons in our community</p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalCases">0</div>
+                        <div class="stat-label">Total Cases</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="urgentCases">0</div>
+                        <div class="stat-label">Urgent</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="recentCases">0</div>
+                        <div class="stat-label">Recent (7 days)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filters Section -->
+        <section class="filters-section filter-container">
+            <div class="container">
+                <div class="filters-container">
+                    <div class="filter-group">
+                        <label for="statusFilter">Status:</label>
+                        <select id="statusFilter" class="filter-select">
+                            <option value="">All Statuses</option>
+                            <option value="Active">Active</option>
+                            <option value="Safe">Safe</option>
+                            <option value="Missing">Missing</option>
+                            <option value="Found">Found</option>
+                            <option value="Investigating">Investigating</option>
+                            <option value="Closed">Closed</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="locationFilter">Location:</label>
+                        <select id="locationFilter" class="filter-select">
+                            <option value="">All Locations</option>
+                            <option value="Austin">Austin</option>
+                            <option value="Houston">Houston</option>
+                            <option value="Dallas">Dallas</option>
+                            <option value="San Antonio">San Antonio</option>
+                            <option value="Fort Worth">Fort Worth</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="urgencyFilter">Urgency:</label>
+                        <select id="urgencyFilter" class="filter-select">
+                            <option value="">All Cases</option>
+                            <option value="urgent">Urgent Only</option>
+                            <option value="recent">Recent Only</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="ageRangeFilter">Age Range:</label>
+                        <select id="ageRangeFilter" class="filter-select">
+                            <option value="">All Ages</option>
+                            <option value="0-17">0-17 (Child)</option>
+                            <option value="18-25">18-25 (Young Adult)</option>
+                            <option value="26-40">26-40 (Adult)</option>
+                            <option value="41-60">41-60 (Middle Age)</option>
+                            <option value="61-100">61+ (Senior)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="genderFilter">Gender:</label>
+                        <select id="genderFilter" class="filter-select">
+                            <option value="">All Genders</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="dateRangeFilter">Date Reported:</label>
+                        <select id="dateRangeFilter" class="filter-select">
+                            <option value="">All Dates</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group search-group">
+                        <label for="searchFilter">Advanced Search:</label>
+                        <div class="search-container">
+                            <input type="text" id="searchFilter" class="filter-input" placeholder="Search by name, description, location...">
+                            <div id="searchSuggestions" class="search-suggestions"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button id="saveSearch" class="btn btn-primary">💾 Save Search</button>
+                        <button id="clearFilters" class="btn btn-secondary">Clear Filters</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Enhanced Search Features -->
+        <section class="search-features">
+            <div class="container">
+                <div class="search-features-grid">
+                    <div id="searchHistory"></div>
+                    <div id="savedSearches"></div>
+                </div>
+                <div id="filterSummary"></div>
+                <div id="messageContainer"></div>
+            </div>
+        </section>
+
+        <!-- Cases Grid -->
+        <section class="cases-section cases-container">
+            <div class="container">
+                <div class="cases-header">
+                    <h2>Missing Persons Cases</h2>
+                    <div class="cases-count">
+                        Showing <span id="showingCount">0</span> of <span id="totalCount">0</span> cases
+                    </div>
+                </div>
+                
+                <!-- Loading State -->
+                <div id="loadingState" class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <p>Loading cases...</p>
+                </div>
+                
+                <!-- Error State -->
+                <div id="errorState" class="error-state" style="display: none;">
+                    <div class="error-icon">⚠️</div>
+                    <h3>Unable to load cases</h3>
+                    <p>Please check your connection and try again.</p>
+                    <button id="retryButton" class="btn btn-primary">Retry</button>
+                </div>
+                
+                <!-- Empty State -->
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <div class="empty-icon">📋</div>
+                    <h3>No cases found</h3>
+                    <p>There are currently no active cases matching your criteria.</p>
+                    <a href="https://241runnersawareness.org/report-case.html" class="btn btn-primary">Report a Case</a>
+                </div>
+                
+                <!-- Cases Grid -->
+                <div id="casesGrid" class="cases-grid">
+                    <!-- Cases will be loaded here -->
+                </div>
+                
+                <!-- Load More Button -->
+                <div id="loadMoreContainer" class="load-more-container" style="display: none;">
+                    <button id="loadMoreButton" class="btn btn-secondary">Load More Cases</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="cta-section cta-container">
+            <div class="container">
+                <div class="cta-content">
+                    <h2>Help Bring Families Closure</h2>
+                    <p>Every piece of information matters. If you have any information about these cases, please contact the authorities or use our reporting system.</p>
+                    <div class="cta-buttons">
+                        <a href="https://241runnersawareness.org/report-case.html" class="btn btn-primary">Report Information</a>
+                        <a href="https://241runnersawareness.org/map.html" class="btn btn-secondary cta-secondary-btn">View on Map</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+
+    <!-- Scripts -->
+    <script src="https://241runnersawareness.org/assets/js/config.js?v=20250109"></script>
+    <script src="https://241runnersawareness.org/js/error-ui.js?v=20250108"></script>
+    <script type="module" src="/js/api.js?v=20250113"></script>
+    <script src="https://241runnersawareness.org/js/cases.js?v=20250109"></script>
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const hamburger = document.getElementById('hamburger');
+        const nav = document.querySelector('nav');
+        
+        // Theme toggle
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            themeToggle.textContent = isDark ? '☀️' : '🌙';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeToggle.textContent = '☀️';
+        }
+        
+        // Hamburger menu
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            nav.classList.toggle('active');
+        });
+        
+        // Close menu when clicking on a link
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                nav.classList.remove('active');
+            });
+        });
+        
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html> 
