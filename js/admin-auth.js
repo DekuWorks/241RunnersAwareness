@@ -13,7 +13,7 @@ const AUTH_CONFIG = {
     roleKey: "ra_admin_role", 
     userKey: "ra_admin_user",
     refreshKey: "ra_admin_refresh_token",
-    apiBaseUrl: 'https://241runners-api.azurewebsites.net/api',
+    apiBaseUrl: 'https://241runners-api-v2.azurewebsites.net/api',
     tokenRefreshThreshold: 5 * 60 * 1000, // 5 minutes before expiry
     maxRetryAttempts: 3,
     retryDelay: 1000

@@ -5,7 +5,7 @@
 
 class PublicCasesManager {
     constructor() {
-        this.apiBaseUrl = 'https://241runners-api.azurewebsites.net/api';
+        this.apiBaseUrl = 'https://241runners-api-v2.azurewebsites.net/api';
         this.currentCases = [];
         this.filteredCases = [];
         this.currentPage = 1;

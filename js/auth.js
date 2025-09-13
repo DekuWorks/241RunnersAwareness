@@ -8,7 +8,7 @@
  */
 
 // API Configuration - now centralized in api-utils.js
-let API_BASE_URL = 'https://241runners-api.azurewebsites.net';
+let API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net';
 
 // Load API configuration from config.json
 async function loadConfig() {

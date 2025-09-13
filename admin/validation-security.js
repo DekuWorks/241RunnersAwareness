@@ -476,7 +476,7 @@ class AdminDashboardSecurity {
         if (!head.querySelector('meta[http-equiv="Content-Security-Policy"]')) {
             const meta = document.createElement('meta');
             meta.setAttribute('http-equiv', 'Content-Security-Policy');
-            meta.setAttribute('content', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://241runners-api.azurewebsites.net;");
+            meta.setAttribute('content', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://241runners-api-v2.azurewebsites.net;");
             head.appendChild(meta);
         }
     }

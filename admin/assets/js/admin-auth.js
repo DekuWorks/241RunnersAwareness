@@ -12,7 +12,7 @@ const roleKey = "ra_admin_role";
 const userKey = "ra_admin_user";
 
 // API Configuration - Fixed URL without trailing slash
-let API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+let API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
 
 // Load API configuration from config.json
 async function loadConfig() {

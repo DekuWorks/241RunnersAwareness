@@ -104,7 +104,7 @@ self.addEventListener('fetch', (event) => {
 
     // CRITICAL: Never intercept SignalR requests - let them pass through
     if (url.pathname.includes('/adminHub') || url.pathname.includes('/userHub') || 
-        url.hostname.includes('241runners-api.azurewebsites.net')) {
+        url.hostname.includes('241runners-api-v2.azurewebsites.net')) {
         // Let SignalR requests pass through without service worker interference
         return;
     }

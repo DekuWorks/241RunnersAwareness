@@ -102,7 +102,7 @@ class CasesPage {
             this.showLoading();
             
             // Use the configured API base URL
-            const apiUrl = window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+            const apiUrl = window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
             console.log('📡 API URL:', apiUrl);
             
             // Load NamUs public cases for Houston area
