@@ -13,6 +13,7 @@ namespace _241RunnersAPI.Controllers
 {
     [ApiController]
     [Route("api/auth")]
+    [AllowAnonymous]
     public class AuthController : BaseController
     {
         private readonly ApplicationDbContext _context;

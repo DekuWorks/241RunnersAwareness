@@ -646,6 +646,7 @@ namespace _241RunnersAPI.Controllers
         /// Get all users (temporary - no auth for debugging)
         /// </summary>
         [HttpGet("users-debug")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetUsersDebug()
         {
             try
