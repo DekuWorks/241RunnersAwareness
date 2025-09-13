@@ -13,6 +13,12 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
+// Optional: Enhanced logging with Serilog (uncomment if needed)
+// builder.Host.UseSerilog((ctx, cfg) => cfg
+//   .ReadFrom.Configuration(ctx.Configuration)
+//   .Enrich.FromLogContext()
+//   .WriteTo.Console());
+
 // Add services to the container.
 builder.Services.AddControllers();
 
@@ -29,27 +35,33 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Add validation service
 builder.Services.AddScoped<ValidationService>();
 
-// Add JWT Authentication - Environment variables take precedence
-var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? builder.Configuration["Jwt:Key"] ?? "your-super-secret-key-that-is-at-least-32-characters-long-for-241-runners";
-var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? builder.Configuration["Jwt:Issuer"] ?? "241RunnersAwareness";
-var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? builder.Configuration["Jwt:Audience"] ?? "241RunnersAwareness";
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+// JWT wiring (prevent 401/403 surprises)
+builder.Services
+  .AddAuthentication("Bearer")
+  .AddJwtBearer(o =>
+  {
+    o.Authority = builder.Configuration["JWT_ISSUER"];
+    o.Audience  = builder.Configuration["JWT_AUDIENCE"];
+    o.RequireHttpsMetadata = true;
+    
+    // Fallback to environment variables if config is not set
+    var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? builder.Configuration["Jwt:Key"] ?? "your-super-secret-key-that-is-at-least-32-characters-long-for-241-runners";
+    var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? builder.Configuration["Jwt:Issuer"] ?? "241RunnersAwareness";
+    var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? builder.Configuration["Jwt:Audience"] ?? "241RunnersAwareness";
+    
+    o.TokenValidationParameters = new TokenValidationParameters
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtIssuer,
-            ValidAudience = jwtAudience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
-        };
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+    };
         
         // Configure JWT for SignalR
-        options.Events = new JwtBearerEvents
+        o.Events = new JwtBearerEvents
         {
             OnMessageReceived = context =>
             {
@@ -82,20 +94,16 @@ builder.Services.AddAuthorization();
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<ApplicationDbContext>("database");
 
-// Add CORS - Production domains with proper SignalR support
-builder.Services.AddCors(options =>
+// CORS policy (allow exact sites only)
+builder.Services.AddCors(opts =>
 {
-    options.AddPolicy("SpaPolicy", p => p
-        .WithOrigins(
-            "https://241runnersawareness.org",
-            "https://www.241runnersawareness.org", 
-            "http://localhost:5173",
-            "http://localhost:3000",
-            "http://localhost:8080"
-        )
+    opts.AddPolicy("web", p => p
+        .WithOrigins("https://241runnersawareness.org",
+                     "https://www.241runnersawareness.org",
+                     "http://localhost:5173")
         .AllowAnyHeader()
         .AllowAnyMethod()
-        .AllowCredentials()); // Required for SignalR connections
+        .AllowCredentials());
 });
 
 
@@ -156,26 +164,17 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
-app.UseCors("SpaPolicy");   // put this BEFORE auth
+app.UseCors("web");   // put this BEFORE auth
 
 // CORS is handled by the policy above
 
-// Configure Swagger for production
+// Swagger visibility
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "241 Runners Awareness API v1");
-        c.RoutePrefix = "swagger";
-    });
+    app.UseSwaggerUI();
 }
-else
-{
-    // In production, expose Swagger behind auth
-    app.UseSwagger();
-    app.MapSwagger().RequireAuthorization();
-}
+// Optional gated: app.MapSwagger().RequireAuthorization(new AuthorizeAttribute{ Roles="Admin" });
 
 // Enable static files for uploaded images
 app.UseStaticFiles();
@@ -185,7 +184,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Map controllers
-app.MapControllers().RequireCors("SpaPolicy");
+app.MapControllers().RequireCors("web");
 
 // Map health check endpoints
 app.MapHealthChecks("/health");
@@ -204,37 +203,38 @@ app.MapHealthChecks("/api/auth/health", new Microsoft.AspNetCore.Diagnostics.Hea
     }
 });
 
-// Add minimal health endpoint
+// Robust health endpoints - liveness vs readiness
+// /healthz must not touch DB (stays green while DB is booting)
 app.MapGet("/healthz", () => Results.Ok(new { 
     status = "ok", 
     time = DateTime.UtcNow
 }));
 
-// Add database health check endpoint
-app.MapGet("/healthz/db", async (ApplicationDbContext db) =>
+// /readyz hits DB for readiness
+app.MapGet("/readyz", async (ApplicationDbContext db) =>
 {
-    var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+    var sw = System.Diagnostics.Stopwatch.StartNew();
     try
     {
-        await db.Database.ExecuteSqlRawAsync("SELECT 1");
-        stopwatch.Stop();
+        await db.Database.CanConnectAsync();
+        sw.Stop();
         return Results.Ok(new { 
             status = "ok", 
             db = "connected", 
-            latencyMs = stopwatch.ElapsedMilliseconds 
+            latencyMs = sw.ElapsedMilliseconds 
         });
     }
     catch (Exception ex)
     {
-        stopwatch.Stop();
+        sw.Stop();
         return Results.Json(new { 
             status = "error", 
             db = "disconnected", 
-            latencyMs = stopwatch.ElapsedMilliseconds,
+            latencyMs = sw.ElapsedMilliseconds,
             error = ex.Message 
         }, statusCode: 503);
     }
-}).RequireAuthorization();
+});
 
 // Add a simple health endpoint that doesn't require database
 app.MapGet("/api/health", () => new { 
@@ -245,11 +245,11 @@ app.MapGet("/api/health", () => new {
 
 // Map SignalR hubs with explicit CORS
 app.MapHub<_241RunnersAPI.Hubs.AdminHub>("/hubs/notifications")
-    .RequireCors("SpaPolicy");
+    .RequireCors("web");
 app.MapHub<_241RunnersAPI.Hubs.UserHub>("/hubs/user")
-    .RequireCors("SpaPolicy");
+    .RequireCors("web");
 
-// Migrations on startup (safe pattern with try/catch + logs)
+// EF Core migrations run safely on startup
 using (var scope = app.Services.CreateScope())
 {
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
@@ -258,46 +258,53 @@ using (var scope = app.Services.CreateScope())
         logger.LogInformation("Starting database migration...");
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         await db.Database.MigrateAsync();
-        logger.LogInformation("Database migration completed successfully");
+        logger.LogInformation("EF migrations applied.");
 
         // Seed admin user if it doesn't exist
         var adminEmail = "admin@241runnersawareness.org";
-        var adminPassword = Environment.GetEnvironmentVariable("SEED_ADMIN_PWD") ?? "Admin2025!";
+        var adminPassword = Environment.GetEnvironmentVariable("SEED_ADMIN_PWD");
         
-        var existingAdmin = await db.Users.FirstOrDefaultAsync(u => u.Email == adminEmail);
-        if (existingAdmin == null)
+        if (!string.IsNullOrWhiteSpace(adminPassword))
         {
-            logger.LogInformation("Seeding admin user...");
-            var adminUser = new User
+            var existingAdmin = await db.Users.FirstOrDefaultAsync(u => u.Email == adminEmail);
+            if (existingAdmin == null)
             {
-                Email = adminEmail,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(adminPassword),
-                FirstName = "System",
-                LastName = "Administrator",
-                Role = "admin",
-                IsActive = true,
-                IsEmailVerified = true,
-                IsPhoneVerified = true,
-                CreatedAt = DateTime.UtcNow,
-                EmailVerifiedAt = DateTime.UtcNow,
-                PhoneVerifiedAt = DateTime.UtcNow,
-                Organization = "241 Runners Awareness",
-                Title = "System Administrator"
-            };
-            
-            db.Users.Add(adminUser);
-            await db.SaveChangesAsync();
-            logger.LogInformation("Admin user seeded successfully: {Email}", adminEmail);
+                logger.LogInformation("Seeding admin user...");
+                var adminUser = new User
+                {
+                    Email = adminEmail,
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(adminPassword),
+                    FirstName = "System",
+                    LastName = "Administrator",
+                    Role = "admin",
+                    IsActive = true,
+                    IsEmailVerified = true,
+                    IsPhoneVerified = true,
+                    CreatedAt = DateTime.UtcNow,
+                    EmailVerifiedAt = DateTime.UtcNow,
+                    PhoneVerifiedAt = DateTime.UtcNow,
+                    Organization = "241 Runners Awareness",
+                    Title = "System Administrator"
+                };
+                
+                db.Users.Add(adminUser);
+                await db.SaveChangesAsync();
+                logger.LogInformation("Admin user seeded successfully: {Email}", adminEmail);
+            }
+            else
+            {
+                logger.LogInformation("Admin user already exists: {Email}", adminEmail);
+            }
         }
         else
         {
-            logger.LogInformation("Admin user already exists: {Email}", adminEmail);
+            logger.LogInformation("SEED_ADMIN_PWD not set, skipping admin user seeding");
         }
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "An error occurred during database migration or seeding");
-        throw; // Re-throw to prevent app startup if critical
+        logger.LogError(ex, "Failed to apply EF migrations on startup.");
+        // Do not throw; keep app up for /healthz visibility.
     }
 }
 

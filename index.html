@@ -258,5 +258,12 @@
       });
     }
   </script>
+  
+  <!-- Load configuration and API client -->
+  <script>
+    window.__CONFIG = {};
+    fetch('/config.json').then(r => r.json()).then(cfg => window.__CONFIG = cfg);
+  </script>
+  <script type="module" src="/js/api.js"></script>
 </body>
 </html>

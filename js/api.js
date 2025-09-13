@@ -38,40 +38,37 @@ if (document.readyState === 'loading') {
  * @returns {Promise<any>} API response data
  */
 export async function api(path, options = {}) {
-    const baseUrl = window.__CONFIG.API_BASE_URL;
-    if (!baseUrl) {
-        throw new Error('API_BASE_URL not configured');
-    }
-
-    const url = `${baseUrl}${path}`;
+    const base = window.__CONFIG.API_BASE_URL;
     
-    // Default options
-    const defaultOptions = {
-        credentials: 'omit', // JWT-only authentication
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    };
-
     // Add JWT token if available
     const token = localStorage.getItem('access_token') || localStorage.getItem('ra_admin_token');
+    const headers = {
+        'Content-Type': 'application/json',
+        ...options.headers
+    };
+    
     if (token) {
-        defaultOptions.headers['Authorization'] = `Bearer ${token}`;
+        headers['Authorization'] = `Bearer ${token}`;
     }
-
-    const finalOptions = { ...defaultOptions, ...options };
-
+    
+    const finalOptions = {
+        credentials: 'include',
+        headers,
+        ...options
+    };
+    
+    const url = `${base}${path}`;
+    
     try {
         console.log(`🌐 API Request: ${finalOptions.method || 'GET'} ${url}`);
-        const response = await fetch(url, finalOptions);
+        const res = await fetch(url, finalOptions);
         
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`❌ API Error ${response.status}:`, errorText);
+        if (!res.ok) {
+            const text = await res.text().catch(() => '');
+            console.error(`❌ API Error ${res.status}:`, text);
             
             // Handle authentication errors
-            if (response.status === 401) {
+            if (res.status === 401) {
                 // Clear invalid tokens
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('ra_admin_token');
@@ -85,10 +82,10 @@ export async function api(path, options = {}) {
                 }
             }
             
-            throw new Error(`API ${response.status}: ${errorText}`);
+            throw new Error(`API ${res.status}: ${text}`);
         }
-
-        const data = await response.json();
+        
+        const data = await res.json();
         console.log(`✅ API Response: ${finalOptions.method || 'GET'} ${url}`, data);
         return data;
     } catch (error) {
