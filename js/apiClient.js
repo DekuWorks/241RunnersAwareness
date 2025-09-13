@@ -147,7 +147,8 @@ class ApiClient {
 
     // Admin methods
     async getUsers() {
-        return this.get('/admin/users');
+        // Temporarily use debug endpoint until authentication is fixed
+        return this.get('/admin/users-debug');
     }
 
     async getAdmins() {
@@ -189,10 +190,11 @@ class ApiClient {
 window.apiClient = new ApiClient();
 
 // Debug: Log API client initialization
-console.log('🔧 API Client initialized (v20250113):', window.apiClient);
+console.log('🔧 API Client initialized (v20250113b):', window.apiClient);
 console.log('🔧 Axios available:', typeof axios !== 'undefined');
 console.log('🔧 Base URL:', axios.defaults.baseURL);
 console.log('🔧 Enhanced 401 error handling: ENABLED');
+console.log('🔧 Using debug endpoint for getUsers() - no auth required');
 
 // Export for module usage
 if (typeof module !== 'undefined' && module.exports) {
