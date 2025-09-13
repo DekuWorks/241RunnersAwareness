@@ -110,6 +110,13 @@ app.MapGet("/api", () => Results.Ok(new {
     }
 }));
 
+// Test endpoint to check if controllers are working
+app.MapGet("/api/test", () => Results.Ok(new { 
+    message = "Controllers are working", 
+    timestamp = DateTime.UtcNow,
+    environment = app.Environment.EnvironmentName
+}));
+
 // Health check endpoints
 app.MapGet("/healthz", () => Results.Ok(new { 
     status = "ok", 
