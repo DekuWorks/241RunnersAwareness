@@ -48,10 +48,16 @@ class AdminRealtime {
                 return;
             }
 
+            console.log('🔑 Using token for SignalR:', token ? `Present (length: ${token.length})` : 'Missing');
+
             // Create SignalR connection
             this.connection = new signalR.HubConnectionBuilder()
                 .withUrl(this.signalRUrl, {
-                    accessTokenFactory: () => token,
+                    accessTokenFactory: () => {
+                        const currentToken = this.getAuthToken();
+                        console.log('🔑 SignalR accessTokenFactory called, token:', currentToken ? `Present (length: ${currentToken.length})` : 'Missing');
+                        return currentToken || '';
+                    },
                     transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
                     skipNegotiation: false,
                     withCredentials: true // Required for CORS with AllowCredentials()
