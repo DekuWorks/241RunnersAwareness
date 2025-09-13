@@ -4,7 +4,7 @@
  */
 
 // Configure axios defaults
-axios.defaults.baseURL = "https://241runners-api.azurewebsites.net/api";
+axios.defaults.baseURL = "https://241runners-api-v2.azurewebsites.net/api";
 axios.defaults.withCredentials = false; // No cookies - use JWT only
 
 // Request interceptor to add JWT token

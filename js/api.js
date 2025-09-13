@@ -16,11 +16,11 @@ async function loadConfig() {
             console.log('🔧 Configuration loaded:', window.__CONFIG);
         } else {
             console.warn('⚠️ Could not load config.json, using defaults');
-            window.__CONFIG.API_BASE_URL = window.__CONFIG.API_BASE_URL || 'https://241runners-api.azurewebsites.net';
+            window.__CONFIG.API_BASE_URL = window.__CONFIG.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net';
         }
     } catch (error) {
         console.error('❌ Error loading configuration:', error);
-        window.__CONFIG.API_BASE_URL = window.__CONFIG.API_BASE_URL || 'https://241runners-api.azurewebsites.net';
+        window.__CONFIG.API_BASE_URL = window.__CONFIG.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net';
     }
 }
 
