@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using _241RunnersAPI.Data;
+using _241RunnersAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,9 @@ builder.Services.AddApplicationInsightsTelemetry();
 // Add Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Add validation service
+builder.Services.AddScoped<ValidationService>();
 
 // Add JWT Authentication - Environment variables take precedence
 var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? builder.Configuration["Jwt:Key"] ?? "your-super-secret-key-that-is-at-least-32-characters-long-for-241-runners";
@@ -47,13 +51,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 var path = context.HttpContext.Request.Path;
                 
                 // If the request is for the SignalR hub
-                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/adminHub"))
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
                 {
                     // Read the token out of the query string
                     context.Token = accessToken;
                 }
                 // Also check Authorization header for SignalR connections
-                else if (path.StartsWithSegments("/adminHub") || path.StartsWithSegments("/userHub"))
+                else if (path.StartsWithSegments("/hubs"))
                 {
                     var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
                     if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
@@ -71,15 +75,16 @@ builder.Services.AddAuthorization();
 // Add Health Checks
 builder.Services.AddHealthChecks();
 
-// Add CORS - Production domains only
-builder.Services.AddCors(o =>
-    o.AddPolicy("ProdCors", p => p
-        .WithOrigins("https://241runnersawareness.org","https://www.241runnersawareness.org")
+// Add CORS - Production domains only (no credentials for JWT auth)
+var allowedOrigin = "https://241runnersawareness.org";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("WebApp", p => p
+        .WithOrigins(allowedOrigin)
         .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials() // Required for SignalR
-        .SetIsOriginAllowedToAllowWildcardSubdomains() // Allow subdomains
-        .SetPreflightMaxAge(TimeSpan.FromSeconds(86400)))); // Cache preflight for 24 hours
+        .AllowAnyMethod());
+        // No AllowCredentials() - using JWT tokens instead
+});
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -138,24 +143,9 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-app.UseCors("ProdCors");   // put this BEFORE auth
+app.UseCors("WebApp");   // put this BEFORE auth
 
-// Add explicit CORS handling for OPTIONS requests
-app.Use(async (context, next) =>
-{
-    if (context.Request.Method == "OPTIONS")
-    {
-        context.Response.Headers["Access-Control-Allow-Origin"] = "https://241runnersawareness.org";
-        context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-        context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With";
-        context.Response.Headers["Access-Control-Allow-Credentials"] = "true";
-        context.Response.Headers["Access-Control-Max-Age"] = "86400";
-        context.Response.StatusCode = 200;
-        await context.Response.WriteAsync("");
-        return;
-    }
-    await next();
-});
+// CORS is handled by the policy above
 
 // Enable Swagger based on configuration
 var swaggerEnabled = builder.Configuration.GetValue<bool>("Swagger:Enabled", true);
@@ -208,10 +198,10 @@ app.MapGet("/api/health", () => new {
 });
 
 // Map SignalR hubs with explicit CORS
-app.MapHub<_241RunnersAPI.Hubs.AdminHub>("/adminHub")
-    .RequireCors("ProdCors");
-app.MapHub<_241RunnersAPI.Hubs.UserHub>("/userHub")
-    .RequireCors("ProdCors");
+app.MapHub<_241RunnersAPI.Hubs.AdminHub>("/hubs/notifications")
+    .RequireCors("WebApp");
+app.MapHub<_241RunnersAPI.Hubs.UserHub>("/hubs/user")
+    .RequireCors("WebApp");
 
 
 app.Run();

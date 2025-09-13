@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using _241RunnersAPI.Data;
 using _241RunnersAPI.Models;
+using _241RunnersAPI.Services;
 using System.Security.Claims;
 
 namespace _241RunnersAPI.Controllers
@@ -13,11 +14,13 @@ namespace _241RunnersAPI.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<AdminController> _logger;
+        private readonly ValidationService _validationService;
 
-        public AdminController(ApplicationDbContext context, ILogger<AdminController> logger)
+        public AdminController(ApplicationDbContext context, ILogger<AdminController> logger, ValidationService validationService)
         {
             _context = context;
             _logger = logger;
+            _validationService = validationService;
         }
 
         /// <summary>
@@ -481,6 +484,102 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
+        /// Update user profile (admin only) with comprehensive validation
+        /// </summary>
+        [HttpPut("users/{id}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateDto updateData)
+        {
+            try
+            {
+                // Validate the update data
+                var validationResult = await _validationService.ValidateUserUpdate(id, updateData);
+                
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(new { 
+                        success = false, 
+                        message = "Validation failed",
+                        errors = validationResult.Errors.Select(e => new { e.Message, e.Code }),
+                        warnings = validationResult.Warnings.Select(w => new { w.Message, w.Code })
+                    });
+                }
+
+                // Find the user to update
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
+                {
+                    return NotFound(new { success = false, message = "User not found" });
+                }
+
+                // Update user fields
+                user.FirstName = updateData.FirstName;
+                user.LastName = updateData.LastName;
+                user.PhoneNumber = updateData.PhoneNumber;
+                user.Address = updateData.Address;
+                user.City = updateData.City;
+                user.State = updateData.State;
+                user.ZipCode = updateData.ZipCode;
+                user.Organization = updateData.Organization;
+                user.Title = updateData.Title;
+                user.Credentials = updateData.Credentials;
+                user.Specialization = updateData.Specialization;
+                user.YearsOfExperience = updateData.YearsOfExperience;
+                user.EmergencyContactName = updateData.EmergencyContactName;
+                user.EmergencyContactPhone = updateData.EmergencyContactPhone;
+                user.EmergencyContactRelationship = updateData.EmergencyContactRelationship;
+                user.Notes = updateData.Notes;
+                user.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("User profile updated for user {UserId} ({Email})", user.Id, user.Email);
+
+                // Return updated user data
+                var userResponse = new UserResponseDto
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    FullName = user.FullName,
+                    Role = user.Role,
+                    IsActive = user.IsActive,
+                    CreatedAt = user.CreatedAt,
+                    LastLoginAt = user.LastLoginAt,
+                    UpdatedAt = user.UpdatedAt,
+                    PhoneNumber = user.PhoneNumber,
+                    Address = user.Address,
+                    City = user.City,
+                    State = user.State,
+                    ZipCode = user.ZipCode,
+                    Organization = user.Organization,
+                    Title = user.Title,
+                    Credentials = user.Credentials,
+                    Specialization = user.Specialization,
+                    YearsOfExperience = user.YearsOfExperience,
+                    EmergencyContactName = user.EmergencyContactName,
+                    EmergencyContactPhone = user.EmergencyContactPhone,
+                    EmergencyContactRelationship = user.EmergencyContactRelationship,
+                    IsEmailVerified = user.IsEmailVerified,
+                    IsPhoneVerified = user.IsPhoneVerified
+                };
+
+                return Ok(new { 
+                    success = true, 
+                    message = "User updated successfully",
+                    user = userResponse,
+                    warnings = validationResult.Warnings.Select(w => new { w.Message, w.Code })
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating user {UserId}", id);
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
         /// Get all users (temporary - no auth for debugging)
         /// </summary>
         [HttpGet("users-debug")]
@@ -532,7 +631,7 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
-        /// Delete a user (admin only)
+        /// Delete a user (admin only) with comprehensive validation
         /// </summary>
         [HttpDelete("users/{id}")]
         [Authorize(Roles = "admin")]
@@ -547,6 +646,21 @@ namespace _241RunnersAPI.Controllers
                     return Unauthorized(new { success = false, message = "Invalid authentication token" });
                 }
 
+                // Validate the deletion operation
+                var validationResult = await _validationService.ValidateUserDeletion(id, currentUserId);
+                
+                if (!validationResult.IsValid)
+                {
+                    var firstError = validationResult.Errors.First();
+                    return BadRequest(new { 
+                        success = false, 
+                        message = firstError.Message,
+                        code = firstError.Code,
+                        errors = validationResult.Errors.Select(e => new { e.Message, e.Code }),
+                        warnings = validationResult.Warnings.Select(w => new { w.Message, w.Code })
+                    });
+                }
+
                 // Find the user to delete
                 var userToDelete = await _context.Users.FindAsync(id);
                 if (userToDelete == null)
@@ -554,29 +668,12 @@ namespace _241RunnersAPI.Controllers
                     return NotFound(new { success = false, message = "User not found" });
                 }
 
-                // Prevent self-deletion
-                if (userToDelete.Id == currentUserId)
+                // Check if we should deactivate instead of delete
+                var hasRelatedData = validationResult.Warnings.Any(w => w.Code == "HAS_RELATED_DATA");
+                
+                if (hasRelatedData)
                 {
-                    return BadRequest(new { success = false, message = "You cannot delete your own account" });
-                }
-
-                // Prevent deletion of the last admin
-                if (userToDelete.Role == "admin")
-                {
-                    var adminCount = await _context.Users.CountAsync(u => u.Role == "admin" && u.IsActive);
-                    if (adminCount <= 1)
-                    {
-                        return BadRequest(new { success = false, message = "Cannot delete the last active admin user" });
-                    }
-                }
-
-                // Check for related data that might prevent deletion
-                var hasCases = await _context.Cases.AnyAsync(c => c.ReportedByUserId == id);
-                var hasRunners = await _context.Runners.AnyAsync(r => r.UserId == id);
-
-                if (hasCases || hasRunners)
-                {
-                    // Instead of hard delete, mark as inactive
+                    // Mark as inactive instead of deleting
                     userToDelete.IsActive = false;
                     userToDelete.UpdatedAt = DateTime.UtcNow;
                     
@@ -588,7 +685,8 @@ namespace _241RunnersAPI.Controllers
                     return Ok(new { 
                         success = true, 
                         message = "User marked as inactive due to related data (cases or runners)",
-                        action = "deactivated"
+                        action = "deactivated",
+                        warnings = validationResult.Warnings.Select(w => new { w.Message, w.Code })
                     });
                 }
 
@@ -613,7 +711,7 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
-        /// Delete an admin user (admin only)
+        /// Delete an admin user (admin only) with comprehensive validation
         /// </summary>
         [HttpDelete("admins/{id}")]
         [Authorize(Roles = "admin")]
@@ -628,6 +726,21 @@ namespace _241RunnersAPI.Controllers
                     return Unauthorized(new { success = false, message = "Invalid authentication token" });
                 }
 
+                // Validate the admin deletion operation
+                var validationResult = await _validationService.ValidateAdminDeletion(id, currentUserId);
+                
+                if (!validationResult.IsValid)
+                {
+                    var firstError = validationResult.Errors.First();
+                    return BadRequest(new { 
+                        success = false, 
+                        message = firstError.Message,
+                        code = firstError.Code,
+                        errors = validationResult.Errors.Select(e => new { e.Message, e.Code }),
+                        warnings = validationResult.Warnings.Select(w => new { w.Message, w.Code })
+                    });
+                }
+
                 // Find the admin to delete
                 var adminToDelete = await _context.Users.FindAsync(id);
                 if (adminToDelete == null)
@@ -635,32 +748,12 @@ namespace _241RunnersAPI.Controllers
                     return NotFound(new { success = false, message = "Admin not found" });
                 }
 
-                // Verify the user is actually an admin
-                if (adminToDelete.Role != "admin")
+                // Check if we should deactivate instead of delete
+                var hasRelatedData = validationResult.Warnings.Any(w => w.Code == "HAS_RELATED_DATA");
+                
+                if (hasRelatedData)
                 {
-                    return BadRequest(new { success = false, message = "User is not an admin" });
-                }
-
-                // Prevent self-deletion
-                if (adminToDelete.Id == currentUserId)
-                {
-                    return BadRequest(new { success = false, message = "You cannot delete your own admin account" });
-                }
-
-                // Prevent deletion of the last admin
-                var adminCount = await _context.Users.CountAsync(u => u.Role == "admin" && u.IsActive);
-                if (adminCount <= 1)
-                {
-                    return BadRequest(new { success = false, message = "Cannot delete the last active admin user" });
-                }
-
-                // Check for related data that might prevent deletion
-                var hasCases = await _context.Cases.AnyAsync(c => c.ReportedByUserId == id);
-                var hasRunners = await _context.Runners.AnyAsync(r => r.UserId == id);
-
-                if (hasCases || hasRunners)
-                {
-                    // Instead of hard delete, mark as inactive
+                    // Mark as inactive instead of deleting
                     adminToDelete.IsActive = false;
                     adminToDelete.UpdatedAt = DateTime.UtcNow;
                     
@@ -672,7 +765,8 @@ namespace _241RunnersAPI.Controllers
                     return Ok(new { 
                         success = true, 
                         message = "Admin marked as inactive due to related data (cases or runners)",
-                        action = "deactivated"
+                        action = "deactivated",
+                        warnings = validationResult.Warnings.Select(w => new { w.Message, w.Code })
                     });
                 }
 
