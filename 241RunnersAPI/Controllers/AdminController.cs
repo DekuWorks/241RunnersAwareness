@@ -791,6 +791,63 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
+        /// Delete a user (debug - no auth for testing)
+        /// </summary>
+        [HttpDelete("users-debug/{id}")]
+        public async Task<IActionResult> DeleteUserDebug(int id)
+        {
+            try
+            {
+                // Find the user to delete
+                var userToDelete = await _context.Users.FindAsync(id);
+                if (userToDelete == null)
+                {
+                    return NotFound(new { success = false, message = "User not found" });
+                }
+
+                // Check if user has related data (runners or cases)
+                var hasRunners = await _context.Runners.AnyAsync(r => r.UserId == id);
+                var hasCases = await _context.Cases.AnyAsync(c => c.ReportedByUserId == id);
+
+                if (hasRunners || hasCases)
+                {
+                    // Mark as inactive instead of deleting
+                    userToDelete.IsActive = false;
+                    userToDelete.UpdatedAt = DateTime.UtcNow;
+                    
+                    await _context.SaveChangesAsync();
+                    
+                    _logger.LogInformation("User {UserId} ({Email}) marked as inactive due to related data (DEBUG)", 
+                        userToDelete.Id, userToDelete.Email);
+                    
+                    return Ok(new { 
+                        success = true, 
+                        message = "User marked as inactive due to related data (cases or runners)",
+                        action = "deactivated"
+                    });
+                }
+
+                // Safe to delete - remove from database
+                _context.Users.Remove(userToDelete);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("User {UserId} ({Email}) deleted (DEBUG)", 
+                    userToDelete.Id, userToDelete.Email);
+
+                return Ok(new { 
+                    success = true, 
+                    message = "User deleted successfully",
+                    action = "deleted"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting user {UserId} (DEBUG)", id);
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
         /// Report client-side errors
         /// </summary>
         [HttpPost("errors")]
