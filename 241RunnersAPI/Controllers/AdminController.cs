@@ -10,7 +10,7 @@ namespace _241RunnersAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AdminController : ControllerBase
+    public class AdminController : BaseController
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<AdminController> _logger;
@@ -854,6 +854,241 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
+        /// Invite new user
+        /// </summary>
+        [HttpPost("invite-user")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> InviteUser([FromBody] InviteUserRequest request)
+        {
+            try
+            {
+                // Check if user already exists
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+                if (existingUser != null)
+                {
+                    return BadRequestResponse("User with this email already exists");
+                }
+
+                // Create new user
+                var user = new User
+                {
+                    Email = request.Email,
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
+                    Role = request.Role ?? "user",
+                    IsActive = true,
+                    IsEmailVerified = false,
+                    IsPhoneVerified = false,
+                    CreatedAt = DateTime.UtcNow,
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("TempPassword123!") // Temporary password
+                };
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                // In production, send invitation email
+                _logger.LogInformation($"User invited: {user.Email} with role: {user.Role}");
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "User invited successfully",
+                    user = new
+                    {
+                        id = user.Id,
+                        email = user.Email,
+                        firstName = user.FirstName,
+                        lastName = user.LastName,
+                        role = user.Role,
+                        isActive = user.IsActive,
+                        createdAt = user.CreatedAt
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inviting user");
+                return InternalServerErrorResponse("Failed to invite user");
+            }
+        }
+
+        /// <summary>
+        /// Bulk update user status
+        /// </summary>
+        [HttpPost("users/bulk-update-status")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> BulkUpdateUserStatus([FromBody] BulkUpdateStatusRequest request)
+        {
+            try
+            {
+                var users = await _context.Users.Where(u => request.UserIds.Contains(u.Id)).ToListAsync();
+                
+                if (!users.Any())
+                {
+                    return BadRequestResponse("No users found with the provided IDs");
+                }
+
+                foreach (var user in users)
+                {
+                    user.IsActive = request.IsActive;
+                    user.UpdatedAt = DateTime.UtcNow;
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    success = true,
+                    message = $"Updated {users.Count} users",
+                    updatedCount = users.Count
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error bulk updating user status");
+                return InternalServerErrorResponse("Failed to update user status");
+            }
+        }
+
+        /// <summary>
+        /// Bulk update user role
+        /// </summary>
+        [HttpPost("users/bulk-update-role")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> BulkUpdateUserRole([FromBody] BulkUpdateRoleRequest request)
+        {
+            try
+            {
+                var users = await _context.Users.Where(u => request.UserIds.Contains(u.Id)).ToListAsync();
+                
+                if (!users.Any())
+                {
+                    return BadRequestResponse("No users found with the provided IDs");
+                }
+
+                foreach (var user in users)
+                {
+                    user.Role = request.Role;
+                    user.UpdatedAt = DateTime.UtcNow;
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    success = true,
+                    message = $"Updated {users.Count} users",
+                    updatedCount = users.Count
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error bulk updating user role");
+                return InternalServerErrorResponse("Failed to update user role");
+            }
+        }
+
+        /// <summary>
+        /// Validate deletion
+        /// </summary>
+        [HttpGet("validate-deletion/{entityType}/{entityId}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> ValidateDeletion(string entityType, string entityId)
+        {
+            try
+            {
+                var canDelete = true;
+                var dependencies = new List<string>();
+
+                switch (entityType.ToLower())
+                {
+                    case "user":
+                        var userId = int.Parse(entityId);
+                        var user = await _context.Users.FindAsync(userId);
+                        if (user == null)
+                        {
+                            return NotFoundResponse("User not found");
+                        }
+
+                        // Check if user has any cases
+                        var userCases = await _context.Cases.Where(c => c.CreatedByUserId == userId).CountAsync();
+                        if (userCases > 0)
+                        {
+                            canDelete = false;
+                            dependencies.Add($"{userCases} cases");
+                        }
+
+                        // Check if user has any runners
+                        var userRunners = await _context.Runners.Where(r => r.CreatedByUserId == userId).CountAsync();
+                        if (userRunners > 0)
+                        {
+                            canDelete = false;
+                            dependencies.Add($"{userRunners} runners");
+                        }
+                        break;
+
+                    case "case":
+                        var caseId = int.Parse(entityId);
+                        var caseEntity = await _context.Cases.FindAsync(caseId);
+                        if (caseEntity == null)
+                        {
+                            return NotFoundResponse("Case not found");
+                        }
+                        // Cases can generally be deleted
+                        break;
+
+                    case "runner":
+                        var runnerId = int.Parse(entityId);
+                        var runner = await _context.Runners.FindAsync(runnerId);
+                        if (runner == null)
+                        {
+                            return NotFoundResponse("Runner not found");
+                        }
+
+                        // Check if runner has any cases
+                        var runnerCases = await _context.Cases.Where(c => c.RunnerId == runnerId).CountAsync();
+                        if (runnerCases > 0)
+                        {
+                            canDelete = false;
+                            dependencies.Add($"{runnerCases} cases");
+                        }
+                        break;
+
+                    default:
+                        return BadRequestResponse("Invalid entity type");
+                }
+
+                return Ok(new
+                {
+                    success = true,
+                    canDelete = canDelete,
+                    dependencies = dependencies,
+                    message = canDelete ? "Entity can be deleted" : "Entity has dependencies and cannot be deleted"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error validating deletion");
+                return InternalServerErrorResponse("Failed to validate deletion");
+            }
+        }
+
+        /// <summary>
+        /// Get data version for cache busting
+        /// </summary>
+        [HttpGet("data-version")]
+        [Authorize(Roles = "admin")]
+        public IActionResult GetDataVersion()
+        {
+            return Ok(new
+            {
+                success = true,
+                version = DateTime.UtcNow.Ticks.ToString(),
+                timestamp = DateTime.UtcNow
+            });
+        }
+
+        /// <summary>
         /// Delete a user (debug - no auth for testing)
         /// </summary>
         [HttpDelete("users-debug/{id}")]
@@ -958,5 +1193,25 @@ namespace _241RunnersAPI.Controllers
     {
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 25;
+    }
+
+    public class InviteUserRequest
+    {
+        public string Email { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string? Role { get; set; }
+    }
+
+    public class BulkUpdateStatusRequest
+    {
+        public List<int> UserIds { get; set; } = new();
+        public bool IsActive { get; set; }
+    }
+
+    public class BulkUpdateRoleRequest
+    {
+        public List<int> UserIds { get; set; } = new();
+        public string Role { get; set; } = string.Empty;
     }
 }

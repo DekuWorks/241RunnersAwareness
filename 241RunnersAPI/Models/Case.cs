@@ -23,6 +23,8 @@ namespace _241RunnersAPI.Models
         [ForeignKey("ReportedByUserId")]
         public User ReportedByUser { get; set; } = null!;
 
+        public int? CreatedByUserId { get; set; }
+
         [Required(ErrorMessage = "Case title is required")]
         [MaxLength(200, ErrorMessage = "Case title cannot exceed 200 characters")]
         public string Title { get; set; } = string.Empty;
@@ -37,6 +39,11 @@ namespace _241RunnersAPI.Models
         [Required(ErrorMessage = "Last seen location is required")]
         [MaxLength(500, ErrorMessage = "Last seen location cannot exceed 500 characters")]
         public string LastSeenLocation { get; set; } = string.Empty;
+
+        [MaxLength(500, ErrorMessage = "Location cannot exceed 500 characters")]
+        public string? Location { get; set; }
+
+        public DateTime? LastSeenAt { get; set; }
 
         [MaxLength(100, ErrorMessage = "Last seen time cannot exceed 100 characters")]
         public string? LastSeenTime { get; set; }
@@ -154,6 +161,11 @@ namespace _241RunnersAPI.Models
         [MaxLength(500, ErrorMessage = "Last seen location cannot exceed 500 characters")]
         public string LastSeenLocation { get; set; } = string.Empty;
 
+        [MaxLength(500, ErrorMessage = "Location cannot exceed 500 characters")]
+        public string? Location { get; set; }
+
+        public DateTime? LastSeenAt { get; set; }
+
         [MaxLength(100, ErrorMessage = "Last seen time cannot exceed 100 characters")]
         public string? LastSeenTime { get; set; }
 
@@ -224,6 +236,11 @@ namespace _241RunnersAPI.Models
         [Required(ErrorMessage = "Last seen location is required")]
         [MaxLength(500, ErrorMessage = "Last seen location cannot exceed 500 characters")]
         public string LastSeenLocation { get; set; } = string.Empty;
+
+        [MaxLength(500, ErrorMessage = "Location cannot exceed 500 characters")]
+        public string? Location { get; set; }
+
+        public DateTime? LastSeenAt { get; set; }
 
         [MaxLength(100, ErrorMessage = "Last seen time cannot exceed 100 characters")]
         public string? LastSeenTime { get; set; }

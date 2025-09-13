@@ -337,6 +337,148 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
+        /// Get public cases (for public consumption)
+        /// </summary>
+        [HttpGet("publiccases")]
+        public async Task<IActionResult> GetPublicCases([FromQuery] PublicCaseQuery query)
+        {
+            try
+            {
+                var casesQuery = _context.Cases
+                    .Where(c => c.IsPublic == true && c.Status != "Closed")
+                    .AsQueryable();
+
+                // Apply search filter
+                if (!string.IsNullOrEmpty(query.Search))
+                {
+                    var searchTerm = query.Search.ToLower();
+                    casesQuery = casesQuery.Where(c => 
+                        c.Runner.FirstName.ToLower().Contains(searchTerm) ||
+                        c.Runner.LastName.ToLower().Contains(searchTerm) ||
+                        c.Description.ToLower().Contains(searchTerm) ||
+                        c.Location.ToLower().Contains(searchTerm));
+                }
+
+                // Apply status filter
+                if (!string.IsNullOrEmpty(query.Status))
+                {
+                    casesQuery = casesQuery.Where(c => c.Status == query.Status);
+                }
+
+                // Apply region filter (simplified - in production, use proper geographic filtering)
+                if (!string.IsNullOrEmpty(query.Region))
+                {
+                    var region = query.Region.ToLower();
+                    if (region == "houston")
+                    {
+                        casesQuery = casesQuery.Where(c => 
+                            c.Location.ToLower().Contains("houston") ||
+                            c.Location.ToLower().Contains("texas") ||
+                            c.Location.ToLower().Contains("tx"));
+                    }
+                }
+
+                // Get total count
+                var totalCount = await casesQuery.CountAsync();
+
+                // Apply pagination
+                var cases = await casesQuery
+                    .OrderByDescending(c => c.CreatedAt)
+                    .Skip((query.Page - 1) * query.PageSize)
+                    .Take(query.PageSize)
+                    .Select(c => new
+                    {
+                        id = c.Id,
+                        runnerId = c.RunnerId,
+                        runnerName = $"{c.Runner.FirstName} {c.Runner.LastName}",
+                        runnerAge = c.Runner.Age,
+                        runnerGender = c.Runner.Gender,
+                        runnerPhoto = c.Runner.ProfileImageUrl,
+                        description = c.Description,
+                        location = c.Location,
+                        status = c.Status,
+                        lastSeen = c.LastSeenAt,
+                        createdAt = c.CreatedAt,
+                        isPublic = c.IsPublic
+                    })
+                    .ToListAsync();
+
+                return Ok(new
+                {
+                    success = true,
+                    cases = cases,
+                    pagination = new
+                    {
+                        page = query.Page,
+                        pageSize = query.PageSize,
+                        totalCount = totalCount,
+                        totalPages = (int)Math.Ceiling((double)totalCount / query.PageSize)
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting public cases");
+                return InternalServerErrorResponse("Failed to get public cases");
+            }
+        }
+
+        /// <summary>
+        /// Get public cases statistics for a region
+        /// </summary>
+        [HttpGet("publiccases/stats/{region}")]
+        public async Task<IActionResult> GetPublicCasesStats(string region)
+        {
+            try
+            {
+                var casesQuery = _context.Cases
+                    .Where(c => c.IsPublic == true)
+                    .AsQueryable();
+
+                // Apply region filter
+                if (!string.IsNullOrEmpty(region))
+                {
+                    var regionLower = region.ToLower();
+                    if (regionLower == "houston")
+                    {
+                        casesQuery = casesQuery.Where(c => 
+                            c.Location.ToLower().Contains("houston") ||
+                            c.Location.ToLower().Contains("texas") ||
+                            c.Location.ToLower().Contains("tx"));
+                    }
+                }
+
+                var totalCases = await casesQuery.CountAsync();
+                var activeCases = await casesQuery.Where(c => c.Status == "Active").CountAsync();
+                var resolvedCases = await casesQuery.Where(c => c.Status == "Resolved").CountAsync();
+                var closedCases = await casesQuery.Where(c => c.Status == "Closed").CountAsync();
+
+                var recentCases = await casesQuery
+                    .Where(c => c.CreatedAt >= DateTime.UtcNow.AddDays(-30))
+                    .CountAsync();
+
+                return Ok(new
+                {
+                    success = true,
+                    stats = new
+                    {
+                        totalCases = totalCases,
+                        activeCases = activeCases,
+                        resolvedCases = resolvedCases,
+                        closedCases = closedCases,
+                        recentCases = recentCases,
+                        region = region
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting public cases stats");
+                return InternalServerErrorResponse("Failed to get public cases statistics");
+            }
+        }
+
+        /// <summary>
         /// Delete a case
         /// </summary>
         [HttpDelete("{id}")]
@@ -399,5 +541,14 @@ namespace _241RunnersAPI.Controllers
         public string? Title { get; set; }
         public string? Description { get; set; }
         public string? Status { get; set; }
+    }
+
+    public class PublicCaseQuery
+    {
+        public int Page { get; set; } = 1;
+        public int PageSize { get; set; } = 20;
+        public string? Search { get; set; }
+        public string? Status { get; set; }
+        public string? Region { get; set; }
     }
 }

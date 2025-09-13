@@ -13,7 +13,7 @@ namespace _241RunnersAPI.Controllers
 {
     [ApiController]
     [Route("api/auth")]
-    public class AuthController : ControllerBase
+    public class AuthController : BaseController
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<AuthController> _logger;
@@ -193,6 +193,283 @@ namespace _241RunnersAPI.Controllers
             // In a stateless JWT system, logout is handled client-side
             // This endpoint exists for consistency and future token blacklisting
             return Ok(new { ok = true });
+        }
+
+        /// <summary>
+        /// Verify JWT token
+        /// </summary>
+        [HttpPost("verify")]
+        [Authorize]
+        public async Task<IActionResult> VerifyToken()
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                var user = await _context.Users.FindAsync(userId);
+                
+                if (user == null)
+                {
+                    return UnauthorizedResponse("User not found");
+                }
+
+                return Ok(new
+                {
+                    success = true,
+                    user = new
+                    {
+                        id = user.Id,
+                        email = user.Email,
+                        firstName = user.FirstName,
+                        lastName = user.LastName,
+                        role = user.Role,
+                        isActive = user.IsActive
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error verifying token");
+                return InternalServerErrorResponse("Failed to verify token");
+            }
+        }
+
+        /// <summary>
+        /// Get current user profile
+        /// </summary>
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                var user = await _context.Users.FindAsync(userId);
+                
+                if (user == null)
+                {
+                    return UnauthorizedResponse("User not found");
+                }
+
+                return Ok(new
+                {
+                    success = true,
+                    user = new
+                    {
+                        id = user.Id,
+                        email = user.Email,
+                        firstName = user.FirstName,
+                        lastName = user.LastName,
+                        fullName = $"{user.FirstName} {user.LastName}".Trim(),
+                        role = user.Role,
+                        isActive = user.IsActive,
+                        phoneNumber = user.PhoneNumber,
+                        address = user.Address,
+                        city = user.City,
+                        state = user.State,
+                        zipCode = user.ZipCode,
+                        organization = user.Organization,
+                        title = user.Title,
+                        credentials = user.Credentials,
+                        specialization = user.Specialization,
+                        yearsOfExperience = user.YearsOfExperience,
+                        profileImageUrl = user.ProfileImageUrl,
+                        emergencyContactName = user.EmergencyContactName,
+                        emergencyContactPhone = user.EmergencyContactPhone,
+                        emergencyContactRelationship = user.EmergencyContactRelationship,
+                        isEmailVerified = user.IsEmailVerified,
+                        isPhoneVerified = user.IsPhoneVerified,
+                        createdAt = user.CreatedAt,
+                        lastLoginAt = user.LastLoginAt,
+                        updatedAt = user.UpdatedAt
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting current user");
+                return InternalServerErrorResponse("Failed to get user profile");
+            }
+        }
+
+        /// <summary>
+        /// Update user profile
+        /// </summary>
+        [HttpPut("profile")]
+        [Authorize]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                var user = await _context.Users.FindAsync(userId);
+                
+                if (user == null)
+                {
+                    return UnauthorizedResponse("User not found");
+                }
+
+                // Update user fields
+                if (!string.IsNullOrEmpty(request.FirstName))
+                    user.FirstName = request.FirstName;
+                if (!string.IsNullOrEmpty(request.LastName))
+                    user.LastName = request.LastName;
+                if (!string.IsNullOrEmpty(request.PhoneNumber))
+                    user.PhoneNumber = request.PhoneNumber;
+                if (!string.IsNullOrEmpty(request.Address))
+                    user.Address = request.Address;
+                if (!string.IsNullOrEmpty(request.City))
+                    user.City = request.City;
+                if (!string.IsNullOrEmpty(request.State))
+                    user.State = request.State;
+                if (!string.IsNullOrEmpty(request.ZipCode))
+                    user.ZipCode = request.ZipCode;
+                if (!string.IsNullOrEmpty(request.Organization))
+                    user.Organization = request.Organization;
+                if (!string.IsNullOrEmpty(request.Title))
+                    user.Title = request.Title;
+                if (!string.IsNullOrEmpty(request.Credentials))
+                    user.Credentials = request.Credentials;
+                if (!string.IsNullOrEmpty(request.Specialization))
+                    user.Specialization = request.Specialization;
+                if (request.YearsOfExperience.HasValue)
+                    user.YearsOfExperience = request.YearsOfExperience.ToString();
+                if (!string.IsNullOrEmpty(request.ProfileImageUrl))
+                    user.ProfileImageUrl = request.ProfileImageUrl;
+                if (!string.IsNullOrEmpty(request.EmergencyContactName))
+                    user.EmergencyContactName = request.EmergencyContactName;
+                if (!string.IsNullOrEmpty(request.EmergencyContactPhone))
+                    user.EmergencyContactPhone = request.EmergencyContactPhone;
+                if (!string.IsNullOrEmpty(request.EmergencyContactRelationship))
+                    user.EmergencyContactRelationship = request.EmergencyContactRelationship;
+
+                user.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Profile updated successfully",
+                    user = new
+                    {
+                        id = user.Id,
+                        email = user.Email,
+                        firstName = user.FirstName,
+                        lastName = user.LastName,
+                        fullName = $"{user.FirstName} {user.LastName}".Trim(),
+                        role = user.Role,
+                        isActive = user.IsActive,
+                        phoneNumber = user.PhoneNumber,
+                        address = user.Address,
+                        city = user.City,
+                        state = user.State,
+                        zipCode = user.ZipCode,
+                        organization = user.Organization,
+                        title = user.Title,
+                        credentials = user.Credentials,
+                        specialization = user.Specialization,
+                        yearsOfExperience = user.YearsOfExperience,
+                        profileImageUrl = user.ProfileImageUrl,
+                        emergencyContactName = user.EmergencyContactName,
+                        emergencyContactPhone = user.EmergencyContactPhone,
+                        emergencyContactRelationship = user.EmergencyContactRelationship,
+                        isEmailVerified = user.IsEmailVerified,
+                        isPhoneVerified = user.IsPhoneVerified,
+                        updatedAt = user.UpdatedAt
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating profile");
+                return InternalServerErrorResponse("Failed to update profile");
+            }
+        }
+
+        /// <summary>
+        /// Change password
+        /// </summary>
+        [HttpPost("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                var user = await _context.Users.FindAsync(userId);
+                
+                if (user == null)
+                {
+                    return UnauthorizedResponse("User not found");
+                }
+
+                // Verify current password
+                if (!BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.PasswordHash))
+                {
+                    return BadRequestResponse("Current password is incorrect");
+                }
+
+                // Update password
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+                user.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Password changed successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error changing password");
+                return InternalServerErrorResponse("Failed to change password");
+            }
+        }
+
+        /// <summary>
+        /// Reset password
+        /// </summary>
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+                
+                if (user == null)
+                {
+                    // Don't reveal if email exists
+                    return Ok(new
+                    {
+                        success = true,
+                        message = "If the email exists, a password reset link has been sent"
+                    });
+                }
+
+                // Generate reset token (simplified - in production, use proper token system)
+                var resetToken = Guid.NewGuid().ToString();
+                user.ResetToken = resetToken;
+                user.ResetTokenExpires = DateTime.UtcNow.AddHours(1);
+                user.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                // In production, send email with reset link
+                _logger.LogInformation($"Password reset token for {user.Email}: {resetToken}");
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "If the email exists, a password reset link has been sent"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error resetting password");
+                return InternalServerErrorResponse("Failed to reset password");
+            }
         }
 
         /// <summary>

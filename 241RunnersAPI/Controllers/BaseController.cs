@@ -83,5 +83,29 @@ namespace _241RunnersAPI.Controllers
                 }
             });
         }
+
+        protected IActionResult BadRequestResponse(string message = "Bad request")
+        {
+            return BadRequest(new
+            {
+                error = new
+                {
+                    code = "BAD_REQUEST",
+                    message
+                }
+            });
+        }
+
+        protected IActionResult InternalServerErrorResponse(string message = "Internal server error")
+        {
+            return StatusCode(500, new
+            {
+                error = new
+                {
+                    code = "INTERNAL_SERVER_ERROR",
+                    message
+                }
+            });
+        }
     }
 }

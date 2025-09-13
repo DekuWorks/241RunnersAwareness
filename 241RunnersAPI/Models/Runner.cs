@@ -17,10 +17,18 @@ namespace _241RunnersAPI.Models
         [ForeignKey("UserId")]
         public User User { get; set; } = null!;
 
+        public int? CreatedByUserId { get; set; }
+
         [Required(ErrorMessage = "Runner name is required")]
         [MaxLength(200, ErrorMessage = "Runner name cannot exceed 200 characters")]
         [RegularExpression(@"^[a-zA-Z\s\-'\.]+$", ErrorMessage = "Runner name can only contain letters, spaces, hyphens, apostrophes, and periods")]
         public string Name { get; set; } = string.Empty;
+
+        [MaxLength(100, ErrorMessage = "First name cannot exceed 100 characters")]
+        public string? FirstName { get; set; }
+
+        [MaxLength(100, ErrorMessage = "Last name cannot exceed 100 characters")]
+        public string? LastName { get; set; }
 
         [Required(ErrorMessage = "Date of birth is required")]
         public DateTime DateOfBirth { get; set; }
