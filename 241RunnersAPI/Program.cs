@@ -117,6 +117,24 @@ app.MapGet("/api/test", () => Results.Ok(new {
     environment = app.Environment.EnvironmentName
 }));
 
+// Test endpoint to check database connectivity
+app.MapGet("/api/test-db", async (ApplicationDbContext db) => {
+    try {
+        var userCount = await db.Users.CountAsync();
+        return Results.Ok(new { 
+            message = "Database is working", 
+            userCount = userCount,
+            timestamp = DateTime.UtcNow
+        });
+    } catch (Exception ex) {
+        return Results.Ok(new { 
+            message = "Database error", 
+            error = ex.Message,
+            timestamp = DateTime.UtcNow
+        });
+    }
+});
+
 // Health check endpoints
 app.MapGet("/healthz", () => Results.Ok(new { 
     status = "ok", 
