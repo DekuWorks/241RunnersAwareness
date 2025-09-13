@@ -142,6 +142,24 @@ app.MapGet("/api/test-controllers", () => Results.Ok(new {
     environment = app.Environment.EnvironmentName
 }));
 
+// Test endpoint to check auth without Entity Framework
+app.MapPost("/api/test-auth", (HttpContext context) => {
+    try {
+        var request = context.Request;
+        return Results.Ok(new { 
+            message = "Auth test endpoint working", 
+            method = request.Method,
+            timestamp = DateTime.UtcNow
+        });
+    } catch (Exception ex) {
+        return Results.Ok(new { 
+            message = "Auth test error", 
+            error = ex.Message,
+            timestamp = DateTime.UtcNow
+        });
+    }
+});
+
 // Health check endpoints
 app.MapGet("/healthz", () => Results.Ok(new { 
     status = "ok", 
