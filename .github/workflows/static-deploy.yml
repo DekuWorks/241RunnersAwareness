@@ -26,6 +26,7 @@ jobs:
       contents: read
       pages: write
       id-token: write
+      actions: read
 
     steps:
       - name: Checkout code
@@ -47,3 +48,4 @@ jobs:
         run: |
           echo "✅ Static site deployment completed successfully"
           echo "📄 Pages deployed to: https://241runnersawareness.org"
+          echo "🔗 Custom domain: 241runnersawareness.org"
