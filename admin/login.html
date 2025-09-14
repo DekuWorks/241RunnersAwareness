@@ -245,16 +245,7 @@
         // Note: tokenKey, roleKey, userKey, and API_BASE_URL are already declared in admin-auth.js
         
         // Wait for admin-auth.js to load and set API_BASE_URL, then override if needed
-<<<<<<< HEAD
         // This will be handled in the main DOMContentLoaded event below
-=======
-        document.addEventListener('DOMContentLoaded', function() {
-            // Override API_BASE_URL if needed (admin-auth.js will load from config.json)
-            if (typeof API_BASE_URL === 'undefined') {
-                window.API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
-            }
-        });
->>>>>>> 9c2d1e41b85bf8c3fae80a326c037596b48feb6c
         
         // Note: loadConfig, saveAuthData, and isValidEmail functions are already defined in admin-auth.js
         
@@ -349,15 +340,12 @@
         
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-<<<<<<< HEAD
             // Override API_BASE_URL if needed (admin-auth.js will load from config.json)
             if (typeof API_BASE_URL === 'undefined') {
                 window.API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
             }
             console.log('Login page loaded, API_BASE_URL:', window.API_BASE_URL);
             
-=======
->>>>>>> 9c2d1e41b85bf8c3fae80a326c037596b48feb6c
             // Check if already authenticated
             if (checkExistingAuth()) {
                 return;
