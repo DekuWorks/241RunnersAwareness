@@ -15,7 +15,7 @@ class RealtimeClient {
     async initialize() {
         try {
             // Get API base URL from config
-            const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net';
+            const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net';
             const hubUrl = apiBaseUrl.replace('/api', '') + '/hubs/notifications';
             
             console.log('🔌 Connecting to SignalR hub:', hubUrl);

@@ -4271,7 +4271,7 @@
         // API Configuration - Fixed URL without trailing slash
         // Note: API_BASE_URL may be set by admin-auth.js, so we check for it first
         if (typeof API_BASE_URL === 'undefined') {
-            window.API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+            window.API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
         }
         
         // Browser compatibility checks
@@ -4371,13 +4371,30 @@
         function isAuthenticated() {
             console.log("🔍 isAuthenticated() called");
             
-            // TEMPORARY: Allow access while waiting for API deployment
-            console.log("⚠️ TEMPORARY: Allowing admin access while waiting for API deployment");
-            return true;
+            const token = storage.get('ra_admin_token') || storage.get('jwtToken');
+            if (!token) {
+                console.log("❌ No authentication token found");
+                return false;
+            }
             
-            const token = storage.get('ra_admin_token') || storage.get('jwtToken') || storage.get('jwtToken');
-            console.log("🔍 Retrieved token:", token ? "Present (length: " + token.length + ")" : "Missing");
-            const role = storage.get('ra_admin_role');
+            // Check if token is expired
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const now = Math.floor(Date.now() / 1000);
+                if (payload.exp && payload.exp < now) {
+                    console.log("❌ Token expired");
+                    storage.remove('ra_admin_token');
+                    storage.remove('jwtToken');
+                    return false;
+                }
+                console.log("✅ Token is valid");
+                return true;
+            } catch (error) {
+                console.log("❌ Invalid token format:", error);
+                storage.remove('ra_admin_token');
+                storage.remove('jwtToken');
+                return false;
+            }
             
             // Check if token is valid JWT format and not expired
             if (token) {
@@ -4418,53 +4435,20 @@
         function requireAdmin() {
             console.log('🔐 requireAdmin() called');
             
-            // TEMPORARY: Allow access while waiting for API deployment
-            console.log("⚠️ TEMPORARY: Allowing admin access while waiting for API deployment");
-            return true;
+            if (!isAuthenticated()) {
+                console.log('❌ User not authenticated, redirecting to login');
+                window.location.href = '/admin/login.html';
+                return false;
+            }
             
-            // Debug authentication step by step
-            const token = storage.get('ra_admin_token') || storage.get('jwtToken');
             const role = storage.get('ra_admin_role');
-            const user = storage.get('ra_admin_user');
-            
-            console.log('🔍 Authentication Debug:');
-            console.log('  - Token:', token ? `Present (length: ${token.length})` : 'Missing');
-            console.log('  - Role:', role || 'Missing');
-            console.log('  - User:', user ? 'Present' : 'Missing');
-            
-            // Also check direct localStorage for debugging
-            const directToken = localStorage.getItem('ra_admin_token') || localStorage.getItem('jwtToken');
-            const directRole = localStorage.getItem('ra_admin_role');
-            console.log('🔍 Direct localStorage Debug:');
-            console.log('  - Direct Token:', directToken ? `Present (length: ${directToken.length})` : 'Missing');
-            console.log('  - Direct Role:', directRole || 'Missing');
-            
-            if (!token) {
-                console.log('❌ No token found, redirecting to login');
-                console.log('🔍 Full localStorage contents:', Object.keys(localStorage).filter(k => k.includes('admin')));
-                window.location.href = "/admin/login.html";
+            if (role !== 'admin') {
+                console.log('❌ User not admin, redirecting to login');
+                window.location.href = '/admin/login.html';
                 return false;
             }
             
-            if (!role) {
-                console.log('❌ No role found, redirecting to login');
-                window.location.href = "/admin/login.html";
-                return false;
-            }
-            
-            if (role.toLowerCase() !== 'admin') {
-                console.log('❌ Invalid role:', role, 'redirecting to login');
-                window.location.href = "/admin/login.html";
-                return false;
-            }
-            
-            if (typeof token !== 'string' || token.length <= 10) {
-                console.log('❌ Invalid token format or length, redirecting to login');
-                window.location.href = "/admin/login.html";
-                return false;
-            }
-            
-            console.log('✅ Authentication successful');
+            console.log('✅ Admin access granted');
             return true;
         }
         
@@ -4480,9 +4464,8 @@
             const token = storage.get('ra_admin_token') || storage.get('jwtToken') || storage.get('jwtToken');
             console.log("🔍 Retrieved token:", token ? "Present (length: " + token.length + ")" : "Missing");
             
-            // TEMPORARY: Return empty headers while waiting for API deployment
             if (!token) {
-                console.log("⚠️ TEMPORARY: No token found, using empty headers for API calls");
+                console.log("❌ No token found for API calls");
                 return {};
             }
             
@@ -4635,9 +4618,8 @@
                 console.log('📊 Loading dashboard data...');
                 showLoadingState();
                 
-                // TEMPORARY: Set fallback data while waiting for API deployment
-                console.log('⚠️ TEMPORARY: Setting fallback data while waiting for API deployment');
-                setFallbackDashboardData();
+                // Load dashboard data from API
+                console.log('📊 Loading dashboard data from API...');
                 
                 // Load all data in parallel for better performance
                 const [usersData, runnersData, publicCasesData, healthData, adminsData] = await Promise.allSettled([
@@ -4710,7 +4692,7 @@
                 console.log('👥 Loading users from API...');
                 
                 // Try to load from API first, fallback to mock data
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
                 console.log('📡 Users API URL:', `${apiUrl}/admin/users-debug`);
                 
                 try {
@@ -4851,7 +4833,7 @@
         
         async function checkSystemStatus() {
             try {
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
                 // Use the cases endpoint as a health check since it's public and always available
                 const response = await fetch(`${apiUrl}/cases`, {
                     method: 'GET',
@@ -5016,7 +4998,7 @@
             try {
                 showToast('Deleting user...', 'info', 2000);
                 
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
                 const token = storage.get('ra_admin_token') || storage.get('jwtToken');
                 
                 console.log('🔍 Delete User Debug:', {
@@ -5117,7 +5099,7 @@
             try {
                 showToast('Deleting admin...', 'info', 2000);
                 
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
                 const token = storage.get('ra_admin_token') || storage.get('jwtToken');
                 
                 console.log('🔍 Delete Admin Debug:', {
@@ -5204,17 +5186,25 @@
                     return;
                 }
                 
-                // TEMPORARY: Use fallback admin data while waiting for API deployment
-                console.log("⚠️ TEMPORARY: Using fallback admin data while waiting for API deployment");
-                currentAdmin = {
-                    firstName: 'Admin',
-                    lastName: 'User',
-                    email: 'admin@241runnersawareness.org',
-                    role: 'admin',
-                    organization: '241 Runners Awareness'
-                };
-                updateAdminProfile();
-                return;
+                // Load admin data from API
+                console.log("📊 Loading admin data from API...");
+                const response = await fetch(`${window.API_BASE_URL}/auth/me`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...authHeader()
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    currentAdmin = data.data || data;
+                    console.log("✅ Admin data loaded from API:", currentAdmin);
+                    updateAdminProfile();
+                } else {
+                    console.error("❌ Failed to load admin data:", response.status, response.statusText);
+                    throw new Error(`Failed to load admin data: ${response.status}`);
+                }
 
                 // Try to get admin data from localStorage first
                 const savedUser = storage.get('ra_admin_user');
@@ -5318,7 +5308,7 @@
                 
                 console.log('Sending invitation:', inviteData);
                 
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
                 const response = await fetch(`${apiUrl}/admin/invite-user`, {
                     method: 'POST',
                     headers: {
@@ -5388,7 +5378,7 @@
             
             try {
                 const userIds = Array.from(selectedRows).map(row => row.dataset.userId);
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
                 
                 const response = await fetch(`${apiUrl}/admin/users/bulk-update-status`, {
                     method: 'POST',
@@ -5435,7 +5425,7 @@
             
             try {
                 const userIds = Array.from(selectedRows).map(row => row.dataset.userId);
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
                 
                 const response = await fetch(`${apiUrl}/admin/users/bulk-update-role`, {
                     method: 'POST',
@@ -6592,7 +6582,7 @@
         
         // Quick action functions
         function openSwaggerDocs() {
-            window.open('https://241runners-api.azurewebsites.net/swagger', '_blank');
+            window.open('https://241runners-api-v2.azurewebsites.net/swagger', '_blank');
         }
         
         function viewSystemLogs() {
@@ -8668,7 +8658,7 @@
         async function initializeRealTimeUpdates() {
             try {
                 
-                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
                 const hubUrl = apiBaseUrl.replace('/api', '') + '/hubs/notifications';
                 
                 console.log('🔌 Connecting to SignalR hub:', hubUrl);
