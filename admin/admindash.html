@@ -4271,7 +4271,7 @@
         // API Configuration - Fixed URL without trailing slash
         // Note: API_BASE_URL may be set by admin-auth.js, so we check for it first
         if (typeof API_BASE_URL === 'undefined') {
-            window.API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
+            window.API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
         }
         
         // Browser compatibility checks
@@ -4710,7 +4710,7 @@
                 console.log('👥 Loading users from API...');
                 
                 // Try to load from API first, fallback to mock data
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
                 console.log('📡 Users API URL:', `${apiUrl}/admin/users-debug`);
                 
                 try {
@@ -4851,7 +4851,7 @@
         
         async function checkSystemStatus() {
             try {
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
                 // Use the cases endpoint as a health check since it's public and always available
                 const response = await fetch(`${apiUrl}/cases`, {
                     method: 'GET',
@@ -5016,7 +5016,7 @@
             try {
                 showToast('Deleting user...', 'info', 2000);
                 
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
                 const token = storage.get('ra_admin_token') || storage.get('jwtToken');
                 
                 console.log('🔍 Delete User Debug:', {
@@ -5117,7 +5117,7 @@
             try {
                 showToast('Deleting admin...', 'info', 2000);
                 
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
                 const token = storage.get('ra_admin_token') || storage.get('jwtToken');
                 
                 console.log('🔍 Delete Admin Debug:', {
@@ -5318,7 +5318,7 @@
                 
                 console.log('Sending invitation:', inviteData);
                 
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
                 const response = await fetch(`${apiUrl}/admin/invite-user`, {
                     method: 'POST',
                     headers: {
@@ -5388,7 +5388,7 @@
             
             try {
                 const userIds = Array.from(selectedRows).map(row => row.dataset.userId);
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
                 
                 const response = await fetch(`${apiUrl}/admin/users/bulk-update-status`, {
                     method: 'POST',
@@ -5435,7 +5435,7 @@
             
             try {
                 const userIds = Array.from(selectedRows).map(row => row.dataset.userId);
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
                 
                 const response = await fetch(`${apiUrl}/admin/users/bulk-update-role`, {
                     method: 'POST',
@@ -6592,7 +6592,7 @@
         
         // Quick action functions
         function openSwaggerDocs() {
-            window.open('https://241runners-api-v2.azurewebsites.net/swagger', '_blank');
+            window.open('https://241runners-api.azurewebsites.net/swagger', '_blank');
         }
         
         function viewSystemLogs() {
@@ -8667,12 +8667,8 @@
         // Initialize SignalR connection for real-time updates
         async function initializeRealTimeUpdates() {
             try {
-                // TEMPORARY: Disable SignalR while waiting for API deployment
-                console.log('⚠️ TEMPORARY: SignalR connection disabled while waiting for API deployment');
-                updateConnectionStatus(false, false);
-                return;
                 
-                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
                 const hubUrl = apiBaseUrl.replace('/api', '') + '/hubs/notifications';
                 
                 console.log('🔌 Connecting to SignalR hub:', hubUrl);

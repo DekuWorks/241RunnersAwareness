@@ -14,9 +14,15 @@ class RealtimeClient {
 
     async initialize() {
         try {
+            // Get API base URL from config
+            const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api.azurewebsites.net';
+            const hubUrl = apiBaseUrl.replace('/api', '') + '/hubs/notifications';
+            
+            console.log('🔌 Connecting to SignalR hub:', hubUrl);
+            
             // Create SignalR connection
             this.connection = new signalR.HubConnectionBuilder()
-                .withUrl("https://241runners-api-v2.azurewebsites.net/hubs/notifications", {
+                .withUrl(hubUrl, {
                     accessTokenFactory: () => localStorage.getItem("jwtToken") || localStorage.getItem("ra_admin_token") || ""
                     // Do NOT set withCredentials here
                 })
