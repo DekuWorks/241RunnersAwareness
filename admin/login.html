@@ -395,6 +395,7 @@
                     console.log('🔍 API Response Details:');
                     console.log('  - Success:', data.success);
                     console.log('  - Message:', data.message);
+                    console.log('  - AccessToken present:', !!data.accessToken);
                     console.log('  - Token present:', !!data.token);
                     console.log('  - User present:', !!data.user);
                     if (data.user) {
@@ -412,8 +413,9 @@
                     }
                     
                     // Save authentication data to localStorage
-                    saveAuthData(data.token, data.user);
-                    console.log('Auth data saved - Token:', data.token ? 'Present' : 'Missing');
+                    const token = data.accessToken || data.token;
+                    saveAuthData(token, data.user);
+                    console.log('Auth data saved - Token:', token ? 'Present' : 'Missing');
                     console.log('Auth data saved - User role:', data.user.role);
                     
                     // Verify data was saved correctly
