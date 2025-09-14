@@ -21,7 +21,7 @@ builder.Services.AddApplicationInsightsTelemetry(options =>
     options.EnableEventCounterCollectionModule = true; // Enable event counters
     options.EnableDependencyTrackingTelemetryModule = true; // Enable dependency tracking
     options.EnableAppServicesHeartbeatTelemetryModule = true; // Enable heartbeat
-});
+});let
 
 // Add services to the container
 builder.Services.AddControllers();

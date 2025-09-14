@@ -686,6 +686,59 @@ namespace _241RunnersAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Reset password for Marcus admin account (TEMPORARY - for development only)
+        /// </summary>
+        [HttpPost("reset-marcus-password")]
+        public async Task<IActionResult> ResetMarcusPassword()
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == "dekuworks1@gmail.com");
+                if (user == null)
+                {
+                    return NotFound(new
+                    {
+                        error = new
+                        {
+                            code = "USER_NOT_FOUND",
+                            message = "Marcus admin user not found"
+                        }
+                    });
+                }
+
+                // Reset password to marcus2025
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword("marcus2025");
+                user.IsActive = true;
+                user.IsEmailVerified = true;
+                user.IsPhoneVerified = true;
+                user.Role = "admin";
+                user.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Marcus admin password reset successfully");
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Marcus admin password reset successfully",
+                    data = new
+                    {
+                        email = user.Email,
+                        role = user.Role,
+                        isActive = user.IsActive,
+                        updatedAt = user.UpdatedAt
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error resetting Marcus admin password");
+                return InternalServerErrorResponse("An error occurred while resetting password");
+            }
+        }
+
         private string GenerateJwtToken(User user)
         {
             var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? _configuration["Jwt:Key"] ?? "your-super-secret-key-that-is-at-least-32-characters-long-for-241-runners";
