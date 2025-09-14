@@ -89,7 +89,7 @@ namespace _241RunnersAPI.Controllers
         /// Create a notification (admin only)
         /// </summary>
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateNotification([FromBody] CreateNotificationRequest request)
         {
             try

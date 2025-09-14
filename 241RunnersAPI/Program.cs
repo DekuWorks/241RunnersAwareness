@@ -29,7 +29,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Add SignalR
-// builder.Services.AddSignalR();
+builder.Services.AddSignalR();
 
 // Add Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -173,7 +173,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Map SignalR hubs
-// app.MapHub<NotificationHub>("/hubs/notifications");
+app.MapHub<NotificationHub>("/hubs/notifications");
 
 // Add API info endpoint
 app.MapGet("/api", () => Results.Ok(new { 

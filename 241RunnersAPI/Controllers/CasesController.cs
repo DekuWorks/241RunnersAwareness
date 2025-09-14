@@ -174,14 +174,44 @@ namespace _241RunnersAPI.Controllers
         {
             try
             {
-                // Validate request
-                if (string.IsNullOrEmpty(request.IndividualId) || string.IsNullOrEmpty(request.Title))
+                // Comprehensive input validation
+                var validationErrors = new Dictionary<string, string[]>();
+                
+                // Individual ID validation
+                if (string.IsNullOrWhiteSpace(request.IndividualId))
                 {
-                    return ValidationErrorResponse(new Dictionary<string, string[]>
-                    {
-                        { "individualId", new[] { "Individual ID is required" } },
-                        { "title", new[] { "Title is required" } }
-                    });
+                    validationErrors["individualId"] = new[] { "Individual ID is required" };
+                }
+                else if (!IsValidId(request.IndividualId, "ind_"))
+                {
+                    validationErrors["individualId"] = new[] { "Invalid individual ID format" };
+                }
+                
+                // Title validation
+                if (string.IsNullOrWhiteSpace(request.Title))
+                {
+                    validationErrors["title"] = new[] { "Title is required" };
+                }
+                else if (request.Title.Length > 200)
+                {
+                    validationErrors["title"] = new[] { "Title is too long (max 200 characters)" };
+                }
+                
+                // Description validation
+                if (!string.IsNullOrWhiteSpace(request.Description) && request.Description.Length > 2000)
+                {
+                    validationErrors["description"] = new[] { "Description is too long (max 2000 characters)" };
+                }
+                
+                // Status validation
+                if (!string.IsNullOrWhiteSpace(request.Status) && !IsValidCaseStatus(request.Status))
+                {
+                    validationErrors["status"] = new[] { "Invalid status. Must be 'open', 'investigating', 'resolved', or 'closed'" };
+                }
+                
+                if (validationErrors.Any())
+                {
+                    return ValidationErrorResponse(validationErrors);
                 }
 
                 // Parse individual ID
@@ -482,7 +512,7 @@ namespace _241RunnersAPI.Controllers
         /// Delete a case
         /// </summary>
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteCase(string id)
         {
             try
@@ -518,6 +548,58 @@ namespace _241RunnersAPI.Controllers
                 });
             }
         }
+
+        #region Validation Helper Methods
+
+        /// <summary>
+        /// Validates ID format
+        /// </summary>
+        private bool IsValidId(string id, string prefix)
+        {
+            if (string.IsNullOrWhiteSpace(id) || !id.StartsWith(prefix))
+                return false;
+
+            var numericPart = id.Substring(prefix.Length);
+            return int.TryParse(numericPart, out _) && int.Parse(numericPart) > 0;
+        }
+
+        /// <summary>
+        /// Validates case status
+        /// </summary>
+        private bool IsValidCaseStatus(string status)
+        {
+            var validStatuses = new[] { "open", "investigating", "resolved", "closed" };
+            return validStatuses.Contains(status.ToLower());
+        }
+
+        /// <summary>
+        /// Sanitizes input to prevent XSS
+        /// </summary>
+        private string SanitizeInput(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return string.Empty;
+
+            return System.Web.HttpUtility.HtmlEncode(input.Trim());
+        }
+
+        /// <summary>
+        /// Validates and sanitizes text input
+        /// </summary>
+        private string ValidateAndSanitizeText(string input, string fieldName, int maxLength = 255)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return string.Empty;
+
+            var sanitized = SanitizeInput(input);
+            
+            if (sanitized.Length > maxLength)
+                throw new ArgumentException($"{fieldName} is too long (max {maxLength} characters)");
+
+            return sanitized;
+        }
+
+        #endregion
     }
 
     public class CaseQuery

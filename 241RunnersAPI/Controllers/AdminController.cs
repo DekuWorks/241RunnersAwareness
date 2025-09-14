@@ -364,7 +364,7 @@ namespace _241RunnersAPI.Controllers
         /// Get admin dashboard statistics
         /// </summary>
         [HttpGet("stats")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetStats()
         {
             try

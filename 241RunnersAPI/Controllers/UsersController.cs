@@ -8,7 +8,7 @@ namespace _241RunnersAPI.Controllers
 {
     [ApiController]
     [Route("api/users")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "admin")]
     public class UsersController : BaseController
     {
         private readonly ApplicationDbContext _context;
@@ -97,14 +97,56 @@ namespace _241RunnersAPI.Controllers
         {
             try
             {
-                // Validate request
-                if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
+                // Comprehensive input validation
+                var validationErrors = new Dictionary<string, string[]>();
+                
+                // Email validation
+                if (string.IsNullOrWhiteSpace(request.Email))
                 {
-                    return ValidationErrorResponse(new Dictionary<string, string[]>
-                    {
-                        { "email", new[] { "Email is required" } },
-                        { "password", new[] { "Password is required" } }
-                    });
+                    validationErrors["email"] = new[] { "Email is required" };
+                }
+                else if (!IsValidEmail(request.Email))
+                {
+                    validationErrors["email"] = new[] { "Email format is invalid" };
+                }
+                else if (request.Email.Length > 254)
+                {
+                    validationErrors["email"] = new[] { "Email is too long (max 254 characters)" };
+                }
+                
+                // Password validation
+                if (string.IsNullOrWhiteSpace(request.Password))
+                {
+                    validationErrors["password"] = new[] { "Password is required" };
+                }
+                else if (request.Password.Length < 8)
+                {
+                    validationErrors["password"] = new[] { "Password must be at least 8 characters long" };
+                }
+                else if (request.Password.Length > 128)
+                {
+                    validationErrors["password"] = new[] { "Password is too long (max 128 characters)" };
+                }
+                else if (!IsValidPassword(request.Password))
+                {
+                    validationErrors["password"] = new[] { "Password must contain at least one uppercase letter, one lowercase letter, and one number" };
+                }
+                
+                // Name validation
+                if (!string.IsNullOrWhiteSpace(request.Name) && request.Name.Length > 100)
+                {
+                    validationErrors["name"] = new[] { "Name is too long (max 100 characters)" };
+                }
+                
+                // Role validation
+                if (!string.IsNullOrWhiteSpace(request.Role) && !IsValidRole(request.Role))
+                {
+                    validationErrors["role"] = new[] { "Invalid role. Must be 'admin', 'staff', or 'user'" };
+                }
+                
+                if (validationErrors.Any())
+                {
+                    return ValidationErrorResponse(validationErrors);
                 }
 
                 // Check if user already exists
@@ -281,6 +323,57 @@ namespace _241RunnersAPI.Controllers
                 });
             }
         }
+
+        #region Validation Helper Methods
+
+        /// <summary>
+        /// Validates email format
+        /// </summary>
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Validates password strength
+        /// </summary>
+        private bool IsValidPassword(string password)
+        {
+            return password.Length >= 8 &&
+                   password.Any(char.IsUpper) &&
+                   password.Any(char.IsLower) &&
+                   password.Any(char.IsDigit);
+        }
+
+        /// <summary>
+        /// Validates role
+        /// </summary>
+        private bool IsValidRole(string role)
+        {
+            var validRoles = new[] { "admin", "staff", "user" };
+            return validRoles.Contains(role.ToLower());
+        }
+
+        /// <summary>
+        /// Sanitizes input to prevent XSS
+        /// </summary>
+        private string SanitizeInput(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return string.Empty;
+
+            return System.Web.HttpUtility.HtmlEncode(input.Trim());
+        }
+
+        #endregion
     }
 
     public class UserQuery

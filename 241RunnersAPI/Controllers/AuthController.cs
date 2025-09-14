@@ -38,16 +38,68 @@ namespace _241RunnersAPI.Controllers
             var startTime = DateTime.UtcNow;
             try
             {
-                // Validate request
-                if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
+                // Comprehensive input validation
+                var validationErrors = new List<string>();
+                
+                // Email validation
+                if (string.IsNullOrWhiteSpace(request.Email))
+                {
+                    validationErrors.Add("Email is required");
+                }
+                else if (!IsValidEmail(request.Email))
+                {
+                    validationErrors.Add("Email format is invalid");
+                }
+                else if (request.Email.Length > 254)
+                {
+                    validationErrors.Add("Email is too long (max 254 characters)");
+                }
+                
+                // Password validation
+                if (string.IsNullOrWhiteSpace(request.Password))
+                {
+                    validationErrors.Add("Password is required");
+                }
+                else if (request.Password.Length < 8)
+                {
+                    validationErrors.Add("Password must be at least 8 characters long");
+                }
+                else if (request.Password.Length > 128)
+                {
+                    validationErrors.Add("Password is too long (max 128 characters)");
+                }
+                else if (!IsValidPassword(request.Password))
+                {
+                    validationErrors.Add("Password must contain at least one uppercase letter, one lowercase letter, and one number");
+                }
+                
+                // First name validation
+                if (!string.IsNullOrWhiteSpace(request.FirstName) && request.FirstName.Length > 50)
+                {
+                    validationErrors.Add("First name is too long (max 50 characters)");
+                }
+                
+                // Last name validation
+                if (!string.IsNullOrWhiteSpace(request.LastName) && request.LastName.Length > 50)
+                {
+                    validationErrors.Add("Last name is too long (max 50 characters)");
+                }
+                
+                // Phone number validation
+                if (!string.IsNullOrWhiteSpace(request.PhoneNumber) && !IsValidPhoneNumber(request.PhoneNumber))
+                {
+                    validationErrors.Add("Phone number format is invalid");
+                }
+                
+                if (validationErrors.Any())
                 {
                     return BadRequest(new
                     {
                         error = new
                         {
                             code = "VALIDATION_FAILED",
-                            message = "Email and password are required",
-                            details = new { email = "Required", password = "Required" }
+                            message = "Input validation failed",
+                            details = validationErrors
                         }
                     });
                 }
@@ -125,14 +177,32 @@ namespace _241RunnersAPI.Controllers
             var startTime = DateTime.UtcNow;
             try
             {
-                if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
+                // Input validation for login
+                var validationErrors = new List<string>();
+                
+                if (string.IsNullOrWhiteSpace(request.Email))
+                {
+                    validationErrors.Add("Email is required");
+                }
+                else if (!IsValidEmail(request.Email))
+                {
+                    validationErrors.Add("Email format is invalid");
+                }
+                
+                if (string.IsNullOrWhiteSpace(request.Password))
+                {
+                    validationErrors.Add("Password is required");
+                }
+                
+                if (validationErrors.Any())
                 {
                     return BadRequest(new
                     {
                         error = new
                         {
                             code = "VALIDATION_FAILED",
-                            message = "Email and password are required"
+                            message = "Input validation failed",
+                            details = validationErrors
                         }
                     });
                 }
@@ -643,6 +713,77 @@ namespace _241RunnersAPI.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        #region Validation Helper Methods
+
+        /// <summary>
+        /// Validates email format
+        /// </summary>
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Validates password strength
+        /// </summary>
+        private bool IsValidPassword(string password)
+        {
+            // At least 8 characters, one uppercase, one lowercase, one number
+            return password.Length >= 8 &&
+                   password.Any(char.IsUpper) &&
+                   password.Any(char.IsLower) &&
+                   password.Any(char.IsDigit);
+        }
+
+        /// <summary>
+        /// Validates phone number format
+        /// </summary>
+        private bool IsValidPhoneNumber(string phoneNumber)
+        {
+            // Remove all non-digit characters
+            var digitsOnly = new string(phoneNumber.Where(char.IsDigit).ToArray());
+            
+            // Check if it's a valid length (10-15 digits)
+            return digitsOnly.Length >= 10 && digitsOnly.Length <= 15;
+        }
+
+        /// <summary>
+        /// Sanitizes input to prevent XSS
+        /// </summary>
+        private string SanitizeInput(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return string.Empty;
+
+            return System.Web.HttpUtility.HtmlEncode(input.Trim());
+        }
+
+        /// <summary>
+        /// Validates and sanitizes text input
+        /// </summary>
+        private string ValidateAndSanitizeText(string input, string fieldName, int maxLength = 255)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return string.Empty;
+
+            var sanitized = SanitizeInput(input);
+            
+            if (sanitized.Length > maxLength)
+                throw new ArgumentException($"{fieldName} is too long (max {maxLength} characters)");
+
+            return sanitized;
+        }
+
+        #endregion
     }
 
     public class RegisterRequest

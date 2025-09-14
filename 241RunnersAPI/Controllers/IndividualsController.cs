@@ -187,7 +187,7 @@ namespace _241RunnersAPI.Controllers
         /// Create a new individual
         /// </summary>
         [HttpPost]
-        [Authorize(Roles = "Admin,Staff")]
+        [Authorize(Roles = "admin,staff")]
         public async Task<IActionResult> CreateIndividual([FromBody] CreateIndividualRequest request)
         {
             try
@@ -358,7 +358,7 @@ namespace _241RunnersAPI.Controllers
         /// Delete an individual
         /// </summary>
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteIndividual(string id)
         {
             try

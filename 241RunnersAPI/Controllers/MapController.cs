@@ -79,7 +79,7 @@ namespace _241RunnersAPI.Controllers
         /// Get raw map points (admin only)
         /// </summary>
         [HttpGet("points/raw")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetRawMapPoints()
         {
             try
