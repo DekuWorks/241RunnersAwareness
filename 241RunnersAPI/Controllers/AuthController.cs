@@ -539,6 +539,83 @@ namespace _241RunnersAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Create admin user (TEMPORARY - for development only)
+        /// </summary>
+        [HttpPost("create-admin")]
+        public async Task<IActionResult> CreateAdmin([FromBody] CreateAdminRequest request)
+        {
+            var startTime = DateTime.UtcNow;
+            try
+            {
+                // Check if admin already exists
+                var existingAdmin = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+                if (existingAdmin != null)
+                {
+                    return BadRequest(new
+                    {
+                        error = new
+                        {
+                            code = "USER_EXISTS",
+                            message = "Admin user already exists"
+                        }
+                    });
+                }
+
+                // Create new admin user
+                var adminUser = new User
+                {
+                    Email = request.Email,
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                    FirstName = request.FirstName ?? "Admin",
+                    LastName = request.LastName ?? "User",
+                    Role = "admin",
+                    IsActive = true,
+                    IsEmailVerified = true,
+                    IsPhoneVerified = true,
+                    CreatedAt = DateTime.UtcNow,
+                    EmailVerifiedAt = DateTime.UtcNow,
+                    PhoneVerifiedAt = DateTime.UtcNow,
+                    Organization = "241 Runners Awareness",
+                    Title = "Administrator",
+                    PhoneNumber = "+1-555-0123",
+                    Address = "123 Admin Street",
+                    City = "Admin City",
+                    State = "Admin State",
+                    ZipCode = "12345",
+                    EmergencyContactName = "Emergency Services",
+                    EmergencyContactPhone = "+1-555-911",
+                    EmergencyContactRelationship = "Emergency Contact"
+                };
+
+                _context.Users.Add(adminUser);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Admin user created: {Email}", request.Email);
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Admin user created successfully",
+                    data = new
+                    {
+                        email = adminUser.Email,
+                        role = adminUser.Role,
+                        createdAt = adminUser.CreatedAt
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating admin user {Email}", request.Email);
+                return InternalServerErrorResponse("An error occurred while creating admin user");
+            }
+            finally
+            {
+                // Performance tracking removed for now
+            }
+        }
+
         private string GenerateJwtToken(User user)
         {
             var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? _configuration["Jwt:Key"] ?? "your-super-secret-key-that-is-at-least-32-characters-long-for-241-runners";
@@ -586,5 +663,13 @@ namespace _241RunnersAPI.Controllers
     public class VerifyEmailRequest
     {
         public string Token { get; set; } = string.Empty;
+    }
+
+    public class CreateAdminRequest
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
     }
 }
