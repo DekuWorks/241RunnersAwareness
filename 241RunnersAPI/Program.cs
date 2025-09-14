@@ -33,7 +33,15 @@ builder.Services.AddSwaggerGen();
 
 // Add Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    if (connectionString == "UseAzureAppSettings")
+    {
+        // Get connection string from environment variable (Azure App Settings)
+        connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
+    }
+    options.UseSqlServer(connectionString);
+});
 
 // Add JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -394,6 +402,12 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        
+        // Test database connection first
+        logger.LogInformation("Testing database connection...");
+        await db.Database.CanConnectAsync();
+        logger.LogInformation("Database connection successful");
+        
         await db.Database.MigrateAsync();
         logger.LogInformation("Database migrations applied successfully");
         
@@ -403,7 +417,8 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "Failed to initialize database");
+        logger.LogError(ex, "Failed to initialize database: {Message}", ex.Message);
+        logger.LogWarning("API will start without database initialization");
         // Don't throw - let the app start even if initialization fails
     }
 }
