@@ -32,19 +32,28 @@ namespace _241RunnersAPI.Data
                     "mmelasky@iplawconsulting.com", 
                     "ralphfrank900@gmail.com" 
                 };
-                var adminExists = await context.Users.AnyAsync(u => adminEmails.Contains(u.Email));
-                logger.LogInformation("Admin user exists: {AdminExists}", adminExists);
-
-                if (adminExists)
+                
+                // Check each admin user individually and create missing ones
+                var existingAdmins = await context.Users.Where(u => adminEmails.Contains(u.Email)).ToListAsync();
+                logger.LogInformation("Found {Count} existing admin users", existingAdmins.Count);
+                
+                var existingEmails = existingAdmins.Select(u => u.Email).ToHashSet();
+                var missingEmails = adminEmails.Where(email => !existingEmails.Contains(email)).ToList();
+                
+                if (missingEmails.Count == 0)
                 {
-                    logger.LogInformation("Admin user already exists, skipping seed data");
+                    logger.LogInformation("All admin users already exist, skipping seed data");
                     return;
                 }
+                
+                logger.LogInformation("Missing admin users: {MissingEmails}", string.Join(", ", missingEmails));
 
-                // Create admin users - Only the 6 real admin users
-                var adminUsers = new List<User>
+                // Create only missing admin users
+                var adminUsersToCreate = new List<User>();
+                
+                if (missingEmails.Contains("dekuworks1@gmail.com"))
                 {
-                    new User
+                    adminUsersToCreate.Add(new User
                     {
                         Email = "dekuworks1@gmail.com",
                         PasswordHash = BCrypt.Net.BCrypt.HashPassword("marcus2025"),
@@ -67,8 +76,12 @@ namespace _241RunnersAPI.Data
                         EmergencyContactName = "Emergency Services",
                         EmergencyContactPhone = "+1-555-911",
                         EmergencyContactRelationship = "Emergency Contact"
-                    },
-                    new User
+                    });
+                }
+                
+                if (missingEmails.Contains("danielcarey9770@yahoo.com"))
+                {
+                    adminUsersToCreate.Add(new User
                     {
                         Email = "danielcarey9770@yahoo.com",
                         PasswordHash = BCrypt.Net.BCrypt.HashPassword("Daniel2025!"),
@@ -91,8 +104,12 @@ namespace _241RunnersAPI.Data
                         EmergencyContactName = "Emergency Services",
                         EmergencyContactPhone = "+1-555-911",
                         EmergencyContactRelationship = "Emergency Contact"
-                    },
-                    new User
+                    });
+                }
+                
+                if (missingEmails.Contains("lthomas3350@gmail.com"))
+                {
+                    adminUsersToCreate.Add(new User
                     {
                         Email = "lthomas3350@gmail.com",
                         PasswordHash = BCrypt.Net.BCrypt.HashPassword("Lisa2025!"),
@@ -115,8 +132,12 @@ namespace _241RunnersAPI.Data
                         EmergencyContactName = "Emergency Services",
                         EmergencyContactPhone = "+1-555-911",
                         EmergencyContactRelationship = "Emergency Contact"
-                    },
-                    new User
+                    });
+                }
+                
+                if (missingEmails.Contains("tinaleggins@yahoo.com"))
+                {
+                    adminUsersToCreate.Add(new User
                     {
                         Email = "tinaleggins@yahoo.com",
                         PasswordHash = BCrypt.Net.BCrypt.HashPassword("Tina2025!"),
@@ -139,8 +160,12 @@ namespace _241RunnersAPI.Data
                         EmergencyContactName = "Emergency Services",
                         EmergencyContactPhone = "+1-555-911",
                         EmergencyContactRelationship = "Emergency Contact"
-                    },
-                    new User
+                    });
+                }
+                
+                if (missingEmails.Contains("mmelasky@iplawconsulting.com"))
+                {
+                    adminUsersToCreate.Add(new User
                     {
                         Email = "mmelasky@iplawconsulting.com",
                         PasswordHash = BCrypt.Net.BCrypt.HashPassword("Mark2025!"),
@@ -163,8 +188,12 @@ namespace _241RunnersAPI.Data
                         EmergencyContactName = "Emergency Services",
                         EmergencyContactPhone = "+1-555-911",
                         EmergencyContactRelationship = "Emergency Contact"
-                    },
-                    new User
+                    });
+                }
+                
+                if (missingEmails.Contains("ralphfrank900@gmail.com"))
+                {
+                    adminUsersToCreate.Add(new User
                     {
                         Email = "ralphfrank900@gmail.com",
                         PasswordHash = BCrypt.Net.BCrypt.HashPassword("Ralph2025!"),
@@ -187,20 +216,24 @@ namespace _241RunnersAPI.Data
                         EmergencyContactName = "Emergency Services",
                         EmergencyContactPhone = "+1-555-911",
                         EmergencyContactRelationship = "Emergency Contact"
+                    });
+                }
+
+                if (adminUsersToCreate.Count > 0)
+                {
+                    context.Users.AddRange(adminUsersToCreate);
+                    await context.SaveChangesAsync();
+
+                    logger.LogInformation("Database seeded with {Count} new admin users", adminUsersToCreate.Count);
+                    foreach (var user in adminUsersToCreate)
+                    {
+                        logger.LogInformation("- {Email} created successfully", user.Email);
                     }
-                };
-
-                context.Users.AddRange(adminUsers);
-                await context.SaveChangesAsync();
-
-                logger.LogInformation("Database seeded with {Count} initial users", adminUsers.Count);
-                logger.LogInformation("Admin users created:");
-                logger.LogInformation("- dekuworks1@gmail.com (Password: marcus2025)");
-                logger.LogInformation("- danielcarey9770@yahoo.com (Password: Daniel2025!)");
-                logger.LogInformation("- lthomas3350@gmail.com (Password: Lisa2025!)");
-                logger.LogInformation("- tinaleggins@yahoo.com (Password: Tina2025!)");
-                logger.LogInformation("- mmelasky@iplawconsulting.com (Password: Mark2025!)");
-                logger.LogInformation("- ralphfrank900@gmail.com (Password: Ralph2025!)");
+                }
+                else
+                {
+                    logger.LogInformation("No new admin users needed - all already exist");
+                }
             }
             catch (Exception ex)
             {
