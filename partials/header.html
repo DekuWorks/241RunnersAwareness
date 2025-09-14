@@ -26,6 +26,7 @@
         <a href="/runner.html" class="nav-link">Runners</a>
         <a href="/map.html" class="nav-link">Map</a>
         <a href="/dna-tracking.html" class="nav-link">DNA Tracking</a>
+        <a href="https://share.google/2mvSoJK9zGVpBdYqA" target="_blank" class="nav-link nav-shop">🏃‍♂️ Shop</a>
       </div>
 
       <!-- Auth Section -->
@@ -71,6 +72,7 @@
         <a href="/runner.html" class="nav-mobile-link">Runners</a>
         <a href="/map.html" class="nav-mobile-link">Map</a>
         <a href="/dna-tracking.html" class="nav-mobile-link">DNA Tracking</a>
+        <a href="https://share.google/2mvSoJK9zGVpBdYqA" target="_blank" class="nav-mobile-link nav-mobile-shop">🏃‍♂️ Shop</a>
       </div>
       <div class="nav-mobile-auth">
         <div class="nav-mobile-guest" id="navMobileGuest">
@@ -165,6 +167,40 @@
 
 .nav-link:hover {
   color: var(--color-text-primary);
+}
+
+/* Shop Link Styling */
+.nav-shop {
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  color: white !important;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+}
+
+.nav-shop:hover {
+  background: linear-gradient(135deg, #e55a2b, #e0841a);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+  color: white !important;
+}
+
+.nav-mobile-shop {
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  color: white !important;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 8px;
+}
+
+.nav-mobile-shop:hover {
+  background: linear-gradient(135deg, #e55a2b, #e0841a);
+  color: white !important;
 }
 
 /* Auth Section */
