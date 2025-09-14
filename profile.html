@@ -1086,7 +1086,7 @@
 
   <script>
     // API Configuration - use existing from auth.js
-    let PROFILE_PROFILE_API_BASE_URL = 'https://241runners-api.azurewebsites.net/api';
+    let PROFILE_PROFILE_API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
     
     // SignalR Connection
     let userHubConnection = null;
@@ -1105,7 +1105,7 @@
     // Initialize SignalR connection for real-time notifications
     async function initializeRealTimeNotifications() {
       try {
-        const apiBaseUrl = PROFILE_PROFILE_API_BASE_URL || 'https://241runners-api.azurewebsites.net/api';
+        const apiBaseUrl = PROFILE_PROFILE_API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
         const hubUrl = apiBaseUrl.replace('/api', '/userHub');
         
         console.log('🔌 Connecting to User SignalR hub:', hubUrl);

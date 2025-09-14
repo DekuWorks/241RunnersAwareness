@@ -1,4 +1,4 @@
-@_241RunnersAPI_HostAddress = https://241runners-api.azurewebsites.net
+@_241RunnersAPI_HostAddress = https://241runners-api-v2.azurewebsites.net
 
 ### Health Check
 GET {{_241RunnersAPI_HostAddress}}/api/health
