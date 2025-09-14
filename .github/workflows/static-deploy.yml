@@ -22,6 +22,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: https://241runnersawareness.org
     permissions:
       contents: read
       pages: write
