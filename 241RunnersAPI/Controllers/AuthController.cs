@@ -846,6 +846,7 @@ namespace _241RunnersAPI.Controllers
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string? Role { get; set; }
+        public string? PhoneNumber { get; set; }
     }
 
     public class LoginRequest

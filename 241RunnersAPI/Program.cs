@@ -6,7 +6,7 @@ using System.Diagnostics;
 using _241RunnersAPI.Data;
 using _241RunnersAPI.Services;
 using _241RunnersAPI.Models;
-// using _241RunnersAPI.Hubs;
+using _241RunnersAPI.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +21,7 @@ builder.Services.AddApplicationInsightsTelemetry(options =>
     options.EnableEventCounterCollectionModule = true; // Enable event counters
     options.EnableDependencyTrackingTelemetryModule = true; // Enable dependency tracking
     options.EnableAppServicesHeartbeatTelemetryModule = true; // Enable heartbeat
-});let
+});
 
 // Add services to the container
 builder.Services.AddControllers();
