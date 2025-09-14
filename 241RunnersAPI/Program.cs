@@ -304,6 +304,27 @@ app.MapGet("/", () => Results.Ok(new {
     environment = app.Environment.EnvironmentName
 }));
 
+// Debug endpoint to check database state
+app.MapGet("/debug/users", async (ApplicationDbContext db) => {
+    try {
+        var users = await db.Users.Select(u => new { 
+            u.Email, 
+            u.Role, 
+            u.IsActive, 
+            u.CreatedAt 
+        }).ToListAsync();
+        return Results.Ok(new { 
+            userCount = users.Count,
+            users = users
+        });
+    } catch (Exception ex) {
+        return Results.Ok(new { 
+            error = ex.Message,
+            stackTrace = ex.StackTrace
+        });
+    }
+});
+
 // Comprehensive health check endpoints
 app.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
 {
