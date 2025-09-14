@@ -13,11 +13,15 @@ namespace _241RunnersAPI.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<CasesController> _logger;
+        private readonly CoordinateValidationService _coordinateValidation;
+        private readonly ContentSecurityService _contentSecurity;
 
-        public CasesController(ApplicationDbContext context, ILogger<CasesController> logger)
+        public CasesController(ApplicationDbContext context, ILogger<CasesController> logger, CoordinateValidationService coordinateValidation, ContentSecurityService contentSecurity)
         {
             _context = context;
             _logger = logger;
+            _coordinateValidation = coordinateValidation;
+            _contentSecurity = contentSecurity;
         }
 
         /// <summary>
@@ -167,9 +171,10 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
-        /// Create a new case
+        /// Create a new case with enhanced validation
         /// </summary>
         [HttpPost]
+        [RequestSizeLimit(10 * 1024 * 1024)] // 10MB request size limit
         public async Task<IActionResult> CreateCase([FromBody] CreateCaseRequest request)
         {
             try
@@ -207,6 +212,50 @@ namespace _241RunnersAPI.Controllers
                 if (!string.IsNullOrWhiteSpace(request.Status) && !IsValidCaseStatus(request.Status))
                 {
                     validationErrors["status"] = new[] { "Invalid status. Must be 'open', 'investigating', 'resolved', or 'closed'" };
+                }
+
+                // Location validation
+                if (string.IsNullOrWhiteSpace(request.LastSeenLocation))
+                {
+                    validationErrors["lastSeenLocation"] = new[] { "Last seen location is required" };
+                }
+                else if (!_coordinateValidation.ValidateLocationString(request.LastSeenLocation))
+                {
+                    validationErrors["lastSeenLocation"] = new[] { "Invalid location format or content" };
+                }
+
+                // Coordinate validation (if provided)
+                if (request.Latitude.HasValue || request.Longitude.HasValue)
+                {
+                    if (!_coordinateValidation.ValidateCoordinates(request.Latitude, request.Longitude))
+                    {
+                        validationErrors["coordinates"] = new[] { "Invalid coordinates. Latitude must be between -90 and 90, longitude between -180 and 180" };
+                    }
+                }
+
+                // Content security validation
+                var titleValidation = _contentSecurity.ValidateContent(request.Title, "title");
+                if (!titleValidation.IsValid)
+                {
+                    validationErrors["title"] = titleValidation.Errors.ToArray();
+                }
+
+                if (!string.IsNullOrWhiteSpace(request.Description))
+                {
+                    var descriptionValidation = _contentSecurity.ValidateContent(request.Description, "description");
+                    if (!descriptionValidation.IsValid)
+                    {
+                        validationErrors["description"] = descriptionValidation.Errors.ToArray();
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(request.AdditionalInfo))
+                {
+                    var additionalInfoValidation = _contentSecurity.ValidateContent(request.AdditionalInfo, "text");
+                    if (!additionalInfoValidation.IsValid)
+                    {
+                        validationErrors["additionalInfo"] = additionalInfoValidation.Errors.ToArray();
+                    }
                 }
                 
                 if (validationErrors.Any())

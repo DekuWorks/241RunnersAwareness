@@ -20,13 +20,15 @@ namespace _241RunnersAPI.Controllers
         private readonly ILogger<AuthController> _logger;
         private readonly IConfiguration _configuration;
         private readonly PerformanceMonitoringService _performanceService;
+        private readonly InputSanitizationService _sanitizationService;
 
-        public AuthController(ApplicationDbContext context, ILogger<AuthController> logger, IConfiguration configuration, PerformanceMonitoringService performanceService)
+        public AuthController(ApplicationDbContext context, ILogger<AuthController> logger, IConfiguration configuration, PerformanceMonitoringService performanceService, InputSanitizationService sanitizationService)
         {
             _context = context;
             _logger = logger;
             _configuration = configuration;
             _performanceService = performanceService;
+            _sanitizationService = sanitizationService;
         }
 
         /// <summary>
@@ -38,24 +40,27 @@ namespace _241RunnersAPI.Controllers
             var startTime = DateTime.UtcNow;
             try
             {
-                // Comprehensive input validation
+                // Comprehensive input validation with sanitization
                 var validationErrors = new List<string>();
                 
-                // Email validation
-                if (string.IsNullOrWhiteSpace(request.Email))
+                // Sanitize and validate email
+                var sanitizedEmail = _sanitizationService.SanitizeEmail(request.Email);
+                if (string.IsNullOrWhiteSpace(sanitizedEmail))
                 {
-                    validationErrors.Add("Email is required");
+                    validationErrors.Add("Email is required and must be valid");
                 }
-                else if (!IsValidEmail(request.Email))
-                {
-                    validationErrors.Add("Email format is invalid");
-                }
-                else if (request.Email.Length > 254)
+                else if (sanitizedEmail.Length > 254)
                 {
                     validationErrors.Add("Email is too long (max 254 characters)");
                 }
                 
-                // Password validation
+                // Check for malicious content
+                if (_sanitizationService.IsMaliciousContent(request.Email))
+                {
+                    validationErrors.Add("Email contains invalid characters");
+                }
+                
+                // Password validation with malicious content check
                 if (string.IsNullOrWhiteSpace(request.Password))
                 {
                     validationErrors.Add("Password is required");
@@ -72,21 +77,42 @@ namespace _241RunnersAPI.Controllers
                 {
                     validationErrors.Add("Password must contain at least one uppercase letter, one lowercase letter, and one number");
                 }
-                
-                // First name validation
-                if (!string.IsNullOrWhiteSpace(request.FirstName) && request.FirstName.Length > 50)
+                else if (_sanitizationService.IsMaliciousContent(request.Password))
                 {
-                    validationErrors.Add("First name is too long (max 50 characters)");
+                    validationErrors.Add("Password contains invalid characters");
                 }
                 
-                // Last name validation
-                if (!string.IsNullOrWhiteSpace(request.LastName) && request.LastName.Length > 50)
+                // Sanitize and validate first name
+                var sanitizedFirstName = _sanitizationService.SanitizeHtml(request.FirstName);
+                if (!string.IsNullOrWhiteSpace(sanitizedFirstName))
                 {
-                    validationErrors.Add("Last name is too long (max 50 characters)");
+                    if (sanitizedFirstName.Length > 50)
+                    {
+                        validationErrors.Add("First name is too long (max 50 characters)");
+                    }
+                    else if (_sanitizationService.IsMaliciousContent(request.FirstName))
+                    {
+                        validationErrors.Add("First name contains invalid characters");
+                    }
                 }
                 
-                // Phone number validation
-                if (!string.IsNullOrWhiteSpace(request.PhoneNumber) && !IsValidPhoneNumber(request.PhoneNumber))
+                // Sanitize and validate last name
+                var sanitizedLastName = _sanitizationService.SanitizeHtml(request.LastName);
+                if (!string.IsNullOrWhiteSpace(sanitizedLastName))
+                {
+                    if (sanitizedLastName.Length > 50)
+                    {
+                        validationErrors.Add("Last name is too long (max 50 characters)");
+                    }
+                    else if (_sanitizationService.IsMaliciousContent(request.LastName))
+                    {
+                        validationErrors.Add("Last name contains invalid characters");
+                    }
+                }
+                
+                // Sanitize and validate phone number
+                var sanitizedPhoneNumber = _sanitizationService.SanitizePhoneNumber(request.PhoneNumber);
+                if (!string.IsNullOrWhiteSpace(request.PhoneNumber) && string.IsNullOrWhiteSpace(sanitizedPhoneNumber))
                 {
                     validationErrors.Add("Phone number format is invalid");
                 }
@@ -118,14 +144,15 @@ namespace _241RunnersAPI.Controllers
                     });
                 }
 
-                // Create new user
+                // Create new user with sanitized data
                 var user = new User
                 {
-                    Email = request.Email,
+                    Email = sanitizedEmail,
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-                    FirstName = request.FirstName,
-                    LastName = request.LastName,
-                    Role = request.Role ?? "User",
+                    FirstName = sanitizedFirstName,
+                    LastName = sanitizedLastName,
+                    Role = request.Role ?? "user",
+                    PhoneNumber = sanitizedPhoneNumber,
                     IsActive = true,
                     IsEmailVerified = false,
                     CreatedAt = DateTime.UtcNow

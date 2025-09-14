@@ -7,6 +7,9 @@ using _241RunnersAPI.Data;
 using _241RunnersAPI.Services;
 using _241RunnersAPI.Models;
 using _241RunnersAPI.Hubs;
+using AspNetCoreRateLimit;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.AspNetCore.Server.IISIntegration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +27,24 @@ builder.Services.AddApplicationInsightsTelemetry(options =>
 });
 
 // Add services to the container
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    // Add request size limits
+    options.MaxModelBindingCollectionSize = 100; // Maximum 100 items in collections
+    options.MaxModelBindingRecursionDepth = 10; // Maximum recursion depth
+});
+
+// Configure request size limits
+builder.Services.Configure<IISServerOptions>(options =>
+{
+    options.MaxRequestBodySize = 100 * 1024 * 1024; // 100MB
+});
+
+builder.Services.Configure<KestrelServerOptions>(options =>
+{
+    options.Limits.MaxRequestBodySize = 100 * 1024 * 1024; // 100MB
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -73,7 +93,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-// Add CORS
+// Add CORS with enhanced security
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -83,20 +103,43 @@ builder.Services.AddCors(options =>
                           "http://localhost:5173",
                           "http://localhost:3000",
                           "http://localhost:8080")
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
+              .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+              .WithHeaders("Content-Type", "Authorization", "X-Requested-With", "X-ClientId")
+              .AllowCredentials()
+              .SetPreflightMaxAge(TimeSpan.FromMinutes(10));
     });
 });
 
+// Add rate limiting services
+builder.Services.AddMemoryCache(); // Required for rate limiting
+builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+
 // Add validation service
 builder.Services.AddScoped<ValidationService>();
+
+// Add input sanitization service
+builder.Services.AddScoped<InputSanitizationService>();
+
+// Add coordinate validation service
+builder.Services.AddScoped<CoordinateValidationService>();
+
+// Add IP validation service
+builder.Services.AddScoped<IpValidationService>();
+
+// Add content security service
+builder.Services.AddScoped<ContentSecurityService>();
+
+// Add database query validation service
+builder.Services.AddScoped<DatabaseQueryValidationService>();
 
 // Add performance monitoring service
 builder.Services.AddScoped<PerformanceMonitoringService>();
 
 // Add caching service
-builder.Services.AddMemoryCache();
 builder.Services.AddScoped<CachingService>();
 
 // Add response compression
@@ -138,6 +181,101 @@ if (swaggerEnabled)
     app.UseSwaggerUI();
 }
 
+// Add IP validation middleware
+app.Use(async (context, next) =>
+{
+    var ipValidationService = context.RequestServices.GetRequiredService<IpValidationService>();
+    
+    // Skip IP validation for health checks and static files
+    var path = context.Request.Path.Value?.ToLowerInvariant();
+    if (path != null && (path.StartsWith("/health") || path.StartsWith("/api/health") || path.StartsWith("/uploads")))
+    {
+        await next();
+        return;
+    }
+    
+    // Validate request IP, origin, and user agent
+    if (!ipValidationService.ValidateRequest(context))
+    {
+        context.Response.StatusCode = 403;
+        await context.Response.WriteAsync("Access denied");
+        return;
+    }
+    
+    await next();
+});
+
+// Add database query validation middleware
+app.Use(async (context, next) =>
+{
+    var queryValidationService = context.RequestServices.GetRequiredService<DatabaseQueryValidationService>();
+    
+    // Skip query validation for health checks and static files
+    var path = context.Request.Path.Value?.ToLowerInvariant();
+    if (path != null && (path.StartsWith("/health") || path.StartsWith("/api/health") || path.StartsWith("/uploads")))
+    {
+        await next();
+        return;
+    }
+    
+    // Validate query parameters in request body
+    if (context.Request.HasFormContentType || context.Request.ContentType?.Contains("application/json") == true)
+    {
+        try
+        {
+            context.Request.EnableBuffering();
+                            var body = await new StreamReader(context.Request.Body).ReadToEndAsync();
+                            context.Request.Body.Position = 0;
+                            
+                            if (!string.IsNullOrWhiteSpace(body))
+                            {
+                                var queryResult = queryValidationService.ValidateDynamicQuery(body);
+                                if (!queryResult.IsValid)
+                                {
+                                    context.Response.StatusCode = 400;
+                                    await context.Response.WriteAsync("Invalid request parameters");
+                                    return;
+                                }
+                            }
+        }
+        catch (Exception ex)
+        {
+            var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "Error in database query validation middleware");
+            // Continue processing on error to avoid breaking the application
+        }
+    }
+    
+    await next();
+});
+
+// Add security headers middleware
+app.Use(async (context, next) =>
+{
+    // Security headers
+    context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+    context.Response.Headers.Add("X-Frame-Options", "DENY");
+    context.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
+    context.Response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
+    context.Response.Headers.Add("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
+    context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+    
+    // Content Security Policy
+    var csp = "default-src 'self'; " +
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+              "style-src 'self' 'unsafe-inline'; " +
+              "img-src 'self' data: https:; " +
+              "font-src 'self'; " +
+              "connect-src 'self' https:; " +
+              "frame-ancestors 'none'; " +
+              "base-uri 'self'; " +
+              "form-action 'self'";
+    
+    context.Response.Headers.Add("Content-Security-Policy", csp);
+    
+    await next();
+});
+
 // Add performance logging middleware
 app.Use(async (context, next) =>
 {
@@ -165,6 +303,10 @@ app.Use(async (context, next) =>
 
 app.UseResponseCompression();
 app.UseHttpsRedirection();
+
+// Add rate limiting middleware
+app.UseIpRateLimiting();
+
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();

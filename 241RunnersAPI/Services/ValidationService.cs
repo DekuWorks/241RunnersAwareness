@@ -12,11 +12,13 @@ namespace _241RunnersAPI.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<ValidationService> _logger;
+        private readonly DatabaseQueryValidationService _queryValidation;
 
-        public ValidationService(ApplicationDbContext context, ILogger<ValidationService> logger)
+        public ValidationService(ApplicationDbContext context, ILogger<ValidationService> logger, DatabaseQueryValidationService queryValidation)
         {
             _context = context;
             _logger = logger;
+            _queryValidation = queryValidation;
         }
 
         /// <summary>
@@ -347,6 +349,16 @@ namespace _241RunnersAPI.Services
                     !Regex.IsMatch(caseData.ContactPersonEmail, @"^[^\s@]+@[^\s@]+\.[^\s@]+$"))
                 {
                     result.AddError("Please enter a valid contact email", "CONTACT_EMAIL_INVALID");
+                }
+
+                // Validate database query parameters
+                var queryValidation = _queryValidation.ValidateQueryParameters(caseData);
+                if (!queryValidation.IsValid)
+                {
+                    foreach (var error in queryValidation.Errors)
+                    {
+                        result.AddError(error, "QUERY_VALIDATION_ERROR");
+                    }
                 }
 
                 result.IsValid = result.Errors.Count == 0;
