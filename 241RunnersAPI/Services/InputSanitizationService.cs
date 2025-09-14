@@ -33,13 +33,13 @@ namespace _241RunnersAPI.Services
         };
 
         private static readonly string[] SqlInjectionPatterns = {
-            @"('|(\\')|(;)|(--)|(\|)|(\*)|(%)|(\+)|(\<)|(\>)|(\[)|(\])|(\{)|(\})|(\()|(\))|(\=)|(\!)|(\&)|(\|)|(\^)|(\~)|(\`)|(\?)",
-            @"(union|select|insert|delete|update|drop|create|alter|exec|execute|sp_|xp_)",
-            @"(\bor\b|\band\b)",
-            @"(\bnull\b|\btrue\b|\bfalse\b)",
-            @"(0x[0-9a-fA-F]+)",
-            @"(\bwaitfor\b|\bdelay\b)",
-            @"(\bchar\b|\bnchar\b|\bvarchar\b|\bnvarchar\b)"
+            @"(union\s+select|select\s+.*\s+from|insert\s+into|delete\s+from|update\s+.*\s+set|drop\s+table|create\s+table|alter\s+table)",
+            @"(exec\s*\(|execute\s*\(|sp_|xp_)",
+            @"(\bor\s+1\s*=\s*1\b|\band\s+1\s*=\s*1\b)",
+            @"(waitfor\s+delay|benchmark\s*\()",
+            @"(0x[0-9a-fA-F]{4,})",
+            @"(char\s*\(|nchar\s*\(|varchar\s*\(|nvarchar\s*\()",
+            @"(--|\/\*|\*\/)"
         };
 
         public InputSanitizationService(ILogger<InputSanitizationService> logger)
@@ -90,9 +90,9 @@ namespace _241RunnersAPI.Services
                 var allowedTags = new[] { "p", "br", "strong", "em", "ul", "ol", "li", "h1", "h2", "h3", "h4", "h5", "h6", "blockquote" };
                 
                 // Remove all script tags and dangerous patterns
-                foreach (var pattern in DangerousPatterns)
+                foreach (var dangerousPattern in DangerousPatterns)
                 {
-                    input = Regex.Replace(input, pattern, "", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                    input = Regex.Replace(input, dangerousPattern, "", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                 }
 
                 // Remove all HTML tags except allowed ones

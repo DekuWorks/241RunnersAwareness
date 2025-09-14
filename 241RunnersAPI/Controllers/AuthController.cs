@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
 using _241RunnersAPI.Data;
 using _241RunnersAPI.Models;
 using _241RunnersAPI.Services;
+using _241RunnersAPI.Hubs;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -21,14 +23,16 @@ namespace _241RunnersAPI.Controllers
         private readonly IConfiguration _configuration;
         private readonly PerformanceMonitoringService _performanceService;
         private readonly InputSanitizationService _sanitizationService;
+        private readonly IHubContext<AdminHub> _hubContext;
 
-        public AuthController(ApplicationDbContext context, ILogger<AuthController> logger, IConfiguration configuration, PerformanceMonitoringService performanceService, InputSanitizationService sanitizationService)
+        public AuthController(ApplicationDbContext context, ILogger<AuthController> logger, IConfiguration configuration, PerformanceMonitoringService performanceService, InputSanitizationService sanitizationService, IHubContext<AdminHub> hubContext)
         {
             _context = context;
             _logger = logger;
             _configuration = configuration;
             _performanceService = performanceService;
             _sanitizationService = sanitizationService;
+            _hubContext = hubContext;
         }
 
         /// <summary>
@@ -168,12 +172,42 @@ namespace _241RunnersAPI.Controllers
                 _performanceService.TrackUserRegistration(user.Email, user.Role, true);
                 _performanceService.TrackApiEndpoint("/api/auth/register", "POST", duration, 201, true);
 
+                // Send real-time notification to admins about new user registration
+                try
+                {
+                    await _hubContext.Clients.Group("Admins").SendAsync("NewUserRegistration", new
+                    {
+                        UserId = user.Id,
+                        Email = user.Email,
+                        FullName = $"{user.FirstName} {user.LastName}",
+                        Role = user.Role,
+                        CreatedAt = user.CreatedAt,
+                        Message = $"New user registered: {user.FirstName} {user.LastName} ({user.Role})"
+                    });
+                }
+                catch (Exception notificationEx)
+                {
+                    _logger.LogWarning(notificationEx, "Failed to send new user registration notification");
+                }
+
                 return CreatedAtAction(nameof(Register), new { id = user.Id }, new
                 {
+                    success = true,
+                    message = "Account created successfully! Welcome to 241 Runners Awareness.",
                     id = $"u_{user.Id}",
                     email = user.Email,
                     role = user.Role,
-                    emailVerified = user.IsEmailVerified
+                    emailVerified = user.IsEmailVerified,
+                    user = new
+                    {
+                        id = user.Id,
+                        email = user.Email,
+                        firstName = user.FirstName,
+                        lastName = user.LastName,
+                        role = user.Role,
+                        phoneNumber = user.PhoneNumber,
+                        createdAt = user.CreatedAt
+                    }
                 });
             }
             catch (Exception ex)
@@ -326,7 +360,12 @@ namespace _241RunnersAPI.Controllers
         {
             try
             {
-                var userId = GetCurrentUserId();
+                var userId = GetCurrentUserIdAsInt();
+                if (userId == null)
+                {
+                    return UnauthorizedResponse("Invalid user token");
+                }
+                
                 var user = await _context.Users.FindAsync(userId);
                 
                 if (user == null)
@@ -364,7 +403,12 @@ namespace _241RunnersAPI.Controllers
         {
             try
             {
-                var userId = GetCurrentUserId();
+                var userId = GetCurrentUserIdAsInt();
+                if (userId == null)
+                {
+                    return UnauthorizedResponse("Invalid user token");
+                }
+                
                 var user = await _context.Users.FindAsync(userId);
                 
                 if (user == null)
@@ -422,7 +466,12 @@ namespace _241RunnersAPI.Controllers
         {
             try
             {
-                var userId = GetCurrentUserId();
+                var userId = GetCurrentUserIdAsInt();
+                if (userId == null)
+                {
+                    return UnauthorizedResponse("Invalid user token");
+                }
+                
                 var user = await _context.Users.FindAsync(userId);
                 
                 if (user == null)
@@ -517,7 +566,12 @@ namespace _241RunnersAPI.Controllers
         {
             try
             {
-                var userId = GetCurrentUserId();
+                var userId = GetCurrentUserIdAsInt();
+                if (userId == null)
+                {
+                    return UnauthorizedResponse("Invalid user token");
+                }
+                
                 var user = await _context.Users.FindAsync(userId);
                 
                 if (user == null)

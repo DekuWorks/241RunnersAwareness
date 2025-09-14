@@ -15,7 +15,7 @@ echo "🚀 Starting 241 Runners API Deployment..."
 API_PROJECT_PATH="./241RunnersAPI"
 PUBLISH_PATH="./publish"
 ZIP_NAME="api-production-deployment.zip"
-APP_SERVICE_NAME="241runners-api"
+APP_SERVICE_NAME="241runners-api-v2"
 RESOURCE_GROUP="241raLinux_group"
 
 # Clean previous builds
