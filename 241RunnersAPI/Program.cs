@@ -6,7 +6,7 @@ using System.Diagnostics;
 using _241RunnersAPI.Data;
 using _241RunnersAPI.Services;
 using _241RunnersAPI.Models;
-using _241RunnersAPI.Hubs;
+// using _241RunnersAPI.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +29,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Add SignalR
-builder.Services.AddSignalR();
+// builder.Services.AddSignalR();
 
 // Add Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -165,7 +165,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Map SignalR hubs
-app.MapHub<NotificationHub>("/hubs/notifications");
+// app.MapHub<NotificationHub>("/hubs/notifications");
 
 // Add API info endpoint
 app.MapGet("/api", () => Results.Ok(new { 
