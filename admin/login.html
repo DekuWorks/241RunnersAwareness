@@ -379,7 +379,7 @@
                     console.log('Form data being sent:', formData);
                     
                     // FIXED: Proper headers without credentials to avoid CORS issues
-                    const response = await fetch(`${apiUrl}/Auth/login`, {
+                    const response = await fetch(`${apiUrl}/auth/login`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
