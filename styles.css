@@ -5344,7 +5344,7 @@ footer .footer-bottom p {
         text-align: center;
         gap: 1.5rem;
     }
-}
+
 
 @media (max-width: 480px) {
     /* Hero responsive */
@@ -6431,4 +6431,12 @@ footer .footer-bottom p {
 .report-runner-btn:focus {
     outline: 3px solid rgba(220, 38, 38, 0.3) !important;
     outline-offset: 2px !important;
+}
+/* === PayPal Button Styles === */
+.center-paypal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 1em;
 }
