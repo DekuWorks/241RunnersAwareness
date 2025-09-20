@@ -1368,22 +1368,27 @@
       if (authData && authData.user) {
         const user = authData.user;
         
+        // Parse name if it exists, otherwise use defaults
+        const nameParts = user.name ? user.name.split(' ') : ['User', ''];
+        const firstName = user.firstName || nameParts[0] || 'User';
+        const lastName = user.lastName || (nameParts.length > 1 ? nameParts.slice(1).join(' ') : '');
+        
         // Update header
-        document.getElementById('profileName').textContent = `${user.firstName || 'User'} ${user.lastName || ''}`;
+        document.getElementById('profileName').textContent = `${firstName} ${lastName}`.trim();
         document.getElementById('profileEmail').textContent = user.email || 'No email';
         document.getElementById('profileRole').textContent = user.role || 'user';
         
         // Update personal information
-        document.getElementById('firstName').textContent = user.firstName || 'Not provided';
-        document.getElementById('lastName').textContent = user.lastName || 'Not provided';
+        document.getElementById('firstName').textContent = firstName;
+        document.getElementById('lastName').textContent = lastName;
         document.getElementById('email').textContent = user.email || 'Not provided';
         document.getElementById('phone').textContent = user.phoneNumber || 'Not provided';
         document.getElementById('role').textContent = user.role || 'user';
         document.getElementById('memberSince').textContent = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown';
         
         // Update edit form
-        document.getElementById('editFirstName').value = user.firstName || '';
-        document.getElementById('editLastName').value = user.lastName || '';
+        document.getElementById('editFirstName').value = firstName;
+        document.getElementById('editLastName').value = lastName;
         document.getElementById('editPhone').value = user.phoneNumber || '';
         document.getElementById('editRole').value = user.role || 'user';
       } else {
@@ -1764,7 +1769,7 @@
     if (logoutBtn) {
       logoutBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        localStorage.removeItem('user');
+        localStorage.removeItem('ra_auth');
         window.location.href = 'index.html';
       });
     }
@@ -1868,8 +1873,8 @@
       const formData = new FormData();
       formData.append("image", file);
 
-      const userData = JSON.parse(localStorage.getItem("user"));
-      if (!userData || !userData.token) {
+      const userData = JSON.parse(localStorage.getItem("ra_auth"));
+      if (!userData || !(userData.accessToken || userData.token)) {
         alert("Please log in again");
         window.location.href = "login.html";
         return;
@@ -1896,7 +1901,7 @@
         const response = await fetch(`${PROFILE_API_BASE_URL}/ImageUpload/upload`, {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${userData.token}`
+            "Authorization": `Bearer ${userData.accessToken || userData.token}`
           },
           body: formData
         });
