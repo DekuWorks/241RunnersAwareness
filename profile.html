@@ -1357,7 +1357,7 @@
       const authData = localStorage.getItem('ra_auth');
       if (authData) {
         const auth = JSON.parse(authData);
-        return auth.token;
+        return auth.accessToken || auth.token;
       }
       return null;
     }
@@ -1663,7 +1663,7 @@
         const token = getAuthToken();
         const authData = checkAuth();
         
-        const response = await fetch(`${PROFILE_API_BASE_URL}/Auth/profile`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1/auth/profile`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -1776,15 +1776,15 @@
     async function loadUserProfileData() {
       try {
         const userData = JSON.parse(localStorage.getItem("ra_auth"));
-        if (!userData || !userData.token) {
+        if (!userData || !(userData.accessToken || userData.token)) {
           window.location.href = "login.html";
           return;
         }
 
-        const response = await fetch(`${PROFILE_API_BASE_URL}/Auth/me`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1/auth/me`, {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${userData.token}`,
+            "Authorization": `Bearer ${userData.accessToken || userData.token}`,
             "Content-Type": "application/json"
           }
         });
@@ -1937,7 +1937,7 @@
         const response = await fetch(`${PROFILE_API_BASE_URL}/ImageUpload/entity/user/${currentUser.id}`, {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${userData.token}`,
+            "Authorization": `Bearer ${userData.accessToken || userData.token}`,
             "Content-Type": "application/json"
           },
           body: JSON.stringify({ imageUrl: imageUrl })
@@ -1968,7 +1968,7 @@
         const response = await fetch(`${PROFILE_API_BASE_URL}/ImageUpload/delete`, {
           method: "DELETE",
           headers: {
-            "Authorization": `Bearer ${userData.token}`,
+            "Authorization": `Bearer ${userData.accessToken || userData.token}`,
             "Content-Type": "application/json"
           },
           body: JSON.stringify({ entityType: "user", entityId: currentUser.id })
