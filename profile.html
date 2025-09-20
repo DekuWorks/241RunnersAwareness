@@ -1086,7 +1086,7 @@
 
   <script>
     // API Configuration - use existing from auth.js
-    let PROFILE_PROFILE_API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
+    let PROFILE_API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
     
     // SignalR Connection
     let userHubConnection = null;
@@ -1096,7 +1096,7 @@
       try {
         const response = await fetch('/config.json');
         const config = await response.json();
-        PROFILE_PROFILE_API_BASE_URL = config.PROFILE_API_BASE_URL;
+        PROFILE_API_BASE_URL = config.PROFILE_API_BASE_URL || PROFILE_API_BASE_URL;
       } catch (error) {
         console.warn('Failed to load config.json, using default API URL');
       }
@@ -1105,7 +1105,12 @@
     // Initialize SignalR connection for real-time notifications
     async function initializeRealTimeNotifications() {
       try {
-        const apiBaseUrl = PROFILE_PROFILE_API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+        // SignalR hub is currently not available - disable for now
+        console.log('🔌 SignalR connection disabled - hub not available');
+        updateConnectionStatus('disconnected', 'SignalR hub not available');
+        return;
+        
+        const apiBaseUrl = PROFILE_API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
         const hubUrl = apiBaseUrl.replace('/api', '/userHub');
         
         console.log('🔌 Connecting to User SignalR hub:', hubUrl);
@@ -1317,7 +1322,7 @@
     async function handleEmergencyAlert(notificationId) {
       try {
         // Update user status to safe
-        const response = await fetch(`${PROFILE_PROFILE_API_BASE_URL}/users/status`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/users/status`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -1406,7 +1411,7 @@
           throw new Error('No authentication token');
         }
 
-        const response = await fetch(`${PROFILE_PROFILE_API_BASE_URL}/runners/profile`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/runners/profile`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
