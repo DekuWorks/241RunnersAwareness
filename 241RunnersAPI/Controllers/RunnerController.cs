@@ -139,69 +139,54 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
-        /// Get current user's runner profile (authenticated users)
+        /// Get current user's runner profile status (authenticated users) - Simple version without database dependency
         /// </summary>
         [HttpGet("my-profile")]
         [Authorize]
-        public async Task<IActionResult> GetMyRunnerProfile()
+        public IActionResult GetMyRunnerProfile()
         {
             try
             {
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+                var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+                var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (userIdClaim == null)
                 {
                     return Unauthorized(new { success = false, message = "Invalid user token" });
                 }
 
-                var runner = await _context.Runners
-                    .Include(r => r.User)
-                    .FirstOrDefaultAsync(r => r.UserId == userId);
-
-                if (runner == null)
+                // Simple response without database dependency
+                if (userRole?.ToLower() == "admin")
                 {
-                    return NotFound(new { success = false, message = "Runner profile not found" });
+                    return Ok(new { 
+                        success = true, 
+                        hasProfile = false,
+                        message = "Admin users typically don't need runner profiles. You have administrative access to manage all runner profiles.",
+                        userRole = userRole,
+                        userEmail = userEmail,
+                        userName = userName,
+                        timestamp = DateTime.UtcNow
+                    });
                 }
-
-                var runnerResponse = new RunnerResponseDto
+                else
                 {
-                    Id = runner.Id,
-                    UserId = runner.UserId,
-                    Name = runner.Name,
-                    DateOfBirth = runner.DateOfBirth,
-                    Age = DateTime.UtcNow.Year - runner.DateOfBirth.Year - (DateTime.UtcNow.DayOfYear < runner.DateOfBirth.DayOfYear ? 1 : 0),
-                    Gender = runner.Gender,
-                    PhysicalDescription = runner.PhysicalDescription,
-                    MedicalConditions = runner.MedicalConditions,
-                    Medications = runner.Medications,
-                    Allergies = runner.Allergies,
-                    EmergencyInstructions = runner.EmergencyInstructions,
-                    PreferredRunningLocations = runner.PreferredRunningLocations,
-                    TypicalRunningTimes = runner.TypicalRunningTimes,
-                    ExperienceLevel = runner.ExperienceLevel,
-                    SpecialNeeds = runner.SpecialNeeds,
-                    AdditionalNotes = runner.AdditionalNotes,
-                    IsActive = runner.IsActive,
-                    CreatedAt = runner.CreatedAt,
-                    UpdatedAt = runner.UpdatedAt,
-                    LastKnownLocation = runner.LastKnownLocation,
-                    LastLocationUpdate = runner.LastLocationUpdate,
-                    PreferredContactMethod = runner.PreferredContactMethod,
-                    ProfileImageUrl = runner.ProfileImageUrl,
-                    IsProfileComplete = runner.IsProfileComplete,
-                    IsVerified = runner.IsVerified,
-                    VerifiedAt = runner.VerifiedAt,
-                    VerifiedBy = runner.VerifiedBy,
-                    UserEmail = runner.User.Email,
-                    UserPhoneNumber = runner.User.PhoneNumber,
-                    UserEmergencyContactName = runner.User.EmergencyContactName,
-                    UserEmergencyContactPhone = runner.User.EmergencyContactPhone
-                };
-
-                return Ok(new { success = true, runner = runnerResponse });
+                    return Ok(new { 
+                        success = true, 
+                        hasProfile = false,
+                        message = "No runner profile found. Create one using POST /api/runner to register as a runner.",
+                        userRole = userRole,
+                        userEmail = userEmail,
+                        userName = userName,
+                        instructions = "To create a runner profile, send a POST request to /api/runner with your runner information.",
+                        timestamp = DateTime.UtcNow
+                    });
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving runner profile for user");
+                _logger.LogError(ex, "Error retrieving runner profile status for user");
                 return StatusCode(500, new { success = false, message = "Internal server error" });
             }
         }

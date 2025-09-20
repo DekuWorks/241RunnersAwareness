@@ -169,7 +169,7 @@ class ApiClient {
     }
 
     async getDashboardStats() {
-        return this.get('/admin/dashboard-stats');
+        return this.get('/Admin/stats');
     }
 
     // Cases methods

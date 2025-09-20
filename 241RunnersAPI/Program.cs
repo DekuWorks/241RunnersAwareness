@@ -93,7 +93,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-// Add CORS with enhanced security
+// Add CORS with enhanced security for both web and mobile
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -102,10 +102,28 @@ builder.Services.AddCors(options =>
                           "https://www.241runnersawareness.org",
                           "http://localhost:5173",
                           "http://localhost:3000",
-                          "http://localhost:8080")
-              .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-              .WithHeaders("Content-Type", "Authorization", "X-Requested-With", "X-ClientId")
+                          "http://localhost:8080",
+                          // Add mobile app origins (Expo development and production)
+                          "exp://localhost:19000", // Expo development
+                          "exp://192.168.*:*", // Local network for mobile development
+                          "exp://10.*:*", // Local network for mobile development
+                          "exp://172.*:*") // Local network for mobile development
+              .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+              .WithHeaders("Content-Type", "Authorization", "X-Requested-With", "X-ClientId", 
+                          "Accept", "Origin", "Access-Control-Request-Method", 
+                          "Access-Control-Request-Headers", "User-Agent")
               .AllowCredentials()
+              .SetPreflightMaxAge(TimeSpan.FromMinutes(10));
+    });
+    
+    // Add a more permissive policy for mobile apps during development
+    options.AddPolicy("MobileDevelopment", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+              .WithHeaders("Content-Type", "Authorization", "X-Requested-With", "X-ClientId", 
+                          "Accept", "Origin", "Access-Control-Request-Method", 
+                          "Access-Control-Request-Headers", "User-Agent")
               .SetPreflightMaxAge(TimeSpan.FromMinutes(10));
     });
 });
@@ -141,6 +159,11 @@ builder.Services.AddScoped<PerformanceMonitoringService>();
 
 // Add caching service
 builder.Services.AddScoped<CachingService>();
+
+// Add push notification and real-time services
+builder.Services.AddScoped<ITopicService, TopicService>();
+builder.Services.AddScoped<IFirebaseNotificationService, FirebaseNotificationService>();
+builder.Services.AddScoped<ISignalRService, SignalRService>();
 
 // Add response compression
 builder.Services.AddResponseCompression(options =>
@@ -316,6 +339,7 @@ app.MapControllers();
 
 // Map SignalR hubs
 app.MapHub<NotificationHub>("/hubs/notifications");
+app.MapHub<AlertsHub>("/hubs/alerts");
 
 // Add API info endpoint
 app.MapGet("/api", () => Results.Ok(new { 
@@ -537,7 +561,7 @@ app.MapGet("/api/performance", (PerformanceMonitoringService performanceService)
     });
 });
 
-// Database initialization
+// Database initialization - made more resilient
 using (var scope = app.Services.CreateScope())
 {
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
@@ -547,20 +571,45 @@ using (var scope = app.Services.CreateScope())
         
         // Test database connection first
         logger.LogInformation("Testing database connection...");
-        await db.Database.CanConnectAsync();
-        logger.LogInformation("Database connection successful");
-        
-        await db.Database.MigrateAsync();
-        logger.LogInformation("Database migrations applied successfully");
-        
-        // Initialize database with seed data
-        await _241RunnersAPI.Data.DbInitializer.Initialize(db, logger);
-        logger.LogInformation("Database initialization completed successfully");
+        var canConnect = await db.Database.CanConnectAsync();
+        if (!canConnect)
+        {
+            logger.LogWarning("Database connection failed, but continuing with application startup");
+            logger.LogWarning("API will be available but database operations may fail");
+        }
+        else
+        {
+            logger.LogInformation("Database connection successful");
+            
+            // Apply migrations
+            try
+            {
+                await db.Database.MigrateAsync();
+                logger.LogInformation("Database migrations applied successfully");
+            }
+            catch (Exception migrationEx)
+            {
+                logger.LogError(migrationEx, "Database migration failed: {Message}", migrationEx.Message);
+                logger.LogWarning("Continuing without migrations - database may be in inconsistent state");
+            }
+            
+            // Initialize database with seed data
+            try
+            {
+                await _241RunnersAPI.Data.DbInitializer.Initialize(db, logger);
+                logger.LogInformation("Database initialization completed successfully");
+            }
+            catch (Exception initEx)
+            {
+                logger.LogError(initEx, "Database initialization failed: {Message}", initEx.Message);
+                logger.LogWarning("Continuing without seed data initialization");
+            }
+        }
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "Failed to initialize database: {Message}", ex.Message);
-        logger.LogWarning("API will start without database initialization");
+        logger.LogError(ex, "Critical error during database setup: {Message}", ex.Message);
+        logger.LogWarning("API will start without database initialization - some features may not work");
         // Don't throw - let the app start even if initialization fails
     }
 }

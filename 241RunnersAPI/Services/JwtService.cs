@@ -118,8 +118,7 @@ namespace _241RunnersAPI.Services
                     ValidAudience = jwtAudience,
                     IssuerSigningKey = key,
                     ClockSkew = TimeSpan.Zero,
-                    RequireExpirationTime = true,
-                    ValidateIssuerSigningKey = true
+                    RequireExpirationTime = true
                 };
 
                 var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);

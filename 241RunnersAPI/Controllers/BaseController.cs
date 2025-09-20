@@ -13,6 +13,16 @@ namespace _241RunnersAPI.Controllers
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
 
+        protected int? GetCurrentUserIdAsInt()
+        {
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(userIdString, out var userId))
+            {
+                return userId;
+            }
+            return null;
+        }
+
         protected string? GetCurrentUserRole()
         {
             return User.FindFirst(ClaimTypes.Role)?.Value;
@@ -25,13 +35,13 @@ namespace _241RunnersAPI.Controllers
 
         protected bool IsAdmin()
         {
-            return GetCurrentUserRole() == "Admin";
+            return GetCurrentUserRole()?.ToLower() == "admin";
         }
 
         protected bool IsStaff()
         {
-            var role = GetCurrentUserRole();
-            return role == "Admin" || role == "Staff";
+            var role = GetCurrentUserRole()?.ToLower();
+            return role == "admin" || role == "staff";
         }
 
         protected IActionResult ErrorResponse(string code, string message, object? details = null)

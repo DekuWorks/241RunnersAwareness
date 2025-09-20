@@ -237,8 +237,10 @@ namespace _241RunnersAPI.Data
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "An error occurred while initializing the database");
-                throw;
+                logger.LogError(ex, "An error occurred while initializing the database: {Message}", ex.Message);
+                logger.LogWarning("Database initialization failed, but application will continue to start");
+                // Don't throw - let the application start even if initialization fails
+                // This allows the API to be accessible even if there are database issues
             }
         }
     }

@@ -23,6 +23,7 @@ namespace _241RunnersAPI.Controllers
         /// Get map points (public for aggregated, admin for raw)
         /// </summary>
         [HttpGet("points")]
+        [Authorize]
         public async Task<IActionResult> GetMapPoints([FromQuery] MapQuery query)
         {
             try

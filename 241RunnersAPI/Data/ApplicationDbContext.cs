@@ -15,6 +15,9 @@ namespace _241RunnersAPI.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Runner> Runners { get; set; }
         public DbSet<Case> Cases { get; set; }
+        public DbSet<Device> Devices { get; set; }
+        public DbSet<TopicSubscription> TopicSubscriptions { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -187,6 +190,101 @@ namespace _241RunnersAPI.Data
                 entity.Property(e => e.ViewCount).HasDefaultValue(0);
                 entity.Property(e => e.ShareCount).HasDefaultValue(0);
                 entity.Property(e => e.TipCount).HasDefaultValue(0);
+            });
+
+            // Device configuration
+            modelBuilder.Entity<Device>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                
+                // Foreign key relationship
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                
+                // Unique constraint for user + platform combination
+                entity.HasIndex(e => new { e.UserId, e.Platform }).IsUnique();
+                
+                // Required fields
+                entity.Property(e => e.UserId).IsRequired();
+                entity.Property(e => e.Platform).IsRequired().HasMaxLength(10);
+                entity.Property(e => e.FcmToken).IsRequired().HasMaxLength(500);
+                entity.Property(e => e.IsActive).IsRequired().HasDefaultValue(true);
+                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
+                entity.Property(e => e.LastSeenAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
+                
+                // String length constraints
+                entity.Property(e => e.AppVersion).HasMaxLength(20);
+                entity.Property(e => e.TopicsJson).HasMaxLength(2000);
+                entity.Property(e => e.DeviceModel).HasMaxLength(100);
+                entity.Property(e => e.OsVersion).HasMaxLength(50);
+                entity.Property(e => e.AppBuildNumber).HasMaxLength(100);
+            });
+
+            // TopicSubscription configuration
+            modelBuilder.Entity<TopicSubscription>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                
+                // Foreign key relationship
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                
+                // Unique constraint for user + topic combination
+                entity.HasIndex(e => new { e.UserId, e.Topic }).IsUnique();
+                
+                // Required fields
+                entity.Property(e => e.UserId).IsRequired();
+                entity.Property(e => e.Topic).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.IsSubscribed).IsRequired().HasDefaultValue(true);
+                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
+                
+                // String length constraints
+                entity.Property(e => e.SubscriptionReason).HasMaxLength(200);
+                
+                // Default values
+                entity.Property(e => e.NotificationCount).HasDefaultValue(0);
+            });
+
+            // Notification configuration
+            modelBuilder.Entity<Notification>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                
+                // Foreign key relationship
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                
+                // Required fields
+                entity.Property(e => e.UserId).IsRequired();
+                entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Body).IsRequired().HasMaxLength(1000);
+                entity.Property(e => e.Type).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.IsSent).IsRequired().HasDefaultValue(false);
+                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
+                entity.Property(e => e.Priority).IsRequired().HasMaxLength(100).HasDefaultValue("normal");
+                
+                // String length constraints
+                entity.Property(e => e.Topic).HasMaxLength(100);
+                entity.Property(e => e.DataJson).HasMaxLength(2000);
+                entity.Property(e => e.ErrorMessage).HasMaxLength(500);
+                
+                // Default values
+                entity.Property(e => e.IsDelivered).HasDefaultValue(false);
+                entity.Property(e => e.IsOpened).HasDefaultValue(false);
+                entity.Property(e => e.RetryCount).HasDefaultValue(0);
+                
+                // Indexes for performance
+                entity.HasIndex(e => e.UserId);
+                entity.HasIndex(e => e.Type);
+                entity.HasIndex(e => e.Topic);
+                entity.HasIndex(e => e.CreatedAt);
+                entity.HasIndex(e => e.IsSent);
             });
 
             // Seed data

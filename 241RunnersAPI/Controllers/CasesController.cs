@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using _241RunnersAPI.Data;
 using _241RunnersAPI.Models;
+using _241RunnersAPI.Services;
 
 namespace _241RunnersAPI.Controllers
 {
@@ -15,13 +16,20 @@ namespace _241RunnersAPI.Controllers
         private readonly ILogger<CasesController> _logger;
         private readonly CoordinateValidationService _coordinateValidation;
         private readonly ContentSecurityService _contentSecurity;
+        private readonly ISignalRService _signalRService;
 
-        public CasesController(ApplicationDbContext context, ILogger<CasesController> logger, CoordinateValidationService coordinateValidation, ContentSecurityService contentSecurity)
+        public CasesController(
+            ApplicationDbContext context, 
+            ILogger<CasesController> logger, 
+            CoordinateValidationService coordinateValidation, 
+            ContentSecurityService contentSecurity,
+            ISignalRService signalRService)
         {
             _context = context;
             _logger = logger;
             _coordinateValidation = coordinateValidation;
             _contentSecurity = contentSecurity;
+            _signalRService = signalRService;
         }
 
         /// <summary>
@@ -227,7 +235,10 @@ namespace _241RunnersAPI.Controllers
                 // Coordinate validation (if provided)
                 if (request.Latitude.HasValue || request.Longitude.HasValue)
                 {
-                    if (!_coordinateValidation.ValidateCoordinates(request.Latitude, request.Longitude))
+                    var latitude = request.Latitude.HasValue ? (decimal?)request.Latitude.Value : null;
+                    var longitude = request.Longitude.HasValue ? (decimal?)request.Longitude.Value : null;
+                    
+                    if (!_coordinateValidation.ValidateCoordinates(latitude, longitude))
                     {
                         validationErrors["coordinates"] = new[] { "Invalid coordinates. Latitude must be between -90 and 90, longitude between -180 and 180" };
                     }
@@ -318,6 +329,25 @@ namespace _241RunnersAPI.Controllers
                 _logger.LogInformation("Case created: {Title} for individual {IndividualId} by user {UserId}", 
                     caseEntity.Title, individualId, userId);
 
+                // Broadcast new case notification
+                try
+                {
+                    var caseData = new
+                    {
+                        id = caseEntity.Id,
+                        title = caseEntity.Title,
+                        status = caseEntity.Status,
+                        priority = caseEntity.Priority,
+                        createdAt = caseEntity.CreatedAt,
+                        runnerId = caseEntity.RunnerId
+                    };
+                    await _signalRService.BroadcastNewCaseAsync(caseEntity.Id, caseData);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error broadcasting new case notification for case {CaseId}", caseEntity.Id);
+                }
+
                 return CreatedAtAction(nameof(GetCase), new { id = caseEntity.Id }, new
                 {
                     id = $"case_{caseEntity.Id}",
@@ -392,6 +422,25 @@ namespace _241RunnersAPI.Controllers
 
                 _logger.LogInformation("Case updated: {Title}", caseEntity.Title);
 
+                // Broadcast case update notification
+                try
+                {
+                    var caseData = new
+                    {
+                        id = caseEntity.Id,
+                        title = caseEntity.Title,
+                        status = caseEntity.Status,
+                        priority = caseEntity.Priority,
+                        updatedAt = caseEntity.UpdatedAt,
+                        runnerId = caseEntity.RunnerId
+                    };
+                    await _signalRService.BroadcastCaseUpdatedAsync(caseEntity.Id, caseData);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error broadcasting case update notification for case {CaseId}", caseEntity.Id);
+                }
+
                 return Ok(new
                 {
                     id = $"case_{caseEntity.Id}",
@@ -419,6 +468,7 @@ namespace _241RunnersAPI.Controllers
         /// Get public cases (for public consumption)
         /// </summary>
         [HttpGet("publiccases")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetPublicCases([FromQuery] PublicCaseQuery query)
         {
             try
@@ -506,6 +556,7 @@ namespace _241RunnersAPI.Controllers
         /// Get public cases statistics for a region
         /// </summary>
         [HttpGet("publiccases/stats/{region}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetPublicCasesStats(string region)
         {
             try
@@ -665,6 +716,10 @@ namespace _241RunnersAPI.Controllers
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
         public string? Status { get; set; }
+        public string? LastSeenLocation { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public string? AdditionalInfo { get; set; }
     }
 
     public class UpdateCaseRequest
