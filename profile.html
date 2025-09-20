@@ -1105,13 +1105,8 @@
     // Initialize SignalR connection for real-time notifications
     async function initializeRealTimeNotifications() {
       try {
-        // SignalR hub is currently not available - disable for now
-        console.log('🔌 SignalR connection disabled - hub not available');
-        updateConnectionStatus('disconnected', 'SignalR hub not available');
-        return;
-        
         const apiBaseUrl = PROFILE_API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
-        const hubUrl = apiBaseUrl.replace('/api', '/userHub');
+        const hubUrl = apiBaseUrl.replace('/api', '/hubs/user');
         
         console.log('🔌 Connecting to User SignalR hub:', hubUrl);
         

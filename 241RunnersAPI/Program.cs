@@ -454,6 +454,7 @@ app.MapControllers();
 // Map SignalR hubs
 app.MapHub<NotificationHub>("/hubs/notifications");
 app.MapHub<AlertsHub>("/hubs/alerts");
+app.MapHub<UserHub>("/hubs/user");
 
 // Add API info endpoint
 app.MapGet("/api", () => Results.Ok(new { 
