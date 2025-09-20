@@ -10,11 +10,13 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace _241RunnersAPI.Controllers
 {
     [ApiController]
-    [Route("api/auth")]
+    [Route("api/v{version:apiVersion}/auth")]
+    [ApiVersion("1.0")]
     [AllowAnonymous]
     public class AuthController : BaseController
     {
@@ -915,6 +917,36 @@ namespace _241RunnersAPI.Controllers
                 throw new ArgumentException($"{fieldName} is too long (max {maxLength} characters)");
 
             return sanitized;
+        }
+
+        /// <summary>
+        /// Health check endpoint for authentication service
+        /// </summary>
+        [HttpGet("health")]
+        public IActionResult Health()
+        {
+            try
+            {
+                return Ok(new
+                {
+                    status = "healthy",
+                    service = "auth",
+                    version = "1.0",
+                    timestamp = DateTime.UtcNow,
+                    environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Health check failed for auth service");
+                return StatusCode(503, new
+                {
+                    status = "unhealthy",
+                    service = "auth",
+                    error = ex.Message,
+                    timestamp = DateTime.UtcNow
+                });
+            }
         }
 
         #endregion

@@ -7,7 +7,8 @@ using _241RunnersAPI.Models;
 namespace _241RunnersAPI.Controllers
 {
     [ApiController]
-    [Route("api/users")]
+    [Route("api/v{version:apiVersion}/users")]
+    [ApiVersion("1.0")]
     [Authorize(Roles = "admin")]
     public class UsersController : BaseController
     {

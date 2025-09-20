@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace _241RunnersAPI.Controllers
 {
@@ -42,6 +43,21 @@ namespace _241RunnersAPI.Controllers
         {
             var role = GetCurrentUserRole()?.ToLower();
             return role == "admin" || role == "staff";
+        }
+
+        protected string GetCurrentApiVersion()
+        {
+            return HttpContext.GetRequestedApiVersion()?.ToString() ?? "1.0";
+        }
+
+        protected string GetClientPlatform()
+        {
+            return Request.Headers["X-Platform"].FirstOrDefault() ?? "unknown";
+        }
+
+        protected string GetClientVersion()
+        {
+            return Request.Headers["X-Version"].FirstOrDefault() ?? "unknown";
         }
 
         protected IActionResult ErrorResponse(string code, string message, object? details = null)

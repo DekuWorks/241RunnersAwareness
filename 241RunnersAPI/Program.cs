@@ -34,6 +34,20 @@ builder.Services.AddControllers(options =>
     options.MaxModelBindingRecursionDepth = 10; // Maximum recursion depth
 });
 
+// Add API versioning support for mobile app compatibility
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+});
+
+builder.Services.AddVersionedApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
+
 // Configure request size limits
 builder.Services.Configure<IISServerOptions>(options =>
 {
@@ -46,7 +60,53 @@ builder.Services.Configure<KestrelServerOptions>(options =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo 
+    { 
+        Title = "241 Runners Awareness API", 
+        Version = "v1",
+        Description = "API for the 241 Runners Awareness missing persons case management system",
+        Contact = new Microsoft.OpenApi.Models.OpenApiContact
+        {
+            Name = "241 Runners Awareness",
+            Email = "support@241runnersawareness.org"
+        }
+    });
+    
+    // Include XML comments for better documentation
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = System.IO.Path.Combine(System.AppContext.BaseDirectory, xmlFile);
+    if (System.IO.File.Exists(xmlPath))
+    {
+        c.IncludeXmlComments(xmlPath);
+    }
+    
+    // Add JWT Bearer authentication to Swagger
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+    
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 // Add SignalR
 builder.Services.AddSignalR();
@@ -107,11 +167,18 @@ builder.Services.AddCors(options =>
                           "exp://localhost:19000", // Expo development
                           "exp://192.168.*:*", // Local network for mobile development
                           "exp://10.*:*", // Local network for mobile development
-                          "exp://172.*:*") // Local network for mobile development
+                          "exp://172.*:*", // Local network for mobile development
+                          // React Native and mobile app schemes
+                          "rn://localhost:*", // React Native development
+                          "capacitor://localhost", // Capacitor apps
+                          "ionic://localhost", // Ionic apps
+                          // Production mobile app identifiers
+                          "com.241runnersawareness.app", // iOS bundle identifier
+                          "org.241runnersawareness.app") // Android package name
               .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
               .WithHeaders("Content-Type", "Authorization", "X-Requested-With", "X-ClientId", 
                           "Accept", "Origin", "Access-Control-Request-Method", 
-                          "Access-Control-Request-Headers", "User-Agent")
+                          "Access-Control-Request-Headers", "User-Agent", "X-Version", "X-Platform")
               .AllowCredentials()
               .SetPreflightMaxAge(TimeSpan.FromMinutes(10));
     });
@@ -123,7 +190,20 @@ builder.Services.AddCors(options =>
               .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
               .WithHeaders("Content-Type", "Authorization", "X-Requested-With", "X-ClientId", 
                           "Accept", "Origin", "Access-Control-Request-Method", 
-                          "Access-Control-Request-Headers", "User-Agent")
+                          "Access-Control-Request-Headers", "User-Agent", "X-Version", "X-Platform")
+              .SetPreflightMaxAge(TimeSpan.FromMinutes(10));
+    });
+    
+    // Add specific policy for production mobile apps
+    options.AddPolicy("MobileProduction", policy =>
+    {
+        policy.WithOrigins("https://241runnersawareness.org",
+                          "https://www.241runnersawareness.org")
+              .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+              .WithHeaders("Content-Type", "Authorization", "X-Requested-With", "X-ClientId", 
+                          "Accept", "Origin", "Access-Control-Request-Method", 
+                          "Access-Control-Request-Headers", "User-Agent", "X-Version", "X-Platform")
+              .AllowCredentials()
               .SetPreflightMaxAge(TimeSpan.FromMinutes(10));
     });
 });
@@ -165,12 +245,45 @@ builder.Services.AddScoped<ITopicService, TopicService>();
 builder.Services.AddScoped<IFirebaseNotificationService, FirebaseNotificationService>();
 builder.Services.AddScoped<ISignalRService, SignalRService>();
 
-// Add response compression
+// Add response compression with enhanced options
 builder.Services.AddResponseCompression(options =>
 {
     options.EnableForHttps = true;
     options.Providers.Add<Microsoft.AspNetCore.ResponseCompression.BrotliCompressionProvider>();
     options.Providers.Add<Microsoft.AspNetCore.ResponseCompression.GzipCompressionProvider>();
+    
+    // Configure compression levels for better performance
+    options.Providers.Add<Microsoft.AspNetCore.ResponseCompression.BrotliCompressionProvider>();
+    options.Providers.Add<Microsoft.AspNetCore.ResponseCompression.GzipCompressionProvider>();
+    
+    // Add MIME types that should be compressed
+    options.MimeTypes = Microsoft.AspNetCore.ResponseCompression.ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/json", "application/javascript", "text/css", "text/html", "text/json", "text/plain" });
+});
+
+// Configure compression levels
+builder.Services.Configure<Microsoft.AspNetCore.ResponseCompression.BrotliCompressionProviderOptions>(options =>
+{
+    options.Level = System.IO.Compression.CompressionLevel.Optimal;
+});
+
+builder.Services.Configure<Microsoft.AspNetCore.ResponseCompression.GzipCompressionProviderOptions>(options =>
+{
+    options.Level = System.IO.Compression.CompressionLevel.SmallestSize;
+});
+
+// Add distributed memory cache for better performance
+builder.Services.AddMemoryCache(options =>
+{
+    // Remove size limit to avoid conflicts with rate limiting
+    options.TrackStatistics = true;
+});
+
+// Add response caching
+builder.Services.AddResponseCaching(options =>
+{
+    options.MaximumBodySize = 1024 * 1024; // 1MB max response size
+    options.UseCaseSensitivePaths = false;
 });
 
 // Add comprehensive health checks
@@ -325,6 +438,7 @@ app.Use(async (context, next) =>
 });
 
 app.UseResponseCompression();
+app.UseResponseCaching();
 app.UseHttpsRedirection();
 
 // Add rate limiting middleware

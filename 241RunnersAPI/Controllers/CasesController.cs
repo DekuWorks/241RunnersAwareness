@@ -8,7 +8,8 @@ using _241RunnersAPI.Services;
 namespace _241RunnersAPI.Controllers
 {
     [ApiController]
-    [Route("api/cases")]
+    [Route("api/v{version:apiVersion}/cases")]
+    [ApiVersion("1.0")]
     [Authorize]
     public class CasesController : BaseController
     {
