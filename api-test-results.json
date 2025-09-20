@@ -1,0 +1,95 @@
+{
+  "timestamp": "2025-09-14T20:28:33.541Z",
+  "summary": {
+    "total": 7,
+    "passed": 2,
+    "failed": 5,
+    "skipped": 0
+  },
+  "results": [
+    {
+      "name": "Root Endpoint",
+      "method": "GET",
+      "path": "/",
+      "url": "https://241runners-api-v2.azurewebsites.net/",
+      "statusCode": 200,
+      "success": true,
+      "duration": 583,
+      "responseSize": 111,
+      "timestamp": "2025-09-14T20:28:34.140Z",
+      "error": null
+    },
+    {
+      "name": "API Root",
+      "method": "GET",
+      "path": "/api",
+      "url": "https://241runners-api-v2.azurewebsites.net/api",
+      "statusCode": 200,
+      "success": true,
+      "duration": 118,
+      "responseSize": 321,
+      "timestamp": "2025-09-14T20:28:34.258Z",
+      "error": null
+    },
+    {
+      "name": "User Registration",
+      "method": "POST",
+      "path": "/api/auth/register",
+      "url": "https://241runners-api-v2.azurewebsites.net/api/auth/register",
+      "statusCode": 400,
+      "success": false,
+      "duration": 428,
+      "responseSize": 80,
+      "timestamp": "2025-09-14T20:28:34.686Z",
+      "error": null
+    },
+    {
+      "name": "Admin Login",
+      "method": "POST",
+      "path": "/api/auth/login",
+      "url": "https://241runners-api-v2.azurewebsites.net/api/auth/login",
+      "statusCode": 401,
+      "success": false,
+      "duration": 819,
+      "responseSize": 78,
+      "timestamp": "2025-09-14T20:28:35.505Z",
+      "error": null
+    },
+    {
+      "name": "Get Map Points",
+      "method": "GET",
+      "path": "/api/map/points",
+      "url": "https://241runners-api-v2.azurewebsites.net/api/map/points",
+      "statusCode": 401,
+      "success": false,
+      "duration": 78,
+      "responseSize": 2,
+      "timestamp": "2025-09-14T20:28:35.584Z",
+      "error": null
+    },
+    {
+      "name": "Get Map Points (Clustered)",
+      "method": "GET",
+      "path": "/api/map/points?cluster=true",
+      "url": "https://241runners-api-v2.azurewebsites.net/api/map/points?cluster=true",
+      "statusCode": 401,
+      "success": false,
+      "duration": 154,
+      "responseSize": 2,
+      "timestamp": "2025-09-14T20:28:35.738Z",
+      "error": null
+    },
+    {
+      "name": "Get Image",
+      "method": "GET",
+      "path": "/api/imageupload/test-image.jpg",
+      "url": "https://241runners-api-v2.azurewebsites.net/api/imageupload/test-image.jpg",
+      "statusCode": 404,
+      "success": false,
+      "duration": 179,
+      "responseSize": 45,
+      "timestamp": "2025-09-14T20:28:35.917Z",
+      "error": null
+    }
+  ]
+}
