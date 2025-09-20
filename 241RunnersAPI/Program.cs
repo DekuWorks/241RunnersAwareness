@@ -455,6 +455,7 @@ app.MapControllers();
 app.MapHub<NotificationHub>("/hubs/notifications");
 app.MapHub<AlertsHub>("/hubs/alerts");
 app.MapHub<UserHub>("/hubs/user");
+app.MapHub<AdminHub>("/hubs/admin");
 
 // Add API info endpoint
 app.MapGet("/api", () => Results.Ok(new { 
@@ -470,7 +471,15 @@ app.MapGet("/api", () => Results.Ok(new {
         users = "/api/users/*",
         admin = "/api/Admin/*",
         runner = "/api/Runner/*",
-        swagger = "/swagger"
+        swagger = "/swagger",
+        signalrStats = "/api/signalr/stats",
+        signalrBroadcast = "/api/signalr/broadcast/*"
+    },
+    signalrHubs = new {
+        userHub = "/hubs/user",
+        alertsHub = "/hubs/alerts",
+        notificationsHub = "/hubs/notifications",
+        adminHub = "/hubs/admin"
     }
 }));
 
@@ -480,6 +489,63 @@ app.MapGet("/api/test", () => Results.Ok(new {
     timestamp = DateTime.UtcNow,
     environment = app.Environment.EnvironmentName
 }));
+
+// SignalR connection statistics endpoint
+app.MapGet("/api/signalr/stats", async (ISignalRService signalRService) => {
+    try
+    {
+        var stats = await signalRService.GetConnectionStatsAsync();
+        return Results.Ok(new { 
+            success = true, 
+            data = stats,
+            timestamp = DateTime.UtcNow 
+        });
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"Failed to get SignalR stats: {ex.Message}");
+    }
+});
+
+// SignalR broadcast endpoints for admin functionality
+app.MapPost("/api/signalr/broadcast/all", async (ISignalRService signalRService, HttpContext context) => {
+    try
+    {
+        var request = await context.Request.ReadFromJsonAsync<dynamic>();
+        var result = await signalRService.SendToAllAsync("broadcast", request);
+        return Results.Ok(result);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"Failed to broadcast message: {ex.Message}");
+    }
+});
+
+app.MapPost("/api/signalr/broadcast/admins", async (ISignalRService signalRService, HttpContext context) => {
+    try
+    {
+        var request = await context.Request.ReadFromJsonAsync<dynamic>();
+        var result = await signalRService.SendToAdminsAsync("admin_broadcast", request);
+        return Results.Ok(result);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"Failed to broadcast to admins: {ex.Message}");
+    }
+});
+
+app.MapPost("/api/signalr/send/user/{userId}", async (ISignalRService signalRService, int userId, HttpContext context) => {
+    try
+    {
+        var request = await context.Request.ReadFromJsonAsync<dynamic>();
+        var result = await signalRService.SendToUserAsync(userId, "user_message", request);
+        return Results.Ok(result);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"Failed to send message to user: {ex.Message}");
+    }
+});
 
 // Test endpoint to check database connectivity
 app.MapGet("/api/test-db", async (ApplicationDbContext db) => {
