@@ -154,12 +154,20 @@
 
                     const result = await response.json();
                     
-                    if (result.success) {
-                        authUtils.setAuth(result);
+                    if (response.ok && result.accessToken) {
+                        // Transform API response to expected format
+                        const authData = {
+                            success: true,
+                            accessToken: result.accessToken,
+                            expiresIn: result.expiresIn,
+                            user: result.user
+                        };
+                        
+                        authUtils.setAuth(authData);
                         authUtils.showToast('Login successful!', 'success');
                         
                         // Redirect based on user role
-                        const user = authUtils.getCurrentUser();
+                        const user = result.user;
                         if (user && user.role === 'admin') {
                             window.location.href = 'admin/index.html';
                         } else {
