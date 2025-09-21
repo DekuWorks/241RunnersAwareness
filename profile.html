@@ -471,22 +471,174 @@
       background: #4b5563;
     }
 
-    /* Responsive Design */
+    /* Enhanced Responsive Design */
     @media (max-width: 768px) {
       .profile-container {
-        padding: 1rem;
+        padding: 0.5rem;
+        margin: 0;
       }
 
       .profile-content {
         grid-template-columns: 1fr;
+        gap: 1rem;
       }
 
       .profile-header {
-        padding: 1.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
       }
 
       .profile-name {
         font-size: 1.5rem;
+      }
+
+      .profile-info-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+
+      .profile-info-item {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+      }
+
+      .profile-info-label {
+        font-size: 0.8rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .profile-info-value {
+        font-size: 0.9rem;
+      }
+
+      .case-status-card {
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .case-status-title {
+        font-size: 1rem;
+      }
+
+      .case-status-badge {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+      }
+
+      .btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+
+      .btn-group {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .btn-group .btn {
+        width: 100%;
+        margin: 0;
+      }
+
+      .edit-form {
+        padding: 1rem;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        padding: 0.75rem;
+        font-size: 1rem;
+      }
+
+      .image-upload-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .upload-section {
+        width: 100%;
+      }
+
+      .upload-btn, .remove-btn {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 0.9rem;
+      }
+
+      /* Mobile-specific logout button styling */
+      .nav-login {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        border-radius: 6px;
+        background: #dc2626;
+        color: white;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        transition: background-color 0.3s ease;
+      }
+
+      .nav-login:hover {
+        background: #b91c1c;
+        color: white;
+      }
+
+      /* Mobile navigation improvements */
+      .nav-menu {
+        padding: 1rem;
+      }
+
+      .nav-menu a {
+        padding: 0.75rem 0;
+        font-size: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .nav-menu a:last-child {
+        border-bottom: none;
+      }
+    }
+
+    /* Extra small devices */
+    @media (max-width: 480px) {
+      .profile-container {
+        padding: 0.25rem;
+      }
+
+      .profile-header {
+        padding: 0.75rem;
+      }
+
+      .profile-name {
+        font-size: 1.25rem;
+      }
+
+      .profile-info-item {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+      }
+
+      .case-status-card {
+        padding: 0.75rem;
+      }
+
+      .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+      }
+
+      .edit-form {
+        padding: 0.75rem;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        padding: 0.5rem;
+        font-size: 0.9rem;
       }
     }
     
@@ -1764,13 +1916,52 @@
       navToggle.classList.toggle('active');
     });
 
-    // Logout functionality
+    // Enhanced Logout functionality
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
       logoutBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        localStorage.removeItem('ra_auth');
-        window.location.href = 'index.html';
+        
+        // Clear all authentication data
+        const authKeys = [
+          'ra_auth', 'ra_admin_token', 'ra_admin_role', 'ra_admin_user',
+          'ra_user_token', 'ra_user_role', 'ra_user_data',
+          'admin_token', 'admin_role', 'admin_user', 'user', 'userToken'
+        ];
+        
+        authKeys.forEach(key => {
+          localStorage.removeItem(key);
+        });
+        
+        // Clear sessionStorage as well
+        if (typeof sessionStorage !== 'undefined') {
+          authKeys.forEach(key => {
+            try {
+              sessionStorage.removeItem(key);
+            } catch (e) {
+              console.warn('Could not clear sessionStorage key:', key);
+            }
+          });
+        }
+        
+        // Disconnect SignalR if connected
+        if (typeof window.connection !== 'undefined' && window.connection.state === signalR.HubConnectionState.Connected) {
+          try {
+            window.connection.stop();
+          } catch (error) {
+            console.warn('Error disconnecting SignalR:', error);
+          }
+        }
+        
+        // Show logout confirmation
+        if (typeof showNotification !== 'undefined') {
+          showNotification('Logged out successfully', 'success');
+        }
+        
+        // Redirect to home page
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 500);
       });
     }
 

@@ -8474,12 +8474,12 @@
                 console.log('✅ Logout completed, redirecting...');
                 
                 // Force immediate redirect with cache bypass
-                window.location.replace('/admin/login.html');
+                window.location.replace('./login.html');
                 
             } catch (error) {
                 console.error('❌ Error during logout:', error);
                 // Force redirect even if logout fails
-                window.location.href = '/admin/login.html';
+                window.location.href = './login.html';
             }
         }
         
