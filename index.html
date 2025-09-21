@@ -173,32 +173,30 @@
 
     <!-- Features Section -->
     <section class="features-section" aria-labelledby="features-heading">
-      <div class="container">
-        <h2 id="features-heading">Our Services</h2>
-        <div class="features-grid">
-          <!-- DNA Tracking Feature Card -->
-          <div class="feature-card">
-            <div class="feature-icon">🧬</div>
-            <h3>DNA Tracking & Identification</h3>
-            <p>Advanced DNA technology for missing persons cases. Secure sample collection, analysis, and national database integration.</p>
-            <a href="https://241runnersawareness.org/dna-tracking.html" class="btn btn-outline">Learn More</a>
-          </div>
+      <h2 id="features-heading">Our Services</h2>
+      <div class="features-grid">
+        <!-- DNA Tracking Feature Card -->
+        <div class="feature-card">
+          <div class="feature-icon">🧬</div>
+          <h3>DNA Tracking & Identification</h3>
+          <p>Advanced DNA technology for missing persons cases. Secure sample collection, analysis, and national database integration.</p>
+          <a href="https://241runnersawareness.org/dna-tracking.html" class="btn btn-outline">Learn More</a>
+        </div>
 
-          <!-- Real-Time Alerts Feature Card -->
-          <div class="feature-card">
-            <div class="feature-icon">🚨</div>
-            <h3>Real-Time Emergency Alerts</h3>
-            <p>Instant notifications for missing individuals with special needs. GPS tracking, wandering alerts, and immediate community response system.</p>
-            <a href="https://241runnersawareness.org/cases.html" class="btn btn-primary">View Active Cases</a>
-          </div>
+        <!-- Real-Time Alerts Feature Card -->
+        <div class="feature-card">
+          <div class="feature-icon">🚨</div>
+          <h3>Real-Time Emergency Alerts</h3>
+          <p>Instant notifications for missing individuals with special needs. GPS tracking, wandering alerts, and immediate community response system.</p>
+          <a href="https://241runnersawareness.org/cases.html" class="btn btn-primary">View Active Cases</a>
+        </div>
 
-          <!-- Special Needs Support Feature Card -->
-          <div class="feature-card">
-            <div class="feature-icon">🤝</div>
-            <h3>Special Needs Support Network</h3>
-            <p>Comprehensive support for individuals with disabilities, autism, and special needs. Caregiver alerts, medical emergency notifications, and specialized search protocols.</p>
-            <a href="https://241runnersawareness.org/aboutus.html" class="btn btn-outline">Learn About Our Mission</a>
-          </div>
+        <!-- Special Needs Support Feature Card -->
+        <div class="feature-card">
+          <div class="feature-icon">🤝</div>
+          <h3>Special Needs Support Network</h3>
+          <p>Comprehensive support for individuals with disabilities, autism, and special needs. Caregiver alerts, medical emergency notifications, and specialized search protocols.</p>
+          <a href="https://241runnersawareness.org/aboutus.html" class="btn btn-outline">Learn About Our Mission</a>
         </div>
       </div>
     </section>
@@ -300,5 +298,43 @@
     fetch('/config.json').then(r => r.json()).then(cfg => window.__CONFIG = cfg);
   </script>
   <script type="module" src="/js/api.js"></script>
+  
+  <!-- Initialize authentication state -->
+  <script>
+    // Initialize authentication state when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      // Wait for auth-utils.js to load, then update navigation
+      if (typeof updateNavigation === 'function') {
+        updateNavigation();
+      } else {
+        // If auth-utils.js hasn't loaded yet, wait a bit and try again
+        setTimeout(function() {
+          if (typeof updateNavigation === 'function') {
+            updateNavigation();
+          }
+        }, 100);
+      }
+      
+      // Add logout functionality to logout button if it exists
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', function() {
+          if (typeof clearAllAuth === 'function') {
+            clearAllAuth();
+          } else {
+            // Fallback: clear localStorage manually
+            localStorage.removeItem('user');
+            localStorage.removeItem('ra_auth');
+            localStorage.removeItem('ra_admin_token');
+            localStorage.removeItem('ra_admin_role');
+            localStorage.removeItem('ra_admin_user');
+            localStorage.removeItem('jwtToken');
+            // Refresh page to update navigation
+            window.location.reload();
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>

@@ -32,7 +32,52 @@ loadConfig();
  */
 
 function updateNavigation() {
+  // Check for authentication data in multiple possible localStorage keys
   const user = localStorage.getItem('user');
+  const raAuth = localStorage.getItem('ra_auth');
+  const adminToken = localStorage.getItem('ra_admin_token');
+  const jwtToken = localStorage.getItem('jwtToken');
+  
+  // Determine if user is authenticated
+  let isAuthenticated = false;
+  let userData = null;
+  let userRole = null;
+  
+  if (user) {
+    try {
+      userData = JSON.parse(user);
+      isAuthenticated = true;
+      userRole = userData.role;
+    } catch (e) {
+      console.warn('Error parsing user data:', e);
+    }
+  } else if (raAuth) {
+    try {
+      userData = JSON.parse(raAuth);
+      isAuthenticated = !!(userData.token || userData.accessToken);
+      userRole = userData.user?.role;
+    } catch (e) {
+      console.warn('Error parsing ra_auth data:', e);
+    }
+  } else if (adminToken) {
+    isAuthenticated = true;
+    userRole = localStorage.getItem('ra_admin_role');
+    const adminUser = localStorage.getItem('ra_admin_user');
+    if (adminUser) {
+      try {
+        userData = JSON.parse(adminUser);
+        userRole = userData.role;
+      } catch (e) {
+        console.warn('Error parsing admin user data:', e);
+      }
+    }
+  } else if (jwtToken) {
+    isAuthenticated = true;
+    // Try to get role from other sources
+    userRole = localStorage.getItem('ra_admin_role');
+  }
+  
+  // Get navigation elements
   const signupLink = document.getElementById('signupLink');
   const loginLink = document.getElementById('loginLink');
   const profileLink = document.getElementById('profileLink');
@@ -40,8 +85,9 @@ function updateNavigation() {
   const runnerProfileLink = document.getElementById('runnerProfileLink');
   const userManagementLink = document.getElementById('userManagementLink');
   const logoutBtn = document.getElementById('logoutBtn');
+  const adminLink = document.getElementById('adminLink');
 
-  if (user) {
+  if (isAuthenticated) {
     // User is logged in - hide auth links, show logout and profile
     if (signupLink) signupLink.style.display = 'none';
     if (loginLink) loginLink.style.display = 'none';
@@ -49,7 +95,6 @@ function updateNavigation() {
     if (logoutBtn) logoutBtn.style.display = 'inline-block';
     
     // Show dashboard link for all authenticated users
-    const userData = JSON.parse(user);
     if (dashboardLink) {
       dashboardLink.style.display = 'inline-block';
     }
@@ -57,8 +102,12 @@ function updateNavigation() {
     if (runnerProfileLink) {
       runnerProfileLink.style.display = 'inline-block';
     }
+    // Show admin link for admin users only
+    if (adminLink && (userRole === 'admin' || userRole === 'Admin')) {
+      adminLink.style.display = 'inline-block';
+    }
     // Show user management links for admin users only
-    if (userManagementLink && userData.role === 'admin') {
+    if (userManagementLink && (userRole === 'admin' || userRole === 'Admin')) {
       userManagementLink.style.display = 'inline-block';
     }
   } else {
@@ -70,7 +119,21 @@ function updateNavigation() {
     if (runnerProfileLink) runnerProfileLink.style.display = 'none';
     if (userManagementLink) userManagementLink.style.display = 'none';
     if (logoutBtn) logoutBtn.style.display = 'none';
+    if (adminLink) adminLink.style.display = 'none';
   }
+}
+
+/**
+ * Clear all authentication data from localStorage
+ */
+function clearAllAuth() {
+  localStorage.removeItem('user');
+  localStorage.removeItem('ra_auth');
+  localStorage.removeItem('ra_admin_token');
+  localStorage.removeItem('ra_admin_role');
+  localStorage.removeItem('ra_admin_user');
+  localStorage.removeItem('jwtToken');
+  updateNavigation();
 }
 
 /**
