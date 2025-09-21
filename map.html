@@ -57,6 +57,12 @@
     </script>
     <!-- MarkerClusterer library -->
     <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
+    <script>
+        // Ensure MarkerClusterer is available globally
+        if (typeof MarkerClusterer === 'undefined' && typeof window.MarkerClusterer !== 'undefined') {
+            window.MarkerClusterer = window.MarkerClusterer;
+        }
+    </script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
@@ -669,8 +675,41 @@
                 
                 console.log("Google Map created:", map);
                 
-                // Initialize marker clusterer
-                markerCluster = new MarkerClusterer(map, [], config.CLUSTER_CONFIG);
+                // Initialize marker clusterer with error handling
+                try {
+                    if (typeof MarkerClusterer !== 'undefined') {
+                        markerCluster = new MarkerClusterer(map, [], config.CLUSTER_CONFIG);
+                        console.log("✅ MarkerClusterer initialized successfully");
+                    } else {
+                        console.warn("⚠️ MarkerClusterer not available, using fallback marker management");
+                        // Fallback: just use individual markers without clustering
+                        markerCluster = {
+                            addMarkers: function(markers) {
+                                markers.forEach(marker => marker.setMap(map));
+                            },
+                            clearMarkers: function() {
+                                // This will be handled by the displayRunners function
+                            },
+                            getMarkers: function() {
+                                return markers;
+                            }
+                        };
+                    }
+                } catch (error) {
+                    console.error("❌ Error initializing MarkerClusterer:", error);
+                    // Fallback: just use individual markers without clustering
+                    markerCluster = {
+                        addMarkers: function(markers) {
+                            markers.forEach(marker => marker.setMap(map));
+                        },
+                        clearMarkers: function() {
+                            // This will be handled by the displayRunners function
+                        },
+                        getMarkers: function() {
+                            return markers;
+                        }
+                    };
+                }
                 
                 // Initialize info window
                 infoWindow = new google.maps.InfoWindow();
@@ -839,7 +878,11 @@
             // Clear existing markers
             markers.forEach(marker => marker.setMap(null));
             markers = [];
-            markerCluster.clearMarkers();
+            
+            // Clear marker cluster if available
+            if (markerCluster && typeof markerCluster.clearMarkers === 'function') {
+                markerCluster.clearMarkers();
+            }
             
             if (!runners || runners.length === 0) {
                 console.log("No runners data to display");
@@ -1053,6 +1096,11 @@
         }
 
         function toggleClusters() {
+            if (!markerCluster || typeof markerCluster.getMarkers !== 'function') {
+                console.warn("⚠️ Marker clustering not available");
+                return;
+            }
+            
             if (markerCluster.getMarkers().length > 0) {
                 // Show individual markers
                 markerCluster.clearMarkers();
@@ -1075,6 +1123,13 @@
                 // Show markers again
                 markers.forEach(marker => marker.setMap(map));
             } else {
+                // Check if visualization library is available
+                if (typeof google.maps.visualization === 'undefined') {
+                    console.warn("⚠️ Google Maps visualization library not available");
+                    alert("Heat map feature requires Google Maps visualization library. Please check your API key configuration.");
+                    return;
+                }
+                
                 // Hide markers when showing heatmap
                 markers.forEach(marker => marker.setMap(null));
                 
