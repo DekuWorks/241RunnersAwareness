@@ -9,7 +9,7 @@
 
 window.GOOGLE_MAPS_CONFIG = {
     // Replace this with your actual Google Maps API key from your mobile repo
-    API_KEY: 'YOUR_GOOGLE_MAPS_API_KEY',
+    API_KEY: 'AIzaSyC54u396zN1n1tNMcqaf6CySrku-Pu50Fw',
     
     // Map configuration
     DEFAULT_CENTER: {
