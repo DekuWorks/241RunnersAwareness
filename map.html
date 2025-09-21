@@ -808,10 +808,39 @@
         
         // Create popup content for Google Maps info windows
         function createPopupContent(runner) {
+            // Format the last seen date if available
+            let lastSeenText = "Unknown";
+            if (runner.lastSeenDate) {
+                try {
+                    lastSeenText = new Date(runner.lastSeenDate).toLocaleDateString();
+                } catch (e) {
+                    lastSeenText = runner.lastSeenDate;
+                }
+            }
+            
+            // Format priority if available
+            let priorityText = "";
+            if (runner.priority && runner.priority !== "Unknown") {
+                const priorityColor = runner.priority.toLowerCase() === "high" ? "#dc2626" : 
+                                    runner.priority.toLowerCase() === "medium" ? "#f59e0b" : "#10b981";
+                priorityText = `
+                    <div style="display: flex; flex-direction: column;">
+                        <div style="font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">
+                            Priority
+                        </div>
+                        <div style="font-size: 14px; color: #333; font-weight: 500;">
+                            <span style="display: inline-block; padding: 4px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; background: ${priorityColor}; color: white;">
+                                ${runner.priority}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }
+            
             return `
                 <div style="padding: 15px; max-width: 300px; font-family: Arial, sans-serif;">
                     <h3 style="margin: 0 0 15px 0; color: #dc2626; font-size: 1.3rem; border-bottom: 2px solid #f3f4f6; padding-bottom: 8px;">
-                        ${runner.fullName || 'Unknown'}
+                        ${runner.fullName || 'Unknown Case'}
                     </h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0;">
                         <div style="display: flex; flex-direction: column;">
@@ -850,13 +879,32 @@
                         </div>
                         <div style="display: flex; flex-direction: column; grid-column: 1 / -1;">
                             <div style="font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">
-                                Date Added
+                                Last Seen
                             </div>
                             <div style="font-size: 14px; color: #333; font-weight: 500;">
-                                ${new Date(runner.dateAdded).toLocaleDateString()}
+                                ${lastSeenText}
                             </div>
                         </div>
+                        <div style="display: flex; flex-direction: column; grid-column: 1 / -1;">
+                            <div style="font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">
+                                Address
+                            </div>
+                            <div style="font-size: 14px; color: #333; font-weight: 500;">
+                                ${runner.address || 'Unknown'}
+                            </div>
+                        </div>
+                        ${priorityText}
                     </div>
+                    ${runner.description ? `
+                        <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #e5e7eb;">
+                            <div style="font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px;">
+                                Description
+                            </div>
+                            <div style="font-size: 13px; color: #555; line-height: 1.4;">
+                                ${runner.description.length > 100 ? runner.description.substring(0, 100) + '...' : runner.description}
+                            </div>
+                        </div>
+                    ` : ''}
                 </div>
             `;
         }
@@ -926,46 +974,88 @@
                 // Try to get public cases data (this endpoint doesn't require authentication)
                 try {
                     if (window.apiUtils && window.apiUtils.fetchWithRetry) {
+                        console.log("🔍 Fetching public cases from API...");
                         const response = await window.apiUtils.fetchWithRetry("/api/v1/cases/publiccases", {
                             ignoreHealthCheck: true // Allow even if API health check fails
                         });
                         const result = await response.json();
+                        console.log("📊 Public cases API response:", result);
+                        
                         if (result && result.data && Array.isArray(result.data)) {
-                            // Convert public cases to runner format
-                            const convertedCases = result.data.map(caseItem => ({
-                                id: caseItem.id,
-                                fullName: caseItem.title || "Unknown",
-                                currentStatus: caseItem.status || "missing",
-                                latitude: 29.7604 + (Math.random() - 0.5) * 0.1, // Mock coordinates around Houston
-                                longitude: -95.3698 + (Math.random() - 0.5) * 0.1,
-                                city: "Houston",
-                                state: "TX",
-                                dateAdded: caseItem.createdAt || new Date(),
-                                address: "Houston, TX",
-                                age: "Unknown",
-                                gender: "Unknown"
-                            }));
+                            // Convert public cases to runner format with real data
+                            const convertedCases = result.data.map(caseItem => {
+                                // Try to extract location data from the case
+                                let latitude = null;
+                                let longitude = null;
+                                let city = "Houston";
+                                let state = "TX";
+                                
+                                // Check if case has location data
+                                if (caseItem.lastSeenLatitude && caseItem.lastSeenLongitude) {
+                                    latitude = parseFloat(caseItem.lastSeenLatitude);
+                                    longitude = parseFloat(caseItem.lastSeenLongitude);
+                                }
+                                
+                                // If no coordinates, use Houston area with slight variation
+                                if (!latitude || !longitude) {
+                                    latitude = 29.7604 + (Math.random() - 0.5) * 0.1;
+                                    longitude = -95.3698 + (Math.random() - 0.5) * 0.1;
+                                }
+                                
+                                // Extract city/state from lastSeenLocation if available
+                                if (caseItem.lastSeenLocation) {
+                                    const locationParts = caseItem.lastSeenLocation.split(',');
+                                    if (locationParts.length >= 2) {
+                                        city = locationParts[0].trim();
+                                        state = locationParts[locationParts.length - 1].trim();
+                                    }
+                                }
+                                
+                                return {
+                                    id: caseItem.id,
+                                    fullName: caseItem.title || "Unknown Case",
+                                    currentStatus: caseItem.status?.toLowerCase() || "missing",
+                                    latitude: latitude,
+                                    longitude: longitude,
+                                    city: city,
+                                    state: state,
+                                    dateAdded: caseItem.createdAt || new Date(),
+                                    address: caseItem.lastSeenLocation || `${city}, ${state}`,
+                                    age: caseItem.age || "Unknown",
+                                    gender: caseItem.gender || "Unknown",
+                                    description: caseItem.description,
+                                    lastSeenDate: caseItem.lastSeenDate,
+                                    priority: caseItem.priority
+                                };
+                            });
                             apiData = [...apiData, ...convertedCases];
-                            console.log(`Loaded ${convertedCases.length} public cases from API`);
+                            console.log(`✅ Loaded ${convertedCases.length} public cases from API`);
+                        } else {
+                            console.log("⚠️ No data array found in public cases response");
                         }
+                    } else {
+                        console.log("⚠️ API utils not available for public cases");
                     }
                 } catch (publicCasesError) {
-                    console.log("Public cases data not available:", publicCasesError);
+                    console.log("❌ Public cases data not available:", publicCasesError);
                 }
                 
-                // Try to get map points data
+                // Try to get map points data (requires authentication)
                 try {
                     if (window.apiUtils && window.apiUtils.fetchWithRetry) {
+                        console.log("🔍 Fetching map points from API...");
                         const response = await window.apiUtils.fetchWithRetry("/api/map/points?cluster=true", {
                             ignoreHealthCheck: true
                         });
                         const result = await response.json();
+                        console.log("📊 Map points API response:", result);
+                        
                         if (result && result.data && Array.isArray(result.data)) {
                             // Convert map points to runner format
                             const convertedPoints = result.data.map(point => ({
                                 id: point.id,
-                                fullName: "Map Point",
-                                currentStatus: point.status || "missing",
+                                fullName: point.title || "Map Point",
+                                currentStatus: point.status?.toLowerCase() || "missing",
                                 latitude: point.lat,
                                 longitude: point.lng,
                                 city: "Houston",
@@ -976,47 +1066,52 @@
                                 gender: "Unknown"
                             }));
                             apiData = [...apiData, ...convertedPoints];
-                            console.log(`Loaded ${convertedPoints.length} map points from API`);
+                            console.log(`✅ Loaded ${convertedPoints.length} map points from API`);
+                        } else {
+                            console.log("⚠️ No data array found in map points response");
                         }
+                    } else {
+                        console.log("⚠️ API utils not available for map points");
                     }
                 } catch (mapPointsError) {
-                    console.log("Map points data not available:", mapPointsError);
+                    console.log("❌ Map points data not available:", mapPointsError);
                 }
                 
                 currentData = apiData;
                 
-                // If no data from API, show sample data for demonstration
+                // If no data from API, show message instead of sample data
                 if (apiData.length === 0) {
-                    console.log("No API data available, showing sample data for demonstration");
-                    const sampleData = [
-                        {
-                            id: 1,
-                            fullName: "Sample Missing Person",
-                            currentStatus: "missing",
-                            latitude: 29.7604,
-                            longitude: -95.3698,
-                            city: "Houston",
-                            state: "TX",
-                            age: 25,
-                            gender: "Male",
-                            dateAdded: new Date().toISOString(),
-                            address: "123 Main St, Houston, TX"
-                        },
-                        {
-                            id: 2,
-                            fullName: "Sample Found Person",
-                            currentStatus: "found",
-                            latitude: 29.7614,
-                            longitude: -95.3598,
-                            city: "Houston",
-                            state: "TX",
-                            age: 30,
-                            gender: "Female",
-                            dateAdded: new Date(Date.now() - 86400000).toISOString(),
-                            address: "456 Oak Ave, Houston, TX"
-                        }
-                    ];
-                    currentData = sampleData;
+                    console.log("No API data available from database");
+                    // Show a message to the user that no real data is available
+                    const mapContainer = document.getElementById("map");
+                    if (mapContainer) {
+                        const noDataMessage = document.createElement('div');
+                        noDataMessage.style.cssText = `
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            background: rgba(255, 255, 255, 0.95);
+                            padding: 20px;
+                            border-radius: 10px;
+                            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                            text-align: center;
+                            z-index: 1000;
+                            max-width: 300px;
+                        `;
+                        noDataMessage.innerHTML = `
+                            <h3 style="color: #dc2626; margin: 0 0 10px 0;">No Cases Data Available</h3>
+                            <p style="color: #666; margin: 0;">No cases found in the database. Check your API connection or add some cases to see them on the map.</p>
+                        `;
+                        mapContainer.appendChild(noDataMessage);
+                        
+                        // Remove the message after 5 seconds
+                        setTimeout(() => {
+                            if (noDataMessage.parentNode) {
+                                noDataMessage.parentNode.removeChild(noDataMessage);
+                            }
+                        }, 5000);
+                    }
                 }
                 
                 // Display the data on the map
