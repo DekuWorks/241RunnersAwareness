@@ -8,17 +8,24 @@
     <script>
         // Load Google Maps API with configured key
         function loadGoogleMaps() {
+            console.log('🔍 Loading Google Maps...');
+            console.log('🔍 GOOGLE_MAPS_CONFIG:', typeof window.GOOGLE_MAPS_CONFIG);
+            
             if (typeof window.GOOGLE_MAPS_CONFIG === 'undefined') {
-                console.error('Google Maps configuration not loaded');
+                console.error('❌ Google Maps configuration not loaded');
                 return;
             }
             
             const apiKey = window.GOOGLE_MAPS_CONFIG.API_KEY;
+            console.log('🔍 API Key:', apiKey ? `${apiKey.substring(0, 10)}...` : 'undefined');
+            
             if (!apiKey || apiKey === 'YOUR_GOOGLE_MAPS_API_KEY') {
-                console.error('Google Maps API key not configured');
+                console.error('❌ Google Maps API key not configured');
                 showApiKeyError();
                 return;
             }
+            
+            console.log('✅ Google Maps API key is configured, loading script...');
             
             const script = document.createElement('script');
             script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry,places,visualization&callback=initGoogleMap`;
@@ -42,8 +49,11 @@
             }
         }
         
-        // Load Google Maps when DOM is ready
-        document.addEventListener('DOMContentLoaded', loadGoogleMaps);
+        // Load Google Maps when DOM is ready with a small delay to ensure config loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add a small delay to ensure google-maps-config.js loads first
+            setTimeout(loadGoogleMaps, 100);
+        });
     </script>
     <!-- MarkerClusterer library -->
     <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
@@ -631,9 +641,12 @@
 
         // Initialize Google Maps with enhanced features
         function initGoogleMap() {
-            console.log("Initializing Google Maps...");
+            console.log("🚀 Initializing Google Maps...");
+            console.log("🚀 Google Maps library loaded:", typeof google !== 'undefined');
+            console.log("🚀 Google Maps API available:", typeof google.maps !== 'undefined');
+            
             const mapContainer = document.getElementById("map");
-            console.log("Map container:", mapContainer);
+            console.log("🚀 Map container:", mapContainer);
             
             if (!mapContainer) {
                 console.error("Map container not found!");
