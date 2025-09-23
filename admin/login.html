@@ -340,10 +340,8 @@
         
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            // Override API_BASE_URL if needed (admin-auth.js will load from config.json)
-            if (typeof API_BASE_URL === 'undefined') {
-                window.API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
-            }
+            // Set API_BASE_URL immediately to avoid timing issues
+            window.API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
             console.log('Login page loaded, API_BASE_URL:', window.API_BASE_URL);
             
             // Check if already authenticated
@@ -381,13 +379,16 @@
                     console.log('Form data being sent:', formData);
                     
                     // FIXED: Proper headers without credentials to avoid CORS issues
-                    const response = await fetch(`${apiUrl}/v1/auth/login`, {
+                    console.log('Making fetch request to:', fullUrl);
+                    const response = await fetch(fullUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-Client': '241RA-Admin/1.0'
                         },
-                        body: JSON.stringify(formData)
+                        body: JSON.stringify(formData),
+                        mode: 'cors',
+                        credentials: 'omit'
                     });
                     
                     console.log('Login response status:', response.status);
