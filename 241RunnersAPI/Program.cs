@@ -176,7 +176,7 @@ builder.Services.AddCors(options =>
                           "com.241runnersawareness.app", // iOS bundle identifier
                           "org.241runnersawareness.app") // Android package name
               .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
-              .WithHeaders("Content-Type", "Authorization", "X-Requested-With", "X-ClientId", 
+              .WithHeaders("Content-Type", "Authorization", "X-Requested-With", "X-ClientId", "X-Client", 
                           "Accept", "Origin", "Access-Control-Request-Method", 
                           "Access-Control-Request-Headers", "User-Agent", "X-Version", "X-Platform")
               .AllowCredentials()
@@ -188,7 +188,7 @@ builder.Services.AddCors(options =>
     {
         policy.AllowAnyOrigin()
               .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
-              .WithHeaders("Content-Type", "Authorization", "X-Requested-With", "X-ClientId", 
+              .WithHeaders("Content-Type", "Authorization", "X-Requested-With", "X-ClientId", "X-Client", 
                           "Accept", "Origin", "Access-Control-Request-Method", 
                           "Access-Control-Request-Headers", "User-Agent", "X-Version", "X-Platform")
               .SetPreflightMaxAge(TimeSpan.FromMinutes(10));
@@ -200,7 +200,7 @@ builder.Services.AddCors(options =>
         policy.WithOrigins("https://241runnersawareness.org",
                           "https://www.241runnersawareness.org")
               .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
-              .WithHeaders("Content-Type", "Authorization", "X-Requested-With", "X-ClientId", 
+              .WithHeaders("Content-Type", "Authorization", "X-Requested-With", "X-ClientId", "X-Client", 
                           "Accept", "Origin", "Access-Control-Request-Method", 
                           "Access-Control-Request-Headers", "User-Agent", "X-Version", "X-Platform")
               .AllowCredentials()
