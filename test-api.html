@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Connection Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        async function testAPI() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<p>Testing API connection...</p>';
+            
+            try {
+                // Test health endpoint
+                const healthResponse = await fetch('https://241runners-api-v2.azurewebsites.net/api/health', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (healthResponse.ok) {
+                    const healthData = await healthResponse.json();
+                    results.innerHTML += `<p>✅ Health check: ${JSON.stringify(healthData)}</p>`;
+                } else {
+                    results.innerHTML += `<p>❌ Health check failed: ${healthResponse.status}</p>`;
+                }
+                
+                // Test API info endpoint
+                const apiResponse = await fetch('https://241runners-api-v2.azurewebsites.net/api', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (apiResponse.ok) {
+                    const apiData = await apiResponse.json();
+                    results.innerHTML += `<p>✅ API info: ${JSON.stringify(apiData)}</p>`;
+                } else {
+                    results.innerHTML += `<p>❌ API info failed: ${apiResponse.status}</p>`;
+                }
+                
+            } catch (error) {
+                results.innerHTML += `<p>❌ Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Run test on page load
+        testAPI();
+    </script>
+</body>
+</html>

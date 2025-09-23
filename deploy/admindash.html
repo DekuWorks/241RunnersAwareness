@@ -4268,6 +4268,13 @@
     <script>
         // ===== CONFIGURATION & INITIALIZATION =====
         
+        // Check authentication first
+        if (!isAuthenticated()) {
+            console.log('❌ User not authenticated, redirecting to login');
+            window.location.href = '/admin/login.html';
+            return;
+        }
+        
         // API Configuration - Fixed URL without trailing slash
         // Note: API_BASE_URL may be set by admin-auth.js, so we check for it first
         if (typeof API_BASE_URL === 'undefined') {
@@ -4655,16 +4662,25 @@
             try {
                 console.log('👥 Loading users from API...');
                 
+                // Check if user is authenticated
+                const token = storage.get('ra_admin_token') || storage.get('jwtToken');
+                if (!token) {
+                    console.warn('⚠️ No authentication token found, redirecting to login');
+                    window.location.href = '/admin/login.html';
+                    return;
+                }
+                
                 // Try to load from API first, fallback to mock data
                 const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
-                console.log('📡 Users API URL:', `${apiUrl}/admin/users-debug`);
+                console.log('📡 Users API URL:', `${apiUrl}/Admin/stats`);
+                console.log('🔑 Using token:', token ? `Present (length: ${token.length})` : 'Missing');
                 
                 try {
                     const response = await fetch(`${apiUrl}/Admin/stats`, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${storage.get('ra_admin_token') || storage.get('jwtToken')}`
+                            'Authorization': `Bearer ${token}`
                         }
                     });
                     
