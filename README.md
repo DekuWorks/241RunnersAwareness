@@ -150,8 +150,6 @@ curl -sS -H "Authorization: Bearer <ACCESS_TOKEN>" \
 - **Case Management**: Create, edit, and manage missing persons cases
 - **User Management**: Admin user creation and role management
 - **System Monitoring**: Health checks and performance monitoring
-- **Mobile Admin Portal**: Full admin functionality on mobile devices
-- **PWA Support**: Install as mobile app with offline capabilities
 
 ### Technical Features
 - **Real-time Updates**: SignalR-powered live updates with polling fallback

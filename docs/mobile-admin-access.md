@@ -17,19 +17,7 @@ The 241 Runners Awareness platform is fully configured for mobile admin access w
 - **Mobile Navigation**: Collapsible sidebar for mobile devices
 
 ### ✅ **Admin Data Seeding**
-The database is properly seeded with admin users:
-
-```csharp
-// Admin users automatically created in database
-var adminEmails = new[] { 
-    "dekuworks1@gmail.com",           // Marcus Brown (Primary Admin)
-    "danielcarey9770@yahoo.com",     // Daniel Carey
-    "lthomas3350@gmail.com",         // Lisa Thomas
-    "tinaleggins@yahoo.com",         // Tina Matthews
-    "mmelasky@iplawconsulting.com", // Mark Melasky
-    "ralphfrank900@gmail.com"        // Ralph Frank
-};
-```
+The database is properly seeded with admin users configured in the application.
 
 ### ✅ **Mobile Authentication Flow**
 1. **Login**: Mobile-optimized login form
@@ -52,9 +40,9 @@ var adminEmails = new[] {
 3. **Admin Login**: Use admin credentials to access admin portal
 4. **Mobile Dashboard**: Full admin functionality on mobile
 
-### **Admin Credentials:**
-- **Primary Admin**: `dekuworks1@gmail.com` / `marcus2025`
-- **Secondary Admins**: See database seeding configuration
+### **Admin Access:**
+- **Admin Portal**: Access through secure admin login
+- **Role-Based Access**: Admin users have appropriate permissions
 
 ### **Mobile-Specific Features:**
 - **Touch Gestures**: Swipe navigation for mobile
@@ -144,7 +132,7 @@ var adminEmails = new[] {
 ## 🚀 **Deployment Status**
 
 ### **Current Status:**
-- ✅ **Admin Data Seeded**: All admin users created in database
+- ✅ **Admin Data Seeded**: Admin users configured in database
 - ✅ **Mobile Responsive**: Admin portal fully mobile-responsive
 - ✅ **PWA Configured**: Progressive Web App features enabled
 - ✅ **Mobile Authentication**: Mobile login and authentication working
