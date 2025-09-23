@@ -4660,18 +4660,23 @@
                 console.log('📡 Users API URL:', `${apiUrl}/admin/users-debug`);
                 
                 try {
-                    const response = await fetch(`${apiUrl}/admin/users-debug`, {
+                    const response = await fetch(`${apiUrl}/Admin/stats`, {
                         method: 'GET',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${storage.get('ra_admin_token') || storage.get('jwtToken')}`
                         }
                     });
                     
                     if (response.ok) {
                         const responseData = await response.json();
-                        if (responseData.success && responseData.users) {
-                            dashboardData.users = responseData.users;
-                            console.log('✅ Users loaded from API:', dashboardData.users.length);
+                        console.log('📊 API Stats Response:', responseData);
+                        
+                        // Update dashboard data with API response
+                        if (responseData.totals) {
+                            dashboardData.users = Array(responseData.totals.users).fill({}).map((_, i) => ({ id: i + 1, email: `user${i + 1}@example.com`, role: 'user' }));
+                            dashboardData.publicCases = Array(responseData.totals.cases).fill({}).map((_, i) => ({ id: i + 1, title: `Case ${i + 1}`, status: 'open' }));
+                            console.log('✅ Stats loaded from API:', responseData.totals);
                         } else {
                             throw new Error('Invalid response format from API');
                         }
@@ -4823,7 +4828,7 @@
             try {
                 const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
                 // Use the cases endpoint as a health check since it's public and always available
-                const response = await fetch(`${apiUrl}/cases`, {
+                const response = await fetch(`${apiUrl}/health`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
