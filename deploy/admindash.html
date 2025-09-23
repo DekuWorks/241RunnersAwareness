@@ -5195,21 +5195,81 @@
                     return;
                 }
 
+                console.log("📊 Loading admin data...");
+                
                 // Try to get admin data from localStorage first
                 const savedUser = storage.get('ra_admin_user');
+                const savedAuth = storage.get('ra_auth');
+                const userData = storage.get('user');
+                
+                console.log('🔍 Checking localStorage for user data:');
+                console.log('- ra_admin_user:', savedUser);
+                console.log('- ra_auth:', savedAuth);
+                console.log('- user:', userData);
+                
                 if (savedUser) {
                     try {
                         currentAdmin = JSON.parse(savedUser);
-                        console.log('📱 Loaded admin from localStorage:', currentAdmin);
+                        console.log('📱 Loaded admin from ra_admin_user:', currentAdmin);
                         updateAdminProfile();
                         return;
                     } catch (e) {
-                        console.warn('Failed to parse saved user data:', e);
+                        console.warn('Failed to parse ra_admin_user data:', e);
+                    }
+                }
+                
+                if (savedAuth) {
+                    try {
+                        const authData = JSON.parse(savedAuth);
+                        if (authData.user) {
+                            currentAdmin = authData.user;
+                            console.log('📱 Loaded admin from ra_auth:', currentAdmin);
+                            updateAdminProfile();
+                            return;
+                        }
+                    } catch (e) {
+                        console.warn('Failed to parse ra_auth data:', e);
+                    }
+                }
+                
+                if (userData) {
+                    try {
+                        const user = JSON.parse(userData);
+                        currentAdmin = {
+                            firstName: user.fullName?.split(' ')[0] || 'User',
+                            lastName: user.fullName?.split(' ')[1] || '',
+                            email: user.email,
+                            role: user.role
+                        };
+                        console.log('📱 Loaded admin from user data:', currentAdmin);
+                        updateAdminProfile();
+                        return;
+                    } catch (e) {
+                        console.warn('Failed to parse user data:', e);
                     }
                 }
 
-                // Use fallback admin data since /auth/me endpoint doesn't exist
-                console.log("🔍 Using fallback admin data (no /auth/me endpoint)");
+                // If no user data found, try to extract from JWT token
+                const token = storage.get('ra_admin_token') || storage.get('jwtToken');
+                if (token) {
+                    try {
+                        const payload = JSON.parse(atob(token.split('.')[1]));
+                        currentAdmin = {
+                            firstName: payload.firstName || payload.name?.split(' ')[0] || 'User',
+                            lastName: payload.lastName || payload.name?.split(' ')[1] || '',
+                            email: payload.email || payload.sub,
+                            role: payload.role || 'admin'
+                        };
+                        console.log('📱 Loaded admin from JWT token:', currentAdmin);
+                        updateAdminProfile();
+                        return;
+                    } catch (e) {
+                        console.warn('Failed to parse JWT token:', e);
+                    }
+                }
+
+                // Use fallback admin data as last resort
+                console.log("🔍 No user data found, using fallback");
                 currentAdmin = {
                     firstName: 'Admin',
                     lastName: 'User',
