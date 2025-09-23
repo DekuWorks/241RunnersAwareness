@@ -4668,14 +4668,21 @@
                 console.log('📡 Users API URL:', `${apiUrl}/Admin/stats`);
                 console.log('🔑 Using token:', token ? `Present (length: ${token.length})` : 'Missing');
                 
-                try {
-                    const response = await fetch(`${apiUrl}/Admin/stats`, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
+            try {
+                console.log('📡 Making API request to:', `${apiUrl}/Admin/stats`);
+                console.log('🔑 Using token:', token ? `Present (${token.length} chars)` : 'Missing');
+                
+                const response = await fetch(`${apiUrl}/Admin/stats`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        'X-Client': '241RA-Admin/1.0'
+                    },
+                    credentials: 'omit'
+                });
+                
+                console.log('📊 API Response status:', response.status, response.statusText);
                     
                     if (response.ok) {
                         const responseData = await response.json();
@@ -5206,6 +5213,9 @@
                 console.log('- ra_admin_user:', savedUser);
                 console.log('- ra_auth:', savedAuth);
                 console.log('- user:', userData);
+                console.log('- jwtToken:', localStorage.getItem('jwtToken'));
+                console.log('- ra_admin_token:', localStorage.getItem('ra_admin_token'));
+                console.log('- ra_admin_role:', localStorage.getItem('ra_admin_role'));
                 
                 if (savedUser) {
                     try {

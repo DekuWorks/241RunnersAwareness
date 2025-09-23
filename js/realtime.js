@@ -16,17 +16,26 @@ class RealtimeClient {
         try {
             // Get API base URL from config
             const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net';
-            const hubUrl = apiBaseUrl.replace('/api', '') + '/hubs/notifications';
+            const baseUrl = apiBaseUrl.replace('/api', '');
+            const hubUrl = baseUrl + '/hubs/alerts'; // Use AlertsHub which is the main hub
             
             console.log('🔌 Connecting to SignalR hub:', hubUrl);
+            
+            // Get authentication token
+            const token = localStorage.getItem("jwtToken") || localStorage.getItem("ra_admin_token") || localStorage.getItem("ra_auth");
+            console.log('🔑 Using token for SignalR:', token ? 'Present' : 'Missing');
             
             // Create SignalR connection
             this.connection = new signalR.HubConnectionBuilder()
                 .withUrl(hubUrl, {
-                    accessTokenFactory: () => localStorage.getItem("jwtToken") || localStorage.getItem("ra_admin_token") || ""
-                    // Do NOT set withCredentials here
+                    accessTokenFactory: () => {
+                        const authToken = localStorage.getItem("jwtToken") || localStorage.getItem("ra_admin_token");
+                        return authToken || "";
+                    },
+                    transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling
                 })
                 .withAutomaticReconnect([0, 2000, 10000, 30000]) // Reconnect attempts
+                .configureLogging(signalR.LogLevel.Information)
                 .build();
 
             // Set up event handlers
