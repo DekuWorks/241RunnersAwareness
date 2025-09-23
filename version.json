@@ -1,7 +1,7 @@
 {
-  "version": "1.4.2",
-  "commit": "api-integration-complete",
-  "builtAt": "2025-01-09T17:45:00Z",
+  "version": "1.4.3",
+  "commit": "v2-api-migration",
+  "builtAt": "2025-01-27T12:00:00Z",
   "environment": "production",
   "features": [
     "Production-ready API deployment",

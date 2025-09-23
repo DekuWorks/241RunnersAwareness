@@ -138,23 +138,23 @@ curl https://241runners-api-staging.azurewebsites.net/readyz
 ### **Health Check Commands**
 ```bash
 # Basic health checks
-curl -sS -I https://241runners-api.azurewebsites.net/healthz
-curl -sS https://241runners-api.azurewebsites.net/readyz | jq .
+curl -sS -I https://241runners-api-v2.azurewebsites.net/healthz
+curl -sS https://241runners-api-v2.azurewebsites.net/readyz | jq .
 
 # API health
-curl -sS https://241runners-api.azurewebsites.net/api/health | jq .
+curl -sS https://241runners-api-v2.azurewebsites.net/api/health | jq .
 ```
 
 ### **Authentication Testing**
 ```bash
 # Login test (replace credentials)
-curl -sS -X POST https://241runners-api.azurewebsites.net/api/auth/login \
+curl -sS -X POST https://241runners-api-v2.azurewebsites.net/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@241runnersawareness.org","password":"<REDACTED>"}' | jq .
 
 # Admin stats (requires valid token)
 curl -sS -H "Authorization: Bearer <ACCESS_TOKEN>" \
-  https://241runners-api.azurewebsites.net/api/admin/stats | jq .
+  https://241runners-api-v2.azurewebsites.net/api/admin/stats | jq .
 ```
 
 ### **Rollback Procedure**

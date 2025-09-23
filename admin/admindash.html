@@ -4744,6 +4744,12 @@
             } catch (error) {
                 console.error('❌ Error loading users:', error);
                 dashboardData.users = [];
+                // Show error in UI
+                updateElement('totalUsers', 0, {
+                    message: 'Failed to load users',
+                    endpoint: '/api/admin/users',
+                    status: error.message || 'Unknown error'
+                });
             }
         }
         
@@ -4759,6 +4765,12 @@
             } catch (error) {
                 console.error('Error loading runners:', error);
                 dashboardData.runners = [];
+                // Show error in UI
+                updateElement('totalRunners', 0, {
+                    message: 'Failed to load runners',
+                    endpoint: '/api/runners',
+                    status: error.message || 'Unknown error'
+                });
             }
         }
         
@@ -4777,6 +4789,12 @@
             } catch (error) {
                 console.error('❌ Error loading admins:', error);
                 dashboardData.admins = [];
+                // Show error in UI
+                updateElement('activeAdmins', 0, {
+                    message: 'Failed to load admins',
+                    endpoint: '/api/admin/users',
+                    status: error.message || 'Unknown error'
+                });
             }
         }
         
@@ -4792,6 +4810,12 @@
             } catch (error) {
                 console.error('Error loading public cases:', error);
                 dashboardData.publicCases = [];
+                // Show error in UI
+                updateElement('totalPublicCases', 0, {
+                    message: 'Failed to load public cases',
+                    endpoint: '/api/cases/public',
+                    status: error.message || 'Unknown error'
+                });
             }
         }
 
@@ -5170,10 +5194,17 @@
             }
         }
         
-        function updateElement(id, value) {
+        function updateElement(id, value, error = null) {
             const element = document.getElementById(id);
             if (element) {
-                element.textContent = value;
+                if (error) {
+                    // Show error message with endpoint and status
+                    element.innerHTML = `<span style="color: #dc2626; font-size: 0.9em;">⚠️ ${error.message}</span><br><small style="color: #6b7280;">${error.endpoint} (${error.status})</small>`;
+                    element.title = `Error: ${error.message}\nEndpoint: ${error.endpoint}\nStatus: ${error.status}`;
+                } else {
+                    element.textContent = value;
+                    element.title = '';
+                }
             }
         }
         

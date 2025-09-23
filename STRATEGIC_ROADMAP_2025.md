@@ -346,8 +346,8 @@
 
 ### **Project Resources**
 - **Repository**: https://github.com/241RunnersAwareness/241RunnersAwareness
-- **API Documentation**: https://241runners-api.azurewebsites.net/swagger
-- **Health Monitoring**: https://241runners-api.azurewebsites.net/api/health
+- **API Documentation**: https://241runners-api-v2.azurewebsites.net/swagger
+- **Health Monitoring**: https://241runners-api-v2.azurewebsites.net/api/health
 
 ### **External Partners**
 - **Azure Support**: Microsoft Azure

@@ -7,9 +7,9 @@
  * and automatic update notifications for improved performance.
  */
 
-const CACHE_NAME = '241runners-v1.1.0';
-const STATIC_CACHE = 'static-v1.1.0';
-const DYNAMIC_CACHE = 'dynamic-v1.1.0';
+const CACHE_NAME = '241runners-v1.4.3';
+const STATIC_CACHE = 'static-v1.4.3';
+const DYNAMIC_CACHE = 'dynamic-v1.4.3';
 
 // Files to cache immediately
 const STATIC_FILES = [

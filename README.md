@@ -5,10 +5,38 @@ A comprehensive platform for raising awareness about missing persons cases, spec
 ## 🎯 Current Status: **OPERATIONAL** ✅
 
 **Version:** 1.0.3 | **Last Updated:** January 27, 2025  
-**API Health:** [![API Status](https://img.shields.io/badge/API-Operational-green)](https://241runners-api.azurewebsites.net/api/auth/health)  
+**API Health:** [![API Status](https://img.shields.io/badge/API-Operational-green)](https://241runners-api-v2.azurewebsites.net/api/auth/health)  
 **Frontend:** [![Frontend Status](https://img.shields.io/badge/Frontend-Live-blue)](https://241runnersawareness.org)
 
 > 📊 **Detailed Status:** See [DEPLOYMENT_STATUS.md](./DEPLOYMENT_STATUS.md) for comprehensive system health and monitoring information.
+
+## 🔄 v2 API Migration
+
+**Migration Date:** January 27, 2025  
+**New API Base URL:** `https://241runners-api-v2.azurewebsites.net/api`
+
+### What Changed
+- ✅ Updated all API references from `241runners-api.azurewebsites.net` to `241runners-api-v2.azurewebsites.net`
+- ✅ Enhanced CORS configuration for production domains only
+- ✅ Centralized Authorization header handling with 401 → logout flow
+- ✅ Improved admin UI error handling with inline error messages
+- ✅ Service worker cache versioning for config.json (no-store)
+- ✅ Version bump to 1.4.3 across all components
+
+### Post-Deploy Verification
+```bash
+# Verify API health
+curl -sS https://241runners-api-v2.azurewebsites.net/api/health | jq .
+
+# Test authentication
+curl -sS -X POST https://241runners-api-v2.azurewebsites.net/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@241runnersawareness.org","password":"<REDACTED>"}' | jq .
+
+# Check admin stats
+curl -sS -H "Authorization: Bearer <ACCESS_TOKEN>" \
+  https://241runners-api-v2.azurewebsites.net/api/admin/stats | jq .
+```
 
 ## 🚀 Quick Start
 
@@ -33,8 +61,8 @@ node scripts/integration-tests.js
 
 ### For Administrators
 - **Admin Portal:** [https://241runnersawareness.org/admin](https://241runnersawareness.org/admin)
-- **API Documentation:** [https://241runners-api.azurewebsites.net/swagger](https://241runners-api.azurewebsites.net/swagger)
-- **Health Monitoring:** [https://241runners-api.azurewebsites.net/api/auth/health](https://241runners-api.azurewebsites.net/api/auth/health)
+- **API Documentation:** [https://241runners-api-v2.azurewebsites.net/swagger](https://241runners-api-v2.azurewebsites.net/swagger)
+- **Health Monitoring:** [https://241runners-api-v2.azurewebsites.net/api/auth/health](https://241runners-api-v2.azurewebsites.net/api/auth/health)
 
 ## 🏥 Health Monitoring
 
@@ -46,17 +74,17 @@ node scripts/integration-tests.js
 ### Quick Health Commands
 ```bash
 # Basic health checks
-curl -sS -I https://241runners-api.azurewebsites.net/healthz
-curl -sS https://241runners-api.azurewebsites.net/readyz | jq .
+curl -sS -I https://241runners-api-v2.azurewebsites.net/healthz
+curl -sS https://241runners-api-v2.azurewebsites.net/readyz | jq .
 
 # API health
-curl -sS https://241runners-api.azurewebsites.net/api/health | jq .
+curl -sS https://241runners-api-v2.azurewebsites.net/api/health | jq .
 ```
 
 ## 🌍 Environments
 
 ### Production
-- **API:** https://241runners-api.azurewebsites.net
+- **API:** https://241runners-api-v2.azurewebsites.net
 - **Frontend:** https://241runnersawareness.org
 - **Database:** Azure SQL (Production)
 - **Monitoring:** Application Insights
@@ -93,13 +121,13 @@ curl -sS https://241runners-api.azurewebsites.net/api/health | jq .
 ### Smoke Tests
 ```bash
 # Authentication test
-curl -sS -X POST https://241runners-api.azurewebsites.net/api/auth/login \
+curl -sS -X POST https://241runners-api-v2.azurewebsites.net/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@241runnersawareness.org","password":"<REDACTED>"}' | jq .
 
 # Admin stats (requires valid token)
 curl -sS -H "Authorization: Bearer <ACCESS_TOKEN>" \
-  https://241runners-api.azurewebsites.net/api/admin/stats | jq .
+  https://241runners-api-v2.azurewebsites.net/api/admin/stats | jq .
 ```
 
 ### Operations Runbook
@@ -222,7 +250,7 @@ curl -sS -H "Authorization: Bearer <ACCESS_TOKEN>" \
 
 4. **Access the application**
    - Frontend: https://241runnersawareness.org
-   - API: https://241runners-api.azurewebsites.net
+   - API: https://241runners-api-v2.azurewebsites.net
    - Admin: https://241runnersawareness.org/admin
 
 ### Environment Configuration
@@ -277,8 +305,8 @@ az webapp deployment source config-zip \
    - CNAME: Configured for both www and apex domains
 
 ### Health Monitoring
-- **Health Check**: https://241runners-api.azurewebsites.net/healthz
-- **Readiness Check**: https://241runners-api.azurewebsites.net/readyz
+- **Health Check**: https://241runners-api-v2.azurewebsites.net/healthz
+- **Readiness Check**: https://241runners-api-v2.azurewebsites.net/readyz
 - **Status Badge**: [![Deployment Status](https://github.com/241RunnersAwareness/241RunnersAwareness/workflows/API%20Build%20and%20Deploy/badge.svg)](https://github.com/241RunnersAwareness/241RunnersAwareness/actions)
 
 ## 📁 Project Structure

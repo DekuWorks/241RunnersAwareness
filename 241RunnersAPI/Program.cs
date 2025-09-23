@@ -156,7 +156,21 @@ builder.Services.AddAuthorization();
 // Add CORS with enhanced security for both web and mobile
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    // Production policy - only allow production domains
+    options.AddPolicy("Production", policy =>
+    {
+        policy.WithOrigins("https://241runnersawareness.org",
+                          "https://www.241runnersawareness.org")
+              .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+              .WithHeaders("Content-Type", "Authorization", "X-Requested-With", "X-ClientId", "X-Client", 
+                          "Accept", "Origin", "Access-Control-Request-Method", 
+                          "Access-Control-Request-Headers", "User-Agent", "X-Version", "X-Platform")
+              .AllowCredentials()
+              .SetPreflightMaxAge(TimeSpan.FromMinutes(10));
+    });
+    
+    // Development policy - allow localhost for development
+    options.AddPolicy("Development", policy =>
     {
         policy.WithOrigins("https://241runnersawareness.org",
                           "https://www.241runnersawareness.org",
@@ -444,7 +458,15 @@ app.UseHttpsRedirection();
 // Add rate limiting middleware
 app.UseIpRateLimiting();
 
-app.UseCors("AllowAll");
+// Use appropriate CORS policy based on environment
+if (app.Environment.IsProduction())
+{
+    app.UseCors("Production");
+}
+else
+{
+    app.UseCors("Development");
+}
 app.UseAuthentication();
 app.UseAuthorization();
 
