@@ -1820,7 +1820,7 @@
         const token = getAuthToken();
         const authData = checkAuth();
         
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1/auth/profile`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/v1/auth/profile`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -1977,7 +1977,7 @@
           return;
         }
 
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1/auth/me`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/v1/auth/me`, {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${userData.accessToken || userData.token}`,
