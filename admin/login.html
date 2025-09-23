@@ -238,7 +238,7 @@
     </div>
 
     <!-- Admin Authentication Script -->
-    <script src="/admin/assets/js/admin-auth.js?v=20250107"></script>
+    <script src="/admin/assets/js/admin-auth.js?v=20250123"></script>
     
     <script>
         // Admin Authentication Functions - FIXED VERSION
@@ -374,7 +374,9 @@
                 
                 try {
                     const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                    const fullUrl = `${apiUrl}/v1/auth/login`;
                     console.log('Attempting login with API URL:', apiUrl);
+                    console.log('Full login URL:', fullUrl);
                     console.log('Sending login request...');
                     console.log('Form data being sent:', formData);
                     
