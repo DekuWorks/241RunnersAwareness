@@ -1,3 +1,3 @@
 {
-  "API_BASE_URL": "https://241runners-api-v2.azurewebsites.net"
+  "API_BASE_URL": "https://241runners-api-v2.azurewebsites.net/api"
 }
