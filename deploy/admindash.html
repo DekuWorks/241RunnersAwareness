@@ -4268,12 +4268,6 @@
     <script>
         // ===== CONFIGURATION & INITIALIZATION =====
         
-        // Check authentication first
-        if (!isAuthenticated()) {
-            console.log('❌ User not authenticated, redirecting to login');
-            window.location.href = '/admin/login.html';
-        }
-        
         // API Configuration - Fixed URL without trailing slash
         // Note: API_BASE_URL may be set by admin-auth.js, so we check for it first
         if (typeof API_BASE_URL === 'undefined') {
@@ -9013,6 +9007,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Admin Dashboard DOM loaded');
             console.log('Debug: Body content length: ' + document.body.innerHTML.length);
+            
+            // Check authentication after DOM is loaded
+            if (!isAuthenticated()) {
+                console.log('❌ User not authenticated, redirecting to login');
+                window.location.href = '/admin/login.html';
+                return;
+            }
             
             // Add global error handlers
             window.addEventListener('error', function(event) {
