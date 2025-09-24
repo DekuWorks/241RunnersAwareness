@@ -4700,6 +4700,24 @@
                             dashboardData.users = responseData.users;
                             console.log('✅ Real users loaded from API:', responseData.users.length);
                             console.log('📋 User details:', responseData.users.map(u => ({ id: u.id, email: u.email, name: u.fullName, role: u.role })));
+                            
+                            // Log user breakdown by role
+                            const adminUsers = responseData.users.filter(u => u.role === 'admin');
+                            const regularUsers = responseData.users.filter(u => u.role === 'user');
+                            console.log('👑 Admin users:', adminUsers.length, adminUsers.map(u => u.fullName));
+                            console.log('👤 Regular users:', regularUsers.length, regularUsers.map(u => u.fullName));
+                            
+                            // Validate expected counts
+                            if (responseData.users.length === 7 && adminUsers.length === 6) {
+                                console.log('✅ Perfect! Found 7 total users: 6 admins + 1 test user');
+                            } else {
+                                console.warn('⚠️ User count mismatch:', {
+                                    total: responseData.users.length,
+                                    admins: adminUsers.length,
+                                    users: regularUsers.length,
+                                    expected: { total: 7, admins: 6, users: 1 }
+                                });
+                            }
                         } else {
                             throw new Error('Invalid response format from users API');
                         }
@@ -4988,7 +5006,35 @@
             const activeAdmins = dashboardData.admins ? dashboardData.admins.length : 0;
             const totalPublicCases = dashboardData.publicCases ? dashboardData.publicCases.length : 0;
             
-            console.log('Dashboard stats:', { totalUsers, totalRunners, activeAdmins, totalPublicCases });
+            // Count users by role for detailed logging
+            const adminCount = dashboardData.users ? dashboardData.users.filter(u => u.role === 'admin').length : 0;
+            const userCount = dashboardData.users ? dashboardData.users.filter(u => u.role === 'user').length : 0;
+            
+            console.log('Dashboard stats:', { 
+                totalUsers, 
+                totalRunners, 
+                activeAdmins, 
+                totalPublicCases,
+                adminCount,
+                userCount,
+                expectedTotal: 7,
+                expectedAdmins: 6
+            });
+            
+            // Validate expected user counts
+            if (totalUsers !== 7) {
+                console.warn(`⚠️ Expected 7 total users, but got ${totalUsers}`);
+                showToast(`Warning: Expected 7 users but found ${totalUsers}`, 'warning', 3000);
+            }
+            
+            if (adminCount !== 6) {
+                console.warn(`⚠️ Expected 6 admin users, but got ${adminCount}`);
+                showToast(`Warning: Expected 6 admins but found ${adminCount}`, 'warning', 3000);
+            }
+            
+            if (totalUsers === 7 && adminCount === 6) {
+                console.log('✅ User counts match expected values: 7 total users (6 admins + 1 test user)');
+            }
             
             updateElement('totalUsers', totalUsers);
             updateElement('totalRunners', totalRunners);
