@@ -102,6 +102,11 @@ class RealtimeClient {
             this.handleCaseUpdated(data);
         });
 
+        this.connection.on("caseDeleted", (data) => {
+            console.log('🗑️ Case deleted:', data);
+            this.handleCaseDeleted(data);
+        });
+
         this.connection.on("SystemNotification", (data) => {
             console.log('🔔 System notification:', data);
             this.handleSystemNotification(data);
@@ -230,6 +235,18 @@ class RealtimeClient {
         // Refresh cases list
         if (typeof loadPublicCases === 'function') {
             loadPublicCases();
+        }
+    }
+
+    handleCaseDeleted(data) {
+        // Refresh cases list
+        if (typeof loadPublicCases === 'function') {
+            loadPublicCases();
+        }
+        
+        // Show notification
+        if (typeof showToast === 'function') {
+            showToast(`Case deleted: ${data.data?.title || 'Unknown'}`, 'warning');
         }
     }
 

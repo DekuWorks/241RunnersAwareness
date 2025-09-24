@@ -268,5 +268,34 @@ namespace _241RunnersAPI.Services
                 return new { error = ex.Message };
             }
         }
+
+        /// <summary>
+        /// Broadcast case deletion to relevant users
+        /// </summary>
+        public async Task<ServiceResult> BroadcastCaseDeletedAsync(int caseId, object caseData)
+        {
+            try
+            {
+                var payload = new { id = caseId, data = caseData };
+
+                // Send via SignalR to all connected clients
+                await _hubContext.Clients.All.SendAsync("caseDeleted", payload);
+
+                // Send to admin group specifically
+                await _hubContext.Clients.Group("role:admin")
+                    .SendAsync("adminCaseDeleted", payload);
+
+                _logger.LogInformation("Case deletion broadcasted for case {CaseId}", caseId);
+
+                return ServiceResult.CreateSuccess(
+                    "Case deletion broadcasted successfully",
+                    new { caseId = caseId });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error broadcasting case deletion for case {CaseId}", caseId);
+                return ServiceResult.CreateFailure($"Failed to broadcast case deletion: {ex.Message}");
+            }
+        }
     }
 }

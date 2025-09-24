@@ -9031,6 +9031,22 @@
                     updateDashboardUI();
                 });
 
+                // Handle case deletion
+                realTimeConnection.on("caseDeleted", (caseData) => {
+                    console.log('🗑️ Real-time case deletion:', caseData);
+                    removeCaseFromList(caseData.id);
+                    updateDashboardUI();
+                    showToast(`Case "${caseData.data.title}" deleted`, 'info', 3000);
+                });
+
+                // Handle admin case deletion (specific to admin dashboard)
+                realTimeConnection.on("adminCaseDeleted", (caseData) => {
+                    console.log('🗑️ Admin case deletion:', caseData);
+                    removeCaseFromList(caseData.id);
+                    updateDashboardUI();
+                    showToast(`Admin deleted case "${caseData.data.title}"`, 'warning', 3000);
+                });
+
                 // Handle admin connections
                 realTimeConnection.on("AdminConnected", (adminData) => {
                     console.log('👤 Admin connected:', adminData);
@@ -9152,6 +9168,18 @@
                 dashboardData.stats.totalCases++;
             }
             updateCasesTable();
+        }
+
+        // Remove case from the list
+        function removeCaseFromList(caseId) {
+            const caseIndex = dashboardData.cases.findIndex(c => c.id === caseId);
+            if (caseIndex !== -1) {
+                dashboardData.cases.splice(caseIndex, 1);
+                if (dashboardData.stats.totalCases > 0) {
+                    dashboardData.stats.totalCases--;
+                }
+                updateCasesTable();
+            }
         }
 
         // Polling mode fallback when SignalR fails

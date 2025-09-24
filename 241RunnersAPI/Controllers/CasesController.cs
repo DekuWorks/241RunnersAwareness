@@ -629,10 +629,31 @@ namespace _241RunnersAPI.Controllers
                     return NotFoundResponse("Case not found");
                 }
 
+                // Store case data before deletion for SignalR notification
+                var caseData = new
+                {
+                    id = caseEntity.Id,
+                    title = caseEntity.Title,
+                    status = caseEntity.Status,
+                    priority = caseEntity.Priority,
+                    deletedAt = DateTime.UtcNow,
+                    runnerId = caseEntity.RunnerId
+                };
+
                 _context.Cases.Remove(caseEntity);
                 await _context.SaveChangesAsync();
 
                 _logger.LogInformation("Case deleted: {Title}", caseEntity.Title);
+
+                // Broadcast case deletion notification
+                try
+                {
+                    await _signalRService.BroadcastCaseDeletedAsync(caseEntity.Id, caseData);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error broadcasting case deletion notification for case {CaseId}", caseEntity.Id);
+                }
 
                 return NoContent();
             }
