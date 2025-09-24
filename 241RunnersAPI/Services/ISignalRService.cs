@@ -24,6 +24,14 @@ namespace _241RunnersAPI.Services
         Task<ServiceResult> BroadcastNewCaseAsync(int caseId, object caseData);
 
         /// <summary>
+        /// Broadcast case deletion to relevant users
+        /// </summary>
+        /// <param name="caseId">Case ID</param>
+        /// <param name="caseData">Case data</param>
+        /// <returns>Operation result</returns>
+        Task<ServiceResult> BroadcastCaseDeletedAsync(int caseId, object caseData);
+
+        /// <summary>
         /// Broadcast admin notice to admin users
         /// </summary>
         /// <param name="message">Admin message</param>
