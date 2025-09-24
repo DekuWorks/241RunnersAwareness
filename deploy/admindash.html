@@ -4565,13 +4565,22 @@
         
         async function loadDashboardData() {
             try {
-                console.log('📊 Loading dashboard data...');
+                console.log('📊 STEP 1: Starting dashboard data loading...');
                 showLoadingState();
                 
                 // Load dashboard data from API
-                console.log('📊 Loading dashboard data from API...');
+                console.log('📊 STEP 2: Loading dashboard data from API...');
+                
+                console.log('🔍 STEP 2: Current dashboard data state:', {
+                    users: dashboardData.users ? dashboardData.users.length : 'undefined',
+                    runners: dashboardData.runners ? dashboardData.runners.length : 'undefined',
+                    admins: dashboardData.admins ? dashboardData.admins.length : 'undefined',
+                    publicCases: dashboardData.publicCases ? dashboardData.publicCases.length : 'undefined',
+                    systemStatus: dashboardData.systemStatus || 'undefined'
+                });
                 
                 // Load all data in parallel for better performance
+                console.log('📊 STEP 3: Starting parallel data loading...');
                 const [usersData, runnersData, publicCasesData, healthData, adminsData] = await Promise.allSettled([
                     loadUsers(),
                     loadRunners(),
@@ -4579,6 +4588,8 @@
                     checkSystemStatus(),
                     loadAdmins()
                 ]);
+                
+                console.log('📊 STEP 4: Parallel loading completed, processing results...');
                     
                     // Handle results
                     if (usersData.status === 'fulfilled') {
@@ -5381,25 +5392,36 @@
         
         async function loadCurrentAdmin() {
             try {
+                console.log("🔍 STEP 1: Checking authentication status...");
                 if (!isAuthenticated()) {
+                    console.log("❌ STEP 1 FAILED: Not authenticated, redirecting to login");
                     window.location.href = '/admin/login.html';
                     return;
                 }
+                console.log("✅ STEP 1 SUCCESS: Authentication verified");
                 
-                console.log("📊 Loading admin data...");
+                console.log("📊 STEP 2: Loading admin data...");
                 
                 // Try to get admin data from localStorage first
                 const savedUser = storage.get('ra_admin_user');
                 const savedAuth = storage.get('ra_auth');
                 const userData = storage.get('user');
+                const adminToken = storage.get('ra_admin_token');
+                const jwtToken = storage.get('jwtToken');
+                const adminRole = storage.get('ra_admin_role');
                 
-                console.log('🔍 Checking localStorage for user data:');
-                console.log('- ra_admin_user:', savedUser);
-                console.log('- ra_auth:', savedAuth);
-                console.log('- user:', userData);
-                console.log('- jwtToken:', localStorage.getItem('jwtToken'));
-                console.log('- ra_admin_token:', localStorage.getItem('ra_admin_token'));
-                console.log('- ra_admin_role:', localStorage.getItem('ra_admin_role'));
+                console.log('🔍 STEP 2: Checking localStorage for user data:');
+                console.log('- ra_admin_user:', savedUser ? 'Present' : 'Missing');
+                console.log('- ra_auth:', savedAuth ? 'Present' : 'Missing');
+                console.log('- user:', userData ? 'Present' : 'Missing');
+                console.log('- jwtToken:', jwtToken ? `Present (${jwtToken.length} chars)` : 'Missing');
+                console.log('- ra_admin_token:', adminToken ? `Present (${adminToken.length} chars)` : 'Missing');
+                console.log('- ra_admin_role:', adminRole || 'Missing');
+                
+                // Show all localStorage keys for debugging
+                const allKeys = Object.keys(localStorage);
+                const relevantKeys = allKeys.filter(k => k.includes('admin') || k.includes('token') || k.includes('user') || k.includes('auth'));
+                console.log('🔍 All relevant localStorage keys:', relevantKeys);
                 
                 if (savedUser) {
                     try {
@@ -9128,20 +9150,27 @@
         
         async function initializeDashboard() {
             try {
-                console.log('🚀 Initializing enhanced admin dashboard...');
+                console.log('🚀 STEP 1: Initializing enhanced admin dashboard...');
                 
                 // Check authentication
+                console.log('🔍 STEP 2: Checking admin authentication...');
                 if (!requireAdmin()) {
+                    console.log('❌ STEP 2 FAILED: Admin authentication failed');
                     return;
                 }
+                console.log('✅ STEP 2 SUCCESS: Admin authentication verified');
                 
-                console.log('✅ Authentication verified, initializing dashboard...');
+                console.log('✅ STEP 3: Authentication verified, initializing dashboard...');
                 
                 // Load initial dashboard data after authentication is confirmed
+                console.log('📊 STEP 4: Loading initial dashboard data...');
                 await loadDashboardData();
+                console.log('✅ STEP 4 COMPLETED: Dashboard data loaded');
                 
                 // Initialize real-time updates
+                console.log('🔄 STEP 5: Initializing real-time updates...');
                 await initializeRealTimeUpdates();
+                console.log('✅ STEP 5 COMPLETED: Real-time updates initialized');
                 
                 // Initialize admin profile manager (optional)
                 if (typeof AdminProfileManager !== 'undefined' && AdminProfileManager.initialize) {
