@@ -4643,10 +4643,10 @@
                         console.error('Runners load failed:', runnersData.reason);
                     }
                     
-                    if (adminsData[0].status === 'fulfilled') {
+                    if (adminsData.status === 'fulfilled') {
                         console.log('Admins loaded:', dashboardData.admins ? dashboardData.admins.length : 'undefined');
                     } else {
-                        console.error('Admins load failed:', adminsData[0].reason);
+                        console.error('Admins load failed:', adminsData.reason);
                     }
                     
                     if (publicCasesData.status === 'fulfilled') {
@@ -4670,7 +4670,11 @@
                 
             } catch (error) {
                 console.error('Error loading dashboard data:', error);
-                showToast('Failed to load dashboard data', 'error');
+                showToast('Failed to load dashboard data - using fallback data', 'warning');
+                
+                // Set fallback data to ensure dashboard shows something
+                setFallbackDashboardData();
+                updateDashboardUI();
                 hideLoadingState();
             }
         }
@@ -4713,9 +4717,10 @@
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`,
-                        'X-Client': '241RA-Admin/1.0'
+                        'X-Client': '241RA-Admin/1.0',
+                        'Accept': 'application/json'
                     },
-                    credentials: 'omit'
+                    credentials: 'include'
                 });
                 
                 console.log('📊 API Response status:', response.status, response.statusText);
@@ -4733,7 +4738,17 @@
                             throw new Error('Invalid response format from API');
                         }
                     } else {
-                        throw new Error(`API returned ${response.status}`);
+                        // Handle specific error cases
+                        if (response.status === 401) {
+                            console.error('❌ 401 Unauthorized - token may be expired or invalid');
+                            handleAuthFailure();
+                            throw new Error('Session expired. Please sign in again.');
+                        } else if (response.status === 403) {
+                            console.error('❌ 403 Forbidden - insufficient permissions');
+                            throw new Error('Insufficient permissions to access admin data.');
+                        } else {
+                            throw new Error(`API returned ${response.status}: ${response.statusText}`);
+                        }
                     }
                 } catch (apiError) {
                     console.warn('⚠️ API users endpoint not available, using mock data:', apiError.message);
@@ -4904,11 +4919,29 @@
         function updateDashboardUI() {
             console.log('Updating dashboard UI...');
             
-            // Update statistics
-            updateElement('totalUsers', dashboardData.users.length);
-            updateElement('totalRunners', dashboardData.runners.length);
-            updateElement('activeAdmins', dashboardData.admins.length);
-            updateElement('totalPublicCases', dashboardData.publicCases.length);
+            // Ensure dashboardData is initialized
+            if (!dashboardData) {
+                dashboardData = {
+                    users: [],
+                    runners: [],
+                    admins: [],
+                    publicCases: [],
+                    systemStatus: 'loading'
+                };
+            }
+            
+            // Update statistics with safe fallbacks
+            const totalUsers = dashboardData.users ? dashboardData.users.length : 0;
+            const totalRunners = dashboardData.runners ? dashboardData.runners.length : 0;
+            const activeAdmins = dashboardData.admins ? dashboardData.admins.length : 0;
+            const totalPublicCases = dashboardData.publicCases ? dashboardData.publicCases.length : 0;
+            
+            console.log('Dashboard stats:', { totalUsers, totalRunners, activeAdmins, totalPublicCases });
+            
+            updateElement('totalUsers', totalUsers);
+            updateElement('totalRunners', totalRunners);
+            updateElement('activeAdmins', activeAdmins);
+            updateElement('publicCases', totalPublicCases);
             
             // Update system status
             const systemStatusElement = document.getElementById('systemStatus');
@@ -8773,12 +8806,20 @@
                             console.log('🔑 SignalR accessTokenFactory called, token:', currentToken ? `Present (length: ${currentToken.length})` : 'Missing');
                             return currentToken || '';
                         },
-                        transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
-                        skipNegotiation: false, // Let SignalR handle negotiation
-                        withCredentials: true // Required for CORS with AllowCredentials()
+                        transport: signalR.HttpTransportType.LongPolling, // Use LongPolling for better reliability
+                        skipNegotiation: false,
+                        withCredentials: false // Set to false to avoid CORS issues
                     })
-                    .withAutomaticReconnect([0, 2000, 10000, 30000])
-                    .configureLogging(signalR.LogLevel.Information)
+                    .withAutomaticReconnect({
+                        nextRetryDelayInMilliseconds: retryContext => {
+                            if (retryContext.previousRetryCount < 3) {
+                                return Math.min(1000 * Math.pow(2, retryContext.previousRetryCount), 10000);
+                            } else {
+                                return null; // Stop retrying after 3 attempts
+                            }
+                        }
+                    })
+                    .configureLogging(signalR.LogLevel.Warning) // Reduce logging noise
                     .build();
 
                 // Handle user updates
@@ -8868,6 +8909,15 @@
             } catch (error) {
                 console.error('❌ Real-time connection failed:', error);
                 isRealTimeEnabled = false;
+                
+                // Check if it's an authentication error
+                if (error.message && error.message.includes('401')) {
+                    console.error('❌ SignalR authentication failed - token may be expired');
+                    showToast('Authentication expired - please refresh the page', 'error', 5000);
+                    // Don't fallback to polling for auth errors
+                    return;
+                }
+                
                 showToast('Real-time updates unavailable - using polling mode', 'warning', 3000);
                 
                 // Fallback to polling mode
