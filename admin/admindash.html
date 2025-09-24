@@ -4561,57 +4561,7 @@
         
         // ===== DASHBOARD FUNCTIONS =====
         
-        function setFallbackDashboardData() {
-            console.log('📊 Setting fallback dashboard data...');
-            
-            // Set fallback data for dashboard widgets
-            const fallbackData = {
-                totalUsers: 6,
-                totalRunners: 3,
-                activeAdmins: 6,
-                publicCases: 3,
-                systemStatus: 'Healthy'
-            };
-            
-            // Update dashboard data object
-            if (typeof dashboardData === 'undefined') {
-                window.dashboardData = {};
-            }
-            
-            dashboardData.users = dashboardData.users || [];
-            dashboardData.runners = dashboardData.runners || [];
-            dashboardData.admins = dashboardData.admins || [];
-            dashboardData.publicCases = dashboardData.publicCases || [];
-            dashboardData.systemStatus = fallbackData.systemStatus;
-            
-            // Update UI elements
-            const totalUsersElement = document.getElementById('totalUsers');
-            if (totalUsersElement) {
-                totalUsersElement.textContent = fallbackData.totalUsers;
-            }
-            
-            const totalRunnersElement = document.getElementById('totalRunners');
-            if (totalRunnersElement) {
-                totalRunnersElement.textContent = fallbackData.totalRunners;
-            }
-            
-            const activeAdminsElement = document.getElementById('activeAdmins');
-            if (activeAdminsElement) {
-                activeAdminsElement.textContent = fallbackData.activeAdmins;
-            }
-            
-            const publicCasesElement = document.getElementById('publicCases');
-            if (publicCasesElement) {
-                publicCasesElement.textContent = fallbackData.publicCases;
-            }
-            
-            const systemStatusElement = document.getElementById('systemStatus');
-            if (systemStatusElement) {
-                systemStatusElement.textContent = fallbackData.systemStatus;
-            }
-            
-            console.log('✅ Fallback dashboard data set successfully');
-        }
+        // Fallback data function removed - dashboard now uses real API data only
         
         async function loadDashboardData() {
             try {
@@ -4670,10 +4620,16 @@
                 
             } catch (error) {
                 console.error('Error loading dashboard data:', error);
-                showToast('Failed to load dashboard data - using fallback data', 'warning');
+                showToast('Failed to load dashboard data from server', 'error');
                 
-                // Set fallback data to ensure dashboard shows something
-                setFallbackDashboardData();
+                // Initialize empty data arrays instead of fallback data
+                dashboardData = {
+                    users: [],
+                    runners: [],
+                    admins: [],
+                    publicCases: [],
+                    systemStatus: 'error'
+                };
                 updateDashboardUI();
                 hideLoadingState();
             }
@@ -4703,16 +4659,16 @@
                     return;
                 }
                 
-                // Try to load from API first, fallback to mock data
+                // Load real user data from API
                 const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
-                console.log('📡 Users API URL:', `${apiUrl}/Admin/stats`);
+                console.log('📡 Users API URL:', `${apiUrl}/Admin/users`);
                 console.log('🔑 Using token:', token ? `Present (length: ${token.length})` : 'Missing');
                 
             try {
-                console.log('📡 Making API request to:', `${apiUrl}/Admin/stats`);
+                console.log('📡 Making API request to:', `${apiUrl}/Admin/users`);
                 console.log('🔑 Using token:', token ? `Present (${token.length} chars)` : 'Missing');
                 
-                const response = await fetch(`${apiUrl}/Admin/stats`, {
+                const response = await fetch(`${apiUrl}/Admin/users`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -4723,19 +4679,19 @@
                     credentials: 'include'
                 });
                 
-                console.log('📊 API Response status:', response.status, response.statusText);
+                console.log('📊 Users API Response status:', response.status, response.statusText);
                     
                     if (response.ok) {
                         const responseData = await response.json();
-                        console.log('📊 API Stats Response:', responseData);
+                        console.log('📊 Users API Response:', responseData);
                         
-                        // Update dashboard data with API response
-                        if (responseData.totals) {
-                            dashboardData.users = Array(responseData.totals.users).fill({}).map((_, i) => ({ id: i + 1, email: `user${i + 1}@example.com`, role: 'user' }));
-                            dashboardData.publicCases = Array(responseData.totals.cases).fill({}).map((_, i) => ({ id: i + 1, title: `Case ${i + 1}`, status: 'open' }));
-                            console.log('✅ Stats loaded from API:', responseData.totals);
+                        // Update dashboard data with real API response
+                        if (responseData.success && responseData.users) {
+                            dashboardData.users = responseData.users;
+                            console.log('✅ Real users loaded from API:', responseData.users.length);
+                            console.log('📋 User details:', responseData.users.map(u => ({ id: u.id, email: u.email, name: u.fullName, role: u.role })));
                         } else {
-                            throw new Error('Invalid response format from API');
+                            throw new Error('Invalid response format from users API');
                         }
                     } else {
                         // Handle specific error cases
@@ -4747,35 +4703,27 @@
                             console.error('❌ 403 Forbidden - insufficient permissions');
                             throw new Error('Insufficient permissions to access admin data.');
                         } else {
-                            throw new Error(`API returned ${response.status}: ${response.statusText}`);
+                            throw new Error(`Users API returned ${response.status}: ${response.statusText}`);
                         }
                     }
                 } catch (apiError) {
-                    console.warn('⚠️ API users endpoint not available, using mock data:', apiError.message);
+                    console.error('❌ Failed to load users from API:', apiError.message);
                     
                     // Show error UI for API failures
                     if (window.errorUI) {
                         window.errorUI.showErrorUI(
-                            'Unable to load users from the server. Using cached data.',
+                            'Unable to load users from the server. Please check your connection and try again.',
                             {
-                                title: 'Users Loading Warning',
+                                title: 'Users Loading Error',
                                 retryFunction: () => loadUsers(),
                                 showRetry: true
                             }
                         );
                     }
                     
-                    // Fallback to mock data
-                    dashboardData.users = [
-                        { id: 1, email: "test@example.com", firstName: "Test", lastName: "User", role: "user", isActive: true },
-                        { id: 2, email: "dekuworks1@gmail.com", firstName: "Marcus", lastName: "Brown", role: "admin", isActive: true },
-                        { id: 3, email: "danielcarey9770@yahoo.com", firstName: "Daniel", lastName: "Carey", role: "admin", isActive: true },
-                        { id: 4, email: "lthomas3350@gmail.com", firstName: "Lisa", lastName: "Thomas", role: "admin", isActive: true },
-                        { id: 5, email: "tinaleggins@yahoo.com", firstName: "Tina", lastName: "Matthews", role: "admin", isActive: true },
-                        { id: 6, email: "mmelasky@iplawconsulting.com", firstName: "Mark", lastName: "Melasky", role: "admin", isActive: true },
-                        { id: 7, email: "ralphfrank900@gmail.com", firstName: "Ralph", lastName: "Frank", role: "admin", isActive: true }
-                    ];
-                    console.log('📊 Using mock users data:', dashboardData.users.length);
+                    // Set empty users array instead of mock data
+                    dashboardData.users = [];
+                    console.log('❌ No users loaded - API call failed');
                 }
             } catch (error) {
                 console.error('❌ Error loading users:', error);
@@ -4791,13 +4739,43 @@
         
         async function loadRunners() {
             try {
-                // Mock data for runners - TODO: Update when runners endpoint is available
-                dashboardData.runners = [
-                    { id: 1, name: "John Doe", status: "active" },
-                    { id: 2, name: "Jane Smith", status: "active" },
-                    { id: 3, name: "Bob Johnson", status: "inactive" }
-                ];
-                console.log('Loaded runners:', dashboardData.runners.length);
+                // Load runners from API when endpoint is available
+                // For now, get runner count from cases data
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const token = storage.get('ra_admin_token') || storage.get('jwtToken');
+                
+                if (!token) {
+                    console.warn('⚠️ No authentication token found for runners');
+                    dashboardData.runners = [];
+                    return;
+                }
+                
+                // Try to load runners from API (this endpoint may not exist yet)
+                try {
+                    const response = await fetch(`${apiUrl}/runners`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        },
+                        credentials: 'include'
+                    });
+                    
+                    if (response.ok) {
+                        const responseData = await response.json();
+                        dashboardData.runners = responseData.runners || responseData || [];
+                        console.log('✅ Real runners loaded from API:', dashboardData.runners.length);
+                    } else {
+                        console.warn('⚠️ Runners endpoint not available, setting empty array');
+                        dashboardData.runners = [];
+                    }
+                } catch (runnerError) {
+                    console.warn('⚠️ Runners endpoint not available:', runnerError.message);
+                    dashboardData.runners = [];
+                }
+                
+                console.log('🏃 Runners loaded:', dashboardData.runners.length);
             } catch (error) {
                 console.error('Error loading runners:', error);
                 dashboardData.runners = [];
@@ -4812,44 +4790,116 @@
         
         async function loadAdmins() {
             try {
-                // Ensure users data is available before filtering
-                if (!dashboardData.users || !Array.isArray(dashboardData.users)) {
-                    console.warn('⚠️ Users data not available for admin filtering, using empty array');
+                // Load admins from the dedicated API endpoint
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const token = storage.get('ra_admin_token') || storage.get('jwtToken');
+                
+                if (!token) {
+                    console.warn('⚠️ No authentication token found for admins');
                     dashboardData.admins = [];
                     return;
                 }
                 
-                // Filter admin users from the loaded users
-                dashboardData.admins = dashboardData.users.filter(user => user.role === 'admin');
-                console.log('✅ Loaded admins:', dashboardData.admins.length);
+                console.log('👑 Loading admins from API:', `${apiUrl}/Admin/admins`);
+                
+                const response = await fetch(`${apiUrl}/Admin/admins`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const responseData = await response.json();
+                    console.log('📊 Admins API Response:', responseData);
+                    
+                    if (responseData.success && responseData.admins) {
+                        dashboardData.admins = responseData.admins;
+                        console.log('✅ Real admins loaded from API:', responseData.admins.length);
+                    } else {
+                        throw new Error('Invalid response format from admins API');
+                    }
+                } else {
+                    // Fallback: filter from users data if admins endpoint fails
+                    if (dashboardData.users && Array.isArray(dashboardData.users)) {
+                        dashboardData.admins = dashboardData.users.filter(user => user.role === 'admin');
+                        console.log('👑 Admins filtered from users data:', dashboardData.admins.length);
+                    } else {
+                        dashboardData.admins = [];
+                        console.warn('⚠️ No users data available for admin filtering');
+                    }
+                }
             } catch (error) {
                 console.error('❌ Error loading admins:', error);
-                dashboardData.admins = [];
-                // Show error in UI
-                updateElement('activeAdmins', 0, {
-                    message: 'Failed to load admins',
-                    endpoint: '/api/admin/users',
-                    status: error.message || 'Unknown error'
-                });
+                
+                // Fallback: try to filter from users data
+                if (dashboardData.users && Array.isArray(dashboardData.users)) {
+                    dashboardData.admins = dashboardData.users.filter(user => user.role === 'admin');
+                    console.log('👑 Fallback: Admins filtered from users data:', dashboardData.admins.length);
+                } else {
+                    dashboardData.admins = [];
+                    console.warn('⚠️ No fallback data available for admins');
+                }
             }
         }
         
         async function loadPublicCases() {
             try {
-                // Mock data for public cases - TODO: Update when public cases endpoint is available
-                dashboardData.publicCases = [
-                    { id: 1, title: "Case 1", status: "open" },
-                    { id: 2, title: "Case 2", status: "closed" },
-                    { id: 3, title: "Case 3", status: "pending" }
-                ];
-                console.log('Loaded public cases:', dashboardData.publicCases.length);
+                // Load case statistics from the Admin/stats endpoint
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const token = storage.get('ra_admin_token') || storage.get('jwtToken');
+                
+                if (!token) {
+                    console.warn('⚠️ No authentication token found for cases');
+                    dashboardData.publicCases = [];
+                    return;
+                }
+                
+                console.log('📋 Loading case stats from API:', `${apiUrl}/Admin/stats`);
+                
+                const response = await fetch(`${apiUrl}/Admin/stats`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const responseData = await response.json();
+                    console.log('📊 Stats API Response:', responseData);
+                    
+                    if (responseData.totals) {
+                        // Create placeholder case objects based on the total count
+                        const totalCases = responseData.totals.cases || 0;
+                        dashboardData.publicCases = Array(totalCases).fill(null).map((_, i) => ({
+                            id: i + 1,
+                            title: `Case ${i + 1}`,
+                            status: i < (responseData.totals.missing || 0) ? 'Missing' : 'Resolved',
+                            priority: i % 3 === 0 ? 'High' : i % 3 === 1 ? 'Medium' : 'Low'
+                        }));
+                        console.log('✅ Case stats loaded from API:', responseData.totals);
+                    } else {
+                        throw new Error('Invalid response format from stats API');
+                    }
+                } else {
+                    console.warn('⚠️ Stats endpoint not available, setting empty cases array');
+                    dashboardData.publicCases = [];
+                }
+                
+                console.log('📋 Public cases loaded:', dashboardData.publicCases.length);
             } catch (error) {
-                console.error('Error loading public cases:', error);
+                console.error('❌ Error loading public cases:', error);
                 dashboardData.publicCases = [];
                 // Show error in UI
-                updateElement('totalPublicCases', 0, {
-                    message: 'Failed to load public cases',
-                    endpoint: '/api/cases/public',
+                updateElement('publicCases', 0, {
+                    message: 'Failed to load cases',
+                    endpoint: '/api/Admin/stats',
                     status: error.message || 'Unknown error'
                 });
             }
@@ -4877,19 +4927,7 @@
             }
         }
 
-        async function loadRunnersFromAPI() {
-            try {
-                // For now, use mock data since runners endpoint might not exist
-                dashboardData.runners = [
-                    { id: 1, name: "John Doe", status: "active" },
-                    { id: 2, name: "Jane Smith", status: "active" }
-                ];
-                console.log('🏃 Runners loaded:', dashboardData.runners.length);
-            } catch (error) {
-                console.error('❌ Error loading runners:', error);
-                dashboardData.runners = [];
-            }
-        }
+        // Mock runners function removed - using real API data only
         
         async function checkSystemStatus() {
             try {
@@ -5347,25 +5385,16 @@
                     }
                 }
 
-                // Use fallback admin data as last resort
-                console.log("🔍 No user data found, using fallback");
-                currentAdmin = {
-                    firstName: 'Admin',
-                    lastName: 'User',
-                    email: 'admin@241runnersawareness.org',
-                    role: 'admin'
-                };
-                updateAdminProfile();
+                // No fallback data - require real authentication
+                console.log("🔍 No user data found, redirecting to login");
+                clearAuthData();
+                window.location.href = '/admin/login.html';
             } catch (error) {
                 console.error('Error loading admin profile:', error);
-                // Don't redirect on error, just use fallback data
-                console.log('Using fallback admin data');
-                currentAdmin = {
-                    firstName: 'Admin',
-                    lastName: 'User',
-                    email: 'admin@241runnersawareness.org'
-                };
-                updateAdminProfile();
+                // No fallback data - require real authentication
+                console.log('Error loading admin profile, redirecting to login');
+                clearAuthData();
+                window.location.href = '/admin/login.html';
             }
         }        
         
