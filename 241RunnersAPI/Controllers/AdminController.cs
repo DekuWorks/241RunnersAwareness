@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
 using _241RunnersAPI.Data;
 using _241RunnersAPI.Models;
 using _241RunnersAPI.Services;
+using _241RunnersAPI.Hubs;
 using System.Security.Claims;
 
 namespace _241RunnersAPI.Controllers
@@ -16,13 +18,17 @@ namespace _241RunnersAPI.Controllers
         private readonly ILogger<AdminController> _logger;
         private readonly ValidationService _validationService;
         private readonly CachingService _cachingService;
+        private readonly IHubContext<AdminHub> _adminHubContext;
+        private readonly IHubContext<AlertsHub> _alertsHubContext;
 
-        public AdminController(ApplicationDbContext context, ILogger<AdminController> logger, ValidationService validationService, CachingService cachingService)
+        public AdminController(ApplicationDbContext context, ILogger<AdminController> logger, ValidationService validationService, CachingService cachingService, IHubContext<AdminHub> adminHubContext, IHubContext<AlertsHub> alertsHubContext)
         {
             _context = context;
             _logger = logger;
             _validationService = validationService;
             _cachingService = cachingService;
+            _adminHubContext = adminHubContext;
+            _alertsHubContext = alertsHubContext;
         }
 
         /// <summary>
@@ -763,6 +769,31 @@ namespace _241RunnersAPI.Controllers
                 _logger.LogInformation("User {UserId} ({Email}) deleted by admin {AdminId}", 
                     userToDelete.Id, userToDelete.Email, currentUserId);
 
+                // Send SignalR event to admin dashboard
+                try
+                {
+                    await _adminHubContext.Clients.All.SendAsync("UserDeleted", new
+                    {
+                        userId = userToDelete.Id,
+                        email = userToDelete.Email,
+                        deletedBy = currentUserId,
+                        timestamp = DateTime.UtcNow
+                    });
+                    
+                    // Also send to alerts hub for broader notifications
+                    await _alertsHubContext.Clients.Group("role:admin").SendAsync("userDeleted", new
+                    {
+                        id = userToDelete.Id,
+                        email = userToDelete.Email,
+                        deletedBy = currentUserId,
+                        timestamp = DateTime.UtcNow
+                    });
+                }
+                catch (Exception signalrEx)
+                {
+                    _logger.LogWarning(signalrEx, "Failed to send SignalR notification for user deletion");
+                }
+
                 return Ok(new { 
                     success = true, 
                     message = "User deleted successfully",
@@ -842,6 +873,31 @@ namespace _241RunnersAPI.Controllers
 
                 _logger.LogInformation("Admin {AdminId} ({Email}) deleted by admin {CurrentAdminId}", 
                     adminToDelete.Id, adminToDelete.Email, currentUserId);
+
+                // Send SignalR event to admin dashboard
+                try
+                {
+                    await _adminHubContext.Clients.All.SendAsync("AdminDeleted", new
+                    {
+                        adminId = adminToDelete.Id,
+                        email = adminToDelete.Email,
+                        deletedBy = currentUserId,
+                        timestamp = DateTime.UtcNow
+                    });
+                    
+                    // Also send to alerts hub for broader notifications
+                    await _alertsHubContext.Clients.Group("role:admin").SendAsync("adminDeleted", new
+                    {
+                        id = adminToDelete.Id,
+                        email = adminToDelete.Email,
+                        deletedBy = currentUserId,
+                        timestamp = DateTime.UtcNow
+                    });
+                }
+                catch (Exception signalrEx)
+                {
+                    _logger.LogWarning(signalrEx, "Failed to send SignalR notification for admin deletion");
+                }
 
                 return Ok(new { 
                     success = true, 
