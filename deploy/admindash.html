@@ -4674,6 +4674,20 @@
                 console.log('📡 Users API URL:', `${apiUrl}/Admin/users`);
                 console.log('🔑 Using token:', token ? `Present (length: ${token.length})` : 'Missing');
                 
+                // Test API connectivity first
+                console.log('🧪 Testing API connectivity...');
+                try {
+                    const testResponse = await fetch(`${apiUrl}/Admin/stats`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+                    console.log('🧪 API connectivity test:', testResponse.status, testResponse.statusText);
+                } catch (testError) {
+                    console.error('🧪 API connectivity test failed:', testError);
+                }
+                
             try {
                 console.log('📡 Making API request to:', `${apiUrl}/Admin/users`);
                 console.log('🔑 Using token:', token ? `Present (${token.length} chars)` : 'Missing');
@@ -4756,6 +4770,9 @@
                     // Set empty users array instead of mock data
                     dashboardData.users = [];
                     console.log('❌ No users loaded - API call failed');
+                    
+                    // Show connection status
+                    updateConnectionStatus(false, false);
                 }
             } catch (error) {
                 console.error('❌ Error loading users:', error);
@@ -9283,12 +9300,22 @@
                 }
             });
             
-            // Initialize dashboard with a small delay to ensure DOM is fully ready
-            // Reduced delay for faster loading
-            setTimeout(() => {
-                console.log('🚀 Starting dashboard initialization...');
-                initializeDashboard();
-            }, 200);
+        // Initialize dashboard with a small delay to ensure DOM is fully ready
+        // Reduced delay for faster loading
+        setTimeout(() => {
+            console.log('🚀 Starting dashboard initialization...');
+            
+            // Debug authentication state
+            console.log('🔍 Authentication Debug:', {
+                ra_admin_token: localStorage.getItem('ra_admin_token') ? 'Present' : 'Missing',
+                jwtToken: localStorage.getItem('jwtToken') ? 'Present' : 'Missing',
+                ra_admin_role: localStorage.getItem('ra_admin_role'),
+                ra_admin_user: localStorage.getItem('ra_admin_user') ? 'Present' : 'Missing',
+                allKeys: Object.keys(localStorage).filter(k => k.includes('admin') || k.includes('token') || k.includes('user'))
+            });
+            
+            initializeDashboard();
+        }, 200);
             
             // Cleanup on page unload
             window.addEventListener('beforeunload', () => {
