@@ -4810,9 +4810,9 @@
                     return;
                 }
                 
-                // Try to load runners from API (this endpoint may not exist yet)
+                // Try to load runners from API
                 try {
-                    const response = await fetch(`${apiUrl}/runners`, {
+                    const response = await fetch(`${apiUrl}/runner`, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -9068,6 +9068,23 @@
                         if (error.message && error.message.includes('401')) {
                             console.log('🔑 Authentication error - SignalR connection failed due to expired token');
                             showToast('Real-time connection failed: Authentication expired. Please refresh the page.', 'error', 5000);
+                        } else if (error.message && error.message.includes('Failed to fetch')) {
+                            console.log('🌐 Network error - CORS or connectivity issue');
+                            console.log('🔍 Debug info:', {
+                                hubUrl: hubUrl,
+                                token: token ? `Present (${token.length} chars)` : 'Missing',
+                                userAgent: navigator.userAgent,
+                                origin: window.location.origin
+                            });
+                            showToast('Connection failed - network issue detected', 'error', 3000);
+                        } else if (error.message && error.message.includes('negotiation')) {
+                            console.log('🤝 SignalR negotiation failed - possible CORS issue');
+                            console.log('🔍 Debug info:', {
+                                hubUrl: hubUrl,
+                                apiBaseUrl: window.API_BASE_URL,
+                                origin: window.location.origin
+                            });
+                            showToast('SignalR negotiation failed - checking configuration', 'warning', 3000);
                         } else {
                             console.log('🔄 Network error - Switching to polling mode');
                             showToast('Real-time connection lost. Dashboard will use polling mode.', 'warning', 3000);

@@ -166,7 +166,8 @@ builder.Services.AddCors(options =>
               .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
               .WithHeaders("Content-Type", "Authorization", "X-Requested-With", "X-ClientId", "X-Client", 
                           "Accept", "Origin", "Access-Control-Request-Method", 
-                          "Access-Control-Request-Headers", "User-Agent", "X-Version", "X-Platform")
+                          "Access-Control-Request-Headers", "User-Agent", "X-Version", "X-Platform",
+                          "X-SignalR-User-Agent", "Cache-Control", "Pragma")
               .AllowCredentials()
               .SetPreflightMaxAge(TimeSpan.FromMinutes(10));
     });
@@ -194,7 +195,8 @@ builder.Services.AddCors(options =>
               .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
               .WithHeaders("Content-Type", "Authorization", "X-Requested-With", "X-ClientId", "X-Client", 
                           "Accept", "Origin", "Access-Control-Request-Method", 
-                          "Access-Control-Request-Headers", "User-Agent", "X-Version", "X-Platform")
+                          "Access-Control-Request-Headers", "User-Agent", "X-Version", "X-Platform",
+                          "X-SignalR-User-Agent", "Cache-Control", "Pragma")
               .AllowCredentials()
               .SetPreflightMaxAge(TimeSpan.FromMinutes(10));
     });
@@ -412,13 +414,13 @@ app.Use(async (context, next) =>
     context.Response.Headers.Add("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
     context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
     
-    // Content Security Policy
+    // Content Security Policy - Allow SignalR connections
     var csp = "default-src 'self'; " +
               "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
               "style-src 'self' 'unsafe-inline'; " +
               "img-src 'self' data: https:; " +
               "font-src 'self'; " +
-              "connect-src 'self' https:; " +
+              "connect-src 'self' https: wss: ws:; " +
               "frame-ancestors 'none'; " +
               "base-uri 'self'; " +
               "form-action 'self'";
