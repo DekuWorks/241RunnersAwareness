@@ -4732,17 +4732,17 @@
                             console.log('👑 Admin users:', adminUsers.length, adminUsers.map(u => u.fullName));
                             console.log('👤 Regular users:', regularUsers.length, regularUsers.map(u => u.fullName));
                             
-                            // Validate expected counts
-                            if (responseData.users.length === 7 && adminUsers.length === 6) {
-                                console.log('✅ Perfect! Found 7 total users: 6 admins + 1 test user');
-                            } else {
-                                console.warn('⚠️ User count mismatch:', {
-                                    total: responseData.users.length,
-                                    admins: adminUsers.length,
-                                    users: regularUsers.length,
-                                    expected: { total: 7, admins: 6, users: 1 }
-                                });
-                            }
+                       // Log actual user distribution
+                       console.log('📊 User distribution:', {
+                           total: responseData.users.length,
+                           admins: adminUsers.length,
+                           users: regularUsers.length
+                       });
+                       
+                       // Note: Database has grown beyond initial 7 users
+                       if (responseData.users.length > 7) {
+                           console.log('📈 Database has grown! Found', responseData.users.length, 'total users');
+                       }
                         } else {
                             throw new Error('Invalid response format from users API');
                         }
@@ -5049,20 +5049,20 @@
                 expectedAdmins: 6
             });
             
-            // Validate expected user counts
-            if (totalUsers !== 7) {
-                console.warn(`⚠️ Expected 7 total users, but got ${totalUsers}`);
-                showToast(`Warning: Expected 7 users but found ${totalUsers}`, 'warning', 3000);
-            }
-            
-            if (adminCount !== 6) {
-                console.warn(`⚠️ Expected 6 admin users, but got ${adminCount}`);
-                showToast(`Warning: Expected 6 admins but found ${adminCount}`, 'warning', 3000);
-            }
-            
-            if (totalUsers === 7 && adminCount === 6) {
-                console.log('✅ User counts match expected values: 7 total users (6 admins + 1 test user)');
-            }
+       // Log current user distribution (database has grown)
+       console.log('📊 Current user distribution:', {
+           total: totalUsers,
+           admins: adminCount,
+           regularUsers: userCount
+       });
+       
+       if (totalUsers > 7) {
+           console.log(`📈 Database growth detected: ${totalUsers} total users (originally 7)`);
+       }
+       
+       if (adminCount >= 6) {
+           console.log(`✅ Admin count looks good: ${adminCount} admins`);
+       }
             
             updateElement('totalUsers', totalUsers);
             updateElement('totalRunners', totalRunners);
@@ -5498,14 +5498,32 @@
         }        
         
         function updateAdminProfile() {
-            if (!currentAdmin) return;
-
-            updateElement('adminName', `${currentAdmin.firstName} ${currentAdmin.lastName}`);
-            updateElement('adminEmail', currentAdmin.email);
+            if (!currentAdmin) {
+                console.log('⚠️ No current admin data to update profile');
+                return;
+            }
             
-            const adminAvatar = document.getElementById('adminAvatar');
-            if (adminAvatar) {
-                adminAvatar.textContent = `${currentAdmin.firstName.charAt(0)}${currentAdmin.lastName.charAt(0)}`;
+            console.log('👤 Updating admin profile with:', currentAdmin);
+
+            try {
+                const firstName = currentAdmin.firstName || 'Admin';
+                const lastName = currentAdmin.lastName || 'User';
+                const email = currentAdmin.email || 'admin@example.com';
+                
+                updateElement('adminName', `${firstName} ${lastName}`);
+                updateElement('adminEmail', email);
+                
+                const adminAvatar = document.getElementById('adminAvatar');
+                if (adminAvatar) {
+                    // Safe charAt with fallback to prevent undefined errors
+                    const firstInitial = firstName && firstName.length > 0 ? firstName.charAt(0) : 'A';
+                    const lastInitial = lastName && lastName.length > 0 ? lastName.charAt(0) : 'U';
+                    adminAvatar.textContent = `${firstInitial}${lastInitial}`;
+                }
+                
+                console.log('✅ Admin profile updated successfully');
+            } catch (error) {
+                console.error('❌ Error updating admin profile:', error);
             }
         }
         
@@ -9004,8 +9022,18 @@
                     console.log('🔌 SignalR connection closed:', error);
                     isRealTimeEnabled = false;
                     updateConnectionStatus(false, false);
+                    
                     if (error) {
-                        showToast('Real-time connection lost', 'warning', 3000);
+                        if (error.message && error.message.includes('401')) {
+                            console.log('🔑 Authentication error - SignalR connection failed due to expired token');
+                            showToast('Real-time connection failed: Authentication expired. Please refresh the page.', 'error', 5000);
+                        } else {
+                            console.log('🔄 Network error - Switching to polling mode');
+                            showToast('Real-time connection lost. Dashboard will use polling mode.', 'warning', 3000);
+                        }
+                        
+                        // Switch to polling mode as fallback
+                        startPollingMode();
                     }
                 });
 
