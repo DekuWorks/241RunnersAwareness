@@ -156,11 +156,13 @@ builder.Services.AddAuthorization();
 // Add CORS with enhanced security for both web and mobile
 builder.Services.AddCors(options =>
 {
-    // Production policy - only allow production domains
+    // Production policy - allow production domains and GitHub Pages
     options.AddPolicy("Production", policy =>
     {
         policy.WithOrigins("https://241runnersawareness.org",
-                          "https://www.241runnersawareness.org")
+                          "https://www.241runnersawareness.org",
+                          "https://dekuworks.github.io",
+                          "https://dekuworks.github.io/241RunnersAwareness")
               .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
               .WithHeaders("Content-Type", "Authorization", "X-Requested-With", "X-ClientId", "X-Client", 
                           "Accept", "Origin", "Access-Control-Request-Method", 
@@ -461,7 +463,8 @@ app.UseIpRateLimiting();
 // Use appropriate CORS policy based on environment
 if (app.Environment.IsProduction())
 {
-    app.UseCors("Production");
+    // Temporarily use Development policy in production to debug CORS issues
+    app.UseCors("Development");
 }
 else
 {

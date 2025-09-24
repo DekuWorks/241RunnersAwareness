@@ -4653,9 +4653,19 @@
                 
                 // Check if user is authenticated
                 const token = storage.get('ra_admin_token') || storage.get('jwtToken');
+                console.log('🔍 Authentication check:', {
+                    ra_admin_token: storage.get('ra_admin_token') ? 'Present' : 'Missing',
+                    jwtToken: storage.get('jwtToken') ? 'Present' : 'Missing',
+                    finalToken: token ? 'Present' : 'Missing',
+                    tokenLength: token ? token.length : 0
+                });
+                
                 if (!token) {
                     console.warn('⚠️ No authentication token found, redirecting to login');
-                    window.location.href = '/admin/login.html';
+                    showToast('No authentication token found. Please log in again.', 'error', 3000);
+                    setTimeout(() => {
+                        window.location.href = '/admin/login.html';
+                    }, 2000);
                     return;
                 }
                 
@@ -4708,11 +4718,15 @@
                     }
                 } catch (apiError) {
                     console.error('❌ Failed to load users from API:', apiError.message);
+                    console.error('❌ Full error details:', apiError);
+                    
+                    // Show detailed error information for debugging
+                    showToast(`Failed to load users: ${apiError.message}`, 'error', 5000);
                     
                     // Show error UI for API failures
                     if (window.errorUI) {
                         window.errorUI.showErrorUI(
-                            'Unable to load users from the server. Please check your connection and try again.',
+                            `Unable to load users from the server. Error: ${apiError.message}`,
                             {
                                 title: 'Users Loading Error',
                                 retryFunction: () => loadUsers(),
