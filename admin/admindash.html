@@ -8952,7 +8952,8 @@
             try {
                 
                 const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
-                const hubUrl = apiBaseUrl.replace('/api', '') + '/hubs/notifications';
+                const hubUrl = apiBaseUrl.replace('/api', '') + '/hubs/admin';
+                console.log('🔌 SignalR Hub URL:', hubUrl);
                 
                 console.log('🔌 Connecting to SignalR hub:', hubUrl);
                 
@@ -8960,7 +8961,8 @@
                 console.log('🔑 Using token for SignalR:', token ? `Present (length: ${token.length})` : 'Missing');
                 
                 if (!token) {
-                    console.error('❌ No authentication token found for SignalR connection');
+                    console.warn('⚠️ No authentication token found for SignalR connection - skipping real-time updates');
+                    startPollingMode();
                     return;
                 }
                 
@@ -8973,18 +8975,22 @@
                         },
                         transport: signalR.HttpTransportType.LongPolling, // Use LongPolling for better reliability
                         skipNegotiation: false,
-                        withCredentials: false // Set to false to avoid CORS issues
+                        withCredentials: false, // Set to false to avoid CORS issues
+                        timeout: 10000 // 10 second timeout
                     })
                     .withAutomaticReconnect({
                         nextRetryDelayInMilliseconds: retryContext => {
-                            if (retryContext.previousRetryCount < 3) {
-                                return Math.min(1000 * Math.pow(2, retryContext.previousRetryCount), 10000);
+                            console.log(`🔄 SignalR retry attempt ${retryContext.previousRetryCount + 1}`);
+                            if (retryContext.previousRetryCount < 2) {
+                                return Math.min(2000 * Math.pow(2, retryContext.previousRetryCount), 8000);
                             } else {
-                                return null; // Stop retrying after 3 attempts
+                                console.log('🔄 SignalR max retries reached, switching to polling mode');
+                                startPollingMode();
+                                return null; // Stop retrying after 2 attempts
                             }
                         }
                     })
-                    .configureLogging(signalR.LogLevel.Warning) // Reduce logging noise
+                    .configureLogging(signalR.LogLevel.Error) // Only log errors to reduce noise
                     .build();
 
                 // Handle user updates
@@ -9069,17 +9075,30 @@
                     showToast('Real-time updates restored', 'success', 2000);
                 });
 
-                // Start connection with state guard
+                // Start connection with timeout and state guard
                 if (realTimeConnection.state === signalR.HubConnectionState.Disconnected) {
-                    await realTimeConnection.start();
+                    console.log('🔄 Starting SignalR connection...');
+                    try {
+                        await Promise.race([
+                            realTimeConnection.start(),
+                            new Promise((_, reject) => 
+                                setTimeout(() => reject(new Error('Connection timeout')), 15000)
+                            )
+                        ]);
+                        isRealTimeEnabled = true;
+                        console.log('✅ Real-time updates connected');
+                        updateConnectionStatus(true, false);
+                        showToast('Real-time updates enabled', 'success', 2000);
+                    } catch (startError) {
+                        console.warn('⚠️ SignalR connection failed to start:', startError.message);
+                        console.log('🔄 Falling back to polling mode');
+                        startPollingMode();
+                        return;
+                    }
                 } else {
                     console.log('⚠️ Connection already in state:', realTimeConnection.state);
                     return;
                 }
-                isRealTimeEnabled = true;
-                console.log('✅ Real-time updates connected');
-                updateConnectionStatus(true, false);
-                showToast('Real-time updates enabled', 'success', 2000);
                 
             } catch (error) {
                 console.error('❌ Real-time connection failed:', error);
