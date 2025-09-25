@@ -8966,6 +8966,16 @@
                     return;
                 }
                 
+                // Check if we're likely to have CSP issues (GitHub Pages deployment)
+                const isGitHubPages = window.location.hostname.includes('github.io') || 
+                                    window.location.hostname.includes('241runnersawareness.org');
+                
+                if (isGitHubPages) {
+                    console.log('🌐 GitHub Pages detected - CSP likely blocking SignalR, using polling mode');
+                    startPollingMode();
+                    return;
+                }
+                
                 realTimeConnection = new signalR.HubConnectionBuilder()
                     .withUrl(hubUrl, {
                         accessTokenFactory: () => {
@@ -8973,10 +8983,10 @@
                             console.log('🔑 SignalR accessTokenFactory called, token:', currentToken ? `Present (length: ${currentToken.length})` : 'Missing');
                             return currentToken || '';
                         },
-                        transport: signalR.HttpTransportType.ServerSentEvents, // Use SSE as fallback
+                        transport: signalR.HttpTransportType.LongPolling, // Use LongPolling for better CSP compatibility
                         skipNegotiation: false,
                         withCredentials: false, // Disable credentials to avoid CORS issues
-                        timeout: 15000 // 15 second timeout
+                        timeout: 20000 // 20 second timeout
                     })
                     .withAutomaticReconnect({
                         nextRetryDelayInMilliseconds: retryContext => {
@@ -9114,7 +9124,7 @@
                     console.log('🔍 Connection details:', {
                         hubUrl: hubUrl,
                         token: token ? `Present (${token.length} chars)` : 'Missing',
-                        transport: 'ServerSentEvents',
+                        transport: 'LongPolling',
                         withCredentials: false
                     });
                     
@@ -9136,6 +9146,14 @@
                             stack: startError.stack,
                             name: startError.name
                         });
+                        
+                        // Check if it's a CSP or network issue
+                        if (startError.message.includes('Failed to fetch') || 
+                            startError.message.includes('negotiation') ||
+                            startError.message.includes('CSP')) {
+                            console.log('🚫 SignalR blocked by CSP or network policy - using polling mode');
+                        }
+                        
                         console.log('🔄 Falling back to polling mode');
                         startPollingMode();
                         return;
@@ -9217,17 +9235,26 @@
             
             pollingMode = true;
             console.log('🔄 Starting polling mode for data updates');
+            console.log('📡 SignalR blocked by CSP/network policy - using reliable polling');
             
-            // Poll every 30 seconds for updates
+            // Clear any existing polling interval
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+            }
+            
+            // Poll every 15 seconds for more responsive updates
             pollingInterval = setInterval(async () => {
                 try {
+                    console.log('🔄 Polling for dashboard updates...');
                     await refreshDashboardData();
+                    console.log('✅ Polling update successful');
                 } catch (error) {
-                    console.error('Polling error:', error);
+                    console.error('❌ Polling error:', error);
                 }
-            }, 30000);
+            }, 15000); // Reduced from 30s to 15s for better responsiveness
             
             updateConnectionStatus(false, true);
+            showToast('Using polling mode for updates (every 15 seconds)', 'info', 4000);
         }
 
         // Stop polling mode
