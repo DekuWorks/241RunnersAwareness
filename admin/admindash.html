@@ -8973,10 +8973,10 @@
                             console.log('🔑 SignalR accessTokenFactory called, token:', currentToken ? `Present (length: ${currentToken.length})` : 'Missing');
                             return currentToken || '';
                         },
-                        transport: signalR.HttpTransportType.WebSockets, // Try WebSockets first
+                        transport: signalR.HttpTransportType.ServerSentEvents, // Use SSE as fallback
                         skipNegotiation: false,
-                        withCredentials: true, // Enable credentials for authentication
-                        timeout: 10000 // 10 second timeout
+                        withCredentials: false, // Disable credentials to avoid CORS issues
+                        timeout: 15000 // 15 second timeout
                     })
                     .withAutomaticReconnect({
                         nextRetryDelayInMilliseconds: retryContext => {
@@ -9111,6 +9111,13 @@
                 // Start connection with timeout and state guard
                 if (realTimeConnection.state === signalR.HubConnectionState.Disconnected) {
                     console.log('🔄 Starting SignalR connection...');
+                    console.log('🔍 Connection details:', {
+                        hubUrl: hubUrl,
+                        token: token ? `Present (${token.length} chars)` : 'Missing',
+                        transport: 'ServerSentEvents',
+                        withCredentials: false
+                    });
+                    
                     try {
                         await Promise.race([
                             realTimeConnection.start(),
@@ -9123,7 +9130,12 @@
                         updateConnectionStatus(true, false);
                         showToast('Real-time updates enabled', 'success', 2000);
                     } catch (startError) {
-                        console.warn('⚠️ SignalR connection failed to start:', startError.message);
+                        console.error('❌ SignalR connection failed to start:', startError);
+                        console.log('🔍 Error details:', {
+                            message: startError.message,
+                            stack: startError.stack,
+                            name: startError.name
+                        });
                         console.log('🔄 Falling back to polling mode');
                         startPollingMode();
                         return;
