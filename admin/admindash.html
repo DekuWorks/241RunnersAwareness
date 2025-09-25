@@ -8973,9 +8973,9 @@
                             console.log('🔑 SignalR accessTokenFactory called, token:', currentToken ? `Present (length: ${currentToken.length})` : 'Missing');
                             return currentToken || '';
                         },
-                        transport: signalR.HttpTransportType.LongPolling, // Use LongPolling for better reliability
+                        transport: signalR.HttpTransportType.WebSockets, // Try WebSockets first
                         skipNegotiation: false,
-                        withCredentials: false, // Set to false to avoid CORS issues
+                        withCredentials: true, // Enable credentials for authentication
                         timeout: 10000 // 10 second timeout
                     })
                     .withAutomaticReconnect({
