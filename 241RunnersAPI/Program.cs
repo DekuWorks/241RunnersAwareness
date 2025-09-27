@@ -414,18 +414,18 @@ app.Use(async (context, next) =>
     context.Response.Headers.Add("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
     context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
     
-    // Content Security Policy - Allow SignalR connections
-    var csp = "default-src 'self'; " +
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
-              "style-src 'self' 'unsafe-inline'; " +
-              "img-src 'self' data: https:; " +
-              "font-src 'self'; " +
-              "connect-src 'self' https: wss: ws:; " +
-              "frame-ancestors 'none'; " +
-              "base-uri 'self'; " +
-              "form-action 'self'";
+    // Content Security Policy - Temporarily disabled for SignalR testing
+    // var csp = "default-src 'self'; " +
+    //           "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+    //           "style-src 'self' 'unsafe-inline'; " +
+    //           "img-src 'self' data: https:; " +
+    //           "font-src 'self'; " +
+    //           "connect-src 'self' https: wss: ws:; " +
+    //           "frame-ancestors 'none'; " +
+    //           "base-uri 'self'; " +
+    //           "form-action 'self'";
     
-    context.Response.Headers.Add("Content-Security-Policy", csp);
+    // context.Response.Headers.Add("Content-Security-Policy", csp);
     
     await next();
 });

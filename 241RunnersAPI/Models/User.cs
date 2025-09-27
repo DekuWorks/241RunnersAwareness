@@ -16,9 +16,23 @@ namespace _241RunnersAPI.Models
         [MaxLength(255, ErrorMessage = "Email cannot exceed 255 characters")]
         public string Email { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Password hash is required")]
         [MaxLength(255, ErrorMessage = "Password hash cannot exceed 255 characters")]
-        public string PasswordHash { get; set; } = string.Empty;
+        public string? PasswordHash { get; set; } // Nullable for OAuth users
+
+        // OAuth Provider Information
+        [MaxLength(50, ErrorMessage = "Auth provider cannot exceed 50 characters")]
+        public string? AuthProvider { get; set; } // "email", "google", "apple", etc.
+
+        [MaxLength(255, ErrorMessage = "Provider user ID cannot exceed 255 characters")]
+        public string? ProviderUserId { get; set; } // External provider's user ID
+
+        [MaxLength(500, ErrorMessage = "Provider access token cannot exceed 500 characters")]
+        public string? ProviderAccessToken { get; set; } // Encrypted access token
+
+        [MaxLength(500, ErrorMessage = "Provider refresh token cannot exceed 500 characters")]
+        public string? ProviderRefreshToken { get; set; } // Encrypted refresh token
+
+        public DateTime? ProviderTokenExpires { get; set; } // When the provider token expires
 
         [Required(ErrorMessage = "First name is required")]
         [MaxLength(100, ErrorMessage = "First name cannot exceed 100 characters")]
@@ -147,16 +161,14 @@ namespace _241RunnersAPI.Models
         [MaxLength(255, ErrorMessage = "Email cannot exceed 255 characters")]
         public string Email { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Password is required")]
         [MinLength(8, ErrorMessage = "Password must be at least 8 characters long")]
         [MaxLength(100, ErrorMessage = "Password cannot exceed 100 characters")]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", 
             ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character")]
-        public string Password { get; set; } = string.Empty;
+        public string? Password { get; set; } // Optional for OAuth users
 
-        [Required(ErrorMessage = "Confirm password is required")]
         [Compare("Password", ErrorMessage = "Passwords do not match")]
-        public string ConfirmPassword { get; set; } = string.Empty;
+        public string? ConfirmPassword { get; set; } // Optional for OAuth users
 
         [Required(ErrorMessage = "First name is required")]
         [MaxLength(100, ErrorMessage = "First name cannot exceed 100 characters")]
@@ -394,5 +406,88 @@ namespace _241RunnersAPI.Models
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", 
             ErrorMessage = "New password must contain at least one uppercase letter, one lowercase letter, one number, and one special character")]
         public string NewPassword { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// DTO for OAuth authentication (Google, Apple, etc.)
+    /// </summary>
+    public class OAuthLoginDto
+    {
+        [Required(ErrorMessage = "Provider is required")]
+        [MaxLength(50, ErrorMessage = "Provider cannot exceed 50 characters")]
+        [RegularExpression("^(google|apple|microsoft)$", ErrorMessage = "Provider must be one of: google, apple, microsoft")]
+        public string Provider { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Access token is required")]
+        [MaxLength(1000, ErrorMessage = "Access token cannot exceed 1000 characters")]
+        public string AccessToken { get; set; } = string.Empty;
+
+        [MaxLength(1000, ErrorMessage = "ID token cannot exceed 1000 characters")]
+        public string? IdToken { get; set; }
+
+        [MaxLength(1000, ErrorMessage = "Refresh token cannot exceed 1000 characters")]
+        public string? RefreshToken { get; set; }
+
+        [MaxLength(255, ErrorMessage = "Provider user ID cannot exceed 255 characters")]
+        public string? ProviderUserId { get; set; }
+
+        [EmailAddress(ErrorMessage = "Invalid email format")]
+        [MaxLength(255, ErrorMessage = "Email cannot exceed 255 characters")]
+        public string? Email { get; set; }
+
+        [MaxLength(100, ErrorMessage = "First name cannot exceed 100 characters")]
+        public string? FirstName { get; set; }
+
+        [MaxLength(100, ErrorMessage = "Last name cannot exceed 100 characters")]
+        public string? LastName { get; set; }
+
+        [MaxLength(500, ErrorMessage = "Profile image URL cannot exceed 500 characters")]
+        [Url(ErrorMessage = "Profile image URL must be a valid URL")]
+        public string? ProfileImageUrl { get; set; }
+    }
+
+    /// <summary>
+    /// DTO for OAuth user registration
+    /// </summary>
+    public class OAuthRegistrationDto
+    {
+        [Required(ErrorMessage = "Provider is required")]
+        [MaxLength(50, ErrorMessage = "Provider cannot exceed 50 characters")]
+        [RegularExpression("^(google|apple|microsoft)$", ErrorMessage = "Provider must be one of: google, apple, microsoft")]
+        public string Provider { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Provider user ID is required")]
+        [MaxLength(255, ErrorMessage = "Provider user ID cannot exceed 255 characters")]
+        public string ProviderUserId { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email format")]
+        [MaxLength(255, ErrorMessage = "Email cannot exceed 255 characters")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "First name is required")]
+        [MaxLength(100, ErrorMessage = "First name cannot exceed 100 characters")]
+        public string FirstName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Last name is required")]
+        [MaxLength(100, ErrorMessage = "Last name cannot exceed 100 characters")]
+        public string LastName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Role is required")]
+        [RegularExpression("^(user|parent|caregiver|therapist|adoptiveparent|admin)$", 
+            ErrorMessage = "Role must be one of: user, parent, caregiver, therapist, adoptiveparent, admin")]
+        public string Role { get; set; } = "user";
+
+        [MaxLength(500, ErrorMessage = "Profile image URL cannot exceed 500 characters")]
+        [Url(ErrorMessage = "Profile image URL must be a valid URL")]
+        public string? ProfileImageUrl { get; set; }
+
+        [MaxLength(1000, ErrorMessage = "Access token cannot exceed 1000 characters")]
+        public string? AccessToken { get; set; }
+
+        [MaxLength(1000, ErrorMessage = "Refresh token cannot exceed 1000 characters")]
+        public string? RefreshToken { get; set; }
+
+        public DateTime? TokenExpires { get; set; }
     }
 }

@@ -8,17 +8,54 @@
 - **Role**: `user`
 - **Status**: Active
 
-### **Admin Users**
+### **Admin Users (All 6 Admin Accounts)**
+
+#### **1. Marcus Brown (System Administrator)**
+- **Email**: `dekuworks1@gmail.com`
+- **Password**: `marcus2025`
+- **Role**: `admin`
+- **Organization**: 241 Runners Awareness
+- **Title**: System Administrator
+- **Status**: Active
+
+#### **2. Daniel Carey (Administrator)**
 - **Email**: `danielcarey9770@yahoo.com`
+- **Password**: `Daniel2025!`
 - **Role**: `admin`
+- **Organization**: 241 Runners Awareness
+- **Title**: Administrator
 - **Status**: Active
 
+#### **3. Lisa Thomas (Administrator)**
 - **Email**: `lthomas3350@gmail.com`
+- **Password**: `Lisa2025!`
 - **Role**: `admin`
+- **Organization**: 241 Runners Awareness
+- **Title**: Administrator
 - **Status**: Active
 
+#### **4. Tina Matthews (Administrator)**
 - **Email**: `tinaleggins@yahoo.com`
+- **Password**: `Tina2025!`
 - **Role**: `admin`
+- **Organization**: 241 Runners Awareness
+- **Title**: Administrator
+- **Status**: Active
+
+#### **5. Mark Melasky (Legal Administrator)**
+- **Email**: `mmelasky@iplawconsulting.com`
+- **Password**: `Mark2025!`
+- **Role**: `admin`
+- **Organization**: IP Law Consulting
+- **Title**: Legal Administrator
+- **Status**: Active
+
+#### **6. Ralph Frank (Administrator)**
+- **Email**: `ralphfrank900@gmail.com`
+- **Password**: `Ralph2025!`
+- **Role**: `admin`
+- **Organization**: 241 Runners Awareness
+- **Title**: Administrator
 - **Status**: Active
 
 ## 🌐 **Testing the Web Application**
