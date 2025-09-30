@@ -1,0 +1,364 @@
+/**
+ * ============================================
+ * 241 RUNNERS AWARENESS - INLINE STYLES CONVERSION
+ * ============================================
+ * 
+ * This file contains styles that were previously inline in HTML files
+ * for better maintainability and separation of concerns
+ */
+
+/* Display utilities */
+.hidden {
+    display: none !important;
+}
+
+.visible {
+    display: block !important;
+}
+
+.flex {
+    display: flex !important;
+}
+
+.inline-flex {
+    display: inline-flex !important;
+}
+
+/* Loading states */
+.loading-spinner {
+    display: none;
+}
+
+.loading-spinner.show {
+    display: block;
+}
+
+/* Navigation elements */
+.nav-link {
+    display: none;
+}
+
+.nav-link.show {
+    display: inline-block;
+}
+
+.logout-btn {
+    display: none;
+}
+
+.logout-btn.show {
+    display: inline-block;
+}
+
+/* Form elements */
+.file-input {
+    display: none;
+}
+
+.upload-progress {
+    display: none;
+}
+
+.upload-progress.show {
+    display: block;
+}
+
+.remove-btn {
+    display: none;
+}
+
+.remove-btn.show {
+    display: inline-block;
+}
+
+/* Profile image styles */
+.profile-image {
+    display: none;
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.profile-image.show {
+    display: block;
+}
+
+.profile-avatar {
+    display: none;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.profile-avatar.show {
+    display: block;
+}
+
+.avatar-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 3rem;
+    color: #dc2626;
+}
+
+.no-image-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    background: #f3f4f6;
+    border-radius: 8px;
+    color: #6b7280;
+    font-style: italic;
+}
+
+/* Profile sections */
+.profile-section {
+    margin-bottom: 2rem;
+}
+
+/* Admin dashboard styles */
+.admin-sidebar-header {
+    padding: 20px;
+    text-align: center;
+}
+
+.admin-sidebar-title {
+    margin: 0;
+    color: white;
+}
+
+.admin-sidebar-subtitle {
+    margin: 5px 0 0 0;
+    color: #bdc3c7;
+    font-size: 0.9rem;
+}
+
+.admin-sidebar-footer {
+    padding: 20px;
+    margin-top: auto;
+}
+
+.admin-sidebar-logout {
+    width: 100%;
+}
+
+.admin-card-description {
+    margin: 5px 0 0 0;
+    color: #666;
+}
+
+.admin-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.admin-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.admin-card-title {
+    margin: 0;
+    color: #2c3e50;
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+}
+
+.modal.show {
+    display: block;
+}
+
+/* State indicators */
+.loading-state {
+    display: none;
+}
+
+.loading-state.show {
+    display: block;
+}
+
+.error-state {
+    display: none;
+}
+
+.error-state.show {
+    display: block;
+}
+
+.empty-state {
+    display: none;
+}
+
+.empty-state.show {
+    display: block;
+}
+
+.no-cases-state {
+    display: none;
+}
+
+.no-cases-state.show {
+    display: block;
+}
+
+.pagination {
+    display: none;
+}
+
+.pagination.show {
+    display: flex;
+}
+
+.load-more-container {
+    display: none;
+}
+
+.load-more-container.show {
+    display: block;
+}
+
+/* Auth notice */
+.auth-notice {
+    display: none;
+}
+
+.auth-notice.show {
+    display: block;
+}
+
+/* Button styles */
+.btn-full-width {
+    width: 100%;
+}
+
+.btn-margin-left {
+    margin-left: auto;
+}
+
+.btn-margin-left-small {
+    margin-left: 10px;
+}
+
+/* Grid styles */
+.stats-grid-responsive {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.stat-card-compact {
+    padding: 1rem;
+}
+
+.stat-number-large {
+    font-size: 1.5rem;
+}
+
+.stat-label-small {
+    font-size: 0.875rem;
+}
+
+/* Text styles */
+.text-small {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* Legend colors */
+.legend-color-primary {
+    background: #f59e0b;
+}
+
+.legend-color-danger {
+    background: #dc2626;
+}
+
+.legend-color-success {
+    background: #10b981;
+}
+
+.legend-color-error {
+    background: #ef4444;
+}
+
+/* Badge styles */
+.badge-primary {
+    background: #dbeafe;
+    color: #1e40af;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.badge-warning {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.badge-pink {
+    background: #fce7f3;
+    color: #be185d;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.badge-success {
+    background: #dcfce7;
+    color: #166534;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.badge-purple {
+    background: #f3e8ff;
+    color: #7c3aed;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.badge-specialized {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .profile-image {
+        max-width: 150px;
+        max-height: 150px;
+    }
+    
+    .avatar-placeholder {
+        font-size: 2rem;
+    }
+    
+    .stats-grid-responsive {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 0.5rem;
+    }
+    
+    .stat-card-compact {
+        padding: 0.75rem;
+    }
+}
