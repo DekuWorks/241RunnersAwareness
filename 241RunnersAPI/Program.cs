@@ -7,6 +7,7 @@ using _241RunnersAPI.Data;
 using _241RunnersAPI.Services;
 using _241RunnersAPI.Models;
 using _241RunnersAPI.Hubs;
+using _241RunnersAPI.Middleware;
 using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.Server.IISIntegration;
@@ -255,6 +256,9 @@ builder.Services.AddScoped<DatabaseQueryValidationService>();
 // Add performance monitoring service
 builder.Services.AddScoped<PerformanceMonitoringService>();
 
+// Add database optimization service
+builder.Services.AddScoped<DatabaseOptimizationService>();
+
 // Add caching service
 builder.Services.AddScoped<CachingService>();
 
@@ -461,6 +465,12 @@ app.UseHttpsRedirection();
 
 // Add rate limiting middleware
 app.UseIpRateLimiting();
+
+// Add custom middleware
+app.UseMiddleware<RateLimitingMiddleware>(new RateLimitOptions { Enabled = true });
+app.UseMiddleware<RequestValidationMiddleware>(new RequestValidationOptions { Enabled = true });
+app.UseMiddleware<SecurityHeadersMiddleware>(new SecurityHeadersOptions { Enabled = true });
+app.UseMiddleware<PerformanceMonitoringMiddleware>(new PerformanceMonitoringOptions { Enabled = true });
 
 // Use appropriate CORS policy based on environment
 if (app.Environment.IsProduction())
