@@ -259,6 +259,10 @@ builder.Services.AddScoped<PerformanceMonitoringService>();
 // Add database optimization service
 builder.Services.AddScoped<DatabaseOptimizationService>();
 
+// Add security services
+builder.Services.AddScoped<SecureTokenService>();
+builder.Services.AddScoped<SecurityAuditService>();
+
 // Add caching service
 builder.Services.AddScoped<CachingService>();
 
@@ -470,6 +474,8 @@ app.UseIpRateLimiting();
 app.UseMiddleware<RateLimitingMiddleware>(new RateLimitOptions { Enabled = true });
 app.UseMiddleware<RequestValidationMiddleware>(new RequestValidationOptions { Enabled = true });
 app.UseMiddleware<SecurityHeadersMiddleware>(new SecurityHeadersOptions { Enabled = true });
+app.UseMiddleware<HttpsEnforcementMiddleware>(new HttpsEnforcementOptions { Enabled = true });
+app.UseMiddleware<CsrfProtectionMiddleware>(new CsrfProtectionOptions { Enabled = true });
 app.UseMiddleware<PerformanceMonitoringMiddleware>(new PerformanceMonitoringOptions { Enabled = true });
 
 // Use appropriate CORS policy based on environment
