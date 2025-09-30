@@ -23,6 +23,9 @@
     <!-- SignalR Client Library -->
     <script src="https://unpkg.com/@microsoft/signalr@latest/dist/browser/signalr.min.js"></script>
     
+    <!-- Chart.js for monitoring charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    
     <!-- Inline Critical CSS for immediate rendering -->
     <style>
         /* ===== CRITICAL CSS - LOADED FIRST ===== */
@@ -1049,6 +1052,254 @@
 
         .case-action-btn-escalate:hover {
             background: #fecaca;
+        }
+
+        /* Monitoring Section Styles */
+        .monitoring-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            overflow: hidden;
+        }
+
+        .monitoring-dashboard {
+            padding: 20px;
+            background: #f8fafc;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #3b82f6;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .metric-header h4 {
+            margin: 0;
+            color: #1f2937;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .metric-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .metric-status.healthy, .metric-status.normal, .metric-status.fast, .metric-status.online {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .metric-status.warning, .metric-status.slow {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .metric-status.error, .metric-status.critical {
+            background: #fecaca;
+            color: #991b1b;
+        }
+
+        .metric-value {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .metric-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .metric-chart {
+            flex: 1;
+            height: 40px;
+            background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-chart::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 70%;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+        }
+
+        .alerts-section {
+            padding: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .alerts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .alerts-header h3 {
+            margin: 0;
+            color: #1f2937;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .alerts-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .alerts-container {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+
+        .alert-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: background-color 0.2s ease;
+        }
+
+        .alert-item:hover {
+            background: #f3f4f6;
+        }
+
+        .alert-item:last-child {
+            border-bottom: none;
+        }
+
+        .alert-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .alert-icon.critical {
+            background: #fecaca;
+            color: #991b1b;
+        }
+
+        .alert-icon.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .alert-icon.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .alert-message {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .alert-timestamp {
+            color: #9ca3af;
+            font-size: 0.8rem;
+        }
+
+        .alert-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .alert-actions button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .alert-actions .btn-dismiss {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .alert-actions .btn-dismiss:hover {
+            background: #e5e7eb;
+        }
+
+        .performance-charts {
+            padding: 20px;
+            border-top: 1px solid #e5e7eb;
+            background: #f8fafc;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .chart-container h4 {
+            margin: 0 0 15px 0;
+            color: #1f2937;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .chart-container canvas {
+            width: 100%;
+            height: 300px;
         }
 
         /* System Health Styles */
@@ -2794,6 +3045,128 @@
             <div class="stat-card">
                 <h3>System Status</h3>
                 <p class="stat-number" id="systemStatus">-</p>
+            </div>
+        </div>
+
+        <!-- Real-Time Monitoring Section -->
+        <div class="monitoring-section">
+            <div class="section-header">
+                <h2>📊 Real-Time Monitoring & Analytics</h2>
+                <div class="section-actions">
+                    <button class="btn btn-primary" onclick="startRealTimeMonitoring()">
+                        <span class="btn-icon">▶️</span>
+                        Start Monitoring
+                    </button>
+                    <button class="btn btn-warning" onclick="pauseRealTimeMonitoring()">
+                        <span class="btn-icon">⏸️</span>
+                        Pause Monitoring
+                    </button>
+                    <button class="btn btn-outline" onclick="exportMonitoringData()">
+                        <span class="btn-icon">📊</span>
+                        Export Data
+                    </button>
+                    <button class="btn btn-secondary" onclick="refreshMonitoringData()">
+                        <span class="btn-icon">🔄</span>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Real-Time Metrics Dashboard -->
+            <div class="monitoring-dashboard">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <h4>System Health</h4>
+                            <span class="metric-status" id="systemHealthStatus">Healthy</span>
+                        </div>
+                        <div class="metric-value">
+                            <span class="metric-number" id="systemHealthValue">95%</span>
+                            <div class="metric-chart" id="systemHealthChart"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <h4>Active Users</h4>
+                            <span class="metric-status" id="activeUsersStatus">Online</span>
+                        </div>
+                        <div class="metric-value">
+                            <span class="metric-number" id="activeUsersValue">0</span>
+                            <div class="metric-chart" id="activeUsersChart"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <h4>Request Rate</h4>
+                            <span class="metric-status" id="requestRateStatus">Normal</span>
+                        </div>
+                        <div class="metric-value">
+                            <span class="metric-number" id="requestRateValue">0/min</span>
+                            <div class="metric-chart" id="requestRateChart"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <h4>Error Rate</h4>
+                            <span class="metric-status" id="errorRateStatus">Low</span>
+                        </div>
+                        <div class="metric-value">
+                            <span class="metric-number" id="errorRateValue">0.1%</span>
+                            <div class="metric-chart" id="errorRateChart"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <h4>Response Time</h4>
+                            <span class="metric-status" id="responseTimeStatus">Fast</span>
+                        </div>
+                        <div class="metric-value">
+                            <span class="metric-number" id="responseTimeValue">45ms</span>
+                            <div class="metric-chart" id="responseTimeChart"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <h4>Memory Usage</h4>
+                            <span class="metric-status" id="memoryUsageStatus">Normal</span>
+                        </div>
+                        <div class="metric-value">
+                            <span class="metric-number" id="memoryUsageValue">256MB</span>
+                            <div class="metric-chart" id="memoryUsageChart"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real-Time Alerts -->
+            <div class="alerts-section">
+                <div class="alerts-header">
+                    <h3>🚨 Real-Time Alerts</h3>
+                    <div class="alerts-controls">
+                        <button class="btn btn-sm btn-outline" onclick="clearAllAlerts()">Clear All</button>
+                        <button class="btn btn-sm btn-primary" onclick="sendTestAlert()">Test Alert</button>
+                    </div>
+                </div>
+                <div class="alerts-container" id="alertsContainer">
+                    <!-- Alerts will be populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Performance Charts -->
+            <div class="performance-charts">
+                <div class="chart-container">
+                    <h4>Performance Over Time</h4>
+                    <canvas id="performanceChart" width="800" height="300"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h4>Error Trends</h4>
+                    <canvas id="errorTrendsChart" width="800" height="300"></canvas>
+                </div>
             </div>
         </div>
 
@@ -4562,6 +4935,359 @@
         // ===== DASHBOARD FUNCTIONS =====
         
         // Fallback data function removed - dashboard now uses real API data only
+
+        // ===== MONITORING FUNCTIONS =====
+        
+        let monitoringInterval = null;
+        let isMonitoringActive = false;
+        let performanceChart = null;
+        let errorTrendsChart = null;
+        let alerts = [];
+
+        // Start real-time monitoring
+        async function startRealTimeMonitoring() {
+            try {
+                console.log('📊 Starting real-time monitoring...');
+                isMonitoringActive = true;
+                
+                // Start monitoring interval (every 30 seconds)
+                monitoringInterval = setInterval(updateMonitoringData, 30000);
+                
+                // Initial data load
+                await updateMonitoringData();
+                
+                // Initialize charts
+                initializeCharts();
+                
+                showToast('Real-time monitoring started', 'success');
+            } catch (error) {
+                console.error('Failed to start monitoring:', error);
+                showToast('Failed to start monitoring', 'error');
+            }
+        }
+
+        // Pause real-time monitoring
+        function pauseRealTimeMonitoring() {
+            try {
+                console.log('📊 Pausing real-time monitoring...');
+                isMonitoringActive = false;
+                
+                if (monitoringInterval) {
+                    clearInterval(monitoringInterval);
+                    monitoringInterval = null;
+                }
+                
+                showToast('Real-time monitoring paused', 'info');
+            } catch (error) {
+                console.error('Failed to pause monitoring:', error);
+                showToast('Failed to pause monitoring', 'error');
+            }
+        }
+
+        // Update monitoring data
+        async function updateMonitoringData() {
+            try {
+                if (!isMonitoringActive) return;
+                
+                console.log('📊 Updating monitoring data...');
+                
+                // Load monitoring statistics
+                const response = await fetch('/api/v1/monitoring/statistics', {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    updateMonitoringUI(data.data);
+                } else {
+                    console.error('Failed to load monitoring data:', response.statusText);
+                }
+                
+                // Load system health
+                await updateSystemHealth();
+                
+                // Load active sessions
+                await updateActiveSessions();
+                
+            } catch (error) {
+                console.error('Failed to update monitoring data:', error);
+            }
+        }
+
+        // Update monitoring UI
+        function updateMonitoringUI(data) {
+            try {
+                // Update system health
+                document.getElementById('systemHealthValue').textContent = `${data.systemHealth || 95}%`;
+                document.getElementById('systemHealthStatus').textContent = data.systemHealth > 80 ? 'Healthy' : 'Warning';
+                document.getElementById('systemHealthStatus').className = `metric-status ${data.systemHealth > 80 ? 'healthy' : 'warning'}`;
+                
+                // Update active users
+                document.getElementById('activeUsersValue').textContent = data.activeUsers || 0;
+                document.getElementById('activeUsersStatus').textContent = data.activeUsers > 0 ? 'Online' : 'Offline';
+                document.getElementById('activeUsersStatus').className = `metric-status ${data.activeUsers > 0 ? 'online' : 'offline'}`;
+                
+                // Update request rate
+                const requestRate = Math.round((data.totalRequests || 0) / 60); // requests per minute
+                document.getElementById('requestRateValue').textContent = `${requestRate}/min`;
+                document.getElementById('requestRateStatus').textContent = requestRate < 100 ? 'Normal' : 'High';
+                document.getElementById('requestRateStatus').className = `metric-status ${requestRate < 100 ? 'normal' : 'warning'}`;
+                
+                // Update error rate
+                const errorRate = ((data.totalErrors || 0) / (data.totalRequests || 1)) * 100;
+                document.getElementById('errorRateValue').textContent = `${errorRate.toFixed(1)}%`;
+                document.getElementById('errorRateStatus').textContent = errorRate < 5 ? 'Low' : 'High';
+                document.getElementById('errorRateStatus').className = `metric-status ${errorRate < 5 ? 'normal' : 'warning'}`;
+                
+                // Update response time
+                const responseTime = data.averageResponseTime || 45;
+                document.getElementById('responseTimeValue').textContent = `${Math.round(responseTime)}ms`;
+                document.getElementById('responseTimeStatus').textContent = responseTime < 100 ? 'Fast' : 'Slow';
+                document.getElementById('responseTimeStatus').className = `metric-status ${responseTime < 100 ? 'fast' : 'slow'}`;
+                
+                // Update memory usage
+                const memoryUsage = Math.round((data.memoryUsage || 256) / 1024 / 1024); // MB
+                document.getElementById('memoryUsageValue').textContent = `${memoryUsage}MB`;
+                document.getElementById('memoryUsageStatus').textContent = memoryUsage < 512 ? 'Normal' : 'High';
+                document.getElementById('memoryUsageStatus').className = `metric-status ${memoryUsage < 512 ? 'normal' : 'warning'}`;
+                
+                // Update charts
+                updatePerformanceChart(data);
+                updateErrorTrendsChart(data);
+                
+            } catch (error) {
+                console.error('Failed to update monitoring UI:', error);
+            }
+        }
+
+        // Update system health
+        async function updateSystemHealth() {
+            try {
+                const response = await fetch('/api/v1/monitoring/health', {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('System health updated:', data.data);
+                }
+            } catch (error) {
+                console.error('Failed to update system health:', error);
+            }
+        }
+
+        // Update active sessions
+        async function updateActiveSessions() {
+            try {
+                const response = await fetch('/api/v1/monitoring/sessions', {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Active sessions updated:', data.data.length);
+                }
+            } catch (error) {
+                console.error('Failed to update active sessions:', error);
+            }
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            try {
+                // Initialize performance chart
+                const performanceCtx = document.getElementById('performanceChart');
+                if (performanceCtx) {
+                    performanceChart = new Chart(performanceCtx, {
+                        type: 'line',
+                        data: {
+                            labels: [],
+                            datasets: [{
+                                label: 'Response Time (ms)',
+                                data: [],
+                                borderColor: '#3b82f6',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                // Initialize error trends chart
+                const errorCtx = document.getElementById('errorTrendsChart');
+                if (errorCtx) {
+                    errorTrendsChart = new Chart(errorCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: [],
+                            datasets: [{
+                                label: 'Errors',
+                                data: [],
+                                backgroundColor: '#ef4444',
+                                borderColor: '#dc2626'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to initialize charts:', error);
+            }
+        }
+
+        // Update performance chart
+        function updatePerformanceChart(data) {
+            try {
+                if (!performanceChart) return;
+                
+                const now = new Date().toLocaleTimeString();
+                const responseTime = data.averageResponseTime || 45;
+                
+                // Add new data point
+                performanceChart.data.labels.push(now);
+                performanceChart.data.datasets[0].data.push(responseTime);
+                
+                // Keep only last 20 data points
+                if (performanceChart.data.labels.length > 20) {
+                    performanceChart.data.labels.shift();
+                    performanceChart.data.datasets[0].data.shift();
+                }
+                
+                performanceChart.update();
+            } catch (error) {
+                console.error('Failed to update performance chart:', error);
+            }
+        }
+
+        // Update error trends chart
+        function updateErrorTrendsChart(data) {
+            try {
+                if (!errorTrendsChart) return;
+                
+                const now = new Date().toLocaleTimeString();
+                const errorCount = data.totalErrors || 0;
+                
+                // Add new data point
+                errorTrendsChart.data.labels.push(now);
+                errorTrendsChart.data.datasets[0].data.push(errorCount);
+                
+                // Keep only last 10 data points
+                if (errorTrendsChart.data.labels.length > 10) {
+                    errorTrendsChart.data.labels.shift();
+                    errorTrendsChart.data.datasets[0].data.shift();
+                }
+                
+                errorTrendsChart.update();
+            } catch (error) {
+                console.error('Failed to update error trends chart:', error);
+            }
+        }
+
+        // Send test alert
+        async function sendTestAlert() {
+            try {
+                const response = await fetch('/api/v1/monitoring/alerts/test', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    },
+                    body: JSON.stringify({
+                        title: 'Test Alert',
+                        message: 'This is a test alert from the monitoring system',
+                        severity: 'info',
+                        category: 'test'
+                    })
+                });
+                
+                if (response.ok) {
+                    showToast('Test alert sent successfully', 'success');
+                } else {
+                    showToast('Failed to send test alert', 'error');
+                }
+            } catch (error) {
+                console.error('Failed to send test alert:', error);
+                showToast('Failed to send test alert', 'error');
+            }
+        }
+
+        // Clear all alerts
+        function clearAllAlerts() {
+            try {
+                alerts = [];
+                document.getElementById('alertsContainer').innerHTML = '';
+                showToast('All alerts cleared', 'info');
+            } catch (error) {
+                console.error('Failed to clear alerts:', error);
+            }
+        }
+
+        // Refresh monitoring data
+        async function refreshMonitoringData() {
+            try {
+                await updateMonitoringData();
+                showToast('Monitoring data refreshed', 'success');
+            } catch (error) {
+                console.error('Failed to refresh monitoring data:', error);
+                showToast('Failed to refresh monitoring data', 'error');
+            }
+        }
+
+        // Export monitoring data
+        async function exportMonitoringData() {
+            try {
+                const response = await fetch('/api/v1/monitoring/statistics', {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `monitoring-data-${new Date().toISOString().split('T')[0]}.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    showToast('Monitoring data exported', 'success');
+                } else {
+                    showToast('Failed to export monitoring data', 'error');
+                }
+            } catch (error) {
+                console.error('Failed to export monitoring data:', error);
+                showToast('Failed to export monitoring data', 'error');
+            }
+        }
+
+        // Get auth token
+        function getAuthToken() {
+            return localStorage.getItem('userToken') || localStorage.getItem('jwtToken') || localStorage.getItem('token');
+        }
         
         async function loadDashboardData() {
             try {

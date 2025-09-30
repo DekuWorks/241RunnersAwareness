@@ -263,6 +263,10 @@ builder.Services.AddScoped<DatabaseOptimizationService>();
 builder.Services.AddScoped<SecureTokenService>();
 builder.Services.AddScoped<SecurityAuditService>();
 
+// Add monitoring services
+builder.Services.AddScoped<ComprehensiveMonitoringService>();
+builder.Services.AddScoped<RealTimeMonitoringService>();
+
 // Add caching service
 builder.Services.AddScoped<CachingService>();
 
