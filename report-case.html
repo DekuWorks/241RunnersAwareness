@@ -9,9 +9,92 @@
   <meta http-equiv="Expires" content="0" />
   <link rel="stylesheet" href="https://241runnersawareness.org/styles.css?v=20250905" />
   <link rel="stylesheet" href="https://241runnersawareness.org/forms.css" />
+  
+  <!-- Validation and Error Handling Scripts -->
+  <script type="module" src="js/validation.js"></script>
+  <script type="module" src="js/error-handler.js"></script>
+  <script type="module" src="js/loading.js"></script>
+  <script type="module" src="js/utils.js"></script>
+  <script type="module" src="js/report-validation.js"></script>
+  <script type="module" src="js/report-submission.js"></script>
 
   <!-- Custom CSS for Report Case Form -->
   <style>
+    /* Validation Styles */
+    .field-error, .file-error, .form-error {
+      color: #dc3545;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+    
+    .form-error {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      border-radius: 0.375rem;
+    }
+    
+    input.error, textarea.error, select.error {
+      border-color: #dc3545;
+      box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+    
+    .btn-loading {
+      position: relative;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    
+    .btn-loading::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 16px;
+      height: 16px;
+      margin: -8px 0 0 -8px;
+      border: 2px solid transparent;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .drag-over {
+      border-color: #007bff !important;
+      background-color: rgba(0, 123, 255, 0.1) !important;
+    }
+    
+    .uploaded-image {
+      position: relative;
+      display: inline-block;
+      margin: 0.5rem;
+    }
+    
+    .image-remove-btn {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+    }
+    
+    .image-remove-btn:hover {
+      background: #c82333;
+    }
     /* Report Case Container */
     .report-container {
       max-width: 800px;
@@ -961,163 +1044,11 @@
       });
     });
 
-    // Submit Quick Report (Emergency)
-    document.getElementById('quickReportForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const submitBtn = document.getElementById('submitQuickReport');
-      const submitText = document.getElementById('submitQuickText');
-      const submitLoading = document.getElementById('submitQuickLoading');
-      
-      // Show loading state
-      submitBtn.disabled = true;
-      submitText.style.display = 'none';
-      submitLoading.style.display = 'flex';
-      
-      try {
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData.entries());
-        
-        // Add emergency flag
-        data.isEmergency = true;
-        data.reportType = 'quick';
-        
-        // Add uploaded images to the data
-        const uploadedImageUrls = getUploadedImages();
-        if (uploadedImageUrls.length > 0) {
-          data.additionalImageUrls = JSON.stringify(uploadedImageUrls);
-        }        
-        console.log('Submitting emergency report:', data);
-        
-        const response = await fetch(`${API_BASE_URL}/Runners`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        
-        if (response.ok) {
-          showMessage('success', '🚨 Emergency report submitted successfully! Case ID: ' + (result.id || 'N/A'));
-          this.reset();
-        } else {
-          showMessage('error', result.message || 'Failed to submit emergency report. Please try again.');
-        }
-        
-      } catch (error) {
-        console.error('Emergency report error:', error);
-        showMessage('error', 'Network error. Please check your connection and try again.');
-      } finally {
-        // Reset loading state
-        submitBtn.disabled = false;
-        submitText.style.display = 'inline';
-        submitLoading.style.display = 'none';
-      }
-    });
+    // Quick Report submission is now handled by report-submission.js
 
-    // Submit Detailed Report
-    document.getElementById('detailedReportForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const submitBtn = document.getElementById('submitDetailedReport');
-      const submitText = document.getElementById('submitDetailedText');
-      const submitLoading = document.getElementById('submitDetailedLoading');
-      
-      // Show loading state
-      submitBtn.disabled = true;
-      submitText.style.display = 'none';
-      submitLoading.style.display = 'flex';
-      
-      try {
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData.entries());
-        
-        data.reportType = 'detailed';
-        
-        // Add uploaded images to the data
-        const uploadedImageUrls = getUploadedImages();
-        if (uploadedImageUrls.length > 0) {
-          data.additionalImageUrls = JSON.stringify(uploadedImageUrls);
-        }        
-        console.log('Submitting detailed report:', data);
-        
-        const response = await fetch(`${API_BASE_URL}/Runners`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        
-        if (response.ok) {
-          showMessage('success', '📋 Detailed report submitted successfully! Case ID: ' + (result.id || 'N/A'));
-          this.reset();
-        } else {
-          showMessage('error', result.message || 'Failed to submit detailed report. Please try again.');
-        }
-        
-      } catch (error) {
-        console.error('Detailed report error:', error);
-        showMessage('error', 'Network error. Please check your connection and try again.');
-      } finally {
-        // Reset loading state
-        submitBtn.disabled = false;
-        submitText.style.display = 'inline';
-        submitLoading.style.display = 'none';
-      }
-    });
+    // Detailed Report submission is now handled by report-submission.js
 
-    // Submit Update
-    document.getElementById('updateRunnerForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const submitBtn = document.getElementById('submitUpdate');
-      const submitText = document.getElementById('submitUpdateText');
-      const submitLoading = document.getElementById('submitUpdateLoading');
-      
-      // Show loading state
-      submitBtn.disabled = true;
-      submitText.style.display = 'none';
-      submitLoading.style.display = 'flex';
-      
-      try {
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData.entries());
-        
-        console.log('Submitting update:', data);
-        
-        // Update existing runner profile
-        const response = await fetch(`${API_BASE_URL}/Runners/${data.runnerId}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        
-        if (response.ok) {
-          showMessage('success', '🔄 Update submitted successfully!');
-          this.reset();
-        } else {
-          showMessage('error', result.message || 'Failed to submit update. Please try again.');
-        }
-        
-      } catch (error) {
-        console.error('Update error:', error);
-        showMessage('error', 'Network error. Please check your connection and try again.');
-      } finally {
-        // Reset loading state
-        submitBtn.disabled = false;
-        submitText.style.display = 'inline';
-        submitLoading.style.display = 'none';
-      }
-    });
+    // Update Report submission is now handled by report-submission.js
 
     // Show message function
     function showMessage(type, message) {
