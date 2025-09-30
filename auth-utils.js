@@ -3,7 +3,12 @@
  * 
  * This file contains authentication functions for the frontend application.
  * All authentication now goes through the Azure backend API.
+ * 
+ * Updated with input validation, error handling, and security measures.
  */
+
+// Import validation schemas
+import { validateFormData, signupSchema, loginSchema, sanitizeInput } from './validation.js';
 
 // API Configuration
 let API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
@@ -146,13 +151,41 @@ function clearAllAuth() {
 
 async function handleLogin(email, password) {
     try {
+        // Validate input data
+        const validation = validateFormData({ email, password }, loginSchema);
+        if (!validation.success) {
+            if (window.errorHandler) {
+                window.errorHandler.handleError('Validation Error', { errors: validation.errors });
+            }
+            return false;
+        }
+
+        // Sanitize inputs
+        const sanitizedEmail = sanitizeInput(email);
+        const sanitizedPassword = sanitizeInput(password);
+
+        // Show loading state
+        if (window.loadingManager) {
+            window.loadingManager.showSpinner('Logging in...', 'login');
+        }
+
+        // Set timeout for request
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
         const response = await fetch(`${API_BASE_URL}/v1/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ 
+                email: sanitizedEmail, 
+                password: sanitizedPassword 
+            }),
+            signal: controller.signal
         });
+
+        clearTimeout(timeoutId);
 
         if (response.ok) {
             const data = await response.json();
@@ -169,7 +202,9 @@ async function handleLogin(email, password) {
             localStorage.setItem('user', JSON.stringify(userData));
             localStorage.setItem('userToken', data.token);
             
-            showNotification('Login successful!', 'success');
+            if (window.errorHandler) {
+                window.errorHandler.showToast('Login successful!', 'success');
+            }
             
             // Redirect based on role
             if (userData.role === 'admin') {
@@ -181,37 +216,148 @@ async function handleLogin(email, password) {
             return true;
         } else {
             const errorData = await response.json();
-            throw new Error(errorData.message || 'Login failed');
+            let errorMessage = 'Login failed';
+            
+            // Handle specific error cases
+            switch (response.status) {
+                case 401:
+                    errorMessage = 'Invalid email or password';
+                    break;
+                case 429:
+                    errorMessage = 'Too many login attempts. Please try again later.';
+                    break;
+                case 500:
+                    errorMessage = 'Server error. Please try again later.';
+                    break;
+                default:
+                    errorMessage = errorData.message || 'Login failed';
+            }
+            
+            throw new Error(errorMessage);
         }
     } catch (error) {
         console.error('Login error:', error);
-        showNotification(error.message || 'Login failed. Please try again.', 'error');
+        
+        let errorMessage = 'Login failed. Please try again.';
+        
+        if (error.name === 'AbortError') {
+            errorMessage = 'Login request timed out. Please try again.';
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+        
+        if (window.errorHandler) {
+            window.errorHandler.handleError('Authentication Error', error, { 
+                action: 'login',
+                email: email 
+            });
+        }
+        
         return false;
+    } finally {
+        // Hide loading state
+        if (window.loadingManager) {
+            window.loadingManager.hideSpinner('login');
+        }
     }
 }
 
 async function handleRegister(userData) {
     try {
+        // Validate input data
+        const validation = validateFormData(userData, signupSchema);
+        if (!validation.success) {
+            if (window.errorHandler) {
+                window.errorHandler.handleError('Validation Error', { errors: validation.errors });
+            }
+            return false;
+        }
+
+        // Sanitize inputs
+        const sanitizedData = {
+            firstName: sanitizeInput(userData.firstName),
+            lastName: sanitizeInput(userData.lastName),
+            email: sanitizeInput(userData.email),
+            password: sanitizeInput(userData.password),
+            confirmPassword: sanitizeInput(userData.confirmPassword),
+            role: userData.role,
+            agreeToTerms: userData.agreeToTerms
+        };
+
+        // Show loading state
+        if (window.loadingManager) {
+            window.loadingManager.showSpinner('Creating account...', 'register');
+        }
+
+        // Set timeout for request
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
         const response = await fetch(`${API_BASE_URL}/v1/auth/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(userData),
+            body: JSON.stringify(sanitizedData),
+            signal: controller.signal
         });
+
+        clearTimeout(timeoutId);
 
         const result = await response.json();
         
-        if (result.success) {
-            showNotification('Registration successful! Please log in.', 'success');
+        if (response.ok && result.success) {
+            if (window.errorHandler) {
+                window.errorHandler.showToast('Registration successful! Please log in.', 'success');
+            }
             return true;
         } else {
-            throw new Error(result.message || 'Registration failed');
+            let errorMessage = 'Registration failed';
+            
+            // Handle specific error cases
+            switch (response.status) {
+                case 400:
+                    errorMessage = 'Please check your input and try again.';
+                    break;
+                case 409:
+                    errorMessage = 'An account with this email already exists.';
+                    break;
+                case 429:
+                    errorMessage = 'Too many registration attempts. Please try again later.';
+                    break;
+                case 500:
+                    errorMessage = 'Server error. Please try again later.';
+                    break;
+                default:
+                    errorMessage = result.message || 'Registration failed';
+            }
+            
+            throw new Error(errorMessage);
         }
     } catch (error) {
         console.error('Registration error:', error);
-        showNotification(error.message || 'Registration failed. Please try again.', 'error');
+        
+        let errorMessage = 'Registration failed. Please try again.';
+        
+        if (error.name === 'AbortError') {
+            errorMessage = 'Registration request timed out. Please try again.';
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+        
+        if (window.errorHandler) {
+            window.errorHandler.handleError('Authentication Error', error, { 
+                action: 'register',
+                email: userData.email 
+            });
+        }
+        
         return false;
+    } finally {
+        // Hide loading state
+        if (window.loadingManager) {
+            window.loadingManager.hideSpinner('register');
+        }
     }
 }
 

@@ -1,9 +1,14 @@
 /**
- * ============================================
- * 241 RUNNERS AWARENESS - ERROR HANDLER
- * ============================================
+ * 241 Runners Awareness - Centralized Error Handler
  * 
- * Comprehensive error handling and session management
+ * This file provides comprehensive error handling with toast notifications,
+ * error logging, and user-friendly error messages.
+ */
+
+/**
+ * ============================================
+ * ERROR HANDLER CLASS
+ * ============================================
  */
 
 class ErrorHandler {
@@ -16,6 +21,7 @@ class ErrorHandler {
         this.sessionTimer = null;
         this.retryAttempts = new Map();
         this.maxRetries = 3;
+        this.isOnline = navigator.onLine;
         
         this.init();
     }
@@ -28,6 +34,7 @@ class ErrorHandler {
         this.setupSessionManagement();
         this.setupActivityTracking();
         this.setupNetworkMonitoring();
+        this.setupToastContainer();
     }
 
     /**
@@ -112,6 +119,24 @@ class ErrorHandler {
     }
 
     /**
+     * Setup toast container
+     */
+    setupToastContainer() {
+        if (!document.getElementById('toast-container')) {
+            const container = document.createElement('div');
+            container.id = 'toast-container';
+            container.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10000;
+                max-width: 400px;
+            `;
+            document.body.appendChild(container);
+        }
+    }
+
+    /**
      * Handle errors with retry logic
      */
     async handleError(type, error, context = {}) {
@@ -148,6 +173,9 @@ class ErrorHandler {
                 break;
             case 'Session Error':
                 this.handleSessionError(error, context);
+                break;
+            case 'Validation Error':
+                this.handleValidationError(error, context);
                 break;
             default:
                 this.handleGenericError(error, context);
@@ -221,6 +249,23 @@ class ErrorHandler {
      */
     handleSessionError(error, context) {
         this.handleSessionExpired();
+    }
+
+    /**
+     * Handle validation errors
+     */
+    handleValidationError(error, context) {
+        if (error.errors && typeof error.errors === 'object') {
+            // Display validation errors
+            Object.keys(error.errors).forEach(field => {
+                const fieldElement = document.querySelector(`[name="${field}"]`);
+                if (fieldElement) {
+                    this.showFieldError(fieldElement, error.errors[field]);
+                }
+            });
+        } else {
+            this.showToast(error.message || 'Please check your input and try again.', 'error');
+        }
     }
 
     /**
@@ -329,6 +374,8 @@ class ErrorHandler {
      * Network status handling
      */
     handleNetworkStatusChange(isOnline) {
+        this.isOnline = isOnline;
+        
         if (isOnline) {
             this.showToast('Connection restored', 'success');
             // Retry any pending requests
@@ -360,6 +407,80 @@ class ErrorHandler {
     retryPendingRequests() {
         // Implementation would depend on your request queue system
         console.log('Retrying pending requests...');
+    }
+
+    /**
+     * Toast notification system
+     */
+    showToast(message, type = 'info', duration = 5000) {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.innerHTML = `
+            <div class="toast-content">
+                <span class="toast-message">${message}</span>
+                <button class="toast-close" onclick="this.parentElement.parentElement.remove()">×</button>
+            </div>
+        `;
+        
+        toast.style.cssText = `
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 16px;
+            margin-bottom: 10px;
+            min-width: 300px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            border-left: 4px solid ${this.getToastColor(type)};
+        `;
+        
+        container.appendChild(toast);
+        
+        setTimeout(() => toast.style.transform = 'translateX(0)', 100);
+        setTimeout(() => {
+            toast.style.transform = 'translateX(100%)';
+            setTimeout(() => toast.remove(), 300);
+        }, duration);
+    }
+
+    getToastColor(type) {
+        switch (type) {
+            case 'success': return '#28a745';
+            case 'error': return '#dc3545';
+            case 'warning': return '#ffc107';
+            case 'info': return '#17a2b8';
+            default: return '#6c757d';
+        }
+    }
+
+    /**
+     * Field error display
+     */
+    showFieldError(field, message) {
+        this.clearFieldError(field);
+        
+        const errorElement = document.createElement('div');
+        errorElement.className = 'field-error';
+        errorElement.textContent = message;
+        errorElement.style.cssText = `
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        `;
+        
+        field.parentNode.insertBefore(errorElement, field.nextSibling);
+        field.classList.add('error');
+    }
+
+    clearFieldError(field) {
+        const errorElement = field.parentNode.querySelector('.field-error');
+        if (errorElement) {
+            errorElement.remove();
+        }
+        field.classList.remove('error');
     }
 
     /**
@@ -403,46 +524,6 @@ class ErrorHandler {
         localStorage.removeItem('ra_auth');
         localStorage.removeItem('google_access_token');
         localStorage.removeItem('userToken');
-    }
-
-    showToast(message, type = 'info', duration = 5000) {
-        // Use existing toast function if available
-        if (window.authUtils && window.authUtils.showToast) {
-            window.authUtils.showToast(message, type, duration);
-            return;
-        }
-
-        // Fallback toast implementation
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        toast.innerHTML = `
-            <div class="toast-content">
-                <span class="toast-message">${message}</span>
-                <button class="toast-close" onclick="this.parentElement.parentElement.remove()">×</button>
-            </div>
-        `;
-        
-        toast.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            padding: 16px;
-            min-width: 300px;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-        `;
-        
-        document.body.appendChild(toast);
-        
-        setTimeout(() => toast.style.transform = 'translateX(0)', 100);
-        setTimeout(() => {
-            toast.style.transform = 'translateX(100%)';
-            setTimeout(() => toast.remove(), 300);
-        }, duration);
     }
 
     /**
