@@ -29,7 +29,7 @@ A comprehensive platform for raising awareness about missing persons cases, spec
 curl -sS https://241runners-api-v2.azurewebsites.net/api/health | jq .
 
 # Test authentication
-curl -sS -X POST https://241runners-api-v2.azurewebsites.net/api/auth/login \
+curl -sS -X POST https://241runners-api-v2.azurewebsites.net/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@241runnersawareness.org","password":"<REDACTED>"}' | jq .
 
@@ -121,7 +121,7 @@ curl -sS https://241runners-api-v2.azurewebsites.net/api/health | jq .
 ### Smoke Tests
 ```bash
 # Authentication test
-curl -sS -X POST https://241runners-api-v2.azurewebsites.net/api/auth/login \
+curl -sS -X POST https://241runners-api-v2.azurewebsites.net/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@241runnersawareness.org","password":"<REDACTED>"}' | jq .
 

@@ -85,7 +85,7 @@
 
 ### **Direct API Login**
 ```bash
-curl -X POST "https://241runners-api-v2.azurewebsites.net/api/auth/login" \
+curl -X POST "https://241runners-api-v2.azurewebsites.net/api/v1/auth/login" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",

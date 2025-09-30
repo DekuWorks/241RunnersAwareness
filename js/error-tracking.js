@@ -9,7 +9,7 @@
 
 // ===== CONFIGURATION =====
 const ERROR_CONFIG = {
-    apiEndpoint: 'https://241runners-api-v2.azurewebsites.net/api/admin/errors',
+    apiEndpoint: 'https://241runners-api-v2.azurewebsites.net/api/v1/admin/errors',
     maxRetries: 3,
     batchSize: 10,
     flushInterval: 30000, // 30 seconds

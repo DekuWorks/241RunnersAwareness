@@ -146,7 +146,7 @@ function clearAllAuth() {
 
 async function handleLogin(email, password) {
     try {
-        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        const response = await fetch(`${API_BASE_URL}/v1/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -192,7 +192,7 @@ async function handleLogin(email, password) {
 
 async function handleRegister(userData) {
     try {
-        const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        const response = await fetch(`${API_BASE_URL}/v1/auth/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
