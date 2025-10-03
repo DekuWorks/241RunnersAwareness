@@ -327,6 +327,23 @@ namespace _241RunnersAPI.Hubs
         }
 
         /// <summary>
+        /// Get current admins (alias for GetOnlineAdmins for frontend compatibility)
+        /// </summary>
+        public async Task CurrentAdmins()
+        {
+            try
+            {
+                var currentAdmins = GetCurrentAdmins();
+                await Clients.Caller.SendAsync("CurrentAdmins", currentAdmins);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting current admins");
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Ping to keep connection alive and update last activity
         /// </summary>
         public async Task Ping()

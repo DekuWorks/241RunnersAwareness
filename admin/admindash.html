@@ -5938,7 +5938,7 @@
                     tokenLength: token ? token.length : 0
                 });
                 
-                const response = await apiFetch(`${apiUrl}/admin/users/${userId}`, {
+                const response = await apiFetch(`${apiUrl}/Admin/users/${userId}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -6039,7 +6039,7 @@
                     tokenLength: token ? token.length : 0
                 });
                 
-                const response = await apiFetch(`${apiUrl}/admin/admins/${adminId}`, {
+                const response = await apiFetch(`${apiUrl}/Admin/admins/${adminId}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -6328,7 +6328,7 @@
                 console.log('Sending invitation:', inviteData);
                 
                 const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
-                const response = await fetch(`${apiUrl}/admin/invite-user`, {
+                const response = await fetch(`${apiUrl}/Admin/invite-user`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -6399,7 +6399,7 @@
                 const userIds = Array.from(selectedRows).map(row => row.dataset.userId);
                 const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
                 
-                const response = await fetch(`${apiUrl}/admin/users/bulk-update-status`, {
+                const response = await fetch(`${apiUrl}/Admin/users/bulk-update-status`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -6446,7 +6446,7 @@
                 const userIds = Array.from(selectedRows).map(row => row.dataset.userId);
                 const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
                 
-                const response = await fetch(`${apiUrl}/admin/users/bulk-update-role`, {
+                const response = await fetch(`${apiUrl}/Admin/users/bulk-update-role`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
