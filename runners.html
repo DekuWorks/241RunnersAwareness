@@ -6,7 +6,7 @@
   <title>Runner Management - 241 Runners Awareness</title>
   <link rel="stylesheet" href="https://241runnersawareness.org/styles.css?v=20250905">
   <link rel="stylesheet" href="https://241runnersawareness.org/forms.css">
-  <script src="https://241runnersawareness.org/js/auth.js?v=20250905" defer></script>
+  <script src="/js/auth-utils.js?v=20250905" defer></script>
   <style>
     .runners-container {
       max-width: 1200px;
@@ -810,8 +810,8 @@
     let pageSize = 25;
     let totalPages = 1;
     let allRunners = [];
-    let filteredRunners = [];
     let editingRunner = null;
+    let filteredRunners = [];
 
     // Load API configuration
     async function loadConfig() {
@@ -1255,13 +1255,238 @@
       }
     });
 
+    // ============================================
+    // MISSING FUNCTIONS IMPLEMENTATION
+    // ============================================
+
+    /**
+     * Open create runner modal
+     */
+    function openCreateRunnerModal() {
+      editingRunner = null;
+      document.getElementById('runnerModalTitle').textContent = 'Create New Runner';
+      document.getElementById('runnerForm').reset();
+      document.getElementById('runnerModal').style.display = 'block';
+    }
+
+    /**
+     * Toggle between "My Runners" and "All Runners" view
+     * @param {string} view - 'my' or 'all'
+     */
+    function toggleView(view) {
+      currentView = view;
+      
+      // Update button states
+      const buttons = document.querySelectorAll('#viewToggle button');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      // Reload runners with new view
+      loadRunners();
+    }
+
+    /**
+     * Apply filters to runner list
+     */
+    function applyFilters() {
+      const statusFilter = document.getElementById('statusFilter').value;
+      const searchInput = document.getElementById('searchInput').value.toLowerCase();
+      
+      const runnerCards = document.querySelectorAll('.runner-card');
+      
+      runnerCards.forEach(card => {
+        const status = card.querySelector('.runner-status').textContent;
+        const name = card.querySelector('.runner-name').textContent.toLowerCase();
+        
+        const statusMatch = !statusFilter || status === statusFilter;
+        const searchMatch = !searchInput || name.includes(searchInput);
+        
+        if (statusMatch && searchMatch) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    /**
+     * Clear all filters
+     */
+    function clearFilters() {
+      document.getElementById('statusFilter').value = '';
+      document.getElementById('searchInput').value = '';
+      applyFilters();
+    }
+
+    /**
+     * Change page size
+     */
+    function changePageSize() {
+      const pageSize = document.getElementById('pageSizeSelect').value;
+      // For now, just reload with new page size
+      // In a real implementation, you'd update pagination
+      loadRunners();
+    }
+
+    /**
+     * Load runners from API
+     */
+    async function loadRunners() {
+      try {
+        if (!authUtils.isAuthenticated()) {
+          window.location.href = '/login.html';
+          return;
+        }
+
+        const endpoint = currentView === 'all' ? '/v1/runners' : '/v1/runners/my';
+        const response = await authUtils.apiRequest(endpoint);
+        
+        if (response.ok) {
+          const runners = await response.json();
+          allRunners = runners; // Store runners data
+          displayRunners(runners);
+        } else {
+          authUtils.showToast('Failed to load runners', 'error');
+        }
+      } catch (error) {
+        console.error('Error loading runners:', error);
+        authUtils.showToast('Failed to load runners. Please try again.', 'error');
+      }
+    }
+
+    /**
+     * Display runners in the grid
+     * @param {Array} runners - Array of runner objects
+     */
+    function displayRunners(runners) {
+      const runnersGrid = document.getElementById('runnersGrid');
+      
+      if (!runners || runners.length === 0) {
+        runnersGrid.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🏃</div>
+            <h3>No Runners Found</h3>
+            <p>${currentView === 'all' ? 'No runners have been created yet.' : 'You haven\'t created any runners yet.'}</p>
+            <button class="btn btn-primary" onclick="openCreateRunnerModal()">
+              Create Your First Runner
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      runnersGrid.innerHTML = runners.map(runner => `
+        <div class="runner-card">
+          <div class="runner-card-header">
+            <h3 class="runner-name">${runner.name || 'Unnamed Runner'}</h3>
+            <span class="runner-status status-${(runner.status || 'missing').toLowerCase()}">${runner.status || 'Missing'}</span>
+          </div>
+          <div class="runner-card-body">
+            <div class="runner-info">
+              <div class="info-row">
+                <span class="info-label">Age</span>
+                <span class="info-value">${runner.age || 'N/A'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Gender</span>
+                <span class="info-value">${runner.gender || 'N/A'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Last Updated</span>
+                <span class="info-value">${runner.updatedAt ? new Date(runner.updatedAt).toLocaleDateString() : 'N/A'}</span>
+              </div>
+            </div>
+            <div class="runner-actions">
+              <button class="btn-small btn-primary-small" onclick="editRunner(${runner.id})">
+                ✏️ Edit
+              </button>
+              <button class="btn-small btn-danger-small" onclick="deleteRunner(${runner.id})">
+                🗑️ Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /**
+     * Edit runner
+     * @param {number} runnerId - ID of runner to edit
+     */
+    function editRunner(runnerId) {
+      // Find runner data
+      const runners = getCurrentRunners(); // You'll need to implement this
+      const runner = runners.find(r => r.id === runnerId);
+      
+      if (runner) {
+        editingRunner = runner;
+        document.getElementById('runnerModalTitle').textContent = 'Edit Runner';
+        
+        // Populate form
+        document.getElementById('runnerName').value = runner.name || '';
+        document.getElementById('runnerDateOfBirth').value = runner.dateOfBirth ? runner.dateOfBirth.split('T')[0] : '';
+        document.getElementById('runnerGender').value = runner.gender || '';
+        document.getElementById('runnerStatus').value = runner.status || 'Missing';
+        document.getElementById('runnerPhysicalDescription').value = runner.physicalDescription || '';
+        document.getElementById('runnerMedicalConditions').value = runner.medicalConditions || '';
+        document.getElementById('runnerPreferredRunningLocations').value = runner.preferredRunningLocations || '';
+        document.getElementById('runnerTypicalRunningTimes').value = runner.typicalRunningTimes || '';
+        
+        document.getElementById('runnerModal').style.display = 'block';
+      }
+    }
+
+    /**
+     * Delete runner
+     * @param {number} runnerId - ID of runner to delete
+     */
+    async function deleteRunner(runnerId) {
+      if (!confirm('Are you sure you want to delete this runner? This action cannot be undone.')) {
+        return;
+      }
+
+      try {
+        const response = await authUtils.apiRequest(`/v1/runners/${runnerId}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          authUtils.showToast('Runner deleted successfully', 'success');
+          loadRunners(); // Reload the list
+        } else {
+          const error = await response.json();
+          authUtils.showToast(`Failed to delete runner: ${error.message}`, 'error');
+        }
+      } catch (error) {
+        console.error('Error deleting runner:', error);
+        authUtils.showToast('Failed to delete runner. Please try again.', 'error');
+      }
+    }
+
+    /**
+     * Get current runners data (helper function)
+     */
+    function getCurrentRunners() {
+      return allRunners;
+    }
+
     // Initialize page
     document.addEventListener('DOMContentLoaded', async function() {
+      // Check authentication first
+      if (!authUtils.requireAuth()) {
+        return;
+      }
+
       await loadConfig();
       
-      if (checkAuth()) {
-        await loadRunners();
+      // Check if user is admin and show admin controls
+      const user = authUtils.getCurrentUser();
+      if (user && user.role === 'admin') {
+        document.getElementById('userRole').style.display = 'inline-block';
+        document.getElementById('viewToggle').style.display = 'flex';
       }
+      
+      await loadRunners();
     });
   </script>
 </body>
