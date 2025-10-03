@@ -13,6 +13,27 @@ A comprehensive platform for raising awareness about missing persons cases, spec
 - **Web**: [241runnersawareness.org](https://241runnersawareness.org) - Public case directory with PWA support
 - **API**: [241runners-api-v2.azurewebsites.net](https://241runners-api-v2.azurewebsites.net) - RESTful API with JWT auth
 - **Mobile**: PWA installable from web app with offline capabilities
+- **Admin Dashboard**: [241runnersawareness.org/admin](https://241runnersawareness.org/admin) - Secure admin interface with real-time updates
+
+## ⚡ 3-Minute Quick Start
+
+### For Users
+1. **Visit**: [241runnersawareness.org](https://241runnersawareness.org)
+2. **Browse Cases**: Use search and filters to find missing persons
+3. **Install PWA**: Click "Install App" for mobile experience
+4. **Report**: Use "Report Case" to submit new information
+
+### For Admins
+1. **Login**: [241runnersawareness.org/admin/login](https://241runnersawareness.org/admin/login)
+2. **Dashboard**: Access real-time admin dashboard with live updates
+3. **Manage**: Create/edit cases, manage users, monitor system health
+4. **Collaborate**: Multiple admins can work simultaneously with live sync
+
+### For Developers
+1. **API Docs**: [241runners-api-v2.azurewebsites.net/swagger](https://241runners-api-v2.azurewebsites.net/swagger)
+2. **Health Check**: [241runners-api-v2.azurewebsites.net/api/health](https://241runners-api-v2.azurewebsites.net/api/health)
+3. **Clone & Run**: `git clone` → `cd 241RunnersAPI` → `dotnet run`
+4. **Test**: Use Swagger UI at `http://localhost:5000/swagger`
 
 ## 🔄 v2 API Migration
 
@@ -225,14 +246,14 @@ curl -sS -H "Authorization: Bearer <ACCESS_TOKEN>" \
 - **GitHub Actions**: CI/CD pipeline
 - **Azure CLI**: Deployment automation
 
-## 🚀 Quick Start
+## 🛠️ Local Development
 
 ### Prerequisites
 - Node.js 18+ (for build tools)
 - .NET 8 SDK (for API development)
 - Git
 
-### Local Development
+### Setup Steps
 
 1. **Clone the repository**
    ```bash
@@ -242,7 +263,7 @@ curl -sS -H "Authorization: Bearer <ACCESS_TOKEN>" \
 
 2. **Set up the API**
    ```bash
-   cd 241RunnersAwarenessAPI
+   cd 241RunnersAPI
    dotnet restore
    dotnet run
    ```
