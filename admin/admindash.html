@@ -4992,7 +4992,7 @@
                 console.log('📊 Updating monitoring data...');
                 
                 // Load monitoring statistics
-                const response = await fetch('/api/monitoring/statistics', {
+                const response = await fetch('/api/v1/monitoring/statistics', {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
                     }
@@ -5065,7 +5065,7 @@
         // Update system health
         async function updateSystemHealth() {
             try {
-                const response = await fetch('/api/monitoring/health', {
+                const response = await fetch('/api/v1/monitoring/health', {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
                     }
@@ -5083,7 +5083,7 @@
         // Update active sessions
         async function updateActiveSessions() {
             try {
-                const response = await fetch('/api/monitoring/sessions', {
+                const response = await fetch('/api/v1/monitoring/sessions', {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
                     }
@@ -5209,7 +5209,7 @@
         // Send test alert
         async function sendTestAlert() {
             try {
-                const response = await fetch('/api/monitoring/alerts/test', {
+                const response = await fetch('/api/v1/monitoring/alerts/test', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -5259,7 +5259,7 @@
         // Export monitoring data
         async function exportMonitoringData() {
             try {
-                const response = await fetch('/api/monitoring/statistics', {
+                const response = await fetch('/api/v1/monitoring/statistics', {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
                     }
