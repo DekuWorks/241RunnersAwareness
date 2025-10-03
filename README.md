@@ -4,11 +4,15 @@ A comprehensive platform for raising awareness about missing persons cases, spec
 
 ## 🎯 Current Status: **OPERATIONAL** ✅
 
-**Version:** 1.0.3 | **Last Updated:** January 27, 2025  
-**API Health:** [![API Status](https://img.shields.io/badge/API-Operational-green)](https://241runners-api-v2.azurewebsites.net/api/auth/health)  
+**Version:** v1.1.0 | **Last Updated:** October 3, 2025  
+**API Health:** [![API Status](https://img.shields.io/badge/API-Operational-green)](https://241runners-api-v2.azurewebsites.net/api/health)  
 **Frontend:** [![Frontend Status](https://img.shields.io/badge/Frontend-Live-blue)](https://241runnersawareness.org)
 
-> 📊 **Detailed Status:** See [DEPLOYMENT_STATUS.md](./DEPLOYMENT_STATUS.md) for comprehensive system health and monitoring information.
+## 🌟 What's Live
+
+- **Web**: [241runnersawareness.org](https://241runnersawareness.org) - Public case directory with PWA support
+- **API**: [241runners-api-v2.azurewebsites.net](https://241runners-api-v2.azurewebsites.net) - RESTful API with JWT auth
+- **Mobile**: PWA installable from web app with offline capabilities
 
 ## 🔄 v2 API Migration
 
@@ -40,29 +44,37 @@ curl -sS -H "Authorization: Bearer <ACCESS_TOKEN>" \
 
 ## 🚀 Quick Start
 
-### For Users
-- **Visit:** [https://241runnersawareness.org](https://241runnersawareness.org)
-- **Browse Cases:** View missing persons cases with advanced filtering
-- **Install PWA:** Add to home screen for offline access
-
-### For Developers
+### API Development
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/241RunnersAwareness.git
-cd 241RunnersAwareness
+# Environment variables
+export DefaultConnection="Server=tcp:your-server.database.windows.net,1433;Database=your-db;..."
+export JWT_KEY="your-32-char-secret-key"
+export JWT_ISSUER="241RunnersAwareness"
+export JWT_AUDIENCE="241RunnersAwareness"
 
-# Deploy to Azure (requires Azure CLI)
-chmod +x scripts/deploy-azure.sh
-./scripts/deploy-azure.sh
+# Run locally
+cd 241RunnersAPI
+dotnet run
 
-# Run integration tests
-node scripts/integration-tests.js
+# Swagger UI: http://localhost:5000/swagger
 ```
 
-### For Administrators
-- **Admin Portal:** [https://241runnersawareness.org/admin](https://241runnersawareness.org/admin)
-- **API Documentation:** [https://241runners-api-v2.azurewebsites.net/swagger](https://241runners-api-v2.azurewebsites.net/swagger)
-- **Health Monitoring:** [https://241runners-api-v2.azurewebsites.net/api/auth/health](https://241runners-api-v2.azurewebsites.net/api/auth/health)
+### Web Development
+```bash
+# Run locally
+python -m http.server 8000
+# Visit: http://localhost:8000
+
+# Build and deploy
+git push origin main  # Auto-deploys to GitHub Pages
+```
+
+### Security & Compliance
+- **JWT Authentication**: Secure token-based auth with automatic refresh
+- **CORS Protection**: Configured for specific domains only
+- **Role-based Access**: Admin/User permissions with ownership checks
+- **Audit Logs**: All admin actions logged with timestamps
+- **HTTPS Everywhere**: All communications encrypted in transit
 
 ## 🏥 Health Monitoring
 
