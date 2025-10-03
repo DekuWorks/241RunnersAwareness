@@ -33,7 +33,7 @@ namespace _241RunnersAPI.Middleware
             
             // Add request ID to context
             context.Items["RequestId"] = requestId;
-            context.Response.Headers.Add("X-Request-ID", requestId);
+            context.Response.Headers["X-Request-ID"] = requestId;
 
             try
             {

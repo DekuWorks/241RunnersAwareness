@@ -32,7 +32,7 @@ cd ..
 # Create deployment zip (contents of publish folder, not the folder itself)
 echo "📦 Creating deployment package..."
 cd $PUBLISH_PATH
-zip -r ../$ZIP_NAME . -x "*.pdb" "*.xml" "*.log" "*.tmp" "runtimes/*"
+zip -r ../$ZIP_NAME . -x "*.pdb" "*.xml" "*.log" "*.tmp" "runtimes/*" "publish/*"
 cd ..
 
 echo "✅ Deployment package created: $ZIP_NAME"
@@ -43,7 +43,8 @@ az webapp deploy \
     --resource-group $RESOURCE_GROUP \
     --name $APP_SERVICE_NAME \
     --src-path $ZIP_NAME \
-    --type zip
+    --type zip \
+    --clean true
 
 # Set environment variables for Linux App Service
 echo "⚙️ Setting environment variables..."

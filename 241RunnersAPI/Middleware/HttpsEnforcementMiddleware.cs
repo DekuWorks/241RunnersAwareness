@@ -133,7 +133,7 @@ namespace _241RunnersAPI.Middleware
                 {
                     hstsValue += "; preload";
                 }
-                response.Headers.Add("Strict-Transport-Security", hstsValue);
+                response.Headers["Strict-Transport-Security"] = hstsValue;
             }
 
             // Content Security Policy
@@ -147,25 +147,25 @@ namespace _241RunnersAPI.Middleware
                               "frame-ancestors 'none'; " +
                               "base-uri 'self'; " +
                               "form-action 'self'";
-                response.Headers.Add("Content-Security-Policy", cspValue);
+                response.Headers["Content-Security-Policy"] = cspValue;
             }
 
             // X-Frame-Options
             if (_options.RequireFrameOptions)
             {
-                response.Headers.Add("X-Frame-Options", "DENY");
+                response.Headers["X-Frame-Options"] = "DENY";
             }
 
             // X-Content-Type-Options
             if (_options.RequireContentTypeOptions)
             {
-                response.Headers.Add("X-Content-Type-Options", "nosniff");
+                response.Headers["X-Content-Type-Options"] = "nosniff";
             }
 
             // Referrer Policy
             if (_options.RequireReferrerPolicy)
             {
-                response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
+                response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
             }
 
             // Permissions Policy
@@ -182,7 +182,7 @@ namespace _241RunnersAPI.Middleware
                                     "vibrate=(), " +
                                     "fullscreen=(self), " +
                                     "sync-xhr=()";
-                response.Headers.Add("Permissions-Policy", permissionsValue);
+                response.Headers["Permissions-Policy"] = permissionsValue;
             }
         }
 
@@ -204,7 +204,7 @@ namespace _241RunnersAPI.Middleware
             {
                 hstsValue += "; preload";
             }
-            context.Response.Headers.Add("Strict-Transport-Security", hstsValue);
+            context.Response.Headers["Strict-Transport-Security"] = hstsValue;
         }
 
         private string GetHttpsUrl(HttpContext context)

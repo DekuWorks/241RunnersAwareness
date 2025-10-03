@@ -97,7 +97,7 @@ namespace _241RunnersAPI.Middleware
             if (context.User?.Identity?.IsAuthenticated == true)
             {
                 var token = await GenerateCsrfToken(context);
-                context.Response.Headers.Add("X-CSRF-Token", token);
+                context.Response.Headers["X-CSRF-Token"] = token;
                 
                 // Set CSRF cookie for double-submit pattern
                 var cookieOptions = new CookieOptions

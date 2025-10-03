@@ -35,7 +35,7 @@ namespace _241RunnersAPI.Middleware
             // Content Security Policy
             if (_options.EnableContentSecurityPolicy)
             {
-                response.Headers.Add("Content-Security-Policy", 
+                response.Headers["Content-Security-Policy"] = 
                     "default-src 'self'; " +
                     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.skypack.dev; " +
                     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
@@ -44,37 +44,41 @@ namespace _241RunnersAPI.Middleware
                     "connect-src 'self' https://241runners-api-v2.azurewebsites.net wss:; " +
                     "frame-ancestors 'none'; " +
                     "base-uri 'self'; " +
-                    "form-action 'self'");
+                    "form-action 'self'";
             }
 
             // X-Content-Type-Options
             if (_options.EnableXContentTypeOptions)
             {
-                response.Headers.Add("X-Content-Type-Options", "nosniff");
+                response.Headers.Remove("X-Content-Type-Options");
+                response.Headers["X-Content-Type-Options"] = "nosniff";
             }
 
             // X-Frame-Options
             if (_options.EnableXFrameOptions)
             {
-                response.Headers.Add("X-Frame-Options", "DENY");
+                response.Headers.Remove("X-Frame-Options");
+                response.Headers["X-Frame-Options"] = "DENY";
             }
 
             // X-XSS-Protection
             if (_options.EnableXXSSProtection)
             {
-                response.Headers.Add("X-XSS-Protection", "1; mode=block");
+                response.Headers.Remove("X-XSS-Protection");
+                response.Headers["X-XSS-Protection"] = "1; mode=block";
             }
 
             // Referrer Policy
             if (_options.EnableReferrerPolicy)
             {
-                response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
+                response.Headers.Remove("Referrer-Policy");
+                response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
             }
 
             // Permissions Policy
             if (_options.EnablePermissionsPolicy)
             {
-                response.Headers.Add("Permissions-Policy", 
+                response.Headers["Permissions-Policy"] = 
                     "geolocation=(), " +
                     "microphone=(), " +
                     "camera=(), " +
@@ -85,32 +89,32 @@ namespace _241RunnersAPI.Middleware
                     "speaker=(), " +
                     "vibrate=(), " +
                     "fullscreen=(self), " +
-                    "sync-xhr=()");
+                    "sync-xhr=()";
             }
 
             // Strict Transport Security (HTTPS only)
             if (_options.EnableHSTS && context.Request.IsHttps)
             {
-                response.Headers.Add("Strict-Transport-Security", 
-                    $"max-age={_options.HSTSMaxAge}; includeSubDomains; preload");
+                response.Headers["Strict-Transport-Security"] = 
+                    $"max-age={_options.HSTSMaxAge}; includeSubDomains; preload";
             }
 
             // Cross-Origin Embedder Policy
             if (_options.EnableCOEP)
             {
-                response.Headers.Add("Cross-Origin-Embedder-Policy", "require-corp");
+                response.Headers["Cross-Origin-Embedder-Policy"] = "require-corp";
             }
 
             // Cross-Origin Opener Policy
             if (_options.EnableCOOP)
             {
-                response.Headers.Add("Cross-Origin-Opener-Policy", "same-origin");
+                response.Headers["Cross-Origin-Opener-Policy"] = "same-origin";
             }
 
             // Cross-Origin Resource Policy
             if (_options.EnableCORP)
             {
-                response.Headers.Add("Cross-Origin-Resource-Policy", "same-origin");
+                response.Headers["Cross-Origin-Resource-Policy"] = "same-origin";
             }
 
             // Remove server header
@@ -124,7 +128,7 @@ namespace _241RunnersAPI.Middleware
             {
                 foreach (var header in _options.CustomHeaders)
                 {
-                    response.Headers.Add(header.Key, header.Value);
+                    response.Headers[header.Key] = header.Value;
                 }
             }
         }

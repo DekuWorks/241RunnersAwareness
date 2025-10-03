@@ -43,10 +43,10 @@ namespace _241RunnersAPI.Middleware
                     _logger.LogWarning("Rate limit exceeded for {ClientId} on {Endpoint}", clientId, endpoint);
                     
                     context.Response.StatusCode = (int)HttpStatusCode.TooManyRequests;
-                    context.Response.Headers.Add("Retry-After", limitConfig.WindowSeconds.ToString());
-                    context.Response.Headers.Add("X-RateLimit-Limit", limitConfig.RequestsPerWindow.ToString());
-                    context.Response.Headers.Add("X-RateLimit-Remaining", "0");
-                    context.Response.Headers.Add("X-RateLimit-Reset", DateTimeOffset.UtcNow.AddSeconds(limitConfig.WindowSeconds).ToUnixTimeSeconds().ToString());
+                    context.Response.Headers["Retry-After"] = limitConfig.WindowSeconds.ToString();
+                    context.Response.Headers["X-RateLimit-Limit"] = limitConfig.RequestsPerWindow.ToString();
+                    context.Response.Headers["X-RateLimit-Remaining"] = "0";
+                    context.Response.Headers["X-RateLimit-Reset"] = DateTimeOffset.UtcNow.AddSeconds(limitConfig.WindowSeconds).ToUnixTimeSeconds().ToString();
                     
                     await context.Response.WriteAsync("Rate limit exceeded. Please try again later.");
                     return;
@@ -54,9 +54,9 @@ namespace _241RunnersAPI.Middleware
                 
                 // Add rate limit headers
                 var remaining = await GetRemainingRequests(rateLimitKey, limitConfig);
-                context.Response.Headers.Add("X-RateLimit-Limit", limitConfig.RequestsPerWindow.ToString());
-                context.Response.Headers.Add("X-RateLimit-Remaining", remaining.ToString());
-                context.Response.Headers.Add("X-RateLimit-Reset", DateTimeOffset.UtcNow.AddSeconds(limitConfig.WindowSeconds).ToUnixTimeSeconds().ToString());
+                context.Response.Headers["X-RateLimit-Limit"] = limitConfig.RequestsPerWindow.ToString();
+                context.Response.Headers["X-RateLimit-Remaining"] = remaining.ToString();
+                context.Response.Headers["X-RateLimit-Reset"] = DateTimeOffset.UtcNow.AddSeconds(limitConfig.WindowSeconds).ToUnixTimeSeconds().ToString();
             }
 
             await _next(context);
