@@ -84,7 +84,7 @@ namespace _241RunnersAPI.Services
         /// <param name="exception">Exception that occurred</param>
         /// <param name="context">Additional context information</param>
         /// <param name="severity">Error severity level</param>
-        public async Task TrackErrorAsync(Exception exception, Dictionary<string, object>? context = null, ErrorSeverity severity = ErrorSeverity.Error)
+        public async Task TrackErrorAsync(Exception exception, Dictionary<string, object>? context = null, ErrorSeverity severity = ErrorSeverity.High)
         {
             try
             {
@@ -156,7 +156,7 @@ namespace _241RunnersAPI.Services
                 var userAgent = httpContext?.Request.Headers.UserAgent.ToString() ?? "unknown";
 
                 // Create custom event
-                var eventTelemetry = new CustomEventTelemetry("UserActivity")
+                var eventTelemetry = new EventTelemetry("UserActivity")
                 {
                     Properties = {
                         ["ActivityType"] = activityType,

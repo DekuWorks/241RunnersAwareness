@@ -9,7 +9,6 @@ namespace _241RunnersAPI.Controllers
     [ApiController]
     [Route("api/v{version:apiVersion}/users")]
     [ApiVersion("1.0")]
-    [Authorize(Roles = "admin")]
     public class UsersController : BaseController
     {
         private readonly ApplicationDbContext _context;
@@ -22,9 +21,172 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
-        /// Get all users with pagination and filtering
+        /// Get current user profile (requires auth)
+        /// </summary>
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
+                {
+                    return Unauthorized(new { success = false, message = "Invalid user token" });
+                }
+                
+                var user = await _context.Users.FindAsync(userId);
+                
+                if (user == null)
+                {
+                    return NotFound(new { success = false, message = "User not found" });
+                }
+
+                return Ok(new
+                {
+                    success = true,
+                    user = new
+                    {
+                        id = user.Id,
+                        email = user.Email,
+                        firstName = user.FirstName,
+                        lastName = user.LastName,
+                        fullName = $"{user.FirstName} {user.LastName}".Trim(),
+                        role = user.Role,
+                        isActive = user.IsActive,
+                        phoneNumber = user.PhoneNumber,
+                        address = user.Address,
+                        city = user.City,
+                        state = user.State,
+                        zipCode = user.ZipCode,
+                        organization = user.Organization,
+                        title = user.Title,
+                        credentials = user.Credentials,
+                        specialization = user.Specialization,
+                        yearsOfExperience = user.YearsOfExperience,
+                        profileImageUrl = user.ProfileImageUrl,
+                        emergencyContactName = user.EmergencyContactName,
+                        emergencyContactPhone = user.EmergencyContactPhone,
+                        emergencyContactRelationship = user.EmergencyContactRelationship,
+                        isEmailVerified = user.IsEmailVerified,
+                        isPhoneVerified = user.IsPhoneVerified,
+                        createdAt = user.CreatedAt,
+                        lastLoginAt = user.LastLoginAt,
+                        updatedAt = user.UpdatedAt
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting current user");
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
+        /// Update current user profile (requires auth)
+        /// </summary>
+        [HttpPut("me")]
+        [Authorize]
+        public async Task<IActionResult> UpdateCurrentUser([FromBody] UserUpdateDto request)
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
+                {
+                    return Unauthorized(new { success = false, message = "Invalid user token" });
+                }
+                
+                var user = await _context.Users.FindAsync(userId);
+                
+                if (user == null)
+                {
+                    return NotFound(new { success = false, message = "User not found" });
+                }
+
+                // Update user fields
+                if (!string.IsNullOrEmpty(request.FirstName))
+                    user.FirstName = request.FirstName;
+                if (!string.IsNullOrEmpty(request.LastName))
+                    user.LastName = request.LastName;
+                if (!string.IsNullOrEmpty(request.PhoneNumber))
+                    user.PhoneNumber = request.PhoneNumber;
+                if (!string.IsNullOrEmpty(request.Address))
+                    user.Address = request.Address;
+                if (!string.IsNullOrEmpty(request.City))
+                    user.City = request.City;
+                if (!string.IsNullOrEmpty(request.State))
+                    user.State = request.State;
+                if (!string.IsNullOrEmpty(request.ZipCode))
+                    user.ZipCode = request.ZipCode;
+                if (!string.IsNullOrEmpty(request.Organization))
+                    user.Organization = request.Organization;
+                if (!string.IsNullOrEmpty(request.Title))
+                    user.Title = request.Title;
+                if (!string.IsNullOrEmpty(request.Credentials))
+                    user.Credentials = request.Credentials;
+                if (!string.IsNullOrEmpty(request.Specialization))
+                    user.Specialization = request.Specialization;
+                if (!string.IsNullOrEmpty(request.YearsOfExperience))
+                    user.YearsOfExperience = request.YearsOfExperience;
+                if (!string.IsNullOrEmpty(request.EmergencyContactName))
+                    user.EmergencyContactName = request.EmergencyContactName;
+                if (!string.IsNullOrEmpty(request.EmergencyContactPhone))
+                    user.EmergencyContactPhone = request.EmergencyContactPhone;
+                if (!string.IsNullOrEmpty(request.EmergencyContactRelationship))
+                    user.EmergencyContactRelationship = request.EmergencyContactRelationship;
+                if (!string.IsNullOrEmpty(request.Notes))
+                    user.Notes = request.Notes;
+
+                user.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Profile updated successfully",
+                    user = new
+                    {
+                        id = user.Id,
+                        email = user.Email,
+                        firstName = user.FirstName,
+                        lastName = user.LastName,
+                        fullName = $"{user.FirstName} {user.LastName}".Trim(),
+                        role = user.Role,
+                        isActive = user.IsActive,
+                        phoneNumber = user.PhoneNumber,
+                        address = user.Address,
+                        city = user.City,
+                        state = user.State,
+                        zipCode = user.ZipCode,
+                        organization = user.Organization,
+                        title = user.Title,
+                        credentials = user.Credentials,
+                        specialization = user.Specialization,
+                        yearsOfExperience = user.YearsOfExperience,
+                        emergencyContactName = user.EmergencyContactName,
+                        emergencyContactPhone = user.EmergencyContactPhone,
+                        emergencyContactRelationship = user.EmergencyContactRelationship,
+                        isEmailVerified = user.IsEmailVerified,
+                        isPhoneVerified = user.IsPhoneVerified,
+                        updatedAt = user.UpdatedAt
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating current user");
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
+        /// Get all users with pagination and filtering (admin only)
         /// </summary>
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetUsers([FromQuery] UserQuery query)
         {
             try

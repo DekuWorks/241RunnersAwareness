@@ -48,7 +48,7 @@ namespace _241RunnersAPI.Services
                 
                 // Store token reference in cache
                 var cacheKey = $"secure_token:{tokenData.TokenId}";
-                await _cache.SetAsync(cacheKey, tokenData, _options.TokenLifetime);
+                _cache.Set(cacheKey, tokenData, _options.TokenLifetime);
 
                 _logger.LogInformation("Generated secure token for user {UserId}", userId);
                 return encryptedToken;
@@ -95,7 +95,7 @@ namespace _241RunnersAPI.Services
 
                 // Verify token exists in cache
                 var cacheKey = $"secure_token:{tokenData.TokenId}";
-                var cachedToken = await _cache.GetAsync<TokenData>(cacheKey);
+                var cachedToken = _cache.Get<TokenData>(cacheKey);
                 if (cachedToken == null)
                 {
                     _logger.LogWarning("Token not found in cache for user {UserId}", tokenData.UserId);
@@ -104,7 +104,7 @@ namespace _241RunnersAPI.Services
 
                 // Update last accessed time
                 tokenData.LastAccessedAt = DateTimeOffset.UtcNow;
-                await _cache.SetAsync(cacheKey, tokenData, _options.TokenLifetime);
+                _cache.Set(cacheKey, tokenData, _options.TokenLifetime);
 
                 return tokenData;
             }

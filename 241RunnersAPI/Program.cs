@@ -475,7 +475,7 @@ app.UseHttpsRedirection();
 app.UseIpRateLimiting();
 
 // Add custom middleware
-app.UseMiddleware<RateLimitingMiddleware>(new RateLimitOptions { Enabled = true });
+app.UseMiddleware<RateLimitingMiddleware>(new _241RunnersAPI.Middleware.RateLimitOptions { Enabled = true });
 app.UseMiddleware<RequestValidationMiddleware>(new RequestValidationOptions { Enabled = true });
 app.UseMiddleware<SecurityHeadersMiddleware>(new SecurityHeadersOptions { Enabled = true });
 app.UseMiddleware<HttpsEnforcementMiddleware>(new HttpsEnforcementOptions { Enabled = true });

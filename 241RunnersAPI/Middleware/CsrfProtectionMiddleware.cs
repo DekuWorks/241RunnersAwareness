@@ -163,7 +163,7 @@ namespace _241RunnersAPI.Middleware
             
             // Store token in cache for validation
             var cacheKey = $"csrf_token:{userId}:{sessionId}";
-            await _cache.SetAsync(cacheKey, token, TimeSpan.FromHours(1));
+            _cache.Set(cacheKey, token, TimeSpan.FromHours(1));
             
             return token;
         }
@@ -207,7 +207,7 @@ namespace _241RunnersAPI.Middleware
 
                 // Check if token exists in cache
                 var cacheKey = $"csrf_token:{userId}:{sessionId}";
-                var cachedToken = await _cache.GetAsync<string>(cacheKey);
+                var cachedToken = _cache.Get<string>(cacheKey);
                 if (cachedToken != token)
                 {
                     return false;

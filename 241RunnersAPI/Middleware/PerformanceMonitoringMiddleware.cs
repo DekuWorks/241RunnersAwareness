@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace _241RunnersAPI.Middleware
 {
@@ -66,7 +67,7 @@ namespace _241RunnersAPI.Middleware
             {
                 Id = requestId,
                 Name = $"{request.Method} {request.Path}",
-                Url = request.GetDisplayUrl(),
+                Url = new Uri(request.GetDisplayUrl()),
                 Timestamp = DateTimeOffset.UtcNow,
                 Properties = {
                     ["User-Agent"] = request.Headers.UserAgent.ToString(),
@@ -87,7 +88,7 @@ namespace _241RunnersAPI.Middleware
             {
                 Id = requestId,
                 Name = $"{context.Request.Method} {context.Request.Path}",
-                Url = context.Request.GetDisplayUrl(),
+                Url = new Uri(context.Request.GetDisplayUrl()),
                 Timestamp = DateTimeOffset.UtcNow,
                 Duration = TimeSpan.FromMilliseconds(durationMs),
                 ResponseCode = response.StatusCode.ToString(),
@@ -115,7 +116,7 @@ namespace _241RunnersAPI.Middleware
             {
                 Id = requestId,
                 Name = $"{context.Request.Method} {context.Request.Path}",
-                Url = context.Request.GetDisplayUrl(),
+                Url = new Uri(context.Request.GetDisplayUrl()),
                 Timestamp = DateTimeOffset.UtcNow,
                 Duration = TimeSpan.FromMilliseconds(durationMs),
                 ResponseCode = response.StatusCode.ToString(),

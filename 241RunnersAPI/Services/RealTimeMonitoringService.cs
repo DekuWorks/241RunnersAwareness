@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Microsoft.ApplicationInsights;
 using System.Collections.Concurrent;
+using _241RunnersAPI.Hubs;
 
 namespace _241RunnersAPI.Services
 {

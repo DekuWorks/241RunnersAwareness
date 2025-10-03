@@ -19,6 +19,16 @@ namespace _241RunnersAPI.Models
 
         public int? CreatedByUserId { get; set; }
 
+        [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public DateTime? UpdatedAt { get; set; }
+
+        [Required]
+        [MaxLength(50, ErrorMessage = "Status cannot exceed 50 characters")]
+        [RegularExpression("^(Missing|Found|Resolved)$", ErrorMessage = "Status must be one of: Missing, Found, Resolved")]
+        public string Status { get; set; } = "Missing";
+
         [Required(ErrorMessage = "Runner name is required")]
         [MaxLength(200, ErrorMessage = "Runner name cannot exceed 200 characters")]
         [RegularExpression(@"^[a-zA-Z\s\-'\.]+$", ErrorMessage = "Runner name can only contain letters, spaces, hyphens, apostrophes, and periods")]
@@ -75,11 +85,6 @@ namespace _241RunnersAPI.Models
         [Required]
         public bool IsActive { get; set; } = true;
 
-        [Required]
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        public DateTime? UpdatedAt { get; set; }
-
         // GPS and tracking information
         [MaxLength(50, ErrorMessage = "Last known location cannot exceed 50 characters")]
         public string? LastKnownLocation { get; set; }
@@ -120,6 +125,10 @@ namespace _241RunnersAPI.Models
 
         [Required(ErrorMessage = "Date of birth is required")]
         public DateTime DateOfBirth { get; set; }
+
+        [Required(ErrorMessage = "Status is required")]
+        [RegularExpression("^(Missing|Found|Resolved)$", ErrorMessage = "Status must be one of: Missing, Found, Resolved")]
+        public string Status { get; set; } = "Missing";
 
         [Required(ErrorMessage = "Gender is required")]
         [MaxLength(20, ErrorMessage = "Gender cannot exceed 20 characters")]
@@ -175,6 +184,10 @@ namespace _241RunnersAPI.Models
         [Required(ErrorMessage = "Date of birth is required")]
         public DateTime DateOfBirth { get; set; }
 
+        [Required(ErrorMessage = "Status is required")]
+        [RegularExpression("^(Missing|Found|Resolved)$", ErrorMessage = "Status must be one of: Missing, Found, Resolved")]
+        public string Status { get; set; } = "Missing";
+
         [Required(ErrorMessage = "Gender is required")]
         [MaxLength(20, ErrorMessage = "Gender cannot exceed 20 characters")]
         [RegularExpression("^(Male|Female|Other|Prefer not to say)$", ErrorMessage = "Gender must be one of: Male, Female, Other, Prefer not to say")]
@@ -227,6 +240,7 @@ namespace _241RunnersAPI.Models
         public DateTime DateOfBirth { get; set; }
         public int Age { get; set; }
         public string Gender { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
         public string? PhysicalDescription { get; set; }
         public string? MedicalConditions { get; set; }
         public string? Medications { get; set; }

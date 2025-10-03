@@ -32,7 +32,7 @@ namespace _241RunnersAPI.Middleware
             var rateLimitKey = $"{clientId}:{endpoint}";
 
             // Get rate limit configuration for this endpoint
-            var limitConfig = GetRateLimitConfig(endpoint);
+            var limitConfig = GetRateLimitConfig(endpoint, context.Request.Method);
             
             if (limitConfig != null)
             {
@@ -76,7 +76,7 @@ namespace _241RunnersAPI.Middleware
             return $"ip:{ipAddress}";
         }
 
-        private RateLimitConfig? GetRateLimitConfig(string endpoint)
+        private RateLimitConfig? GetRateLimitConfig(string endpoint, string method)
         {
             // Define rate limits for different endpoints
             return endpoint switch
@@ -84,8 +84,8 @@ namespace _241RunnersAPI.Middleware
                 var e when e.Contains("/auth/login") => new RateLimitConfig { RequestsPerWindow = 5, WindowSeconds = 300 }, // 5 requests per 5 minutes
                 var e when e.Contains("/auth/register") => new RateLimitConfig { RequestsPerWindow = 3, WindowSeconds = 300 }, // 3 requests per 5 minutes
                 var e when e.Contains("/auth/oauth") => new RateLimitConfig { RequestsPerWindow = 10, WindowSeconds = 300 }, // 10 requests per 5 minutes
-                var e when e.Contains("/runners") && context.Request.Method == "POST" => new RateLimitConfig { RequestsPerWindow = 10, WindowSeconds = 300 }, // 10 reports per 5 minutes
-                var e when e.Contains("/runners") && context.Request.Method == "GET" => new RateLimitConfig { RequestsPerWindow = 100, WindowSeconds = 60 }, // 100 requests per minute
+                var e when e.Contains("/runners") && method == "POST" => new RateLimitConfig { RequestsPerWindow = 10, WindowSeconds = 300 }, // 10 reports per 5 minutes
+                var e when e.Contains("/runners") && method == "GET" => new RateLimitConfig { RequestsPerWindow = 100, WindowSeconds = 60 }, // 100 requests per minute
                 var e when e.Contains("/cases") => new RateLimitConfig { RequestsPerWindow = 50, WindowSeconds = 60 }, // 50 requests per minute
                 var e when e.Contains("/admin") => new RateLimitConfig { RequestsPerWindow = 200, WindowSeconds = 60 }, // 200 requests per minute for admin
                 _ => new RateLimitConfig { RequestsPerWindow = 60, WindowSeconds = 60 } // Default: 60 requests per minute

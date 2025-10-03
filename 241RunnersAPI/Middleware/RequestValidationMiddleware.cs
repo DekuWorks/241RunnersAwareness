@@ -66,7 +66,7 @@ namespace _241RunnersAPI.Middleware
         private async Task<bool> ValidateRequestSize(HttpContext context)
         {
             var contentLength = context.Request.ContentLength ?? 0;
-            var maxSize = GetMaxRequestSize(context.Request.Path);
+            var maxSize = GetMaxRequestSize(context.Request.Path, context.Request.Method);
 
             if (contentLength > maxSize)
             {
@@ -78,12 +78,12 @@ namespace _241RunnersAPI.Middleware
             return true;
         }
 
-        private long GetMaxRequestSize(string path)
+        private long GetMaxRequestSize(string path, string method)
         {
             return path.ToLower() switch
             {
                 var p when p.Contains("/image-upload") => 10 * 1024 * 1024, // 10MB for image uploads
-                var p when p.Contains("/runners") && context.Request.Method == "POST" => 5 * 1024 * 1024, // 5MB for case reports
+                var p when p.Contains("/runners") && method == "POST" => 5 * 1024 * 1024, // 5MB for case reports
                 var p when p.Contains("/auth") => 1 * 1024 * 1024, // 1MB for auth requests
                 _ => 2 * 1024 * 1024 // 2MB default
             };

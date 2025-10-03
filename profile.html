@@ -996,6 +996,7 @@
         <a href="dashboard.html">Dashboard</a>
         <a href="profile.html" class="active">Profile</a>
         <a href="my-cases.html">My Cases</a>
+        <a href="runners.html">Runners</a>
         <a href="#" id="logoutBtn" class="nav-login">Logout</a>
       </div>
       <div class="nav-toggle" id="navToggle">
@@ -1174,6 +1175,14 @@
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>
                 <option value="Prefer not to say">Prefer not to say</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="editStatus">Status</label>
+              <select id="editStatus" name="status" required>
+                <option value="Missing">Missing</option>
+                <option value="Found">Found</option>
+                <option value="Resolved">Resolved</option>
               </select>
             </div>
             <div class="form-group">
@@ -1558,16 +1567,25 @@
           throw new Error('No authentication token');
         }
 
-        const response = await fetch(`${PROFILE_API_BASE_URL}/runners/profile`, {
+        // Get user's runners
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/runner`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
 
         if (response.ok) {
-          const runnerData = await response.json();
-          displayRunnerProfile(runnerData);
-          return runnerData;
+          const runners = await response.json();
+          if (runners && runners.length > 0) {
+            // Use the first runner (users typically have one runner profile)
+            const runnerData = runners[0];
+            displayRunnerProfile(runnerData);
+            return runnerData;
+          } else {
+            // No runner profile exists yet
+            displayNoRunnerProfile();
+            return null;
+          }
         } else if (response.status === 404) {
           // No runner profile exists yet
           displayNoRunnerProfile();
@@ -1602,6 +1620,10 @@
             <span class="runner-info-value">${runner.gender || 'Not provided'}</span>
           </div>
           <div class="runner-info-item">
+            <span class="runner-info-label">Status</span>
+            <span class="runner-info-value">${runner.status || 'Not provided'}</span>
+          </div>
+          <div class="runner-info-item">
             <span class="runner-info-label">Physical Description</span>
             <span class="runner-info-value">${runner.physicalDescription || 'Not provided'}</span>
           </div>
@@ -1632,6 +1654,7 @@
       document.getElementById('editRunnerName').value = runner.name || '';
       document.getElementById('editDateOfBirth').value = runner.dateOfBirth ? runner.dateOfBirth.split('T')[0] : '';
       document.getElementById('editGender').value = runner.gender || '';
+      document.getElementById('editStatus').value = runner.status || 'Missing';
       document.getElementById('editPhysicalDescription').value = runner.physicalDescription || '';
       document.getElementById('editMedicalConditions').value = runner.medicalConditions || '';
       document.getElementById('editPreferredRunningLocations').value = runner.preferredRunningLocations || '';
@@ -1820,7 +1843,7 @@
         const token = getAuthToken();
         const authData = checkAuth();
         
-        const response = await fetch(`${PROFILE_API_BASE_URL}/v1/auth/profile`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1/users/me`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -1861,7 +1884,10 @@
       try {
         const token = getAuthToken();
         
-        const response = await fetch(`${PROFILE_API_BASE_URL}/runners`, {
+        // Add UserId to the data
+        data.userId = currentUser.id;
+        
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/runner`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1977,7 +2003,7 @@
           return;
         }
 
-        const response = await fetch(`${PROFILE_API_BASE_URL}/v1/auth/me`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1/auth/me`, {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${userData.accessToken || userData.token}`,

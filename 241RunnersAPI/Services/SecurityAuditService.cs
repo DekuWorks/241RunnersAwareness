@@ -214,7 +214,7 @@ namespace _241RunnersAPI.Services
         private async Task LogSecurityEventAsync(SecurityAuditEvent auditEvent)
         {
             // Log to application insights
-            var telemetry = new CustomEventTelemetry("SecurityAudit")
+            var telemetry = new EventTelemetry("SecurityAudit")
             {
                 Properties = {
                     ["EventType"] = auditEvent.EventType,

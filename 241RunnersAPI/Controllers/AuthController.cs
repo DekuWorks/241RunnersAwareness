@@ -192,14 +192,15 @@ namespace _241RunnersAPI.Controllers
                     _logger.LogWarning(notificationEx, "Failed to send new user registration notification");
                 }
 
+                // Generate JWT token for the new user
+                var token = GenerateJwtToken(user);
+
                 return CreatedAtAction(nameof(Register), new { id = user.Id }, new
                 {
                     success = true,
                     message = "Account created successfully! Welcome to 241 Runners Awareness.",
-                    id = $"u_{user.Id}",
-                    email = user.Email,
-                    role = user.Role,
-                    emailVerified = user.IsEmailVerified,
+                    accessToken = token,
+                    expiresIn = 3600,
                     user = new
                     {
                         id = user.Id,
@@ -309,9 +310,13 @@ namespace _241RunnersAPI.Controllers
                 _performanceService.TrackAuthentication("Login", user.Id.ToString(), true);
                 _performanceService.TrackApiEndpoint("/api/auth/login", "POST", duration, 200, true);
                 
+                // Generate refresh token (simplified - in production, use proper refresh token system)
+                var refreshToken = Guid.NewGuid().ToString();
+
                 return Ok(new
                 {
                     accessToken = token,
+                    refreshToken = refreshToken,
                     expiresIn = 3600,
                     user = new
                     {

@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using _241RunnersAPI.Data;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using Microsoft.ApplicationInsights;
+using System.Text.RegularExpressions;
 
 namespace _241RunnersAPI.Services
 {
@@ -235,9 +237,9 @@ namespace _241RunnersAPI.Services
                 var caseCount = await _context.Cases.CountAsync();
                 statistics.Add(new TableStatistics { TableName = "Cases", RowCount = caseCount });
 
-                // Get Alerts table stats
-                var alertCount = await _context.Alerts.CountAsync();
-                statistics.Add(new TableStatistics { TableName = "Alerts", RowCount = alertCount });
+                // Get Alerts table stats - commented out as Alerts table doesn't exist
+                // var alertCount = await _context.Alerts.CountAsync();
+                // statistics.Add(new TableStatistics { TableName = "Alerts", RowCount = alertCount });
             }
             catch (Exception ex)
             {
@@ -313,10 +315,10 @@ namespace _241RunnersAPI.Services
                     recommendations.Add("Consider adding index on Runners.Status for better filtering performance");
                 }
 
-                var caseDateCount = await _context.Cases.CountAsync(c => c.DateReported != null);
+                var caseDateCount = await _context.Cases.CountAsync(c => c.CreatedAt != null);
                 if (caseDateCount > 100)
                 {
-                    recommendations.Add("Consider adding index on Cases.DateReported for better date range queries");
+                    recommendations.Add("Consider adding index on Cases.CreatedAt for better date range queries");
                 }
             }
             catch (Exception ex)

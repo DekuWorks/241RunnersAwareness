@@ -98,6 +98,10 @@ namespace _241RunnersAPI.Data
             {
                 entity.HasKey(e => e.Id);
                 
+                // Indices for performance
+                entity.HasIndex(e => e.UserId);
+                entity.HasIndex(e => e.Status);
+                
                 // Foreign key relationship
                 entity.HasOne(e => e.User)
                     .WithMany()
@@ -109,6 +113,7 @@ namespace _241RunnersAPI.Data
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
                 entity.Property(e => e.DateOfBirth).IsRequired();
                 entity.Property(e => e.Gender).IsRequired().HasMaxLength(20);
+                entity.Property(e => e.Status).IsRequired().HasMaxLength(50).HasDefaultValue("Missing");
                 entity.Property(e => e.IsActive).IsRequired().HasDefaultValue(true);
                 entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
                 

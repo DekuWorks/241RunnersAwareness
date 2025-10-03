@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Runner Management - 241 Runners Awareness</title>
+  <link rel="stylesheet" href="https://241runnersawareness.org/styles.css?v=20250905">
+  <link rel="stylesheet" href="https://241runnersawareness.org/forms.css">
+  <script src="https://241runnersawareness.org/js/auth.js?v=20250905" defer></script>
+  <style>
+    .runners-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding: 2rem;
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      color: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(220, 38, 38, 0.3);
+    }
+
+    .page-title {
+      font-size: 2.5rem;
+      margin: 0 0 0.5rem 0;
+      font-weight: 600;
+    }
+
+    .page-subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin: 0;
+    }
+
+    .controls-section {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+
+    .controls-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .controls-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #111827;
+      margin: 0;
+    }
+
+    .controls-row {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .filter-group label {
+      font-weight: 500;
+      color: #374151;
+      font-size: 0.875rem;
+    }
+
+    .filter-group select,
+    .filter-group input {
+      padding: 0.5rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      min-width: 120px;
+    }
+
+    .filter-group select:focus,
+    .filter-group input:focus {
+      outline: none;
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: #dc2626;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #b91c1c;
+    }
+
+    .btn-secondary {
+      background: #6b7280;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #4b5563;
+    }
+
+    .btn-success {
+      background: #059669;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #047857;
+    }
+
+    .runners-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .runner-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .runner-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      border-color: #dc2626;
+    }
+
+    .runner-card-header {
+      padding: 1.5rem;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .runner-name {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #111827;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .runner-status {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-missing {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status-found {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-resolved {
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+
+    .runner-card-body {
+      padding: 1.5rem;
+    }
+
+    .runner-info {
+      display: grid;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      font-weight: 500;
+      color: #374151;
+      font-size: 0.875rem;
+    }
+
+    .info-value {
+      color: #6b7280;
+      font-size: 0.875rem;
+      text-align: right;
+    }
+
+    .runner-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+    }
+
+    .btn-small {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-primary-small {
+      background: #dc2626;
+      color: white;
+    }
+
+    .btn-primary-small:hover {
+      background: #b91c1c;
+    }
+
+    .btn-secondary-small {
+      background: #6b7280;
+      color: white;
+    }
+
+    .btn-secondary-small:hover {
+      background: #4b5563;
+    }
+
+    .btn-danger-small {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-danger-small:hover {
+      background: #dc2626;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #6b7280;
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .empty-state h3 {
+      margin-bottom: 0.5rem;
+      color: #374151;
+      font-size: 1.5rem;
+    }
+
+    .empty-state p {
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: #6b7280;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f4f6;
+      border-top: 4px solid #dc2626;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+
+    .pagination button {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #d1d5db;
+      background: white;
+      color: #374151;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .pagination button:hover:not(:disabled) {
+      background: #f3f4f6;
+      border-color: #9ca3af;
+    }
+
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .pagination button.active {
+      background: #dc2626;
+      color: white;
+      border-color: #dc2626;
+    }
+
+    .pagination-info {
+      margin: 0 1rem;
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+    }
+
+    .modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #111827;
+      margin: 0;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #6b7280;
+      cursor: pointer;
+      padding: 0.25rem;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
+
+    .error-message {
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .success-message {
+      background: #d1fae5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .runners-container {
+        padding: 1rem;
+      }
+
+      .page-header {
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .page-title {
+        font-size: 2rem;
+      }
+
+      .controls-section {
+        padding: 1rem;
+      }
+
+      .controls-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .controls-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filter-group {
+        width: 100%;
+      }
+
+      .runners-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .runner-card {
+        margin-bottom: 1rem;
+      }
+
+      .runner-actions {
+        flex-direction: column;
+      }
+
+      .btn-small {
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+
+      .modal-content {
+        margin: 1rem;
+        padding: 1rem;
+      }
+    }
+
+    /* Admin-specific styles */
+    .admin-badge {
+      background: #7c3aed;
+      color: white;
+      padding: 0.25rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: 0.5rem;
+    }
+
+    .view-toggle {
+      display: flex;
+      background: #f3f4f6;
+      border-radius: 8px;
+      padding: 0.25rem;
+      margin-left: 1rem;
+    }
+
+    .view-toggle button {
+      padding: 0.5rem 1rem;
+      border: none;
+      background: transparent;
+      color: #6b7280;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .view-toggle button.active {
+      background: #dc2626;
+      color: white;
+    }
+
+    .view-toggle button:hover:not(.active) {
+      background: #e5e7eb;
+      color: #374151;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <nav class="nav-container">
+      <div class="nav-brand">
+        <a href="index.html">
+          <img src="assets/images/241-logo.jpg" alt="241 Runners Awareness" class="logo">
+          <span class="brand-text">241 Runners Awareness</span>
+        </a>
+      </div>
+      <div class="nav-menu" id="navMenu">
+        <a href="index.html">Home</a>
+        <a href="aboutus.html">About</a>
+        <a href="cases.html">Cases</a>
+        <a href="map.html">Map</a>
+        <a href="dna-tracking.html">DNA Tracking</a>
+        <a href="report-case.html">Report Case</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="profile.html">Profile</a>
+        <a href="my-cases.html">My Cases</a>
+        <a href="runners.html" class="active">Runners</a>
+        <a href="#" id="logoutBtn" class="nav-login">Logout</a>
+      </div>
+      <div class="nav-toggle" id="navToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="runners-container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="page-title">Runner Management</h1>
+      <p class="page-subtitle">Manage runner profiles and track their status</p>
+    </div>
+
+    <!-- Controls Section -->
+    <div class="controls-section">
+      <div class="controls-header">
+        <h2 class="controls-title">
+          <span>🏃</span>
+          Runner Controls
+          <span id="userRole" class="admin-badge" style="display: none;">Admin</span>
+        </h2>
+        <div class="controls-row">
+          <button class="btn btn-primary" onclick="openCreateRunnerModal()">
+            <span>➕</span>
+            Add New Runner
+          </button>
+          <div class="view-toggle" id="viewToggle" style="display: none;">
+            <button class="active" onclick="toggleView('my')">My Runners</button>
+            <button onclick="toggleView('all')">All Runners</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="controls-row">
+        <div class="filter-group">
+          <label for="statusFilter">Status</label>
+          <select id="statusFilter" onchange="applyFilters()">
+            <option value="">All Statuses</option>
+            <option value="Missing">Missing</option>
+            <option value="Found">Found</option>
+            <option value="Resolved">Resolved</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label for="searchInput">Search</label>
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="Search by name..." 
+            onkeyup="applyFilters()"
+          >
+        </div>
+        
+        <div class="filter-group">
+          <label for="pageSizeSelect">Per Page</label>
+          <select id="pageSizeSelect" onchange="changePageSize()">
+            <option value="10">10</option>
+            <option value="25" selected>25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <button class="btn btn-secondary" onclick="clearFilters()">
+            <span>🔄</span>
+            Clear Filters
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Runners Grid -->
+    <div id="runnersGrid" class="runners-grid">
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        <p>Loading runners...</p>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div id="pagination" class="pagination" style="display: none;">
+      <button id="prevPage" onclick="changePage(-1)">Previous</button>
+      <div id="pageNumbers" class="pagination-info"></div>
+      <button id="nextPage" onclick="changePage(1)">Next</button>
+    </div>
+  </main>
+
+  <!-- Create/Edit Runner Modal -->
+  <div id="runnerModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">Add New Runner</h3>
+        <button class="modal-close" onclick="closeRunnerModal()">&times;</button>
+      </div>
+      
+      <div id="modalMessages"></div>
+      
+      <form id="runnerForm">
+        <div class="form-group">
+          <label for="runnerName">Runner Name *</label>
+          <input type="text" id="runnerName" name="name" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="runnerDOB">Date of Birth *</label>
+          <input type="date" id="runnerDOB" name="dateOfBirth" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="runnerGender">Gender *</label>
+          <select id="runnerGender" name="gender" required>
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+            <option value="Prefer not to say">Prefer not to say</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="runnerStatus">Status *</label>
+          <select id="runnerStatus" name="status" required>
+            <option value="Missing">Missing</option>
+            <option value="Found">Found</option>
+            <option value="Resolved">Resolved</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="runnerPhysicalDescription">Physical Description</label>
+          <textarea 
+            id="runnerPhysicalDescription" 
+            name="physicalDescription" 
+            rows="3" 
+            placeholder="Height, weight, hair color, eye color, etc."
+          ></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="runnerMedicalConditions">Medical Conditions</label>
+          <textarea 
+            id="runnerMedicalConditions" 
+            name="medicalConditions" 
+            rows="2" 
+            placeholder="Any medical conditions or medications"
+          ></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="runnerAllergies">Allergies</label>
+          <textarea 
+            id="runnerAllergies" 
+            name="allergies" 
+            rows="2" 
+            placeholder="Any known allergies"
+          ></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="runnerEmergencyInstructions">Emergency Instructions</label>
+          <textarea 
+            id="runnerEmergencyInstructions" 
+            name="emergencyInstructions" 
+            rows="2" 
+            placeholder="Special instructions in case of emergency"
+          ></textarea>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeRunnerModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="submitBtn">
+            <span id="submitText">Save Runner</span>
+            <div id="loadingSpinner" style="display: none;">
+              <div class="loading-spinner"></div>
+            </div>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Use</a>
+        <a href="aboutus.html">About Us</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // API Configuration
+    let API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
+    
+    // State management
+    let currentUser = null;
+    let currentView = 'my'; // 'my' or 'all'
+    let currentPage = 1;
+    let pageSize = 25;
+    let totalPages = 1;
+    let allRunners = [];
+    let filteredRunners = [];
+    let editingRunner = null;
+
+    // Load API configuration
+    async function loadConfig() {
+      try {
+        const response = await fetch('/config.json');
+        const config = await response.json();
+        API_BASE_URL = config.API_BASE_URL || API_BASE_URL;
+      } catch (error) {
+        console.warn('Failed to load config.json, using default API URL');
+      }
+    }
+
+    // Check authentication and load user data
+    function checkAuth() {
+      const authData = localStorage.getItem('ra_auth');
+      if (!authData) {
+        window.location.href = 'login.html';
+        return false;
+      }
+      
+      const auth = JSON.parse(authData);
+      currentUser = auth.user;
+      
+      // Show admin controls if user is admin
+      if (currentUser.role === 'admin') {
+        document.getElementById('userRole').style.display = 'inline-block';
+        document.getElementById('viewToggle').style.display = 'flex';
+      }
+      
+      return true;
+    }
+
+    // Get auth token
+    function getAuthToken() {
+      const authData = localStorage.getItem('ra_auth');
+      if (authData) {
+        const auth = JSON.parse(authData);
+        return auth.accessToken || auth.token;
+      }
+      return null;
+    }
+
+    // Load runners from API
+    async function loadRunners() {
+      try {
+        const token = getAuthToken();
+        if (!token) {
+          throw new Error('No authentication token');
+        }
+
+        // Build query parameters
+        const params = new URLSearchParams({
+          page: currentPage,
+          pageSize: pageSize
+        });
+
+        // Add status filter if selected
+        const statusFilter = document.getElementById('statusFilter').value;
+        if (statusFilter) {
+          params.append('status', statusFilter);
+        }
+
+        // Add user filter for non-admin users
+        if (currentView === 'my' || currentUser.role !== 'admin') {
+          params.append('userId', currentUser.id);
+        }
+
+        const response = await fetch(`${API_BASE_URL}/api/runner?${params}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          allRunners = data.runners || data;
+          totalPages = Math.ceil((data.totalCount || allRunners.length) / pageSize);
+          
+          applyFilters();
+          updatePagination();
+        } else if (response.status === 401) {
+          window.location.href = 'login.html';
+        } else {
+          throw new Error('Failed to load runners');
+        }
+
+      } catch (error) {
+        console.error('Error loading runners:', error);
+        showError('Failed to load runners. Please try again.');
+      }
+    }
+
+    // Apply filters to runners
+    function applyFilters() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const statusFilter = document.getElementById('statusFilter').value;
+
+      filteredRunners = allRunners.filter(runner => {
+        const matchesSearch = !searchTerm || runner.name.toLowerCase().includes(searchTerm);
+        const matchesStatus = !statusFilter || runner.status === statusFilter;
+        return matchesSearch && matchesStatus;
+      });
+
+      displayRunners();
+    }
+
+    // Display runners in grid
+    function displayRunners() {
+      const grid = document.getElementById('runnersGrid');
+      
+      if (filteredRunners.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🏃</div>
+            <h3>No Runners Found</h3>
+            <p>No runners match your current filters.</p>
+            <button class="btn btn-primary" onclick="clearFilters()">Clear Filters</button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filteredRunners.map(runner => `
+        <div class="runner-card">
+          <div class="runner-card-header">
+            <h3 class="runner-name">${runner.name}</h3>
+            <span class="runner-status status-${runner.status.toLowerCase()}">${runner.status}</span>
+          </div>
+          <div class="runner-card-body">
+            <div class="runner-info">
+              <div class="info-row">
+                <span class="info-label">Age</span>
+                <span class="info-value">${runner.age || 'N/A'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Gender</span>
+                <span class="info-value">${runner.gender || 'N/A'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Created</span>
+                <span class="info-value">${new Date(runner.createdAt).toLocaleDateString()}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Last Updated</span>
+                <span class="info-value">${runner.updatedAt ? new Date(runner.updatedAt).toLocaleDateString() : 'Never'}</span>
+              </div>
+            </div>
+            <div class="runner-actions">
+              <button class="btn-small btn-primary-small" onclick="editRunner(${runner.id})">
+                Edit
+              </button>
+              <button class="btn-small btn-secondary-small" onclick="viewRunnerDetails(${runner.id})">
+                Details
+              </button>
+              <button class="btn-small btn-danger-small" onclick="deleteRunner(${runner.id})">
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Toggle between "My Runners" and "All Runners" view
+    function toggleView(view) {
+      currentView = view;
+      currentPage = 1;
+      
+      // Update button states
+      document.querySelectorAll('.view-toggle button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      
+      loadRunners();
+    }
+
+    // Clear all filters
+    function clearFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('statusFilter').value = '';
+      currentPage = 1;
+      loadRunners();
+    }
+
+    // Change page size
+    function changePageSize() {
+      pageSize = parseInt(document.getElementById('pageSizeSelect').value);
+      currentPage = 1;
+      loadRunners();
+    }
+
+    // Change page
+    function changePage(direction) {
+      const newPage = currentPage + direction;
+      if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        loadRunners();
+      }
+    }
+
+    // Update pagination controls
+    function updatePagination() {
+      const pagination = document.getElementById('pagination');
+      const prevBtn = document.getElementById('prevPage');
+      const nextBtn = document.getElementById('nextPage');
+      const pageNumbers = document.getElementById('pageNumbers');
+
+      if (totalPages <= 1) {
+        pagination.style.display = 'none';
+        return;
+      }
+
+      pagination.style.display = 'flex';
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.disabled = currentPage === totalPages;
+
+      // Show page numbers
+      let pageInfo = `Page ${currentPage} of ${totalPages}`;
+      if (filteredRunners.length > 0) {
+        const start = (currentPage - 1) * pageSize + 1;
+        const end = Math.min(currentPage * pageSize, filteredRunners.length);
+        pageInfo += ` (${start}-${end} of ${filteredRunners.length})`;
+      }
+      pageNumbers.textContent = pageInfo;
+    }
+
+    // Open create runner modal
+    function openCreateRunnerModal() {
+      editingRunner = null;
+      document.getElementById('modalTitle').textContent = 'Add New Runner';
+      document.getElementById('runnerForm').reset();
+      document.getElementById('runnerStatus').value = 'Missing';
+      document.getElementById('modalMessages').innerHTML = '';
+      document.getElementById('runnerModal').classList.add('show');
+    }
+
+    // Edit runner
+    async function editRunner(runnerId) {
+      try {
+        const token = getAuthToken();
+        const response = await fetch(`${API_BASE_URL}/api/runner/${runnerId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const runner = await response.json();
+          editingRunner = runner;
+          
+          document.getElementById('modalTitle').textContent = 'Edit Runner';
+          document.getElementById('runnerName').value = runner.name || '';
+          document.getElementById('runnerDOB').value = runner.dateOfBirth ? runner.dateOfBirth.split('T')[0] : '';
+          document.getElementById('runnerGender').value = runner.gender || '';
+          document.getElementById('runnerStatus').value = runner.status || 'Missing';
+          document.getElementById('runnerPhysicalDescription').value = runner.physicalDescription || '';
+          document.getElementById('runnerMedicalConditions').value = runner.medicalConditions || '';
+          document.getElementById('runnerAllergies').value = runner.allergies || '';
+          document.getElementById('runnerEmergencyInstructions').value = runner.emergencyInstructions || '';
+          
+          document.getElementById('modalMessages').innerHTML = '';
+          document.getElementById('runnerModal').classList.add('show');
+        } else {
+          throw new Error('Failed to load runner data');
+        }
+      } catch (error) {
+        console.error('Error loading runner:', error);
+        showError('Failed to load runner data. Please try again.');
+      }
+    }
+
+    // View runner details
+    function viewRunnerDetails(runnerId) {
+      const runner = allRunners.find(r => r.id === runnerId);
+      if (runner) {
+        alert(`Runner Details:\n\nName: ${runner.name}\nAge: ${runner.age}\nGender: ${runner.gender}\nStatus: ${runner.status}\nPhysical Description: ${runner.physicalDescription || 'N/A'}\nMedical Conditions: ${runner.medicalConditions || 'N/A'}\nAllergies: ${runner.allergies || 'N/A'}\nEmergency Instructions: ${runner.emergencyInstructions || 'N/A'}`);
+      }
+    }
+
+    // Delete runner
+    async function deleteRunner(runnerId) {
+      if (!confirm('Are you sure you want to delete this runner? This action cannot be undone.')) {
+        return;
+      }
+
+      try {
+        const token = getAuthToken();
+        const response = await fetch(`${API_BASE_URL}/api/runner/${runnerId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          showSuccess('Runner deleted successfully');
+          loadRunners();
+        } else {
+          throw new Error('Failed to delete runner');
+        }
+      } catch (error) {
+        console.error('Error deleting runner:', error);
+        showError('Failed to delete runner. Please try again.');
+      }
+    }
+
+    // Close runner modal
+    function closeRunnerModal() {
+      document.getElementById('runnerModal').classList.remove('show');
+      editingRunner = null;
+    }
+
+    // Handle runner form submission
+    document.getElementById('runnerForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData.entries());
+      
+      // Add UserId for new runners
+      if (!editingRunner) {
+        data.userId = currentUser.id;
+      }
+      
+      try {
+        const token = getAuthToken();
+        const submitBtn = document.getElementById('submitBtn');
+        const submitText = document.getElementById('submitText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        submitText.style.display = 'none';
+        loadingSpinner.style.display = 'block';
+        
+        const url = editingRunner 
+          ? `${API_BASE_URL}/api/runner/${editingRunner.id}`
+          : `${API_BASE_URL}/api/runner`;
+        
+        const method = editingRunner ? 'PUT' : 'POST';
+        
+        const response = await fetch(url, {
+          method: method,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+          showSuccess(editingRunner ? 'Runner updated successfully' : 'Runner created successfully');
+          closeRunnerModal();
+          loadRunners();
+        } else {
+          const result = await response.json();
+          throw new Error(result.message || 'Failed to save runner');
+        }
+        
+      } catch (error) {
+        console.error('Error saving runner:', error);
+        showError(error.message || 'Failed to save runner. Please try again.');
+      } finally {
+        // Hide loading state
+        const submitBtn = document.getElementById('submitBtn');
+        const submitText = document.getElementById('submitText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        
+        submitBtn.disabled = false;
+        submitText.style.display = 'inline';
+        loadingSpinner.style.display = 'none';
+      }
+    });
+
+    // Show error message
+    function showError(message) {
+      const messagesDiv = document.getElementById('modalMessages');
+      messagesDiv.innerHTML = `<div class="error-message">${message}</div>`;
+    }
+
+    // Show success message
+    function showSuccess(message) {
+      const messagesDiv = document.getElementById('modalMessages');
+      messagesDiv.innerHTML = `<div class="success-message">${message}</div>`;
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        messagesDiv.innerHTML = '';
+      }, 3000);
+    }
+
+    // Navigation functionality
+    const navToggle = document.getElementById('navToggle');
+    const navMenu = document.getElementById('navMenu');
+    
+    navToggle.addEventListener('click', function() {
+      navMenu.classList.toggle('active');
+      navToggle.classList.toggle('active');
+    });
+
+    // Enhanced Logout functionality
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Clear all authentication data
+        const authKeys = [
+          'ra_auth', 'ra_admin_token', 'ra_admin_role', 'ra_admin_user',
+          'ra_user_token', 'ra_user_role', 'ra_user_data',
+          'admin_token', 'admin_role', 'admin_user', 'user', 'userToken'
+        ];
+        
+        authKeys.forEach(key => {
+          localStorage.removeItem(key);
+        });
+        
+        // Clear sessionStorage as well
+        if (typeof sessionStorage !== 'undefined') {
+          authKeys.forEach(key => {
+            try {
+              sessionStorage.removeItem(key);
+            } catch (e) {
+              console.warn('Could not clear sessionStorage key:', key);
+            }
+          });
+        }
+        
+        // Redirect to home page
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 500);
+      });
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('runnerModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeRunnerModal();
+      }
+    });
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', async function() {
+      await loadConfig();
+      
+      if (checkAuth()) {
+        await loadRunners();
+      }
+    });
+  </script>
+</body>
+</html>

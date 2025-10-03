@@ -21,16 +21,45 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
-        /// Get all runners (admin only)
+        /// Get all runners (admin only) or user's own runners
         /// </summary>
         [HttpGet]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> GetRunners()
+        [Authorize]
+        public async Task<IActionResult> GetRunners([FromQuery] string? status = null, [FromQuery] int page = 1, [FromQuery] int pageSize = 25)
         {
             try
             {
-                var runners = await _context.Runners
-                    .Include(r => r.User)
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+                
+                if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
+                {
+                    return Unauthorized(new { success = false, message = "Invalid user token" });
+                }
+
+                var query = _context.Runners.Include(r => r.User).AsQueryable();
+
+                // Apply role-based filtering
+                if (userRole != "admin")
+                {
+                    // Regular users can only see their own runners
+                    query = query.Where(r => r.UserId == userId);
+                }
+
+                // Apply status filter if provided
+                if (!string.IsNullOrEmpty(status) && (status == "Missing" || status == "Found" || status == "Resolved"))
+                {
+                    query = query.Where(r => r.Status == status);
+                }
+
+                // Get total count
+                var total = await query.CountAsync();
+
+                // Apply pagination
+                var runners = await query
+                    .OrderByDescending(r => r.UpdatedAt ?? r.CreatedAt)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
                     .Select(r => new RunnerResponseDto
                     {
                         Id = r.Id,
@@ -39,6 +68,7 @@ namespace _241RunnersAPI.Controllers
                         DateOfBirth = r.DateOfBirth,
                         Age = DateTime.UtcNow.Year - r.DateOfBirth.Year - (DateTime.UtcNow.DayOfYear < r.DateOfBirth.DayOfYear ? 1 : 0),
                         Gender = r.Gender,
+                        Status = r.Status,
                         PhysicalDescription = r.PhysicalDescription,
                         MedicalConditions = r.MedicalConditions,
                         Medications = r.Medications,
@@ -67,7 +97,14 @@ namespace _241RunnersAPI.Controllers
                     })
                     .ToListAsync();
 
-                return Ok(new { success = true, runners = runners, count = runners.Count });
+                return Ok(new { 
+                    success = true, 
+                    runners = runners, 
+                    count = runners.Count,
+                    total = total,
+                    page = page,
+                    pageSize = pageSize
+                });
             }
             catch (Exception ex)
             {
@@ -77,14 +114,22 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
-        /// Get runner by ID (admin only)
+        /// Get runner by ID (owner or admin only)
         /// </summary>
         [HttpGet("{id}")]
-        [Authorize(Roles = "admin")]
+        [Authorize]
         public async Task<IActionResult> GetRunner(int id)
         {
             try
             {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+                
+                if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
+                {
+                    return Unauthorized(new { success = false, message = "Invalid user token" });
+                }
+
                 var runner = await _context.Runners
                     .Include(r => r.User)
                     .FirstOrDefaultAsync(r => r.Id == id);
@@ -92,6 +137,12 @@ namespace _241RunnersAPI.Controllers
                 if (runner == null)
                 {
                     return NotFound(new { success = false, message = "Runner not found" });
+                }
+
+                // Check ownership - user can only access their own runners unless they're admin
+                if (runner.UserId != userId && userRole != "admin")
+                {
+                    return Forbid("You can only access your own runner profiles");
                 }
 
                 var runnerResponse = new RunnerResponseDto
@@ -102,6 +153,7 @@ namespace _241RunnersAPI.Controllers
                     DateOfBirth = runner.DateOfBirth,
                     Age = DateTime.UtcNow.Year - runner.DateOfBirth.Year - (DateTime.UtcNow.DayOfYear < runner.DateOfBirth.DayOfYear ? 1 : 0),
                     Gender = runner.Gender,
+                    Status = runner.Status,
                     PhysicalDescription = runner.PhysicalDescription,
                     MedicalConditions = runner.MedicalConditions,
                     Medications = runner.Medications,
@@ -225,6 +277,7 @@ namespace _241RunnersAPI.Controllers
                     UserId = userId,
                     Name = request.Name,
                     DateOfBirth = request.DateOfBirth,
+                    Status = request.Status,
                     Gender = request.Gender,
                     PhysicalDescription = request.PhysicalDescription,
                     MedicalConditions = request.MedicalConditions,
@@ -360,6 +413,7 @@ namespace _241RunnersAPI.Controllers
                 // Update runner fields
                 runner.Name = request.Name;
                 runner.DateOfBirth = request.DateOfBirth;
+                runner.Status = request.Status;
                 runner.Gender = request.Gender;
                 runner.PhysicalDescription = request.PhysicalDescription;
                 runner.MedicalConditions = request.MedicalConditions;
@@ -562,24 +616,40 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
-        /// Delete runner profile (admin only)
+        /// Delete runner profile (owner or admin only - soft delete)
         /// </summary>
         [HttpDelete("{id}")]
-        [Authorize(Roles = "admin")]
+        [Authorize]
         public async Task<IActionResult> DeleteRunner(int id)
         {
             try
             {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+                
+                if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
+                {
+                    return Unauthorized(new { success = false, message = "Invalid user token" });
+                }
+
                 var runner = await _context.Runners.FindAsync(id);
                 if (runner == null)
                 {
                     return NotFound(new { success = false, message = "Runner not found" });
                 }
 
-                _context.Runners.Remove(runner);
+                // Check ownership - user can only delete their own runners unless they're admin
+                if (runner.UserId != userId && userRole != "admin")
+                {
+                    return Forbid("You can only delete your own runner profiles");
+                }
+
+                // Soft delete - mark as inactive instead of removing
+                runner.IsActive = false;
+                runner.UpdatedAt = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation("Runner profile deleted for runner {RunnerId}", id);
+                _logger.LogInformation("Runner profile soft deleted for runner {RunnerId} by user {UserId}", id, userId);
 
                 return Ok(new { success = true, message = "Runner profile deleted successfully" });
             }
