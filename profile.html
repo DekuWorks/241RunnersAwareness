@@ -1156,6 +1156,15 @@
         <div id="runnerProfileInfo">
           <div class="loading">Loading runner profile...</div>
         </div>
+        
+        <!-- Create Runner Button (shown when no runner profile exists) -->
+        <div id="createRunnerSection" style="display: none; text-align: center; padding: 2rem; background: #f9fafb; border-radius: 8px; margin-top: 1rem;">
+          <h3 style="color: #374151; margin-bottom: 1rem;">No Runner Profile Found</h3>
+          <p style="color: #6b7280; margin-bottom: 1.5rem;">Create a runner profile to track your running activities and safety status.</p>
+          <button class="btn btn-primary" onclick="showCreateRunnerForm()">
+            🏃 Create Runner Profile
+          </button>
+        </div>
 
         <!-- Edit Runner Profile Form -->
         <div class="edit-form" id="runnerProfileForm">
@@ -1659,20 +1668,31 @@
       document.getElementById('editMedicalConditions').value = runner.medicalConditions || '';
       document.getElementById('editPreferredRunningLocations').value = runner.preferredRunningLocations || '';
       document.getElementById('editTypicalRunningTimes').value = runner.typicalRunningTimes || '';
+      
+      // Hide the create runner section since we have a runner profile
+      const createSection = document.getElementById('createRunnerSection');
+      if (createSection) {
+        createSection.style.display = 'none';
+      }
     }
 
     // Display no runner profile message
     function displayNoRunnerProfile() {
       const container = document.getElementById('runnerProfileInfo');
+      const createSection = document.getElementById('createRunnerSection');
       
       container.innerHTML = `
         <div class="empty-state">
           <div class="empty-state-icon">🏃</div>
           <h3>No Runner Profile</h3>
           <p>You haven't created a runner profile yet. Create one to get started with case tracking.</p>
-          <button class="btn btn-primary" onclick="toggleEditForm('runnerProfile')">Create Runner Profile</button>
         </div>
       `;
+      
+      // Show the create runner section
+      if (createSection) {
+        createSection.style.display = 'block';
+      }
     }
 
     // Load user's case status
@@ -2291,6 +2311,177 @@
     window.addEventListener('beforeunload', function() {
       if (userHubConnection) {
         userHubConnection.stop();
+      }
+    });
+
+    // ============================================
+    // EDIT FORM FUNCTIONALITY
+    // ============================================
+
+    /**
+     * Toggle edit form visibility
+     * @param {string} formId - ID of the form to toggle
+     */
+    function toggleEditForm(formId) {
+      const form = document.getElementById(formId + 'Form');
+      const info = document.getElementById(formId);
+      
+      if (form && info) {
+        const isVisible = form.style.display === 'block';
+        
+        if (isVisible) {
+          // Hide form, show info
+          form.style.display = 'none';
+          info.style.display = 'block';
+        } else {
+          // Show form, hide info
+          form.style.display = 'block';
+          info.style.display = 'none';
+          
+          // Populate form with current data
+          populateEditForm(formId);
+        }
+      }
+    }
+
+    /**
+     * Populate edit form with current data
+     * @param {string} formId - ID of the form to populate
+     */
+    function populateEditForm(formId) {
+      if (formId === 'personalInfo') {
+        const user = currentUser;
+        if (user) {
+          document.getElementById('editFirstName').value = user.firstName || '';
+          document.getElementById('editLastName').value = user.lastName || '';
+          document.getElementById('editPhone').value = user.phoneNumber || '';
+          document.getElementById('editRole').value = user.role || 'user';
+        }
+      } else if (formId === 'runnerProfile') {
+        // This will be populated when we load runner data
+        loadRunnerProfile();
+      }
+    }
+
+    /**
+     * Show create runner form
+     */
+    function showCreateRunnerForm() {
+      const createSection = document.getElementById('createRunnerSection');
+      const editForm = document.getElementById('runnerProfileForm');
+      
+      if (createSection) createSection.style.display = 'none';
+      if (editForm) {
+        editForm.style.display = 'block';
+        // Clear form for new runner
+        document.getElementById('updateRunnerForm').reset();
+      }
+    }
+
+    /**
+     * Handle personal info form submission
+     */
+    async function handlePersonalInfoUpdate(event) {
+      event.preventDefault();
+      
+      const formData = new FormData(event.target);
+      const data = {
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName'),
+        phoneNumber: formData.get('phoneNumber'),
+        role: formData.get('role')
+      };
+
+      try {
+        const response = await authUtils.apiRequest('/v1/users/me', {
+          method: 'PUT',
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          const updatedUser = await response.json();
+          currentUser = updatedUser;
+          
+          // Update display
+          updateProfileDisplay(updatedUser);
+          
+          // Hide form
+          toggleEditForm('personalInfo');
+          
+          authUtils.showToast('Profile updated successfully!', 'success');
+        } else {
+          const error = await response.json();
+          authUtils.showToast(`Failed to update profile: ${error.message}`, 'error');
+        }
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        authUtils.showToast('Failed to update profile. Please try again.', 'error');
+      }
+    }
+
+    /**
+     * Handle runner profile form submission
+     */
+    async function handleRunnerProfileUpdate(event) {
+      event.preventDefault();
+      
+      const formData = new FormData(event.target);
+      const data = {
+        name: formData.get('name'),
+        dateOfBirth: formData.get('dateOfBirth'),
+        gender: formData.get('gender'),
+        status: formData.get('status'),
+        physicalDescription: formData.get('physicalDescription'),
+        medicalConditions: formData.get('medicalConditions'),
+        preferredRunningLocations: formData.get('preferredRunningLocations'),
+        typicalRunningTimes: formData.get('typicalRunningTimes')
+      };
+
+      try {
+        // Check if this is a new runner or update
+        const isNewRunner = !currentUser || !currentUser.runnerProfile;
+        const endpoint = isNewRunner ? '/v1/runners' : '/v1/runners/me';
+        const method = isNewRunner ? 'POST' : 'PUT';
+
+        const response = await authUtils.apiRequest(endpoint, {
+          method: method,
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          
+          // Reload runner profile
+          await loadRunnerProfile();
+          
+          // Hide form
+          toggleEditForm('runnerProfile');
+          
+          authUtils.showToast(
+            isNewRunner ? 'Runner profile created successfully!' : 'Runner profile updated successfully!', 
+            'success'
+          );
+        } else {
+          const error = await response.json();
+          authUtils.showToast(`Failed to ${isNewRunner ? 'create' : 'update'} runner profile: ${error.message}`, 'error');
+        }
+      } catch (error) {
+        console.error('Error updating runner profile:', error);
+        authUtils.showToast('Failed to update runner profile. Please try again.', 'error');
+      }
+    }
+
+    // Add event listeners for forms
+    document.addEventListener('DOMContentLoaded', function() {
+      const personalForm = document.getElementById('updatePersonalForm');
+      const runnerForm = document.getElementById('updateRunnerForm');
+      
+      if (personalForm) {
+        personalForm.addEventListener('submit', handlePersonalInfoUpdate);
+      }
+      
+      if (runnerForm) {
+        runnerForm.addEventListener('submit', handleRunnerProfileUpdate);
       }
     });
   </script>
