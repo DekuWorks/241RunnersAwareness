@@ -7,7 +7,6 @@ using _241RunnersAPI.Data;
 using _241RunnersAPI.Services;
 using _241RunnersAPI.Models;
 using _241RunnersAPI.Hubs;
-using _241RunnersAPI.Middleware;
 using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.Server.IISIntegration;
@@ -256,17 +255,6 @@ builder.Services.AddScoped<DatabaseQueryValidationService>();
 // Add performance monitoring service
 builder.Services.AddScoped<PerformanceMonitoringService>();
 
-// Add database optimization service
-builder.Services.AddScoped<DatabaseOptimizationService>();
-
-// Add security services
-builder.Services.AddScoped<SecureTokenService>();
-builder.Services.AddScoped<SecurityAuditService>();
-
-// Add monitoring services
-builder.Services.AddScoped<ComprehensiveMonitoringService>();
-builder.Services.AddScoped<RealTimeMonitoringService>();
-
 // Add caching service
 builder.Services.AddScoped<CachingService>();
 
@@ -347,140 +335,20 @@ if (swaggerEnabled)
     app.UseSwaggerUI();
 }
 
-// Add IP validation middleware
-app.Use(async (context, next) =>
-{
-    var ipValidationService = context.RequestServices.GetRequiredService<IpValidationService>();
-    
-    // Skip IP validation for health checks and static files
-    var path = context.Request.Path.Value?.ToLowerInvariant();
-    if (path != null && (path.StartsWith("/health") || path.StartsWith("/api/health") || path.StartsWith("/uploads")))
-    {
-        await next();
-        return;
-    }
-    
-    // Validate request IP, origin, and user agent
-    if (!ipValidationService.ValidateRequest(context))
-    {
-        context.Response.StatusCode = 403;
-        await context.Response.WriteAsync("Access denied");
-        return;
-    }
-    
-    await next();
-});
+// IP validation middleware - Disabled for stability
 
-// Add database query validation middleware
-app.Use(async (context, next) =>
-{
-    var queryValidationService = context.RequestServices.GetRequiredService<DatabaseQueryValidationService>();
-    
-    // Skip query validation for health checks and static files
-    var path = context.Request.Path.Value?.ToLowerInvariant();
-    if (path != null && (path.StartsWith("/health") || path.StartsWith("/api/health") || path.StartsWith("/uploads")))
-    {
-        await next();
-        return;
-    }
-    
-    // Validate query parameters in request body
-    if (context.Request.HasFormContentType || context.Request.ContentType?.Contains("application/json") == true)
-    {
-        try
-        {
-            context.Request.EnableBuffering();
-                            var body = await new StreamReader(context.Request.Body).ReadToEndAsync();
-                            context.Request.Body.Position = 0;
-                            
-                            if (!string.IsNullOrWhiteSpace(body))
-                            {
-                                var queryResult = queryValidationService.ValidateDynamicQuery(body);
-                                if (!queryResult.IsValid)
-                                {
-                                    context.Response.StatusCode = 400;
-                                    await context.Response.WriteAsync("Invalid request parameters");
-                                    return;
-                                }
-                            }
-        }
-        catch (Exception ex)
-        {
-            var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-            logger.LogError(ex, "Error in database query validation middleware");
-            // Continue processing on error to avoid breaking the application
-        }
-    }
-    
-    await next();
-});
+// Database query validation middleware - Disabled for stability
 
-// Add security headers middleware
-app.Use(async (context, next) =>
-{
-    // Security headers
-    context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-    context.Response.Headers.Add("X-Frame-Options", "DENY");
-    context.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
-    context.Response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
-    context.Response.Headers.Add("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
-    context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
-    
-    // Content Security Policy - Temporarily disabled for SignalR testing
-    // var csp = "default-src 'self'; " +
-    //           "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
-    //           "style-src 'self' 'unsafe-inline'; " +
-    //           "img-src 'self' data: https:; " +
-    //           "font-src 'self'; " +
-    //           "connect-src 'self' https: wss: ws:; " +
-    //           "frame-ancestors 'none'; " +
-    //           "base-uri 'self'; " +
-    //           "form-action 'self'";
-    
-    // context.Response.Headers.Add("Content-Security-Policy", csp);
-    
-    await next();
-});
+// Security headers middleware - Disabled for stability
 
-// Add performance logging middleware
-app.Use(async (context, next) =>
-{
-    var startTime = DateTime.UtcNow;
-    var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-    
-    logger.LogInformation("Request started: {Method} {Path} at {StartTime}", 
-        context.Request.Method, context.Request.Path, startTime);
-    
-    await next();
-    
-    var endTime = DateTime.UtcNow;
-    var duration = endTime - startTime;
-    
-    logger.LogInformation("Request completed: {Method} {Path} in {Duration}ms with status {StatusCode}", 
-        context.Request.Method, context.Request.Path, duration.TotalMilliseconds, context.Response.StatusCode);
-    
-    // Log slow requests
-    if (duration.TotalMilliseconds > 1000)
-    {
-        logger.LogWarning("Slow request detected: {Method} {Path} took {Duration}ms", 
-            context.Request.Method, context.Request.Path, duration.TotalMilliseconds);
-    }
-});
+// Performance logging middleware - Disabled for stability
 
 app.UseResponseCompression();
 app.UseResponseCaching();
 app.UseHttpsRedirection();
 
-// Add rate limiting middleware
-app.UseIpRateLimiting();
-
-// Add custom middleware
-app.UseMiddleware<RateLimitingMiddleware>(new _241RunnersAPI.Middleware.RateLimitOptions { Enabled = true });
-app.UseMiddleware<RequestValidationMiddleware>(new RequestValidationOptions { Enabled = true });
-app.UseMiddleware<SecurityHeadersMiddleware>(new SecurityHeadersOptions { Enabled = true });
-app.UseMiddleware<HttpsEnforcementMiddleware>(new HttpsEnforcementOptions { Enabled = true });
-app.UseMiddleware<CsrfProtectionMiddleware>(new CsrfProtectionOptions { Enabled = true });
-app.UseMiddleware<PerformanceMonitoringMiddleware>(new PerformanceMonitoringOptions { Enabled = true });
+// Rate limiting middleware - Disabled for stability
+// app.UseIpRateLimiting();
 
 // Use appropriate CORS policy based on environment
 if (app.Environment.IsProduction())
