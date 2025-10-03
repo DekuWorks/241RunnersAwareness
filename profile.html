@@ -6,7 +6,7 @@
   <title>My Profile - 241 Runners Awareness</title>
   <link rel="stylesheet" href="https://241runnersawareness.org/styles.css?v=20250905">
   <link rel="stylesheet" href="https://241runnersawareness.org/forms.css">
-  <script src="https://241runnersawareness.org/js/auth.js?v=20250905" defer></script>
+  <script src="/js/auth-utils.js?v=20250905" defer></script>
   <!-- SignalR Client Library -->
   <script src="https://unpkg.com/@microsoft/signalr@latest/dist/browser/signalr.min.js"></script>
   <style>
@@ -1997,31 +1997,47 @@
     // Load user profile data
     async function loadUserProfileData() {
       try {
-        const userData = JSON.parse(localStorage.getItem("ra_auth"));
-        if (!userData || !(userData.accessToken || userData.token)) {
+        // Check if user is authenticated
+        if (!authUtils.isAuthenticated()) {
           window.location.href = "login.html";
           return;
         }
 
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1/auth/me`, {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${userData.accessToken || userData.token}`,
-            "Content-Type": "application/json"
-          }
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          // /me endpoint returns user data directly, not wrapped in success/user
-          currentUser = result;
-          updateProfileImage(result.profileImageUrl);
-        } else {
-          console.error("Failed to load profile:", response.statusText);
-        }
+        // Get user data from API
+        const result = await authUtils.getCurrentUserFromAPI();
+        currentUser = result;
+        updateProfileImage(result.profileImageUrl);
+        
+        // Update profile display
+        updateProfileDisplay(result);
+        
       } catch (error) {
         console.error("Error loading profile:", error);
+        authUtils.showToast("Failed to load profile data", "error");
       }
+    }
+
+    // Update profile display with user data
+    function updateProfileDisplay(user) {
+      // Update profile header
+      const profileName = document.querySelector('.profile-name');
+      const profileEmail = document.querySelector('.profile-email');
+      const profileRole = document.querySelector('.profile-role');
+      
+      if (profileName) profileName.textContent = `${user.firstName} ${user.lastName}`;
+      if (profileEmail) profileEmail.textContent = user.email;
+      if (profileRole) profileRole.textContent = user.role || 'User';
+      
+      // Update profile form fields
+      const firstNameInput = document.getElementById('firstName');
+      const lastNameInput = document.getElementById('lastName');
+      const emailInput = document.getElementById('email');
+      const phoneInput = document.getElementById('phone');
+      
+      if (firstNameInput) firstNameInput.value = user.firstName || '';
+      if (lastNameInput) lastNameInput.value = user.lastName || '';
+      if (emailInput) emailInput.value = user.email || '';
+      if (phoneInput) phoneInput.value = user.phoneNumber || '';
     }
 
     // Update profile image display
@@ -2255,6 +2271,11 @@
 
     // Initialize profile
     document.addEventListener('DOMContentLoaded', async function() {
+      // Check authentication first
+      if (!authUtils.requireAuth()) {
+        return;
+      }
+      
       await loadConfig();
       loadUserProfile();
       await loadRunnerProfile();

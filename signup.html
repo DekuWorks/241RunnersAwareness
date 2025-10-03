@@ -891,11 +891,11 @@
                         
                         // Show additional success message and redirect
                         setTimeout(() => {
-                            showToast("info", "Redirecting...", "Taking you to the login page to sign in with your new account.", 3000);
+                            showToast("info", "Redirecting...", "Taking you to your profile page.", 3000);
                             
-                            // Redirect to login page after showing success message
+                            // Redirect to profile page after showing success message
                             setTimeout(() => {
-                                window.location.href = "login.html";
+                                window.location.href = "profile.html";
                             }, 2000);
                         }, 3000);
                         
