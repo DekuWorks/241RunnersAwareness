@@ -26,7 +26,7 @@ const STATIC_FILES = [
     '/js/update-banner.js',
     '/assets/js/config.js',
     '/assets/js/api-utils.js',
-    '/241-logo.jpg',
+    '/assets/images/241-logo.jpg',
     '/manifest.json',
     '/version.json'
 ];
@@ -264,8 +264,8 @@ self.addEventListener('push', (event) => {
         
         const options = {
             body: data.body,
-            icon: '/241-logo.jpg',
-            badge: '/241-logo.jpg',
+            icon: '/assets/images/241-logo.jpg',
+            badge: '/assets/images/241-logo.jpg',
             tag: '241runners-notification',
             requireInteraction: true,
             actions: [
