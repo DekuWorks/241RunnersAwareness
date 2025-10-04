@@ -2047,7 +2047,7 @@
       const profileEmail = document.querySelector('.profile-email');
       const profileRole = document.querySelector('.profile-role');
       
-      if (profileName) profileName.textContent = `${user.firstName} ${user.lastName}`;
+      if (profileName) profileName.textContent = user.name || `${user.firstName || 'User'} ${user.lastName || ''}`.trim();
       if (profileEmail) profileEmail.textContent = user.email;
       if (profileRole) profileRole.textContent = user.role || 'User';
       
