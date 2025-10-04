@@ -234,6 +234,45 @@ namespace _241RunnersAPI.Data
                 {
                     logger.LogInformation("No new admin users needed - all already exist");
                 }
+
+                // Always ensure we have a test user for manual testing
+                var testUserEmail = "testuser@241runnersawareness.org";
+                var existingTestUser = await context.Users.FirstOrDefaultAsync(u => u.Email == testUserEmail);
+                
+                if (existingTestUser == null)
+                {
+                    var testUser = new User
+                    {
+                        Email = testUserEmail,
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("TestUser2025!"),
+                        FirstName = "Test",
+                        LastName = "User",
+                        Role = "user",
+                        IsActive = true,
+                        IsEmailVerified = true,
+                        IsPhoneVerified = true,
+                        CreatedAt = DateTime.UtcNow,
+                        EmailVerifiedAt = DateTime.UtcNow,
+                        PhoneVerifiedAt = DateTime.UtcNow,
+                        PhoneNumber = "+1-555-0123",
+                        Address = "123 Test Street",
+                        City = "Test City",
+                        State = "Test State",
+                        ZipCode = "12345",
+                        EmergencyContactName = "Emergency Services",
+                        EmergencyContactPhone = "+1-555-911",
+                        EmergencyContactRelationship = "Emergency Contact"
+                    };
+
+                    context.Users.Add(testUser);
+                    await context.SaveChangesAsync();
+                    
+                    logger.LogInformation("Test user created: {Email} with password: TestUser2025!", testUserEmail);
+                }
+                else
+                {
+                    logger.LogInformation("Test user already exists: {Email}", testUserEmail);
+                }
             }
             catch (Exception ex)
             {
