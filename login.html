@@ -189,7 +189,16 @@
                     console.log('Login response:', result);
                     
                     if (result.accessToken) {
-                        // Store authentication data
+                        // Store authentication data in the format expected by other pages
+                        const authData = {
+                            user: result.user,
+                            accessToken: result.accessToken,
+                            refreshToken: result.refreshToken,
+                            expiresIn: result.expiresIn
+                        };
+                        localStorage.setItem('ra_auth', JSON.stringify(authData));
+                        
+                        // Also store individual items for compatibility
                         localStorage.setItem('user', JSON.stringify(result.user));
                         localStorage.setItem('jwtToken', result.accessToken);
                         localStorage.setItem('refreshToken', result.refreshToken);
