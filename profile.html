@@ -1291,12 +1291,15 @@
         
         userHubConnection = new signalR.HubConnectionBuilder()
           .withUrl(hubUrl, {
-            transport: signalR.HttpTransportType.WebSockets,
+            transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
             skipNegotiation: false,
-            accessTokenFactory: () => token
+            accessTokenFactory: () => {
+              console.log('🔑 SignalR requesting token...');
+              return token;
+            }
           })
           .withAutomaticReconnect([0, 2000, 10000, 30000])
-          .configureLogging(signalR.LogLevel.Information)
+          .configureLogging(signalR.LogLevel.Debug)
           .build();
 
         // Handle welcome message
@@ -1401,9 +1404,14 @@
 
       } catch (error) {
         console.error('❌ Failed to initialize SignalR connection:', error);
+        console.error('❌ Error details:', {
+          message: error.message,
+          name: error.name,
+          stack: error.stack
+        });
         updateConnectionStatus('disconnected', 'Connection failed');
         showNotification('system', 'Connection Failed', 
-          'Unable to connect to real-time notifications. Some features may not work properly.', true);
+          `Unable to connect to real-time notifications: ${error.message}`, true);
       }
     }
 
