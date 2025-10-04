@@ -86,7 +86,11 @@
             }
             
             function showAlert(message, type = 'error') {
-                alertContainer.innerHTML = `<div class="error-message">${message}</div>`;
+                if (type === 'success') {
+                    alertContainer.innerHTML = `<div class="success-message">${message}</div>`;
+                } else {
+                    alertContainer.innerHTML = `<div class="error-message">${message}</div>`;
+                }
             }
             
             function clearErrors() {
@@ -106,6 +110,11 @@
                 }
             }
             
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+            
             function validateForm() {
                 clearErrors();
                 let isValid = true;
@@ -116,7 +125,7 @@
                 if (!email) {
                     document.getElementById('emailError').textContent = 'Email is required';
                     isValid = false;
-                } else if (!authUtils.isValidEmail(email)) {
+                } else if (!isValidEmail(email)) {
                     document.getElementById('emailError').textContent = 'Please enter a valid email address';
                     isValid = false;
                 }
@@ -144,7 +153,7 @@
                 };
                 
                 try {
-                    const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
+                    const response = await fetch(`${API_BASE_URL}/api/v1.0/auth/login`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -164,8 +173,13 @@
                             user: result.user
                         };
                         
-                        authUtils.setAuth(authData);
-                        authUtils.showToast('Login successful!', 'success');
+                        // Store authentication data
+                        localStorage.setItem('user', JSON.stringify(result.user));
+                        localStorage.setItem('jwtToken', result.accessToken);
+                        localStorage.setItem('refreshToken', result.refreshToken);
+                        
+                        // Show success message
+                        showAlert('Login successful!', 'success');
                         
                         // Redirect based on user role
                         const user = result.user;
