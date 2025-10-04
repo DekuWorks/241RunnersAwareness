@@ -1290,10 +1290,10 @@
         console.log('🔑 Using token for SignalR:', token ? 'Present' : 'Missing');
         
         userHubConnection = new signalR.HubConnectionBuilder()
-          .withUrl(`${hubUrl}?access_token=${encodeURIComponent(token)}`, {
+          .withUrl(hubUrl, {
             transport: signalR.HttpTransportType.WebSockets,
-            skipNegotiation: false
-            // No withCredentials - using JWT tokens only
+            skipNegotiation: false,
+            accessTokenFactory: () => token
           })
           .withAutomaticReconnect([0, 2000, 10000, 30000])
           .configureLogging(signalR.LogLevel.Information)
