@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Service Worker Cache</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #c82333;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .info {
+            color: #17a2b8;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Service Worker Cache Clearer</h1>
+        <p>This tool will help you clear the service worker cache and unregister the service worker completely.</p>
+        
+        <div id="status"></div>
+        
+        <button onclick="clearServiceWorker()">Clear Service Worker Cache</button>
+        <button onclick="checkServiceWorker()">Check Service Worker Status</button>
+        <button onclick="goToLogin()">Go to Login Page</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+
+        function updateResults(message) {
+            const results = document.getElementById('results');
+            results.innerHTML += `<div>${message}</div>`;
+        }
+
+        async function clearServiceWorker() {
+            updateStatus('Clearing service worker cache...', 'info');
+            updateResults('Starting service worker cleanup...');
+            
+            try {
+                // Unregister all service workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    updateResults(`Found ${registrations.length} service worker(s)`);
+                    
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                        updateResults('✓ Unregistered service worker');
+                    }
+                }
+
+                // Clear all caches
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    updateResults(`Found ${cacheNames.length} cache(s)`);
+                    
+                    for (let cacheName of cacheNames) {
+                        await caches.delete(cacheName);
+                        updateResults(`✓ Deleted cache: ${cacheName}`);
+                    }
+                }
+
+                // Clear localStorage
+                localStorage.clear();
+                updateResults('✓ Cleared localStorage');
+
+                // Clear sessionStorage
+                sessionStorage.clear();
+                updateResults('✓ Cleared sessionStorage');
+
+                updateStatus('✅ Service worker cache cleared successfully!', 'success');
+                updateResults('🎉 All caches and service workers have been cleared. You can now refresh the login page.');
+
+            } catch (error) {
+                updateStatus('❌ Error clearing service worker cache', 'error');
+                updateResults(`Error: ${error.message}`);
+            }
+        }
+
+        async function checkServiceWorker() {
+            updateStatus('Checking service worker status...', 'info');
+            updateResults('Checking service worker status...');
+            
+            try {
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    updateResults(`Active service workers: ${registrations.length}`);
+                    
+                    for (let registration of registrations) {
+                        updateResults(`- Scope: ${registration.scope}`);
+                        updateResults(`- State: ${registration.active ? registration.active.state : 'No active worker'}`);
+                    }
+                } else {
+                    updateResults('Service workers not supported in this browser');
+                }
+
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    updateResults(`Active caches: ${cacheNames.length}`);
+                    
+                    for (let cacheName of cacheNames) {
+                        updateResults(`- ${cacheName}`);
+                    }
+                } else {
+                    updateResults('Cache API not supported in this browser');
+                }
+
+                updateStatus('✅ Service worker status checked', 'success');
+
+            } catch (error) {
+                updateStatus('❌ Error checking service worker status', 'error');
+                updateResults(`Error: ${error.message}`);
+            }
+        }
+
+        function goToLogin() {
+            window.location.href = '/login.html';
+        }
+
+        // Auto-check on page load
+        window.addEventListener('load', () => {
+            checkServiceWorker();
+        });
+    </script>
+</body>
+</html>
