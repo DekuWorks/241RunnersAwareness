@@ -192,9 +192,11 @@
                         // Store authentication data in the format expected by other pages
                         const authData = {
                             user: result.user,
-                            accessToken: result.accessToken,
+                            token: result.accessToken, // js/auth-utils.js expects 'token' not 'accessToken'
+                            accessToken: result.accessToken, // Keep both for compatibility
                             refreshToken: result.refreshToken,
-                            expiresIn: result.expiresIn
+                            expiresIn: result.expiresIn,
+                            timestamp: Date.now() // Add timestamp for expiration checking
                         };
                         localStorage.setItem('ra_auth', JSON.stringify(authData));
                         
