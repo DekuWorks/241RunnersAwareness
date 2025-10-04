@@ -1291,7 +1291,7 @@
         
         userHubConnection = new signalR.HubConnectionBuilder()
           .withUrl(hubUrl, {
-            transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
+            transport: signalR.HttpTransportType.LongPolling, // Use LongPolling instead of WebSockets
             skipNegotiation: false,
             accessTokenFactory: () => {
               console.log('🔑 SignalR requesting token...');
@@ -1547,8 +1547,9 @@
         const firstName = user.firstName || nameParts[0] || 'User';
         const lastName = user.lastName || (nameParts.length > 1 ? nameParts.slice(1).join(' ') : '');
         
-        // Update header
-        document.getElementById('profileName').textContent = `${firstName} ${lastName}`.trim();
+        // Update header - use the full name from user.name if available
+        const displayName = user.name || `${firstName} ${lastName}`.trim();
+        document.getElementById('profileName').textContent = displayName;
         document.getElementById('profileEmail').textContent = user.email || 'No email';
         document.getElementById('profileRole').textContent = user.role || 'user';
         
@@ -1603,8 +1604,13 @@
           // No runner profile exists yet
           displayNoRunnerProfile();
           return null;
+        } else if (response.status === 500) {
+          // Server error - log but don't break the page
+          console.warn('Runner API returned 500 error - server issue');
+          displayNoRunnerProfile();
+          return null;
         } else {
-          throw new Error('Failed to load runner profile');
+          throw new Error(`Failed to load runner profile: ${response.status} ${response.statusText}`);
         }
 
       } catch (error) {
