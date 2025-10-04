@@ -201,6 +201,7 @@
                         // Also store individual items for compatibility
                         localStorage.setItem('user', JSON.stringify(result.user));
                         localStorage.setItem('jwtToken', result.accessToken);
+                        localStorage.setItem('userToken', result.accessToken); // authUtils expects this key
                         localStorage.setItem('refreshToken', result.refreshToken);
                         
                         // Show success message
