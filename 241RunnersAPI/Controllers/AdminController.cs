@@ -1205,6 +1205,225 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
+        /// Create test runners for development/demo purposes
+        /// </summary>
+        [HttpPost("create-test-runners")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> CreateTestRunners()
+        {
+            try
+            {
+                // Get the first admin user to be the owner of test runners
+                var adminUser = await _context.Users
+                    .Where(u => u.Role == "admin")
+                    .FirstOrDefaultAsync();
+
+                if (adminUser == null)
+                {
+                    return BadRequest(new { success = false, message = "No admin user found to create test runners" });
+                }
+
+                // Check if test runners already exist
+                var existingTestRunners = await _context.Runners
+                    .Where(r => r.Name.Contains("Test Runner"))
+                    .CountAsync();
+
+                if (existingTestRunners > 0)
+                {
+                    return Ok(new { 
+                        success = true, 
+                        message = "Test runners already exist", 
+                        count = existingTestRunners 
+                    });
+                }
+
+                var testRunners = new List<Runner>
+                {
+                    new Runner
+                    {
+                        UserId = adminUser.Id,
+                        Name = "Test Runner 1",
+                        DateOfBirth = DateTime.UtcNow.AddYears(-25),
+                        Gender = "Male",
+                        Status = "Missing",
+                        PhysicalDescription = "5'10\", brown hair, blue eyes",
+                        MedicalConditions = "None known",
+                        LastKnownLocation = "Houston, TX",
+                        CreatedAt = DateTime.UtcNow
+                    },
+                    new Runner
+                    {
+                        UserId = adminUser.Id,
+                        Name = "Test Runner 2",
+                        DateOfBirth = DateTime.UtcNow.AddYears(-30),
+                        Gender = "Female",
+                        Status = "Found",
+                        PhysicalDescription = "5'6\", blonde hair, green eyes",
+                        MedicalConditions = "Diabetes",
+                        LastKnownLocation = "Austin, TX",
+                        CreatedAt = DateTime.UtcNow
+                    },
+                    new Runner
+                    {
+                        UserId = adminUser.Id,
+                        Name = "Test Runner 3",
+                        DateOfBirth = DateTime.UtcNow.AddYears(-22),
+                        Gender = "Male",
+                        Status = "Missing",
+                        PhysicalDescription = "6'0\", black hair, brown eyes",
+                        MedicalConditions = "Asthma",
+                        LastKnownLocation = "Dallas, TX",
+                        CreatedAt = DateTime.UtcNow
+                    }
+                };
+
+                _context.Runners.AddRange(testRunners);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Created {Count} test runners", testRunners.Count);
+
+                return Ok(new { 
+                    success = true, 
+                    message = $"Successfully created {testRunners.Count} test runners",
+                    count = testRunners.Count,
+                    runners = testRunners.Select(r => new { r.Id, r.Name, r.Status })
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating test runners");
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
+        /// Get monitoring data for admin dashboard
+        /// </summary>
+        [HttpGet("monitoring-data")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetMonitoringData()
+        {
+            try
+            {
+                var monitoringData = new
+                {
+                    timestamp = DateTime.UtcNow,
+                    systemHealth = new
+                    {
+                        status = "healthy",
+                        uptime = Environment.TickCount64,
+                        memoryUsage = GC.GetTotalMemory(false),
+                        processorCount = Environment.ProcessorCount
+                    },
+                    databaseStats = new
+                    {
+                        userCount = await _context.Users.CountAsync(),
+                        runnerCount = await _context.Runners.CountAsync(),
+                        caseCount = await _context.Cases.CountAsync(),
+                        activeUsers = await _context.Users.CountAsync(u => u.IsActive)
+                    },
+                    apiStats = new
+                    {
+                        requestsPerMinute = 0, // Could be implemented with a counter
+                        averageResponseTime = 0, // Could be implemented with metrics
+                        errorRate = 0 // Could be implemented with error tracking
+                    }
+                };
+
+                return Ok(new { success = true, data = monitoringData });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting monitoring data");
+                return StatusCode(500, new { success = false, message = "Failed to get monitoring data" });
+            }
+        }
+
+        /// <summary>
+        /// Get system status information
+        /// </summary>
+        [HttpGet("system-status")]
+        [Authorize(Roles = "admin")]
+        public IActionResult GetSystemStatus()
+        {
+            try
+            {
+                var systemStatus = new
+                {
+                    timestamp = DateTime.UtcNow,
+                    environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production",
+                    version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "1.0.0",
+                    machineName = Environment.MachineName,
+                    osVersion = Environment.OSVersion.ToString(),
+                    dotnetVersion = Environment.Version.ToString(),
+                    workingSet = Environment.WorkingSet,
+                    processorCount = Environment.ProcessorCount,
+                    is64BitProcess = Environment.Is64BitProcess,
+                    is64BitOperatingSystem = Environment.Is64BitOperatingSystem
+                };
+
+                return Ok(new { success = true, data = systemStatus });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting system status");
+                return StatusCode(500, new { success = false, message = "Failed to get system status" });
+            }
+        }
+
+        /// <summary>
+        /// Get active sessions information
+        /// </summary>
+        [HttpGet("active-sessions")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetActiveSessions()
+        {
+            try
+            {
+                // Get users who have logged in recently (within last 24 hours)
+                var recentLoginThreshold = DateTime.UtcNow.AddHours(-24);
+                var activeSessions = await _context.Users
+                    .Where(u => u.LastLoginAt.HasValue && u.LastLoginAt.Value > recentLoginThreshold)
+                    .Select(u => new
+                    {
+                        u.Id,
+                        u.Email,
+                        u.FirstName,
+                        u.LastName,
+                        u.Role,
+                        u.LastLoginAt,
+                        u.IsActive,
+                        sessionDuration = DateTime.UtcNow - u.LastLoginAt.Value
+                    })
+                    .OrderByDescending(u => u.LastLoginAt)
+                    .ToListAsync();
+
+                var sessionStats = new
+                {
+                    totalActiveSessions = activeSessions.Count,
+                    sessionsByRole = activeSessions.GroupBy(s => s.Role)
+                        .ToDictionary(g => g.Key, g => g.Count()),
+                    averageSessionDuration = activeSessions.Any() 
+                        ? TimeSpan.FromTicks((long)activeSessions.Average(s => s.sessionDuration.Ticks))
+                        : TimeSpan.Zero
+                };
+
+                return Ok(new { 
+                    success = true, 
+                    data = new { 
+                        sessions = activeSessions, 
+                        stats = sessionStats 
+                    } 
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting active sessions");
+                return StatusCode(500, new { success = false, message = "Failed to get active sessions" });
+            }
+        }
+
+        /// <summary>
         /// Report client-side errors
         /// </summary>
         [HttpPost("errors")]

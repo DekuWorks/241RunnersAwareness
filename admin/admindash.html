@@ -3032,6 +3032,9 @@
             <div class="stat-card">
                 <h3>Total Runners</h3>
                 <p class="stat-number" id="totalRunners">-</p>
+                <button onclick="createTestRunners()" class="btn btn-sm btn-primary" style="margin-top: 10px;">
+                    Create Test Runners
+                </button>
             </div>
             <div class="stat-card clickable" onclick="openAdminsModal()">
                 <h3>Active Admins</h3>
@@ -5538,7 +5541,7 @@
                 
                 // Try to load runners from API
                 try {
-                    const response = await fetch(`${apiUrl}/runner`, {
+                    const response = await fetch(`${apiUrl}/v1.0/Runner`, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -5555,10 +5558,20 @@
                     } else {
                         console.warn('⚠️ Runners endpoint not available, setting empty array');
                         dashboardData.runners = [];
+                        // Show a helpful message in the UI
+                        updateElement('totalRunners', 0, {
+                            message: 'No runners found. Create some runners to get started.',
+                            status: 'info'
+                        });
                     }
                 } catch (runnerError) {
                     console.warn('⚠️ Runners endpoint not available:', runnerError.message);
                     dashboardData.runners = [];
+                    // Show a helpful message in the UI
+                    updateElement('totalRunners', 0, {
+                        message: 'Unable to load runners. Check authentication or create some runners.',
+                        status: 'warning'
+                    });
                 }
                 
                 console.log('🏃 Runners loaded:', dashboardData.runners.length);
@@ -5571,6 +5584,66 @@
                     endpoint: '/api/runners',
                     status: error.message || 'Unknown error'
                 });
+            }
+        }
+        
+        async function createTestRunners() {
+            try {
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const token = storage.get('ra_admin_token') || storage.get('jwtToken');
+                
+                if (!token) {
+                    alert('Please log in first to create test runners.');
+                    return;
+                }
+                
+                console.log('🏃 Creating test runners...');
+                
+                const response = await fetch(`${apiUrl}/Admin/create-test-runners`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ Test runners created:', result);
+                    
+                    // Show success message
+                    updateElement('totalRunners', result.count || 3, {
+                        message: `Successfully created ${result.count || 3} test runners!`,
+                        status: 'success'
+                    });
+                    
+                    // Reload runners data
+                    await loadRunners();
+                    
+                    // Show success notification
+                    showToast('Test runners created successfully!', 'success');
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error('❌ Failed to create test runners:', errorData);
+                    
+                    updateElement('totalRunners', 0, {
+                        message: `Failed to create test runners: ${errorData.message || 'Unknown error'}`,
+                        status: 'error'
+                    });
+                    
+                    showToast('Failed to create test runners. Please try again.', 'error');
+                }
+            } catch (error) {
+                console.error('❌ Error creating test runners:', error);
+                
+                updateElement('totalRunners', 0, {
+                    message: `Error creating test runners: ${error.message}`,
+                    status: 'error'
+                });
+                
+                showToast('Error creating test runners. Please try again.', 'error');
             }
         }
         

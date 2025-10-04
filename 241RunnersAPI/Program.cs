@@ -631,8 +631,10 @@ app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthC
 });
 
 // Performance monitoring endpoint
-app.MapGet("/api/performance", (PerformanceMonitoringService performanceService) =>
+app.MapGet("/api/performance", (IServiceProvider serviceProvider) =>
 {
+    var performanceService = serviceProvider.GetRequiredService<PerformanceMonitoringService>();
+    
     // Track memory usage
     performanceService.TrackMemoryUsage();
     
