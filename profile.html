@@ -1606,7 +1606,7 @@
           return null;
         } else if (response.status === 500) {
           // Server error - log but don't break the page
-          console.warn('Runner API returned 500 error - server issue');
+          console.warn('Runner API returned 500 error - server issue. This is a known backend issue that needs to be fixed.');
           displayNoRunnerProfile();
           return null;
         } else {
