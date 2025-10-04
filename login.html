@@ -161,18 +161,25 @@
                         body: JSON.stringify(formData)
                     });
 
+                    // Check if response is ok and has content
+                    if (!response.ok) {
+                        // Handle error responses
+                        let errorMessage = 'Login failed';
+                        try {
+                            const errorData = await response.json();
+                            errorMessage = errorData.error?.message || errorData.message || errorMessage;
+                        } catch (e) {
+                            // If we can't parse JSON, use status text
+                            errorMessage = response.statusText || errorMessage;
+                        }
+                        showAlert(errorMessage);
+                        return;
+                    }
+
+                    // Parse successful response
                     const result = await response.json();
                     
-                    if (response.ok && result.accessToken) {
-                        // Transform API response to expected format
-                        const authData = {
-                            success: true,
-                            token: result.accessToken,
-                            refreshToken: result.refreshToken,
-                            expiresIn: result.expiresIn,
-                            user: result.user
-                        };
-                        
+                    if (result.accessToken) {
                         // Store authentication data
                         localStorage.setItem('user', JSON.stringify(result.user));
                         localStorage.setItem('jwtToken', result.accessToken);
@@ -189,11 +196,11 @@
                             window.location.href = 'profile.html';
                         }
                     } else {
-                        showAlert(result.message || 'Login failed');
+                        showAlert('Login failed - invalid response from server');
                     }
                 } catch (error) {
                     console.error('Login error:', error);
-                    showAlert(error.message || 'Login failed. Please try again.');
+                    showAlert('Login failed. Please try again.');
                 } finally {
                     setLoading(false);
                 }
