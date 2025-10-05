@@ -9722,6 +9722,11 @@
                     return;
                 }
                 
+                // Temporarily disable SignalR to focus on fixing authentication issues
+                console.log('🔧 SignalR temporarily disabled to focus on authentication fixes');
+                startPollingMode();
+                return;
+                
                 // Check if we're likely to have CSP issues (GitHub Pages deployment)
                 const isGitHubPages = window.location.hostname.includes('github.io') || 
                                     window.location.hostname.includes('241runnersawareness.org');
