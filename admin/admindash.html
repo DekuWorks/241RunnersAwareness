@@ -5284,10 +5284,22 @@
             }
         }
 
-        // Get auth token
+        // Get auth token - use admin authentication system
         function getAuthToken() {
+            // Use the admin authentication system's token retrieval
+            if (typeof getAuthData === 'function') {
+                const authData = getAuthData();
+                console.log('🔍 getAuthToken() called via getAuthData():', {
+                    token: authData.token ? 'Present' : 'Missing',
+                    role: authData.role,
+                    user: authData.user ? 'Present' : 'Missing'
+                });
+                return authData.token;
+            }
+            
+            // Fallback to direct localStorage access
             const token = localStorage.getItem('ra_admin_token') || localStorage.getItem('jwtToken') || localStorage.getItem('access_token');
-            console.log('🔍 getAuthToken() called:', {
+            console.log('🔍 getAuthToken() called via localStorage:', {
                 ra_admin_token: localStorage.getItem('ra_admin_token') ? 'Present' : 'Missing',
                 jwtToken: localStorage.getItem('jwtToken') ? 'Present' : 'Missing',
                 access_token: localStorage.getItem('access_token') ? 'Present' : 'Missing',
