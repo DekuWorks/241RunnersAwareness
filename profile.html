@@ -1547,8 +1547,8 @@
         const firstName = user.firstName || nameParts[0] || 'User';
         const lastName = user.lastName || (nameParts.length > 1 ? nameParts.slice(1).join(' ') : '');
         
-        // Update header - use the full name from user.name if available
-        const displayName = user.name || `${firstName} ${lastName}`.trim();
+        // Update header - use the full name from user.fullName if available, or construct from firstName/lastName
+        const displayName = user.fullName || `${firstName} ${lastName}`.trim() || 'User';
         document.getElementById('profileName').textContent = displayName;
         document.getElementById('profileEmail').textContent = user.email || 'No email';
         document.getElementById('profileRole').textContent = user.role || 'user';
@@ -2047,7 +2047,7 @@
       const profileEmail = document.querySelector('.profile-email');
       const profileRole = document.querySelector('.profile-role');
       
-      if (profileName) profileName.textContent = user.name || `${user.firstName || 'User'} ${user.lastName || ''}`.trim();
+      if (profileName) profileName.textContent = user.fullName || `${user.firstName || 'User'} ${user.lastName || ''}`.trim() || 'User';
       if (profileEmail) profileEmail.textContent = user.email;
       if (profileRole) profileRole.textContent = user.role || 'User';
       
