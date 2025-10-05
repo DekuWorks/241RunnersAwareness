@@ -11,7 +11,7 @@ using System.Security.Claims;
 namespace _241RunnersAPI.Controllers
 {
     [ApiController]
-    [Route("api/v{version:apiVersion}/admin")]
+    [Route("api/v{version:apiVersion}/Admin")]
     [ApiVersion("1.0")]
     public class AdminController : BaseController
     {
@@ -1337,6 +1337,7 @@ namespace _241RunnersAPI.Controllers
         /// Report client-side errors
         /// </summary>
         [HttpPost("errors")]
+        [AllowAnonymous]
         public IActionResult ReportError([FromBody] ErrorReportDto errorReport)
         {
             try
