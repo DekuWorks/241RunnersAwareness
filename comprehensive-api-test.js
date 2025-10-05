@@ -1,311 +1,320 @@
 #!/usr/bin/env node
 
-/**
- * Comprehensive API Endpoint Tester for 241 Runners Awareness API
- * Tests all endpoints with proper authentication
- */
-
 const https = require('https');
 const http = require('http');
 
 // Configuration
 const API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net';
+const TEST_CREDENTIALS = {
+  user: { email: 'test@example.com', password: 'TestPassword123!' },
+  admin: { email: 'dekuworks1@gmail.com', password: 'marcus2025' }
+};
 
-// Authentication token
-let authToken = null;
-let testUserId = null;
+// Colors for console output
+const colors = {
+  reset: '\x1b[0m',
+  bright: '\x1b[1m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  cyan: '\x1b[36m'
+};
 
-/**
- * Make HTTP request with proper error handling
- */
+// Helper function to make HTTP requests
 function makeRequest(url, options = {}) {
-    return new Promise((resolve, reject) => {
-        const isHttps = url.startsWith('https://');
-        const client = isHttps ? https : http;
-        
-        const requestOptions = {
-            method: options.method || 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'User-Agent': '241Runners-API-Tester/1.0',
-                ...options.headers
-            },
-            timeout: 30000
-        };
+  return new Promise((resolve, reject) => {
+    const urlObj = new URL(url);
+    const requestOptions = {
+      hostname: urlObj.hostname,
+      port: urlObj.port || (urlObj.protocol === 'https:' ? 443 : 80),
+      path: urlObj.pathname + urlObj.search,
+      method: options.method || 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+      }
+    };
 
-        const req = client.request(url, requestOptions, (res) => {
-            let data = '';
-            
-            res.on('data', (chunk) => {
-                data += chunk;
-            });
-            
-            res.on('end', () => {
-                try {
-                    const responseData = data ? JSON.parse(data) : {};
-                    resolve({
-                        statusCode: res.statusCode,
-                        headers: res.headers,
-                        data: responseData
-                    });
-                } catch (e) {
-                    resolve({
-                        statusCode: res.statusCode,
-                        headers: res.headers,
-                        data: data
-                    });
-                }
-            });
-        });
-
-        req.on('error', (error) => {
-            reject(error);
-        });
-
-        req.on('timeout', () => {
-            req.destroy();
-            reject(new Error('Request timeout'));
-        });
-
-        if (options.body) {
-            req.write(JSON.stringify(options.body));
+    const req = (urlObj.protocol === 'https:' ? https : http).request(requestOptions, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          const jsonData = data ? JSON.parse(data) : null;
+          resolve({
+            status: res.statusCode,
+            statusText: res.statusMessage,
+            headers: res.headers,
+            data: jsonData,
+            rawData: data
+          });
+        } catch (e) {
+          resolve({
+            status: res.statusCode,
+            statusText: res.statusMessage,
+            headers: res.headers,
+            data: null,
+            rawData: data
+          });
         }
-
-        req.end();
+      });
     });
-}
 
-/**
- * Test a single endpoint
- */
-async function testEndpoint(name, method, path, options = {}) {
-    const url = `${API_BASE_URL}${path}`;
-    const startTime = Date.now();
+    req.on('error', reject);
     
-    console.log(`🧪 Testing: ${method} ${path}`);
-    
-    try {
-        const response = await makeRequest(url, {
-            method,
-            ...options
-        });
-        
-        const duration = Date.now() - startTime;
-        const success = response.statusCode >= 200 && response.statusCode < 300;
-        
-        if (success) {
-            console.log(`✅ ${name}: ${response.statusCode} (${duration}ms)`);
-        } else {
-            console.log(`❌ ${name}: ${response.statusCode} (${duration}ms)`);
-            if (response.data && typeof response.data === 'object') {
-                console.log(`   Error: ${JSON.stringify(response.data).substring(0, 200)}...`);
-            }
-        }
-        
-        return { success, response, duration };
-        
-    } catch (error) {
-        const duration = Date.now() - startTime;
-        console.log(`💥 ${name}: ERROR (${duration}ms) - ${error.message}`);
-        return { success: false, error, duration };
+    if (options.body) {
+      req.write(typeof options.body === 'string' ? options.body : JSON.stringify(options.body));
     }
+    
+    req.end();
+  });
 }
 
-/**
- * Authenticate and get token
- */
-async function authenticate() {
-    console.log('🔐 Authenticating...');
-    
-    const result = await testEndpoint(
-        'Admin Login',
-        'POST',
-        '/api/auth/login',
-        {
-            body: {
-                email: 'dekuworks1@gmail.com',
-                password: 'marcus2025'
-            }
-        }
-    );
+// Test result tracking
+const testResults = {
+  passed: 0,
+  failed: 0,
+  total: 0,
+  details: []
+};
 
-    if (result.success && result.response.data.accessToken) {
-        authToken = result.response.data.accessToken;
-        testUserId = result.response.data.user.id;
-        console.log(`🔑 Authentication successful. User ID: ${testUserId}`);
-        return true;
+function logTest(name, status, message, details = null) {
+  testResults.total++;
+  if (status === 'PASS') {
+    testResults.passed++;
+    console.log(`${colors.green}✓${colors.reset} ${colors.bright}${name}${colors.reset} - ${message}`);
+  } else {
+    testResults.failed++;
+    console.log(`${colors.red}✗${colors.reset} ${colors.bright}${name}${colors.reset} - ${message}`);
+  }
+  
+  testResults.details.push({ name, status, message, details });
+}
+
+async function testEndpoint(name, url, options = {}, expectedStatus = 200) {
+  try {
+    const response = await makeRequest(url, options);
+    const success = response.status === expectedStatus;
+    
+    if (success) {
+      logTest(name, 'PASS', `Status: ${response.status} ${response.statusText}`);
     } else {
-        console.log('❌ Authentication failed');
-        return false;
+      logTest(name, 'FAIL', `Expected ${expectedStatus}, got ${response.status} ${response.statusText}`, response.data);
     }
+    
+    return { success, response };
+  } catch (error) {
+    logTest(name, 'FAIL', `Error: ${error.message}`);
+    return { success: false, error };
+  }
 }
 
-/**
- * Test all endpoints
- */
 async function runComprehensiveTests() {
-    console.log('🚀 Starting Comprehensive API Tests');
-    console.log(`🌐 Testing API at: ${API_BASE_URL}`);
-    console.log(`⏰ Started at: ${new Date().toISOString()}\n`);
+  console.log(`${colors.cyan}${colors.bright}🔍 241 Runners API - Comprehensive Test Suite${colors.reset}\n`);
+  
+  // Test 1: Health Check
+  console.log(`${colors.blue}📊 Health & System Endpoints${colors.reset}`);
+  await testEndpoint('Health Check', `${API_BASE_URL}/health`);
+  await testEndpoint('Swagger UI', `${API_BASE_URL}/swagger`, {}, 200);
+  await testEndpoint('API Info', `${API_BASE_URL}/api/info`);
+  
+  // Test 2: Authentication
+  console.log(`\n${colors.blue}🔐 Authentication Endpoints${colors.reset}`);
+  
+  // User Login
+  const userLoginResult = await testEndpoint(
+    'User Login', 
+    `${API_BASE_URL}/api/v1.0/auth/login`,
+    {
+      method: 'POST',
+      body: TEST_CREDENTIALS.user
+    }
+  );
+  
+  let userToken = null;
+  if (userLoginResult.success && userLoginResult.response.data) {
+    userToken = userLoginResult.response.data.accessToken;
+  }
+  
+  // Admin Login
+  const adminLoginResult = await testEndpoint(
+    'Admin Login', 
+    `${API_BASE_URL}/api/v1.0/auth/login`,
+    {
+      method: 'POST',
+      body: TEST_CREDENTIALS.admin
+    }
+  );
+  
+  let adminToken = null;
+  if (adminLoginResult.success && adminLoginResult.response.data) {
+    adminToken = adminLoginResult.response.data.accessToken;
+  }
+  
+  // Test 3: User Endpoints (with authentication)
+  console.log(`\n${colors.blue}👤 User Endpoints${colors.reset}`);
+  
+  if (userToken) {
+    await testEndpoint(
+      'Get Current User',
+      `${API_BASE_URL}/api/v1.0/users/me`,
+      { headers: { 'Authorization': `Bearer ${userToken}` } }
+    );
     
-    let totalTests = 0;
-    let passedTests = 0;
-    let failedTests = 0;
-
-    // Authenticate first
-    if (!(await authenticate())) {
-        console.log('❌ Cannot proceed without authentication');
-        return;
-    }
-
-    const headers = { 'Authorization': `Bearer ${authToken}` };
-
-    // Test Authentication Endpoints
-    console.log('\n🔐 Testing Authentication Endpoints...');
-    totalTests++;
-    const verifyResult = await testEndpoint('Token Verification', 'POST', '/api/auth/verify', { headers });
-    if (verifyResult.success) passedTests++; else failedTests++;
-
-    totalTests++;
-    const meResult = await testEndpoint('Get Current User', 'GET', '/api/auth/me', { headers });
-    if (meResult.success) passedTests++; else failedTests++;
-
-    // Test Admin Endpoints
-    console.log('\n👑 Testing Admin Endpoints...');
-    totalTests++;
-    const statsResult = await testEndpoint('Admin Stats', 'GET', '/api/admin/stats', { headers });
-    if (statsResult.success) passedTests++; else failedTests++;
-
-    totalTests++;
-    const usersResult = await testEndpoint('Get All Users', 'GET', '/api/admin/users', { headers });
-    if (usersResult.success) passedTests++; else failedTests++;
-
-    totalTests++;
-    const adminsResult = await testEndpoint('Get Admins', 'GET', '/api/admin/admins', { headers });
-    if (adminsResult.success) passedTests++; else failedTests++;
-
-    totalTests++;
-    const activityResult = await testEndpoint('Admin Activity', 'GET', '/api/admin/activity', { headers });
-    if (activityResult.success) passedTests++; else failedTests++;
-
-    totalTests++;
-    const dataVersionResult = await testEndpoint('Data Version', 'GET', '/api/admin/data-version', { headers });
-    if (dataVersionResult.success) passedTests++; else failedTests++;
-
-    // Test Cases Endpoints
-    console.log('\n📋 Testing Cases Endpoints...');
-    totalTests++;
-    const casesResult = await testEndpoint('Get Cases', 'GET', '/api/cases', { headers });
-    if (casesResult.success) passedTests++; else failedTests++;
-
-    totalTests++;
-    const publicCasesResult = await testEndpoint('Get Public Cases', 'GET', '/api/cases/publiccases');
-    if (publicCasesResult.success) passedTests++; else failedTests++;
-
-    totalTests++;
-    const publicStatsResult = await testEndpoint('Get Public Cases Stats', 'GET', '/api/cases/publiccases/stats/houston');
-    if (publicStatsResult.success) passedTests++; else failedTests++;
-
-    // Test Individuals Endpoints
-    console.log('\n👥 Testing Individuals Endpoints...');
-    totalTests++;
-    const individualsResult = await testEndpoint('Get Individuals', 'GET', '/api/individuals', { headers });
-    if (individualsResult.success) passedTests++; else failedTests++;
-
-    // Test Runner Endpoints
-    console.log('\n🏃 Testing Runner Endpoints...');
-    totalTests++;
-    const runnersResult = await testEndpoint('Get All Runners', 'GET', '/api/runner', { headers });
-    if (runnersResult.success) passedTests++; else failedTests++;
-
-    totalTests++;
-    const myProfileResult = await testEndpoint('Get My Runner Profile', 'GET', '/api/runner/my-profile', { headers });
-    if (myProfileResult.success) passedTests++; else failedTests++;
-
-    totalTests++;
-    const myCasesResult = await testEndpoint('Get My Cases', 'GET', '/api/runner/my-cases', { headers });
-    if (myCasesResult.success) passedTests++; else failedTests++;
-
-    // Test Users Endpoints
-    console.log('\n👤 Testing Users Endpoints...');
-    totalTests++;
-    const usersAdminResult = await testEndpoint('Get Users (Admin)', 'GET', '/api/users', { headers });
-    if (usersAdminResult.success) passedTests++; else failedTests++;
-
-    // Test Map Endpoints
-    console.log('\n🗺️  Testing Map Endpoints...');
-    totalTests++;
-    const mapPointsResult = await testEndpoint('Get Map Points', 'GET', '/api/map/points', { headers });
-    if (mapPointsResult.success) passedTests++; else failedTests++;
-
-    totalTests++;
-    const mapPointsClusteredResult = await testEndpoint('Get Map Points (Clustered)', 'GET', '/api/map/points?cluster=true', { headers });
-    if (mapPointsClusteredResult.success) passedTests++; else failedTests++;
-
-    totalTests++;
-    const rawMapPointsResult = await testEndpoint('Get Raw Map Points', 'GET', '/api/map/points/raw', { headers });
-    if (rawMapPointsResult.success) passedTests++; else failedTests++;
-
-    // Test Notifications Endpoints
-    console.log('\n🔔 Testing Notifications Endpoints...');
-    totalTests++;
-    const notificationsResult = await testEndpoint('Get Notifications', 'GET', '/api/notifications', { headers });
-    if (notificationsResult.success) passedTests++; else failedTests++;
-
-    totalTests++;
-    const createNotificationResult = await testEndpoint('Create Notification', 'POST', '/api/notifications', {
-        headers,
+    await testEndpoint(
+      'Update User Profile',
+      `${API_BASE_URL}/api/v1.0/users/me`,
+      {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${userToken}` },
+        body: { firstName: 'Test', lastName: 'User' }
+      }
+    );
+  } else {
+    logTest('User Endpoints', 'SKIP', 'No user token available');
+  }
+  
+  // Test 4: Runner Endpoints
+  console.log(`\n${colors.blue}🏃 Runner Endpoints${colors.reset}`);
+  
+  if (userToken) {
+    await testEndpoint(
+      'Get Runners',
+      `${API_BASE_URL}/api/Runner`,
+      { headers: { 'Authorization': `Bearer ${userToken}` } }
+    );
+    
+    await testEndpoint(
+      'Get My Runner Profile',
+      `${API_BASE_URL}/api/Runner/my-profile`,
+      { headers: { 'Authorization': `Bearer ${userToken}` } }
+    );
+    
+    await testEndpoint(
+      'Create Runner Profile',
+      `${API_BASE_URL}/api/Runner`,
+      {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${userToken}` },
         body: {
-            userId: testUserId,
-            type: 'TEST',
-            title: 'Test Notification',
-            body: 'This is a test notification'
+          name: 'Test Runner',
+          dateOfBirth: '1990-01-01',
+          gender: 'Male',
+          status: 'Missing',
+          physicalDescription: 'Test description',
+          userId: 33
         }
-    });
-    if (createNotificationResult.success) passedTests++; else failedTests++;
-
-    // Test Image Upload Endpoints
-    console.log('\n📸 Testing Image Upload Endpoints...');
-    totalTests++;
-    const imageResult = await testEndpoint('Get Image (404 Expected)', 'GET', '/api/imageupload/nonexistent.jpg');
-    // This is expected to fail with 404, so we count it as a "pass" if it returns 404
-    if (imageResult.success || (imageResult.response && imageResult.response.statusCode === 404)) {
-        passedTests++;
+      }
+    );
+  } else {
+    logTest('Runner Endpoints', 'SKIP', 'No user token available');
+  }
+  
+  // Test 5: Admin Endpoints
+  console.log(`\n${colors.blue}👑 Admin Endpoints${colors.reset}`);
+  
+  if (adminToken) {
+    await testEndpoint(
+      'Get All Users',
+      `${API_BASE_URL}/api/v1.0/admin/users`,
+      { headers: { 'Authorization': `Bearer ${adminToken}` } }
+    );
+    
+    await testEndpoint(
+      'Get System Status',
+      `${API_BASE_URL}/api/v1.0/admin/system-status`,
+      { headers: { 'Authorization': `Bearer ${adminToken}` } }
+    );
+    
+    await testEndpoint(
+      'Get Monitoring Data',
+      `${API_BASE_URL}/api/v1.0/admin/monitoring`,
+      { headers: { 'Authorization': `Bearer ${adminToken}` } }
+    );
+    
+    await testEndpoint(
+      'Get Active Sessions',
+      `${API_BASE_URL}/api/v1.0/admin/sessions`,
+      { headers: { 'Authorization': `Bearer ${adminToken}` } }
+    );
+  } else {
+    logTest('Admin Endpoints', 'SKIP', 'No admin token available');
+  }
+  
+  // Test 6: Case Endpoints
+  console.log(`\n${colors.blue}📋 Case Endpoints${colors.reset}`);
+  
+  if (userToken) {
+    await testEndpoint(
+      'Get Public Cases',
+      `${API_BASE_URL}/api/v1.0/cases/public`
+    );
+    
+    await testEndpoint(
+      'Get My Cases',
+      `${API_BASE_URL}/api/v1.0/cases/my-cases`,
+      { headers: { 'Authorization': `Bearer ${userToken}` } }
+    );
+  } else {
+    logTest('Case Endpoints', 'SKIP', 'No user token available');
+  }
+  
+  // Test 7: SignalR Hub
+  console.log(`\n${colors.blue}🔌 SignalR Hub${colors.reset}`);
+  
+  try {
+    const hubResponse = await makeRequest(`${API_BASE_URL}/hubs/user/negotiate`);
+    if (hubResponse.status === 200 || hubResponse.status === 401) {
+      logTest('SignalR Hub Negotiate', 'PASS', `Status: ${hubResponse.status} (Hub is accessible)`);
     } else {
-        failedTests++;
+      logTest('SignalR Hub Negotiate', 'FAIL', `Status: ${hubResponse.status}`);
     }
-
-    // Test Health Endpoints
-    console.log('\n🏥 Testing Health Endpoints...');
-    totalTests++;
-    const rootResult = await testEndpoint('Root Endpoint', 'GET', '/');
-    if (rootResult.success) passedTests++; else failedTests++;
-
-    totalTests++;
-    const apiRootResult = await testEndpoint('API Root', 'GET', '/api');
-    if (apiRootResult.success) passedTests++; else failedTests++;
-
-    // Print Summary
-    console.log('\n' + '='.repeat(60));
-    console.log('📊 COMPREHENSIVE API TEST SUMMARY');
-    console.log('='.repeat(60));
-    console.log(`Total Tests: ${totalTests}`);
-    console.log(`✅ Passed: ${passedTests}`);
-    console.log(`❌ Failed: ${failedTests}`);
-    console.log(`Success Rate: ${((passedTests / totalTests) * 100).toFixed(1)}%`);
-    console.log('='.repeat(60));
-
-    if (failedTests === 0) {
-        console.log('\n🎉 All API endpoints are working correctly!');
-    } else {
-        console.log(`\n⚠️  ${failedTests} endpoint(s) need attention.`);
-    }
-
-    console.log('\n🎯 API STATUS: LIVE AND FUNCTIONAL');
-    console.log('✅ Authentication: Working');
-    console.log('✅ Database Connection: Working');
-    console.log('✅ All Core Endpoints: Responding');
+  } catch (error) {
+    logTest('SignalR Hub Negotiate', 'FAIL', `Error: ${error.message}`);
+  }
+  
+  // Test 8: Error Handling
+  console.log(`\n${colors.blue}⚠️ Error Handling${colors.reset}`);
+  
+  await testEndpoint(
+    'Invalid Endpoint',
+    `${API_BASE_URL}/api/invalid-endpoint`,
+    {},
+    404
+  );
+  
+  await testEndpoint(
+    'Unauthorized Access',
+    `${API_BASE_URL}/api/v1.0/users/me`,
+    {},
+    401
+  );
+  
+  // Summary
+  console.log(`\n${colors.cyan}${colors.bright}📊 Test Summary${colors.reset}`);
+  console.log(`${colors.green}✓ Passed: ${testResults.passed}${colors.reset}`);
+  console.log(`${colors.red}✗ Failed: ${testResults.failed}${colors.reset}`);
+  console.log(`${colors.blue}📊 Total: ${testResults.total}${colors.reset}`);
+  
+  const successRate = ((testResults.passed / testResults.total) * 100).toFixed(1);
+  console.log(`${colors.magenta}📈 Success Rate: ${successRate}%${colors.reset}`);
+  
+  if (testResults.failed > 0) {
+    console.log(`\n${colors.yellow}⚠️ Failed Tests:${colors.reset}`);
+    testResults.details
+      .filter(test => test.status === 'FAIL')
+      .forEach(test => {
+        console.log(`  • ${test.name}: ${test.message}`);
+        if (test.details) {
+          console.log(`    Details: ${JSON.stringify(test.details, null, 2)}`);
+        }
+      });
+  }
+  
+  console.log(`\n${colors.cyan}🎯 API Testing Complete!${colors.reset}`);
 }
 
-// Run tests
+// Run the tests
 runComprehensiveTests().catch(console.error);

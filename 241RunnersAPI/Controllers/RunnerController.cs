@@ -37,7 +37,7 @@ namespace _241RunnersAPI.Controllers
                     return Unauthorized(new { success = false, message = "Invalid user token" });
                 }
 
-                var query = _context.Runners.Include(r => r.User).AsQueryable();
+                var query = _context.Runners.AsQueryable();
 
                 // Apply role-based filtering
                 if (userRole != "admin")
@@ -90,10 +90,10 @@ namespace _241RunnersAPI.Controllers
                         IsVerified = r.IsVerified,
                         VerifiedAt = r.VerifiedAt,
                         VerifiedBy = r.VerifiedBy,
-                        UserEmail = r.User != null ? r.User.Email : null,
-                        UserPhoneNumber = r.User != null ? r.User.PhoneNumber : null,
-                        UserEmergencyContactName = r.User != null ? r.User.EmergencyContactName : null,
-                        UserEmergencyContactPhone = r.User != null ? r.User.EmergencyContactPhone : null
+                        UserEmail = null, // Will be populated separately if needed
+                        UserPhoneNumber = null, // Will be populated separately if needed
+                        UserEmergencyContactName = null, // Will be populated separately if needed
+                        UserEmergencyContactPhone = null // Will be populated separately if needed
                     })
                     .ToListAsync();
 
@@ -131,7 +131,6 @@ namespace _241RunnersAPI.Controllers
                 }
 
                 var runner = await _context.Runners
-                    .Include(r => r.User)
                     .FirstOrDefaultAsync(r => r.Id == id);
 
                 if (runner == null)
@@ -175,10 +174,10 @@ namespace _241RunnersAPI.Controllers
                     IsVerified = runner.IsVerified,
                     VerifiedAt = runner.VerifiedAt,
                     VerifiedBy = runner.VerifiedBy,
-                    UserEmail = runner.User != null ? runner.User.Email : null,
-                    UserPhoneNumber = runner.User != null ? runner.User.PhoneNumber : null,
-                    UserEmergencyContactName = runner.User != null ? runner.User.EmergencyContactName : null,
-                    UserEmergencyContactPhone = runner.User != null ? runner.User.EmergencyContactPhone : null
+                    UserEmail = null, // Will be populated separately if needed
+                    UserPhoneNumber = null, // Will be populated separately if needed
+                    UserEmergencyContactName = null, // Will be populated separately if needed
+                    UserEmergencyContactPhone = null // Will be populated separately if needed
                 };
 
                 return Ok(new { success = true, runner = runnerResponse });
