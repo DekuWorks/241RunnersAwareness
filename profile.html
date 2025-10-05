@@ -1579,7 +1579,7 @@
         }
 
         // Get user's runners
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/Runner`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -1909,7 +1909,7 @@
         // Add UserId to the data
         data.userId = currentUser.id;
         
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/Runner`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

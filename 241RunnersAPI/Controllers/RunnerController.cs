@@ -8,7 +8,8 @@ using _241RunnersAPI.Models;
 namespace _241RunnersAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
     public class RunnerController : ControllerBase
     {
         private readonly ApplicationDbContext _context;

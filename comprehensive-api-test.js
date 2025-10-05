@@ -182,19 +182,19 @@ async function runComprehensiveTests() {
   if (userToken) {
     await testEndpoint(
       'Get Runners',
-      `${API_BASE_URL}/api/Runner`,
+      `${API_BASE_URL}/api/v1.0/Runner`,
       { headers: { 'Authorization': `Bearer ${userToken}` } }
     );
     
     await testEndpoint(
       'Get My Runner Profile',
-      `${API_BASE_URL}/api/Runner/my-profile`,
+      `${API_BASE_URL}/api/v1.0/Runner/my-profile`,
       { headers: { 'Authorization': `Bearer ${userToken}` } }
     );
     
     await testEndpoint(
       'Create Runner Profile',
-      `${API_BASE_URL}/api/Runner`,
+      `${API_BASE_URL}/api/v1.0/Runner`,
       {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${userToken}` },
