@@ -5286,7 +5286,7 @@
 
         // Get auth token
         function getAuthToken() {
-            return localStorage.getItem('userToken') || localStorage.getItem('jwtToken') || localStorage.getItem('token');
+            return localStorage.getItem('ra_admin_token') || localStorage.getItem('jwtToken') || localStorage.getItem('access_token');
         }
         
         async function loadDashboardData() {
