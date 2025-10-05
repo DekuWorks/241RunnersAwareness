@@ -5538,7 +5538,7 @@
                 
                 // Try to load runners from API
                 try {
-                    const response = await fetch(`${apiUrl}/v1.0/Runner`, {
+                    const response = await fetch(`${apiUrl}/Runner`, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -5730,7 +5730,7 @@
             try {
                 const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
                 // Use the cases endpoint as a health check since it's public and always available
-                const response = await fetch(`${apiUrl}/health`, {
+                const response = await fetch(`${apiUrl.replace('/v1.0', '')}/health`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
