@@ -9722,10 +9722,25 @@
                     return;
                 }
                 
-                // Temporarily disable SignalR to focus on fixing authentication issues
-                console.log('🔧 SignalR temporarily disabled to focus on authentication fixes');
-                startPollingMode();
-                return;
+                // Use the proper RealtimeClient from mobile app
+                if (typeof window.realtimeClient !== 'undefined') {
+                    console.log('🔌 Using RealtimeClient from mobile app for admin dashboard');
+                    try {
+                        await window.realtimeClient.initialize();
+                        isRealTimeEnabled = true;
+                        console.log('✅ Real-time updates enabled via RealtimeClient');
+                        return;
+                    } catch (error) {
+                        console.error('❌ Failed to initialize RealtimeClient:', error);
+                        console.log('🔄 Falling back to polling mode');
+                        startPollingMode();
+                        return;
+                    }
+                } else {
+                    console.log('⚠️ RealtimeClient not available, using polling mode');
+                    startPollingMode();
+                    return;
+                }
                 
                 // Check if we're likely to have CSP issues (GitHub Pages deployment)
                 const isGitHubPages = window.location.hostname.includes('github.io') || 

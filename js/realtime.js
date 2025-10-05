@@ -111,6 +111,57 @@ class RealtimeClient {
             console.log('🔔 System notification:', data);
             this.handleSystemNotification(data);
         });
+
+        // Admin-specific event handlers
+        this.connection.on("AdminConnected", (data) => {
+            console.log('👑 Admin connected:', data);
+            this.handleAdminConnected(data);
+        });
+
+        this.connection.on("AdminDisconnected", (data) => {
+            console.log('👑 Admin disconnected:', data);
+            this.handleAdminDisconnected(data);
+        });
+
+        this.connection.on("CurrentAdmins", (data) => {
+            console.log('👥 Current admins:', data);
+            this.handleCurrentAdmins(data);
+        });
+
+        this.connection.on("UserChanged", (data) => {
+            console.log('👤 User changed:', data);
+            this.handleUserChanged(data);
+        });
+
+        this.connection.on("RunnerChanged", (data) => {
+            console.log('🏃 Runner changed:', data);
+            this.handleRunnerChanged(data);
+        });
+
+        this.connection.on("AdminProfileChanged", (data) => {
+            console.log('👑 Admin profile changed:', data);
+            this.handleAdminProfileChanged(data);
+        });
+
+        this.connection.on("DataVersionChanged", (data) => {
+            console.log('📊 Data version changed:', data);
+            this.handleDataVersionChanged(data);
+        });
+
+        this.connection.on("AdminActivity", (data) => {
+            console.log('👑 Admin activity:', data);
+            this.handleAdminActivity(data);
+        });
+
+        this.connection.on("OnlineAdmins", (data) => {
+            console.log('👥 Online admins:', data);
+            this.handleOnlineAdmins(data);
+        });
+
+        this.connection.on("Pong", (data) => {
+            console.log('🏓 Pong received:', data);
+            this.handlePong(data);
+        });
     }
 
     async start() {
@@ -255,6 +306,111 @@ class RealtimeClient {
         if (typeof showToast === 'function') {
             showToast(data.message || 'System notification', data.type || 'info');
         }
+    }
+
+    // Admin-specific event handlers
+    handleAdminConnected(data) {
+        // Show notification about admin connection
+        if (typeof showToast === 'function') {
+            showToast(`${data.adminName || 'Admin'} connected`, 'info');
+        }
+        
+        // Refresh admin list if function exists
+        if (typeof refreshDashboardData === 'function') {
+            refreshDashboardData();
+        }
+    }
+
+    handleAdminDisconnected(data) {
+        // Show notification about admin disconnection
+        if (typeof showToast === 'function') {
+            showToast(`${data.adminName || 'Admin'} disconnected`, 'info');
+        }
+        
+        // Refresh admin list if function exists
+        if (typeof refreshDashboardData === 'function') {
+            refreshDashboardData();
+        }
+    }
+
+    handleCurrentAdmins(data) {
+        // Update admin list in dashboard
+        if (typeof updateAdminList === 'function') {
+            updateAdminList(data);
+        }
+    }
+
+    handleUserChanged(data) {
+        // Refresh users list
+        if (typeof refreshDashboardData === 'function') {
+            refreshDashboardData();
+        }
+        
+        // Show notification
+        if (typeof showToast === 'function') {
+            showToast(`User ${data.operation || 'changed'} by ${data.changedBy || 'admin'}`, 'info');
+        }
+    }
+
+    handleRunnerChanged(data) {
+        // Refresh runners list
+        if (typeof refreshDashboardData === 'function') {
+            refreshDashboardData();
+        }
+        
+        // Show notification
+        if (typeof showToast === 'function') {
+            showToast(`Runner ${data.operation || 'changed'} by ${data.changedBy || 'admin'}`, 'info');
+        }
+    }
+
+    handleAdminProfileChanged(data) {
+        // Refresh admin profile if needed
+        if (typeof refreshDashboardData === 'function') {
+            refreshDashboardData();
+        }
+        
+        // Show notification
+        if (typeof showToast === 'function') {
+            showToast(`Admin profile ${data.operation || 'changed'} by ${data.changedBy || 'admin'}`, 'info');
+        }
+    }
+
+    handleDataVersionChanged(data) {
+        // Refresh dashboard data when data version changes
+        if (typeof refreshDashboardData === 'function') {
+            refreshDashboardData();
+        }
+        
+        // Show notification
+        if (typeof showToast === 'function') {
+            showToast(`${data.dataType || 'Data'} updated by ${data.changedBy || 'admin'}`, 'info');
+        }
+    }
+
+    handleAdminActivity(data) {
+        // Log admin activity
+        console.log(`Admin activity: ${data.activity} by ${data.adminName}`);
+        
+        // Show notification for important activities
+        if (data.activity && ['user_management', 'system_config', 'bulk_operations'].includes(data.activity)) {
+            if (typeof showToast === 'function') {
+                showToast(`Admin activity: ${data.activity}`, 'info');
+            }
+        }
+    }
+
+    handleOnlineAdmins(data) {
+        // Update online admins list
+        if (typeof updateOnlineAdmins === 'function') {
+            updateOnlineAdmins(data);
+        }
+    }
+
+    handlePong(data) {
+        // Update last ping time
+        this.lastPing = data;
+        console.log('🏓 Ping response received');
     }
 
     // Public methods
