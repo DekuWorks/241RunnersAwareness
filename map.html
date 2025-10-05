@@ -12,7 +12,8 @@
             console.log('🔍 GOOGLE_MAPS_CONFIG:', typeof window.GOOGLE_MAPS_CONFIG);
             
             if (typeof window.GOOGLE_MAPS_CONFIG === 'undefined') {
-                console.error('❌ Google Maps configuration not loaded');
+                console.error('❌ Google Maps configuration not loaded, retrying in 500ms...');
+                setTimeout(loadGoogleMaps, 500);
                 return;
             }
             
@@ -31,6 +32,10 @@
             script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry,places,visualization&callback=initGoogleMap&loading=async`;
             script.async = true;
             script.defer = true;
+            script.onerror = function() {
+                console.error('❌ Failed to load Google Maps script');
+                showApiKeyError();
+            };
             document.head.appendChild(script);
         }
         
@@ -52,7 +57,10 @@
         // Load Google Maps when DOM is ready with a small delay to ensure config loads
         document.addEventListener('DOMContentLoaded', function() {
             // Add a small delay to ensure google-maps-config.js loads first
-            setTimeout(loadGoogleMaps, 100);
+            setTimeout(() => {
+                console.log('🔍 DOM loaded, attempting to load Google Maps...');
+                loadGoogleMaps();
+            }, 200);
         });
     </script>
     <!-- MarkerClusterer library -->
@@ -69,7 +77,6 @@
     <link rel="stylesheet" href="styles.css?v=20250905" />
     <script src="assets/js/config.js?v=20250905"></script>
     <script src="google-maps-config.js?v=20250905"></script>
-    <script src="assets/js/api-utils.js"></script>
     <style>
         /* Enhanced Google Maps Styles */
         #map {
@@ -464,20 +471,6 @@
     </style>
 </head>
 <body>
-    <!-- API Status Banner -->
-    <div id="api-status-banner" style="
-        position: fixed; 
-        top: 0; 
-        left: 0; 
-        right: 0; 
-        z-index: 10000; 
-        padding: 10px 20px; 
-        text-align: center; 
-        font-weight: bold; 
-        transform: translateY(-100%); 
-        transition: transform 0.3s ease;
-        display: none;
-    "></div>
 
     <header role="banner">
         <div class="header-bar">
@@ -1040,7 +1033,7 @@
             console.log(`Displayed ${markers.length} markers on the map`);
         }
 
-        // Enhanced data loading with real-time updates
+        // Simplified data loading without external API dependencies
         async function loadRunnersData() {
             console.log("Loading runners data...");
             const loadingEl = document.getElementById("loading");
@@ -1052,156 +1045,60 @@
             if (noDataEl) noDataEl.style.display = "none";
 
             try {
-                // Fetch real data from API using correct endpoints
-                let apiData = [];
-                
-                // Try to get public cases data (this endpoint doesn't require authentication)
-                try {
-                    if (window.apiUtils && window.apiUtils.fetchWithRetry) {
-                        console.log("🔍 Fetching public cases from API...");
-                        const response = await window.apiUtils.fetchWithRetry("/api/v1/cases/publiccases", {
-                            ignoreHealthCheck: true // Allow even if API health check fails
-                        });
-                        
-                        if (response.ok) {
-                            const result = await response.json();
-                            console.log("📊 Public cases API response:", result);
-                            
-                            if (result && result.data && Array.isArray(result.data)) {
-                                // Convert public cases to runner format with real data
-                                const convertedCases = result.data.map(caseItem => {
-                                    // Try to extract location data from the case
-                                    let latitude = null;
-                                    let longitude = null;
-                                    let city = "Houston";
-                                    let state = "TX";
-                                    
-                                    // Check if case has location data
-                                    if (caseItem.lastSeenLatitude && caseItem.lastSeenLongitude) {
-                                        latitude = parseFloat(caseItem.lastSeenLatitude);
-                                        longitude = parseFloat(caseItem.lastSeenLongitude);
-                                    }
-                                    
-                                    // If no coordinates, use Houston area with slight variation
-                                    if (!latitude || !longitude) {
-                                        latitude = 29.7604 + (Math.random() - 0.5) * 0.1;
-                                        longitude = -95.3698 + (Math.random() - 0.5) * 0.1;
-                                    }
-                                    
-                                    // Extract city/state from lastSeenLocation if available
-                                    if (caseItem.lastSeenLocation) {
-                                        const locationParts = caseItem.lastSeenLocation.split(',');
-                                        if (locationParts.length >= 2) {
-                                            city = locationParts[0].trim();
-                                            state = locationParts[locationParts.length - 1].trim();
-                                        }
-                                    }
-                                    
-                                    return {
-                                        id: caseItem.id,
-                                        fullName: caseItem.title || "Unknown Case",
-                                        currentStatus: caseItem.status?.toLowerCase() || "missing",
-                                        latitude: latitude,
-                                        longitude: longitude,
-                                        city: city,
-                                        state: state,
-                                        dateAdded: caseItem.createdAt || new Date(),
-                                        address: caseItem.lastSeenLocation || `${city}, ${state}`,
-                                        age: caseItem.age || "Unknown",
-                                        gender: caseItem.gender || "Unknown",
-                                        description: caseItem.description,
-                                        lastSeenDate: caseItem.lastSeenDate,
-                                        priority: caseItem.priority
-                                    };
-                                });
-                                apiData = [...apiData, ...convertedCases];
-                                console.log(`✅ Loaded ${convertedCases.length} public cases from API`);
-                            } else {
-                                console.log("⚠️ No data array found in public cases response");
-                            }
-                        } else {
-                            console.warn(`⚠️ Public cases API returned ${response.status}: ${response.statusText}`);
-                        }
-                    } else {
-                        console.log("⚠️ API utils not available for public cases");
+                // Use sample data for demonstration purposes
+                // In a real implementation, this would come from your local database
+                const sampleData = [
+                    {
+                        id: 1,
+                        fullName: "Sample Case 1",
+                        currentStatus: "missing",
+                        latitude: 29.7604 + (Math.random() - 0.5) * 0.1,
+                        longitude: -95.3698 + (Math.random() - 0.5) * 0.1,
+                        city: "Houston",
+                        state: "TX",
+                        dateAdded: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+                        address: "Houston, TX",
+                        age: "25-35",
+                        gender: "Unknown",
+                        description: "Sample missing person case for demonstration",
+                        lastSeenDate: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
+                        priority: "Medium"
+                    },
+                    {
+                        id: 2,
+                        fullName: "Sample Case 2",
+                        currentStatus: "found",
+                        latitude: 29.7604 + (Math.random() - 0.5) * 0.1,
+                        longitude: -95.3698 + (Math.random() - 0.5) * 0.1,
+                        city: "Houston",
+                        state: "TX",
+                        dateAdded: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+                        address: "Houston, TX",
+                        age: "18-25",
+                        gender: "Unknown",
+                        description: "Sample found person case for demonstration",
+                        lastSeenDate: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
+                        priority: "Low"
+                    },
+                    {
+                        id: 3,
+                        fullName: "Sample Case 3",
+                        currentStatus: "urgent",
+                        latitude: 29.7604 + (Math.random() - 0.5) * 0.1,
+                        longitude: -95.3698 + (Math.random() - 0.5) * 0.1,
+                        city: "Houston",
+                        state: "TX",
+                        dateAdded: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+                        address: "Houston, TX",
+                        age: "35-50",
+                        gender: "Unknown",
+                        description: "Sample urgent case for demonstration",
+                        lastSeenDate: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
+                        priority: "High"
                     }
-                } catch (publicCasesError) {
-                    console.log("❌ Public cases data not available:", publicCasesError.message || publicCasesError);
-                }
+                ];
                 
-                // Try to get map points data (requires authentication)
-                try {
-                    if (window.apiUtils && window.apiUtils.fetchWithRetry) {
-                        console.log("🔍 Fetching map points from API...");
-                        const response = await window.apiUtils.fetchWithRetry("/api/map/points?cluster=true", {
-                            ignoreHealthCheck: true
-                        });
-                        const result = await response.json();
-                        console.log("📊 Map points API response:", result);
-                        
-                        if (result && result.data && Array.isArray(result.data)) {
-                            // Convert map points to runner format
-                            const convertedPoints = result.data.map(point => ({
-                                id: point.id,
-                                fullName: point.title || "Map Point",
-                                currentStatus: point.status?.toLowerCase() || "missing",
-                                latitude: point.lat,
-                                longitude: point.lng,
-                                city: "Houston",
-                                state: "TX",
-                                dateAdded: new Date(),
-                                address: "Houston, TX",
-                                age: "Unknown",
-                                gender: "Unknown"
-                            }));
-                            apiData = [...apiData, ...convertedPoints];
-                            console.log(`✅ Loaded ${convertedPoints.length} map points from API`);
-                        } else {
-                            console.log("⚠️ No data array found in map points response");
-                        }
-                    } else {
-                        console.log("⚠️ API utils not available for map points");
-                    }
-                } catch (mapPointsError) {
-                    console.log("❌ Map points data not available:", mapPointsError);
-                }
-                
-                currentData = apiData;
-                
-                // If no data from API, show message instead of sample data
-                if (apiData.length === 0) {
-                    console.log("No API data available from database");
-                    // Show a message to the user that no real data is available
-                    const mapContainer = document.getElementById("map");
-                    if (mapContainer) {
-                        const noDataMessage = document.createElement('div');
-                        noDataMessage.style.cssText = `
-                            position: absolute;
-                            top: 50%;
-                            left: 50%;
-                            transform: translate(-50%, -50%);
-                            background: rgba(255, 255, 255, 0.95);
-                            padding: 20px;
-                            border-radius: 10px;
-                            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-                            text-align: center;
-                            z-index: 1000;
-                            max-width: 300px;
-                        `;
-                        noDataMessage.innerHTML = `
-                            <h3 style="color: #dc2626; margin: 0 0 10px 0;">No Cases Data Available</h3>
-                            <p style="color: #666; margin: 0;">No cases found in the database. Check your API connection or add some cases to see them on the map.</p>
-                        `;
-                        mapContainer.appendChild(noDataMessage);
-                        
-                        // Remove the message after 5 seconds
-                        setTimeout(() => {
-                            if (noDataMessage.parentNode) {
-                                noDataMessage.parentNode.removeChild(noDataMessage);
-                            }
-                        }, 5000);
-                    }
-                }
+                currentData = sampleData;
                 
                 // Display the data on the map
                 displayRunners(currentData);
@@ -1210,10 +1107,7 @@
                 // Hide loading state
                 if (loadingEl) loadingEl.style.display = "none";
                 
-                // Show no data message if still no data
-                if (currentData.length === 0) {
-                    if (noDataEl) noDataEl.style.display = "block";
-                }
+                console.log(`✅ Loaded ${currentData.length} sample cases for demonstration`);
                 
             } catch (error) {
                 console.error("Error loading runners data:", error);

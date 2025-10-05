@@ -12,7 +12,7 @@ window.APP_CONFIG = {
     APP_VERSION: "1.0.0",
     ENVIRONMENT: "production",
     DEBUG: false,
-    HEALTH_CHECK_ENDPOINT: "/Auth/health",
+    HEALTH_CHECK_ENDPOINT: "/auth/health",
     API_TIMEOUT: 10000,
     RETRY_ATTEMPTS: 3
 };
