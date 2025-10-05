@@ -1547,11 +1547,8 @@
         const firstName = user.firstName || nameParts[0] || 'User';
         const lastName = user.lastName || (nameParts.length > 1 ? nameParts.slice(1).join(' ') : '');
         
-        // Update header - use the full name from user.fullName if available, or construct from firstName/lastName
-        const displayName = user.fullName || `${firstName} ${lastName}`.trim() || 'User';
-        document.getElementById('profileName').textContent = displayName;
-        document.getElementById('profileEmail').textContent = user.email || 'No email';
-        document.getElementById('profileRole').textContent = user.role || 'user';
+        // Don't update header here - let loadUserProfileData() handle it with fresh API data
+        // This prevents race condition where localStorage data overwrites API data
         
         // Update personal information
         document.getElementById('firstName').textContent = firstName;
