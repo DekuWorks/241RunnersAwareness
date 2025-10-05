@@ -5286,7 +5286,14 @@
 
         // Get auth token
         function getAuthToken() {
-            return localStorage.getItem('ra_admin_token') || localStorage.getItem('jwtToken') || localStorage.getItem('access_token');
+            const token = localStorage.getItem('ra_admin_token') || localStorage.getItem('jwtToken') || localStorage.getItem('access_token');
+            console.log('🔍 getAuthToken() called:', {
+                ra_admin_token: localStorage.getItem('ra_admin_token') ? 'Present' : 'Missing',
+                jwtToken: localStorage.getItem('jwtToken') ? 'Present' : 'Missing',
+                access_token: localStorage.getItem('access_token') ? 'Present' : 'Missing',
+                finalToken: token ? 'Present' : 'Missing'
+            });
+            return token;
         }
         
         async function loadDashboardData() {
