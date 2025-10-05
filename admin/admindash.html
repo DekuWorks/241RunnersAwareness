@@ -4644,7 +4644,7 @@
         // API Configuration - Fixed URL without trailing slash
         // Note: API_BASE_URL may be set by admin-auth.js, so we check for it first
         if (typeof API_BASE_URL === 'undefined') {
-            window.API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
+            window.API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
         }
         
         // Browser compatibility checks
@@ -5407,7 +5407,7 @@
                 }
                 
                 // Load real user data from API
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
                 console.log('📡 Users API URL:', `${apiUrl}/Admin/users`);
                 console.log('🔑 Using token:', token ? `Present (length: ${token.length})` : 'Missing');
                 
@@ -5527,7 +5527,7 @@
             try {
                 // Load runners from API when endpoint is available
                 // For now, get runner count from cases data
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
                 const token = storage.get('ra_admin_token') || storage.get('jwtToken');
                 
                 if (!token) {
@@ -5588,7 +5588,7 @@
         async function loadAdmins() {
             try {
                 // Load admins from the dedicated API endpoint
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
                 const token = storage.get('ra_admin_token') || storage.get('jwtToken');
                 
                 if (!token) {
@@ -5646,7 +5646,7 @@
         async function loadPublicCases() {
             try {
                 // Load case statistics from the Admin/stats endpoint
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
                 const token = storage.get('ra_admin_token') || storage.get('jwtToken');
                 
                 if (!token) {
@@ -5728,7 +5728,7 @@
         
         async function checkSystemStatus() {
             try {
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
                 // Use the cases endpoint as a health check since it's public and always available
                 const response = await fetch(`${apiUrl}/health`, {
                     method: 'GET',
@@ -5939,7 +5939,7 @@
             try {
                 showToast('Deleting user...', 'info', 2000);
                 
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
                 const token = storage.get('ra_admin_token') || storage.get('jwtToken');
                 
                 console.log('🔍 Delete User Debug:', {
@@ -6040,7 +6040,7 @@
             try {
                 showToast('Deleting admin...', 'info', 2000);
                 
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
                 const token = storage.get('ra_admin_token') || storage.get('jwtToken');
                 
                 console.log('🔍 Delete Admin Debug:', {
@@ -6338,7 +6338,7 @@
                 
                 console.log('Sending invitation:', inviteData);
                 
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
                 const response = await fetch(`${apiUrl}/Admin/invite-user`, {
                     method: 'POST',
                     headers: {
@@ -6408,7 +6408,7 @@
             
             try {
                 const userIds = Array.from(selectedRows).map(row => row.dataset.userId);
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
                 
                 const response = await fetch(`${apiUrl}/Admin/users/bulk-update-status`, {
                     method: 'POST',
@@ -6455,7 +6455,7 @@
             
             try {
                 const userIds = Array.from(selectedRows).map(row => row.dataset.userId);
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
                 
                 const response = await fetch(`${apiUrl}/Admin/users/bulk-update-role`, {
                     method: 'POST',
@@ -9688,7 +9688,7 @@
         async function initializeRealTimeUpdates() {
             try {
                 
-                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
                 const hubUrl = apiBaseUrl.replace('/api', '') + '/hubs/admin';
                 console.log('🔌 SignalR Hub URL:', hubUrl);
                 
