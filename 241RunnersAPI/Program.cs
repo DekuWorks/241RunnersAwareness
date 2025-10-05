@@ -45,7 +45,7 @@ builder.Services.AddApiVersioning(options =>
 builder.Services.AddVersionedApiExplorer(options =>
 {
     options.GroupNameFormat = "'v'VVV";
-    options.SubstituteApiVersionInUrl = true;
+    options.SubstituteApiVersionInUrl = false;
 });
 
 // Configure request size limits
@@ -320,14 +320,9 @@ builder.Services.AddHealthChecks()
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-// Enable Swagger in production if configured
-var swaggerEnabled = builder.Configuration.GetValue<bool>("Swagger:Enabled", false) ||
+// Enable Swagger in development or if configured in production
+var swaggerEnabled = app.Environment.IsDevelopment() || 
+                     builder.Configuration.GetValue<bool>("Swagger:Enabled", false) ||
                      builder.Configuration.GetValue<bool>("Swagger__Enabled", false);
 if (swaggerEnabled)
 {
