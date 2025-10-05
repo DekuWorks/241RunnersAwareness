@@ -90,10 +90,10 @@ namespace _241RunnersAPI.Controllers
                         IsVerified = r.IsVerified,
                         VerifiedAt = r.VerifiedAt,
                         VerifiedBy = r.VerifiedBy,
-                        UserEmail = r.User.Email,
-                        UserPhoneNumber = r.User.PhoneNumber,
-                        UserEmergencyContactName = r.User.EmergencyContactName,
-                        UserEmergencyContactPhone = r.User.EmergencyContactPhone
+                        UserEmail = r.User != null ? r.User.Email : null,
+                        UserPhoneNumber = r.User != null ? r.User.PhoneNumber : null,
+                        UserEmergencyContactName = r.User != null ? r.User.EmergencyContactName : null,
+                        UserEmergencyContactPhone = r.User != null ? r.User.EmergencyContactPhone : null
                     })
                     .ToListAsync();
 
@@ -175,10 +175,10 @@ namespace _241RunnersAPI.Controllers
                     IsVerified = runner.IsVerified,
                     VerifiedAt = runner.VerifiedAt,
                     VerifiedBy = runner.VerifiedBy,
-                    UserEmail = runner.User.Email,
-                    UserPhoneNumber = runner.User.PhoneNumber,
-                    UserEmergencyContactName = runner.User.EmergencyContactName,
-                    UserEmergencyContactPhone = runner.User.EmergencyContactPhone
+                    UserEmail = runner.User != null ? runner.User.Email : null,
+                    UserPhoneNumber = runner.User != null ? runner.User.PhoneNumber : null,
+                    UserEmergencyContactName = runner.User != null ? runner.User.EmergencyContactName : null,
+                    UserEmergencyContactPhone = runner.User != null ? runner.User.EmergencyContactPhone : null
                 };
 
                 return Ok(new { success = true, runner = runnerResponse });
