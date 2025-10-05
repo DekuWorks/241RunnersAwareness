@@ -64,12 +64,15 @@
         });
     </script>
     <!-- MarkerClusterer library -->
-    <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
+    <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js" onload="console.log('✅ MarkerClusterer loaded successfully')" onerror="console.warn('⚠️ Failed to load MarkerClusterer')"></script>
     <script>
         // Ensure MarkerClusterer is available globally
-        if (typeof MarkerClusterer === 'undefined' && typeof window.MarkerClusterer !== 'undefined') {
-            window.MarkerClusterer = window.MarkerClusterer;
-        }
+        window.addEventListener('load', function() {
+            if (typeof MarkerClusterer === 'undefined' && typeof window.MarkerClusterer !== 'undefined') {
+                window.MarkerClusterer = window.MarkerClusterer;
+                console.log('✅ MarkerClusterer made available globally');
+            }
+        });
     </script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0" />
     <meta http-equiv="Pragma" content="no-cache" />
@@ -693,7 +696,11 @@
                         markerCluster = new window.MarkerClusterer(map, [], config.CLUSTER_CONFIG);
                         console.log("✅ MarkerClusterer initialized from window object");
                     } else {
-                        console.warn("⚠️ MarkerClusterer not available, using fallback marker management");
+                        // Only log once to avoid spam
+                        if (!window.markerClustererFallbackLogged) {
+                            console.warn("⚠️ MarkerClusterer not available, using fallback marker management");
+                            window.markerClustererFallbackLogged = true;
+                        }
                         // Enhanced fallback with proper marker management
                         markerCluster = {
                             _markers: [],
@@ -818,8 +825,13 @@
             
             let marker;
             
-            // Use AdvancedMarkerElement if available (recommended), otherwise fall back to Marker
-            if (typeof google.maps.marker !== 'undefined' && google.maps.marker.AdvancedMarkerElement) {
+            // Check for AdvancedMarkerElement availability with better detection
+            const hasAdvancedMarker = typeof google !== 'undefined' && 
+                                    typeof google.maps !== 'undefined' && 
+                                    typeof google.maps.marker !== 'undefined' && 
+                                    typeof google.maps.marker.AdvancedMarkerElement !== 'undefined';
+            
+            if (hasAdvancedMarker) {
                 try {
                     // Create AdvancedMarkerElement (recommended approach)
                     const markerElement = document.createElement('div');
@@ -849,7 +861,11 @@
                         title: runner.fullName || 'Unknown'
                     });
                     
-                    console.log("✅ Using AdvancedMarkerElement (recommended)");
+                    // Only log once to avoid spam
+                    if (!window.advancedMarkerLogged) {
+                        console.log("✅ Using AdvancedMarkerElement (recommended)");
+                        window.advancedMarkerLogged = true;
+                    }
                 } catch (error) {
                     console.warn("⚠️ AdvancedMarkerElement failed, falling back to Marker:", error);
                     // Fallback to traditional Marker
@@ -863,7 +879,11 @@
                 }
             } else {
                 // Use traditional Marker (deprecated but still functional)
-                console.warn("⚠️ AdvancedMarkerElement not available, using deprecated Marker");
+                // Only log once to avoid spam
+                if (!window.deprecatedMarkerLogged) {
+                    console.warn("⚠️ AdvancedMarkerElement not available, using deprecated Marker");
+                    window.deprecatedMarkerLogged = true;
+                }
                 marker = new google.maps.Marker({
                     position: { lat: lat, lng: lng },
                     map: map,
