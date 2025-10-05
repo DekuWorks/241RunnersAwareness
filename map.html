@@ -28,7 +28,7 @@
             console.log('✅ Google Maps API key is configured, loading script...');
             
             const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry,places,visualization&callback=initGoogleMap`;
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry,places,visualization&callback=initGoogleMap&loading=async`;
             script.async = true;
             script.defer = true;
             document.head.appendChild(script);
@@ -464,6 +464,21 @@
     </style>
 </head>
 <body>
+    <!-- API Status Banner -->
+    <div id="api-status-banner" style="
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        right: 0; 
+        z-index: 10000; 
+        padding: 10px 20px; 
+        text-align: center; 
+        font-weight: bold; 
+        transform: translateY(-100%); 
+        transition: transform 0.3s ease;
+        display: none;
+    "></div>
+
     <header role="banner">
         <div class="header-bar">
             <img src="assets/images/241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
@@ -675,38 +690,58 @@
                 
                 console.log("Google Map created:", map);
                 
-                // Initialize marker clusterer with error handling
+                // Initialize marker clusterer with improved error handling
                 try {
+                    // Check for MarkerClusterer availability with multiple fallbacks
                     if (typeof MarkerClusterer !== 'undefined') {
                         markerCluster = new MarkerClusterer(map, [], config.CLUSTER_CONFIG);
                         console.log("✅ MarkerClusterer initialized successfully");
+                    } else if (typeof window.MarkerClusterer !== 'undefined') {
+                        markerCluster = new window.MarkerClusterer(map, [], config.CLUSTER_CONFIG);
+                        console.log("✅ MarkerClusterer initialized from window object");
                     } else {
                         console.warn("⚠️ MarkerClusterer not available, using fallback marker management");
-                        // Fallback: just use individual markers without clustering
+                        // Enhanced fallback with proper marker management
                         markerCluster = {
-                            addMarkers: function(markers) {
-                                markers.forEach(marker => marker.setMap(map));
+                            _markers: [],
+                            addMarkers: function(newMarkers) {
+                                // Clear existing markers first
+                                this.clearMarkers();
+                                // Add new markers
+                                newMarkers.forEach(marker => {
+                                    marker.setMap(map);
+                                    this._markers.push(marker);
+                                });
                             },
                             clearMarkers: function() {
-                                // This will be handled by the displayRunners function
+                                this._markers.forEach(marker => marker.setMap(null));
+                                this._markers = [];
                             },
                             getMarkers: function() {
-                                return markers;
+                                return this._markers;
                             }
                         };
                     }
                 } catch (error) {
                     console.error("❌ Error initializing MarkerClusterer:", error);
-                    // Fallback: just use individual markers without clustering
+                    // Enhanced fallback with proper marker management
                     markerCluster = {
-                        addMarkers: function(markers) {
-                            markers.forEach(marker => marker.setMap(map));
+                        _markers: [],
+                        addMarkers: function(newMarkers) {
+                            // Clear existing markers first
+                            this.clearMarkers();
+                            // Add new markers
+                            newMarkers.forEach(marker => {
+                                marker.setMap(map);
+                                this._markers.push(marker);
+                            });
                         },
                         clearMarkers: function() {
-                            // This will be handled by the displayRunners function
+                            this._markers.forEach(marker => marker.setMap(null));
+                            this._markers = [];
                         },
                         getMarkers: function() {
-                            return markers;
+                            return this._markers;
                         }
                     };
                 }
@@ -788,13 +823,62 @@
                 anchor: new google.maps.Point(10, 10)
             };
             
-            const marker = new google.maps.Marker({
-                position: { lat: lat, lng: lng },
-                map: map,
-                icon: icon,
-                title: runner.fullName || 'Unknown',
-                animation: google.maps.Animation.DROP
-            });
+            let marker;
+            
+            // Use AdvancedMarkerElement if available (recommended), otherwise fall back to Marker
+            if (typeof google.maps.marker !== 'undefined' && google.maps.marker.AdvancedMarkerElement) {
+                try {
+                    // Create AdvancedMarkerElement (recommended approach)
+                    const markerElement = document.createElement('div');
+                    markerElement.innerHTML = `
+                        <div style="
+                            width: 20px; 
+                            height: 20px; 
+                            background: ${color}; 
+                            border: 2px solid white; 
+                            border-radius: 50%; 
+                            display: flex; 
+                            align-items: center; 
+                            justify-content: center; 
+                            color: white; 
+                            font-size: 8px; 
+                            font-weight: bold;
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                        ">
+                            ${status.charAt(0).toUpperCase()}
+                        </div>
+                    `;
+                    
+                    marker = new google.maps.marker.AdvancedMarkerElement({
+                        position: { lat: lat, lng: lng },
+                        map: map,
+                        content: markerElement,
+                        title: runner.fullName || 'Unknown'
+                    });
+                    
+                    console.log("✅ Using AdvancedMarkerElement (recommended)");
+                } catch (error) {
+                    console.warn("⚠️ AdvancedMarkerElement failed, falling back to Marker:", error);
+                    // Fallback to traditional Marker
+                    marker = new google.maps.Marker({
+                        position: { lat: lat, lng: lng },
+                        map: map,
+                        icon: icon,
+                        title: runner.fullName || 'Unknown',
+                        animation: google.maps.Animation.DROP
+                    });
+                }
+            } else {
+                // Use traditional Marker (deprecated but still functional)
+                console.warn("⚠️ AdvancedMarkerElement not available, using deprecated Marker");
+                marker = new google.maps.Marker({
+                    position: { lat: lat, lng: lng },
+                    map: map,
+                    icon: icon,
+                    title: runner.fullName || 'Unknown',
+                    animation: google.maps.Animation.DROP
+                });
+            }
             
             // Add click listener for info window
             marker.addListener("click", () => {
@@ -978,66 +1062,71 @@
                         const response = await window.apiUtils.fetchWithRetry("/api/v1/cases/publiccases", {
                             ignoreHealthCheck: true // Allow even if API health check fails
                         });
-                        const result = await response.json();
-                        console.log("📊 Public cases API response:", result);
                         
-                        if (result && result.data && Array.isArray(result.data)) {
-                            // Convert public cases to runner format with real data
-                            const convertedCases = result.data.map(caseItem => {
-                                // Try to extract location data from the case
-                                let latitude = null;
-                                let longitude = null;
-                                let city = "Houston";
-                                let state = "TX";
-                                
-                                // Check if case has location data
-                                if (caseItem.lastSeenLatitude && caseItem.lastSeenLongitude) {
-                                    latitude = parseFloat(caseItem.lastSeenLatitude);
-                                    longitude = parseFloat(caseItem.lastSeenLongitude);
-                                }
-                                
-                                // If no coordinates, use Houston area with slight variation
-                                if (!latitude || !longitude) {
-                                    latitude = 29.7604 + (Math.random() - 0.5) * 0.1;
-                                    longitude = -95.3698 + (Math.random() - 0.5) * 0.1;
-                                }
-                                
-                                // Extract city/state from lastSeenLocation if available
-                                if (caseItem.lastSeenLocation) {
-                                    const locationParts = caseItem.lastSeenLocation.split(',');
-                                    if (locationParts.length >= 2) {
-                                        city = locationParts[0].trim();
-                                        state = locationParts[locationParts.length - 1].trim();
+                        if (response.ok) {
+                            const result = await response.json();
+                            console.log("📊 Public cases API response:", result);
+                            
+                            if (result && result.data && Array.isArray(result.data)) {
+                                // Convert public cases to runner format with real data
+                                const convertedCases = result.data.map(caseItem => {
+                                    // Try to extract location data from the case
+                                    let latitude = null;
+                                    let longitude = null;
+                                    let city = "Houston";
+                                    let state = "TX";
+                                    
+                                    // Check if case has location data
+                                    if (caseItem.lastSeenLatitude && caseItem.lastSeenLongitude) {
+                                        latitude = parseFloat(caseItem.lastSeenLatitude);
+                                        longitude = parseFloat(caseItem.lastSeenLongitude);
                                     }
-                                }
-                                
-                                return {
-                                    id: caseItem.id,
-                                    fullName: caseItem.title || "Unknown Case",
-                                    currentStatus: caseItem.status?.toLowerCase() || "missing",
-                                    latitude: latitude,
-                                    longitude: longitude,
-                                    city: city,
-                                    state: state,
-                                    dateAdded: caseItem.createdAt || new Date(),
-                                    address: caseItem.lastSeenLocation || `${city}, ${state}`,
-                                    age: caseItem.age || "Unknown",
-                                    gender: caseItem.gender || "Unknown",
-                                    description: caseItem.description,
-                                    lastSeenDate: caseItem.lastSeenDate,
-                                    priority: caseItem.priority
-                                };
-                            });
-                            apiData = [...apiData, ...convertedCases];
-                            console.log(`✅ Loaded ${convertedCases.length} public cases from API`);
+                                    
+                                    // If no coordinates, use Houston area with slight variation
+                                    if (!latitude || !longitude) {
+                                        latitude = 29.7604 + (Math.random() - 0.5) * 0.1;
+                                        longitude = -95.3698 + (Math.random() - 0.5) * 0.1;
+                                    }
+                                    
+                                    // Extract city/state from lastSeenLocation if available
+                                    if (caseItem.lastSeenLocation) {
+                                        const locationParts = caseItem.lastSeenLocation.split(',');
+                                        if (locationParts.length >= 2) {
+                                            city = locationParts[0].trim();
+                                            state = locationParts[locationParts.length - 1].trim();
+                                        }
+                                    }
+                                    
+                                    return {
+                                        id: caseItem.id,
+                                        fullName: caseItem.title || "Unknown Case",
+                                        currentStatus: caseItem.status?.toLowerCase() || "missing",
+                                        latitude: latitude,
+                                        longitude: longitude,
+                                        city: city,
+                                        state: state,
+                                        dateAdded: caseItem.createdAt || new Date(),
+                                        address: caseItem.lastSeenLocation || `${city}, ${state}`,
+                                        age: caseItem.age || "Unknown",
+                                        gender: caseItem.gender || "Unknown",
+                                        description: caseItem.description,
+                                        lastSeenDate: caseItem.lastSeenDate,
+                                        priority: caseItem.priority
+                                    };
+                                });
+                                apiData = [...apiData, ...convertedCases];
+                                console.log(`✅ Loaded ${convertedCases.length} public cases from API`);
+                            } else {
+                                console.log("⚠️ No data array found in public cases response");
+                            }
                         } else {
-                            console.log("⚠️ No data array found in public cases response");
+                            console.warn(`⚠️ Public cases API returned ${response.status}: ${response.statusText}`);
                         }
                     } else {
                         console.log("⚠️ API utils not available for public cases");
                     }
                 } catch (publicCasesError) {
-                    console.log("❌ Public cases data not available:", publicCasesError);
+                    console.log("❌ Public cases data not available:", publicCasesError.message || publicCasesError);
                 }
                 
                 // Try to get map points data (requires authentication)
