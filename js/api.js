@@ -206,6 +206,18 @@ const casesApi = {
     // Delete case
     async deleteCase(caseId) {
         return api(`/api/cases/${caseId}`, { method: 'DELETE' });
+    },
+
+    // Get public cases (NamUs integration)
+    async getPublicCases(region = '', status = '', search = '', page = 1, pageSize = 100) {
+        const params = new URLSearchParams({
+            region: region,
+            page: page.toString(),
+            pageSize: pageSize.toString()
+        });
+        if (status) params.append('status', status);
+        if (search) params.append('search', search);
+        return api(`/api/cases/publiccases?${params}`);
     }
 };
 

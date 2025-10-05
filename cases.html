@@ -844,14 +844,24 @@
     <script type="module" src="/js/api.js?v=20250113"></script>
     <script src="https://241runnersawareness.org/js/cases.js?v=20250109"></script>
     <script>
-        // Initialize CasesPage immediately when script loads
+        // Initialize CasesPage after API client is loaded
         let casesPage;
+        
+        // Wait for API client to be available
+        function waitForApiClient() {
+            if (window.casesApi) {
+                initializePage();
+            } else {
+                // Check again in 100ms
+                setTimeout(waitForApiClient, 100);
+            }
+        }
         
         // Initialize immediately if DOM is ready, otherwise wait for DOMContentLoaded
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializePage);
+            document.addEventListener('DOMContentLoaded', waitForApiClient);
         } else {
-            initializePage();
+            waitForApiClient();
         }
         
         function initializePage() {
