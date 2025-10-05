@@ -37,7 +37,7 @@ if (document.readyState === 'loading') {
  * @param {object} options - Fetch options
  * @returns {Promise<any>} API response data
  */
-export async function api(path, options = {}) {
+async function api(path, options = {}) {
     const base = window.__CONFIG.API_BASE_URL;
     
     // Add JWT token if available
@@ -97,7 +97,7 @@ export async function api(path, options = {}) {
 /**
  * Admin API methods
  */
-export const adminApi = {
+const adminApi = {
     // Get dashboard statistics
     async getStats() {
         return api('/api/admin/stats');
@@ -144,7 +144,7 @@ export const adminApi = {
 /**
  * Auth API methods
  */
-export const authApi = {
+const authApi = {
     // Login
     async login(email, password) {
         return api('/api/auth/login', {
@@ -170,7 +170,7 @@ export const authApi = {
 /**
  * Cases API methods
  */
-export const casesApi = {
+const casesApi = {
     // Get cases with pagination and filtering
     async getCases(status = null, search = '', page = 1, pageSize = 25) {
         const params = new URLSearchParams({
@@ -212,7 +212,7 @@ export const casesApi = {
 /**
  * Individuals API methods
  */
-export const individualsApi = {
+const individualsApi = {
     // Get individuals with pagination and filtering
     async getIndividuals(status = null, search = '', mine = false, page = 1, pageSize = 25) {
         const params = new URLSearchParams({
@@ -255,7 +255,7 @@ export const individualsApi = {
 /**
  * Map API methods
  */
-export const mapApi = {
+const mapApi = {
     // Get map points
     async getMapPoints(status = null, cluster = true) {
         const params = new URLSearchParams();
@@ -273,7 +273,7 @@ export const mapApi = {
 /**
  * Notifications API methods
  */
-export const notificationsApi = {
+const notificationsApi = {
     // Get notifications
     async getNotifications(read = null, page = 1, pageSize = 25) {
         const params = new URLSearchParams({
@@ -301,7 +301,7 @@ export const notificationsApi = {
 /**
  * Utility functions
  */
-export const apiUtils = {
+const apiUtils = {
     // Check if user is authenticated
     isAuthenticated() {
         const token = localStorage.getItem('access_token') || localStorage.getItem('ra_admin_token');
