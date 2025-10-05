@@ -2028,11 +2028,12 @@
 
         // Get user data from API
         const result = await authUtils.getCurrentUserFromAPI();
-        currentUser = result;
-        updateProfileImage(result.profileImageUrl);
+        const userData = result.user || result; // Handle both response formats
+        currentUser = userData;
+        updateProfileImage(userData.profileImageUrl);
         
         // Update profile display
-        updateProfileDisplay(result);
+        updateProfileDisplay(userData);
         
       } catch (error) {
         console.error("Error loading profile:", error);
