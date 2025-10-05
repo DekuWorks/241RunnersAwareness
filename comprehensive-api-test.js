@@ -218,25 +218,25 @@ async function runComprehensiveTests() {
   if (adminToken) {
     await testEndpoint(
       'Get All Users',
-      `${API_BASE_URL}/api/v1.0/admin/users`,
+      `${API_BASE_URL}/api/admin/users`,
       { headers: { 'Authorization': `Bearer ${adminToken}` } }
     );
     
     await testEndpoint(
       'Get System Status',
-      `${API_BASE_URL}/api/v1.0/admin/system-status`,
+      `${API_BASE_URL}/api/admin/system-status`,
       { headers: { 'Authorization': `Bearer ${adminToken}` } }
     );
     
     await testEndpoint(
       'Get Monitoring Data',
-      `${API_BASE_URL}/api/v1.0/admin/monitoring`,
+      `${API_BASE_URL}/api/admin/monitoring-data`,
       { headers: { 'Authorization': `Bearer ${adminToken}` } }
     );
     
     await testEndpoint(
       'Get Active Sessions',
-      `${API_BASE_URL}/api/v1.0/admin/sessions`,
+      `${API_BASE_URL}/api/admin/active-sessions`,
       { headers: { 'Authorization': `Bearer ${adminToken}` } }
     );
   } else {
