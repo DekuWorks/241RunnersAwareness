@@ -2028,7 +2028,9 @@
 
         // Get user data from API
         const result = await authUtils.getCurrentUserFromAPI();
+        console.log('API response from getCurrentUserFromAPI:', result);
         const userData = result.user || result; // Handle both response formats
+        console.log('Extracted userData:', userData);
         currentUser = userData;
         updateProfileImage(userData.profileImageUrl);
         
@@ -2043,12 +2045,20 @@
 
     // Update profile display with user data
     function updateProfileDisplay(user) {
+      console.log('updateProfileDisplay called with:', user);
+      console.log('user.fullName:', user.fullName);
+      console.log('user.firstName:', user.firstName);
+      console.log('user.lastName:', user.lastName);
+      
       // Update profile header
       const profileName = document.querySelector('.profile-name');
       const profileEmail = document.querySelector('.profile-email');
       const profileRole = document.querySelector('.profile-role');
       
-      if (profileName) profileName.textContent = user.fullName || `${user.firstName || 'User'} ${user.lastName || ''}`.trim() || 'User';
+      const displayName = user.fullName || `${user.firstName || 'User'} ${user.lastName || ''}`.trim() || 'User';
+      console.log('Setting profile name to:', displayName);
+      
+      if (profileName) profileName.textContent = displayName;
       if (profileEmail) profileEmail.textContent = user.email;
       if (profileRole) profileRole.textContent = user.role || 'User';
       
@@ -2341,6 +2351,7 @@
 
         if (response.ok) {
           const updatedUser = await response.json();
+          console.log('Profile update API response:', updatedUser);
           currentUser = updatedUser;
           
           // Update display
