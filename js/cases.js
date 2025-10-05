@@ -875,20 +875,5 @@ class CasesPage {
     }
 }
 
-// Initialize the page when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    new CasesPage();
-});
-
-// Mobile navigation toggle
-document.addEventListener('DOMContentLoaded', () => {
-    const navToggle = document.getElementById('navToggle');
-    const navMenu = document.getElementById('navMenu');
-    
-    if (navToggle && navMenu) {
-        navToggle.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-            navToggle.classList.toggle('active');
-        });
-    }
-}); 
+// CasesPage class is now initialized from the HTML file
+// This ensures immediate usage of the preloaded script 
