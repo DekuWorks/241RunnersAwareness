@@ -135,8 +135,18 @@ self.addEventListener('fetch', (event) => {
                     'Expires': '0'
                 }
             }).catch(error => {
-                console.error('Config fetch failed:', error);
-                throw error;
+                console.warn('Config fetch failed, using default config:', error);
+                // Return a default config response instead of throwing
+                return new Response(JSON.stringify({
+                    "API_BASE_URL": "https://241runners-api-v2.azurewebsites.net/api"
+                }), {
+                    status: 200,
+                    statusText: 'OK',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-store, no-cache, must-revalidate'
+                    }
+                });
             })
         );
         return;
