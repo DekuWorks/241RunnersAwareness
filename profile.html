@@ -1604,6 +1604,7 @@
         } else if (response.status === 500) {
           // Server error - log but don't break the page
           console.warn('Runner API returned 500 error - server issue. This is a known backend issue that needs to be fixed.');
+          console.warn('The Runner API is currently experiencing issues. Please try again later.');
           displayNoRunnerProfile();
           return null;
         } else {
@@ -1728,6 +1729,7 @@
         // });
 
         // TODO: Implement case status endpoint
+        console.log('Case status endpoint not yet implemented - showing placeholder');
         displayNoCaseStatus();
 
       } catch (error) {
