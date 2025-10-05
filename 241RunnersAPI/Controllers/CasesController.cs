@@ -468,6 +468,68 @@ namespace _241RunnersAPI.Controllers
         /// <summary>
         /// Get public cases (for public consumption)
         /// </summary>
+        [HttpGet("public")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetPublicCasesSimple([FromQuery] PublicCaseQuery query)
+        {
+            try
+            {
+                var casesQuery = _context.Cases
+                    .Where(c => c.IsPublic == true && c.Status != "Closed")
+                    .AsQueryable();
+
+                // Apply search filter
+                if (!string.IsNullOrEmpty(query.Search))
+                {
+                    var searchTerm = query.Search.ToLower();
+                    casesQuery = casesQuery.Where(c => 
+                        c.Title.ToLower().Contains(searchTerm) ||
+                        c.Description.ToLower().Contains(searchTerm));
+                }
+
+                // Apply status filter
+                if (!string.IsNullOrEmpty(query.Status))
+                {
+                    casesQuery = casesQuery.Where(c => c.Status == query.Status);
+                }
+
+                // Get total count
+                var totalCount = await casesQuery.CountAsync();
+
+                // Apply pagination
+                var cases = await casesQuery
+                    .OrderByDescending(c => c.CreatedAt)
+                    .Skip((query.Page - 1) * query.PageSize)
+                    .Take(query.PageSize)
+                    .Select(c => new
+                    {
+                        id = c.Id,
+                        title = c.Title,
+                        description = c.Description,
+                        status = c.Status,
+                        createdAt = c.CreatedAt,
+                        lastSeenLocation = c.LastSeenLocation
+                    })
+                    .ToListAsync();
+
+                return Ok(new
+                {
+                    success = true,
+                    cases = cases,
+                    count = cases.Count,
+                    total = totalCount
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting public cases");
+                return InternalServerErrorResponse("Failed to get public cases");
+            }
+        }
+
+        /// <summary>
+        /// Get public cases (for public consumption) - detailed version
+        /// </summary>
         [HttpGet("publiccases")]
         [AllowAnonymous]
         public async Task<IActionResult> GetPublicCases([FromQuery] PublicCaseQuery query)
@@ -606,6 +668,84 @@ namespace _241RunnersAPI.Controllers
             {
                 _logger.LogError(ex, "Error getting public cases stats");
                 return InternalServerErrorResponse("Failed to get public cases statistics");
+            }
+        }
+
+        /// <summary>
+        /// Get current user's cases
+        /// </summary>
+        [HttpGet("my-cases")]
+        public async Task<IActionResult> GetMyCases([FromQuery] CaseQuery query)
+        {
+            try
+            {
+                var currentUserId = GetCurrentUserId();
+                if (!int.TryParse(currentUserId, out var userId))
+                {
+                    return UnauthorizedResponse("Invalid user");
+                }
+
+                var casesQuery = _context.Cases
+                    .Where(c => c.ReportedByUserId == userId)
+                    .AsQueryable();
+
+                // Apply status filter
+                if (!string.IsNullOrEmpty(query.Status))
+                {
+                    casesQuery = casesQuery.Where(c => c.Status == query.Status);
+                }
+
+                // Apply search filter
+                if (!string.IsNullOrEmpty(query.Q))
+                {
+                    var searchTerm = query.Q.ToLower();
+                    casesQuery = casesQuery.Where(c => 
+                        c.Title.ToLower().Contains(searchTerm) ||
+                        c.Description.ToLower().Contains(searchTerm));
+                }
+
+                // Get total count
+                var total = await casesQuery.CountAsync();
+
+                // Apply pagination
+                var cases = await casesQuery
+                    .OrderByDescending(c => c.CreatedAt)
+                    .Skip((query.Page - 1) * query.PageSize)
+                    .Take(query.PageSize)
+                    .Select(c => new
+                    {
+                        id = c.Id,
+                        title = c.Title,
+                        description = c.Description,
+                        status = c.Status,
+                        priority = c.Priority,
+                        createdAt = c.CreatedAt,
+                        updatedAt = c.UpdatedAt,
+                        lastSeenLocation = c.LastSeenLocation,
+                        isPublic = c.IsPublic,
+                        isApproved = c.IsApproved
+                    })
+                    .ToListAsync();
+
+                return Ok(new
+                {
+                    success = true,
+                    cases = cases,
+                    count = cases.Count,
+                    total = total
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user's cases");
+                return StatusCode(500, new
+                {
+                    error = new
+                    {
+                        code = "INTERNAL_ERROR",
+                        message = "An error occurred while retrieving cases"
+                    }
+                });
             }
         }
 

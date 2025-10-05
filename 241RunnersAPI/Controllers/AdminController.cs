@@ -11,7 +11,8 @@ using System.Security.Claims;
 namespace _241RunnersAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/admin")]
+    [ApiVersion("1.0")]
     public class AdminController : BaseController
     {
         private readonly ApplicationDbContext _context;
