@@ -10183,6 +10183,13 @@
             console.log('Admin Dashboard DOM loaded');
             console.log('Debug: Body content length: ' + document.body.innerHTML.length);
             
+            // Debug authentication status
+            console.log('🔍 DEBUG: Checking authentication status...');
+            console.log('🔍 localStorage keys:', Object.keys(localStorage));
+            console.log('🔍 ra_admin_token:', localStorage.getItem('ra_admin_token') ? 'Present' : 'Missing');
+            console.log('🔍 jwtToken:', localStorage.getItem('jwtToken') ? 'Present' : 'Missing');
+            console.log('🔍 access_token:', localStorage.getItem('access_token') ? 'Present' : 'Missing');
+            
             // Check authentication after DOM is loaded
             if (!isAuthenticated()) {
                 console.log('❌ User not authenticated, redirecting to login');
