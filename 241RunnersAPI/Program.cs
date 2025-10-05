@@ -320,9 +320,14 @@ builder.Services.AddHealthChecks()
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
-// Enable Swagger in development or if configured in production
-var swaggerEnabled = app.Environment.IsDevelopment() || 
-                     builder.Configuration.GetValue<bool>("Swagger:Enabled", false) ||
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+// Enable Swagger in production if configured
+var swaggerEnabled = builder.Configuration.GetValue<bool>("Swagger:Enabled", false) ||
                      builder.Configuration.GetValue<bool>("Swagger__Enabled", false);
 if (swaggerEnabled)
 {
@@ -581,6 +586,28 @@ app.MapGet("/debug/users", async (ApplicationDbContext db) => {
         return Results.Ok(new { 
             userCount = users.Count,
             users = users
+        });
+    } catch (Exception ex) {
+        return Results.Ok(new { 
+            error = ex.Message,
+            stackTrace = ex.StackTrace
+        });
+    }
+});
+
+// Debug endpoint to check Runners table
+app.MapGet("/debug/runners", async (ApplicationDbContext db) => {
+    try {
+        var runnerCount = await db.Runners.CountAsync();
+        var firstRunner = await db.Runners.FirstOrDefaultAsync();
+        return Results.Ok(new { 
+            runnerCount = runnerCount,
+            firstRunner = firstRunner != null ? new {
+                firstRunner.Id,
+                firstRunner.Name,
+                firstRunner.Status,
+                firstRunner.CreatedAt
+            } : null
         });
     } catch (Exception ex) {
         return Results.Ok(new { 

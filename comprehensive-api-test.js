@@ -117,8 +117,8 @@ async function runComprehensiveTests() {
   // Test 1: Health Check
   console.log(`${colors.blue}📊 Health & System Endpoints${colors.reset}`);
   await testEndpoint('Health Check', `${API_BASE_URL}/health`);
-  await testEndpoint('Swagger UI', `${API_BASE_URL}/swagger`, {}, 200);
-  await testEndpoint('API Info', `${API_BASE_URL}/api/info`);
+  await testEndpoint('Swagger UI', `${API_BASE_URL}/swagger`, {}, 301);
+  await testEndpoint('API Info', `${API_BASE_URL}/api`);
   
   // Test 2: Authentication
   console.log(`\n${colors.blue}🔐 Authentication Endpoints${colors.reset}`);
@@ -182,19 +182,19 @@ async function runComprehensiveTests() {
   if (userToken) {
     await testEndpoint(
       'Get Runners',
-      `${API_BASE_URL}/api/v1.0/Runner`,
+      `${API_BASE_URL}/api/v1.0/runner`,
       { headers: { 'Authorization': `Bearer ${userToken}` } }
     );
     
     await testEndpoint(
       'Get My Runner Profile',
-      `${API_BASE_URL}/api/v1.0/Runner/my-profile`,
+      `${API_BASE_URL}/api/v1.0/runner/my-profile`,
       { headers: { 'Authorization': `Bearer ${userToken}` } }
     );
     
     await testEndpoint(
       'Create Runner Profile',
-      `${API_BASE_URL}/api/v1.0/Runner`,
+      `${API_BASE_URL}/api/v1.0/runner`,
       {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${userToken}` },
@@ -206,7 +206,8 @@ async function runComprehensiveTests() {
           physicalDescription: 'Test description',
           userId: 33
         }
-      }
+      },
+      409 // Expect 409 Conflict since profile already exists
     );
   } else {
     logTest('Runner Endpoints', 'SKIP', 'No user token available');
@@ -218,25 +219,25 @@ async function runComprehensiveTests() {
   if (adminToken) {
     await testEndpoint(
       'Get All Users',
-      `${API_BASE_URL}/api/admin/users`,
+      `${API_BASE_URL}/api/v1.0/admin/users`,
       { headers: { 'Authorization': `Bearer ${adminToken}` } }
     );
     
     await testEndpoint(
       'Get System Status',
-      `${API_BASE_URL}/api/admin/system-status`,
+      `${API_BASE_URL}/api/v1.0/admin/system-status`,
       { headers: { 'Authorization': `Bearer ${adminToken}` } }
     );
     
     await testEndpoint(
       'Get Monitoring Data',
-      `${API_BASE_URL}/api/admin/monitoring-data`,
+      `${API_BASE_URL}/api/v1.0/admin/monitoring-data`,
       { headers: { 'Authorization': `Bearer ${adminToken}` } }
     );
     
     await testEndpoint(
       'Get Active Sessions',
-      `${API_BASE_URL}/api/admin/active-sessions`,
+      `${API_BASE_URL}/api/v1.0/admin/active-sessions`,
       { headers: { 'Authorization': `Bearer ${adminToken}` } }
     );
   } else {

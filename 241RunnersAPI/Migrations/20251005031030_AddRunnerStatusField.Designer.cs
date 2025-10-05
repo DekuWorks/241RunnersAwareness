@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using _241RunnersAPI.Data;
 
@@ -11,9 +12,11 @@ using _241RunnersAPI.Data;
 namespace _241RunnersAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251005031030_AddRunnerStatusField")]
+    partial class AddRunnerStatusField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -765,31 +768,31 @@ namespace _241RunnersAPI.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 10, 5, 3, 12, 3, 675, DateTimeKind.Utc).AddTicks(2760),
+                            CreatedAt = new DateTime(2025, 10, 5, 3, 10, 30, 324, DateTimeKind.Utc).AddTicks(4840),
                             Email = "admin@241runnersawareness.org",
-                            EmailVerifiedAt = new DateTime(2025, 10, 5, 3, 12, 3, 675, DateTimeKind.Utc).AddTicks(2760),
+                            EmailVerifiedAt = new DateTime(2025, 10, 5, 3, 10, 30, 324, DateTimeKind.Utc).AddTicks(4840),
                             FailedLoginAttempts = 0,
                             FirstName = "System",
                             IsActive = true,
                             IsEmailVerified = true,
                             IsPhoneVerified = false,
                             LastName = "Administrator",
-                            PasswordHash = "$2a$11$8cGGRvh4E5nosqaaYfAXp.p.7D2AdiZZWrT1WaIAltz7GFANBUGpK",
+                            PasswordHash = "$2a$11$4Ec59n61qDG084BXAeo3Q..o1eWDpWw5hY1bOa7GuKvoAwLzO8DKC",
                             Role = "admin"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 10, 5, 3, 12, 3, 793, DateTimeKind.Utc).AddTicks(2260),
+                            CreatedAt = new DateTime(2025, 10, 5, 3, 10, 30, 443, DateTimeKind.Utc).AddTicks(3050),
                             Email = "support@241runnersawareness.org",
-                            EmailVerifiedAt = new DateTime(2025, 10, 5, 3, 12, 3, 793, DateTimeKind.Utc).AddTicks(2260),
+                            EmailVerifiedAt = new DateTime(2025, 10, 5, 3, 10, 30, 443, DateTimeKind.Utc).AddTicks(3050),
                             FailedLoginAttempts = 0,
                             FirstName = "Support",
                             IsActive = true,
                             IsEmailVerified = true,
                             IsPhoneVerified = false,
                             LastName = "Team",
-                            PasswordHash = "$2a$11$ezlrIIirdJjA4/fVMZY5iuPvgV6iuqcUzQheCnqkZmjooBnKDWBoK",
+                            PasswordHash = "$2a$11$VKDK/Gxx8xFdLwTrs6aAQ.gnQc9BeINEKiOFmvkPDkqcyiYUm7yqC",
                             Role = "admin"
                         });
                 });

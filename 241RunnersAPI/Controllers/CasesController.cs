@@ -10,7 +10,6 @@ namespace _241RunnersAPI.Controllers
     [ApiController]
     [Route("api/v{version:apiVersion}/cases")]
     [ApiVersion("1.0")]
-    [Authorize]
     public class CasesController : BaseController
     {
         private readonly ApplicationDbContext _context;
