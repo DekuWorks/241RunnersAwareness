@@ -436,6 +436,100 @@
       box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
     }
 
+    /* Validation Styles */
+    .form-group input.error,
+    .form-group select.error,
+    .form-group textarea.error {
+      border-color: #dc2626;
+      background-color: #fef2f2;
+    }
+
+    .field-error {
+      color: #dc2626;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .field-error::before {
+      content: "⚠️";
+      font-size: 0.75rem;
+    }
+
+    /* Message Styles */
+    .message {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .message.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .message.success::before {
+      content: "✅";
+    }
+
+    .message.error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .message.error::before {
+      content: "❌";
+    }
+
+    .message.info {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #bfdbfe;
+    }
+
+    .message.info::before {
+      content: "ℹ️";
+    }
+
+    /* Loading States */
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn.loading {
+      position: relative;
+      color: transparent;
+    }
+
+    .btn.loading::after {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 50%;
+      left: 50%;
+      margin-left: -8px;
+      margin-top: -8px;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
     .form-actions {
       display: flex;
       gap: 0.5rem;
@@ -1857,8 +1951,38 @@
     document.getElementById('updatePersonalForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
+      // Validate form before submission
+      if (!isFormValid('updatePersonalForm')) {
+        showMessage('error', 'Please fill in all required fields correctly');
+        return;
+      }
+      
       const formData = new FormData(this);
       const data = Object.fromEntries(formData.entries());
+      
+      // Additional validation
+      const firstNameValidation = ValidationUtils.validateName(data.firstName);
+      const lastNameValidation = ValidationUtils.validateName(data.lastName);
+      const phoneValidation = ValidationUtils.validatePhone(data.phoneNumber);
+      
+      if (!firstNameValidation.isValid) {
+        showMessage('error', firstNameValidation.message);
+        return;
+      }
+      if (!lastNameValidation.isValid) {
+        showMessage('error', lastNameValidation.message);
+        return;
+      }
+      if (!phoneValidation.isValid) {
+        showMessage('error', phoneValidation.message);
+        return;
+      }
+      
+      // Show loading state
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Saving...';
+      submitBtn.disabled = true;
       
       try {
         const token = getAuthToken();
@@ -1874,6 +1998,8 @@
         });
         
         if (response.ok) {
+          const result = await response.json();
+          
           // Update local storage
           const updatedUser = { ...authData.user, ...data };
           const updatedAuthData = { ...authData, user: updatedUser };
@@ -1892,6 +2018,10 @@
       } catch (error) {
         console.error('Error updating profile:', error);
         showMessage('error', 'Network error. Please try again.');
+      } finally {
+        // Reset button state
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
       }
     });
 
@@ -1934,6 +2064,132 @@
         showMessage('error', 'Network error. Please try again.');
       }
     });
+
+    // Validation Utilities
+    const ValidationUtils = {
+      // Validate name (letters, spaces, hyphens, apostrophes only)
+      validateName: function(name) {
+        if (!name || name.trim().length === 0) {
+          return { isValid: false, message: 'Name is required' };
+        }
+        if (name.length < 2) {
+          return { isValid: false, message: 'Name must be at least 2 characters' };
+        }
+        if (name.length > 50) {
+          return { isValid: false, message: 'Name must be less than 50 characters' };
+        }
+        const nameRegex = /^[a-zA-Z\s\-']+$/;
+        if (!nameRegex.test(name)) {
+          return { isValid: false, message: 'Name can only contain letters, spaces, hyphens, and apostrophes' };
+        }
+        return { isValid: true, message: '' };
+      },
+
+      // Validate phone number
+      validatePhone: function(phone) {
+        if (!phone || phone.trim().length === 0) {
+          return { isValid: true, message: '' }; // Phone is optional
+        }
+        const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+        if (!phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''))) {
+          return { isValid: false, message: 'Please enter a valid phone number' };
+        }
+        return { isValid: true, message: '' };
+      },
+
+      // Validate email (read-only field)
+      validateEmail: function(email) {
+        if (!email || email.trim().length === 0) {
+          return { isValid: false, message: 'Email is required' };
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          return { isValid: false, message: 'Please enter a valid email address' };
+        }
+        return { isValid: true, message: '' };
+      },
+
+      // Format phone number
+      formatPhone: function(phone) {
+        const cleaned = phone.replace(/\D/g, '');
+        if (cleaned.length === 10) {
+          return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+        }
+        return phone;
+      }
+    };
+
+    // Real-time validation
+    function setupRealTimeValidation() {
+      const firstNameInput = document.getElementById('editFirstName');
+      const lastNameInput = document.getElementById('editLastName');
+      const phoneInput = document.getElementById('editPhone');
+
+      if (firstNameInput) {
+        firstNameInput.addEventListener('input', function() {
+          validateField(this, ValidationUtils.validateName);
+        });
+      }
+
+      if (lastNameInput) {
+        lastNameInput.addEventListener('input', function() {
+          validateField(this, ValidationUtils.validateName);
+        });
+      }
+
+      if (phoneInput) {
+        phoneInput.addEventListener('input', function() {
+          // Format phone number as user types
+          const formatted = ValidationUtils.formatPhone(this.value);
+          if (formatted !== this.value) {
+            this.value = formatted;
+          }
+          validateField(this, ValidationUtils.validatePhone);
+        });
+      }
+    }
+
+    // Validate individual field
+    function validateField(field, validator) {
+      const value = field.value.trim();
+      const validation = validator(value);
+      
+      // Remove existing error styling
+      field.classList.remove('error');
+      const existingError = field.parentNode.querySelector('.field-error');
+      if (existingError) {
+        existingError.remove();
+      }
+
+      if (!validation.isValid) {
+        field.classList.add('error');
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'field-error';
+        errorDiv.textContent = validation.message;
+        field.parentNode.appendChild(errorDiv);
+      }
+    }
+
+    // Check if form is valid
+    function isFormValid(formId) {
+      const form = document.getElementById(formId);
+      if (!form) return false;
+
+      const inputs = form.querySelectorAll('input[required], select[required]');
+      let isValid = true;
+
+      inputs.forEach(input => {
+        const value = input.value.trim();
+        if (!value) {
+          isValid = false;
+          input.classList.add('error');
+        } else {
+          input.classList.remove('error');
+        }
+      });
+
+      return isValid;
+    }
 
     // Show message
     function showMessage(type, message) {
@@ -2125,13 +2381,13 @@
       // Validate file type
       const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
       if (!allowedTypes.includes(file.type)) {
-        alert("Please select a valid image file (JPEG, PNG, GIF, or WebP)");
+        showMessage('error', 'Please select a valid image file (JPEG, PNG, GIF, or WebP)');
         return;
       }
 
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert("File size must be less than 5MB");
+        showMessage('error', 'File size must be less than 5MB');
         return;
       }
 
@@ -2140,7 +2396,7 @@
 
       const userData = JSON.parse(localStorage.getItem("ra_auth"));
       if (!userData || !(userData.accessToken || userData.token)) {
-        alert("Please log in again");
+        showMessage('error', 'Please log in again');
         window.location.href = "login.html";
         return;
       }
@@ -2163,17 +2419,44 @@
           progressFill.style.width = `${progress}%`;
         }, 200);
 
-        // TODO: Implement image upload endpoint
+        // Upload to server
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/profile-image`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${userData.accessToken || userData.token}`
+          },
+          body: formData
+        });
+
         clearInterval(progressInterval);
-        progressFill.style.width = "100%";
-        progressText.textContent = "Image upload not yet implemented";
-        setTimeout(() => {
-          progressContainer.style.display = "none";
-        }, 2000);
+        
+        if (response.ok) {
+          const result = await response.json();
+          progressFill.style.width = "100%";
+          progressText.textContent = "Upload successful!";
+          
+          // Update profile image display
+          updateProfileImage(result.profileImageUrl);
+          
+          // Update user data in localStorage
+          const updatedUser = { ...userData.user, profileImageUrl: result.profileImageUrl };
+          const updatedAuthData = { ...userData, user: updatedUser };
+          localStorage.setItem('ra_auth', JSON.stringify(updatedAuthData));
+          
+          showMessage('success', 'Profile image updated successfully!');
+          
+          setTimeout(() => {
+            progressContainer.style.display = "none";
+          }, 2000);
+        } else {
+          const error = await response.json();
+          throw new Error(error.message || 'Upload failed');
+        }
       } catch (error) {
         console.error("Upload error:", error);
+        progressFill.style.width = "0%";
         progressText.textContent = "Upload failed";
-        alert(`Upload failed: ${error.message}`);
+        showMessage('error', `Upload failed: ${error.message}`);
         setTimeout(() => {
           progressContainer.style.display = "none";
         }, 3000);
@@ -2200,11 +2483,50 @@
 
       try {
         const userData = JSON.parse(localStorage.getItem("ra_auth"));
-        // TODO: Implement image delete endpoint
-        console.log('Image delete not yet implemented');
+        if (!userData || !(userData.accessToken || userData.token)) {
+          showMessage('error', 'Please log in again');
+          window.location.href = "login.html";
+          return;
+        }
+
+        // Show loading state
+        const removeBtn = document.getElementById("removeImageBtn");
+        const originalText = removeBtn.textContent;
+        removeBtn.textContent = "Removing...";
+        removeBtn.disabled = true;
+
+        // Delete image from server
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/profile-image`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${userData.accessToken || userData.token}`
+          }
+        });
+
+        if (response.ok) {
+          // Update profile image display
+          updateProfileImage(null);
+          
+          // Update user data in localStorage
+          const updatedUser = { ...userData.user };
+          delete updatedUser.profileImageUrl;
+          const updatedAuthData = { ...userData, user: updatedUser };
+          localStorage.setItem('ra_auth', JSON.stringify(updatedAuthData));
+          
+          showMessage('success', 'Profile image removed successfully!');
+        } else {
+          const error = await response.json();
+          throw new Error(error.message || 'Failed to remove image');
+        }
+
       } catch (error) {
         console.error("Error removing image:", error);
-        alert(`Failed to remove image: ${error.message}`);
+        showMessage('error', `Failed to remove image: ${error.message}`);
+      } finally {
+        // Reset button state
+        const removeBtn = document.getElementById("removeImageBtn");
+        removeBtn.textContent = "🗑️ Remove Image";
+        removeBtn.disabled = false;
       }
     }
 
@@ -2251,6 +2573,7 @@
       await loadUserCases();
       await loadUserProfileData();
       setupImageUpload();
+      setupRealTimeValidation();
       
       // Initialize real-time notifications
       await initializeRealTimeNotifications();
