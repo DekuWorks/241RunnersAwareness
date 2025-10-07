@@ -27,17 +27,19 @@ class RealtimeClient {
             console.log('🔌 Connecting to SignalR hub:', hubUrl);
             console.log('👤 User role:', userRole, '→ Using', userRole === 'admin' ? 'AdminHub' : 'AlertsHub');
             
-            // Get authentication token
-            const token = localStorage.getItem("jwtToken") || localStorage.getItem("ra_admin_token") || localStorage.getItem("ra_auth");
+            // Get authentication token - prioritize the same keys as mobile app
+            const token = localStorage.getItem("ra_admin_token") || localStorage.getItem("jwtToken") || localStorage.getItem("241runners_access_token");
             console.log('🔑 Using token for SignalR:', token ? 'Present' : 'Missing');
             
             // Create SignalR connection
             this.connection = new signalR.HubConnectionBuilder()
                 .withUrl(hubUrl, {
                     accessTokenFactory: () => {
-                        const authToken = localStorage.getItem("jwtToken") || localStorage.getItem("ra_admin_token");
+                        const authToken = localStorage.getItem("ra_admin_token") || localStorage.getItem("jwtToken") || localStorage.getItem("241runners_access_token");
+                        console.log('🔑 SignalR accessTokenFactory token:', authToken ? `Present (${authToken.length} chars)` : 'Missing');
                         return authToken || "";
                     },
+                    skipNegotiation: true, // Skip negotiation for better compatibility
                     transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling
                 })
                 .withAutomaticReconnect([0, 2000, 10000, 30000]) // Reconnect attempts
@@ -165,6 +167,23 @@ class RealtimeClient {
     }
 
     async start() {
+        // Check if already connected or connecting
+        if (this.connection?.state === signalR.HubConnectionState.Connected) {
+            console.log('🔔 SignalR already connected');
+            this.isConnected = true;
+            return;
+        }
+
+        if (this.connection?.state === signalR.HubConnectionState.Connecting) {
+            console.log('🔄 SignalR connection already in progress');
+            return;
+        }
+
+        if (this.connection?.state === signalR.HubConnectionState.Reconnecting) {
+            console.log('🔄 SignalR reconnection in progress');
+            return;
+        }
+
         try {
             await this.connection.start();
             this.isConnected = true;
@@ -185,6 +204,10 @@ class RealtimeClient {
             console.log('🔌 Real-time connection stopped');
             this.updateConnectionStatus('disconnected');
         }
+    }
+
+    isConnected() {
+        return this.connection?.state === signalR.HubConnectionState.Connected;
     }
 
     handleConnectionError(error) {

@@ -536,7 +536,6 @@
         <a href="map.html">Map</a>
         <a href="dna-tracking.html">DNA Tracking</a>
         <a href="report-case.html" class="active">Report Case</a>
-        <a href="dashboard.html" id="dashboardLink" style="display: none;">Dashboard</a>
         <a href="profile.html" id="profileLink" style="display: none;">Profile</a>
         <a href="my-cases.html" id="myCasesLink" style="display: none;">My Cases</a>
         <a href="login.html" id="loginLink">Login</a>
@@ -996,11 +995,10 @@
 
     // Check authentication status (optional)
     function checkAuth() {
-      const user = localStorage.getItem('user');
-      if (user) {
+      const authData = localStorage.getItem('ra_auth');
+      if (authData) {
         // User is logged in - show additional options
         document.getElementById('authNotice').style.display = 'block';
-        document.getElementById('dashboardLink').style.display = 'inline';
         document.getElementById('profileLink').style.display = 'inline';
         document.getElementById('myCasesLink').style.display = 'inline';
         document.getElementById('loginLink').style.display = 'none';
@@ -1008,7 +1006,6 @@
         document.getElementById('logoutBtn').style.display = 'inline';
       } else {
         // User is not logged in - show login/signup options
-        document.getElementById('dashboardLink').style.display = 'none';
         document.getElementById('profileLink').style.display = 'none';
         document.getElementById('myCasesLink').style.display = 'none';
         document.getElementById('loginLink').style.display = 'inline';

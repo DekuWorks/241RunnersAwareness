@@ -406,7 +406,6 @@
                 <a href="map.html">Map</a>
                 <a href="dna-tracking.html">DNA Tracking</a>
                 <a href="report-case.html">Report Case</a>
-                <a href="dashboard.html">Dashboard</a>
                 <a href="profile.html">Profile</a>
                 <a href="my-cases.html" class="active">My Cases</a>
                 <a href="#" id="logoutBtn" class="nav-login">Logout</a>
@@ -487,20 +486,20 @@
 
         // Check authentication
         function checkAuth() {
-            const user = localStorage.getItem('user');
-            if (!user) {
+            const authData = localStorage.getItem('ra_auth');
+            if (!authData) {
                 window.location.href = 'login.html';
                 return false;
             }
-            return JSON.parse(user);
+            return JSON.parse(authData);
         }
 
         // Get auth token
         function getAuthToken() {
-            const user = localStorage.getItem('user');
-            if (user) {
-                const userData = JSON.parse(user);
-                return userData.token;
+            const authData = localStorage.getItem('ra_auth');
+            if (authData) {
+                const auth = JSON.parse(authData);
+                return auth.accessToken || auth.token;
             }
             return null;
         }

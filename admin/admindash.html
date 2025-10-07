@@ -4744,7 +4744,8 @@
         function isAuthenticated() {
             console.log("🔍 isAuthenticated() called");
             
-            const token = storage.get('ra_admin_token') || storage.get('jwtToken');
+            // Use consistent token keys matching mobile app and realtime.js
+            const token = storage.get('ra_admin_token') || storage.get('jwtToken') || storage.get('241runners_access_token');
             if (!token) {
                 console.log("❌ No authentication token found");
                 return false;
@@ -4834,7 +4835,8 @@
         
         function authHeader() {
             console.log("🔍 authHeader() called");
-            const token = storage.get('ra_admin_token') || storage.get('jwtToken') || storage.get('jwtToken');
+            // Use consistent token keys matching mobile app and realtime.js
+            const token = storage.get('ra_admin_token') || storage.get('jwtToken') || storage.get('241runners_access_token');
             console.log("🔍 Retrieved token:", token ? "Present (length: " + token.length + ")" : "Missing");
             
             if (!token) {
@@ -4842,7 +4844,13 @@
                 return {};
             }
             
-            return token ? { "Authorization": `Bearer ${token}` } : {};
+            // Validate token format (should be JWT)
+            if (token && typeof token === 'string' && token.length > 10) {
+                return { "Authorization": `Bearer ${token}` };
+            } else {
+                console.log("❌ Invalid token format");
+                return {};
+            }
         }
         
         // ===== API FUNCTIONS =====
@@ -5297,12 +5305,12 @@
                 return authData.token;
             }
             
-            // Fallback to direct localStorage access
-            const token = localStorage.getItem('ra_admin_token') || localStorage.getItem('jwtToken') || localStorage.getItem('access_token');
+            // Fallback to direct localStorage access - use consistent keys
+            const token = localStorage.getItem('ra_admin_token') || localStorage.getItem('jwtToken') || localStorage.getItem('241runners_access_token');
             console.log('🔍 getAuthToken() called via localStorage:', {
                 ra_admin_token: localStorage.getItem('ra_admin_token') ? 'Present' : 'Missing',
                 jwtToken: localStorage.getItem('jwtToken') ? 'Present' : 'Missing',
-                access_token: localStorage.getItem('access_token') ? 'Present' : 'Missing',
+                '241runners_access_token': localStorage.getItem('241runners_access_token') ? 'Present' : 'Missing',
                 finalToken: token ? 'Present' : 'Missing'
             });
             return token;
@@ -5407,11 +5415,12 @@
             try {
                 console.log('👥 Loading users from API...');
                 
-                // Check if user is authenticated
-                const token = storage.get('ra_admin_token') || storage.get('jwtToken');
+                // Check if user is authenticated - use consistent token keys
+                const token = storage.get('ra_admin_token') || storage.get('jwtToken') || storage.get('241runners_access_token');
                 console.log('🔍 Authentication check:', {
                     ra_admin_token: storage.get('ra_admin_token') ? 'Present' : 'Missing',
                     jwtToken: storage.get('jwtToken') ? 'Present' : 'Missing',
+                    '241runners_access_token': storage.get('241runners_access_token') ? 'Present' : 'Missing',
                     finalToken: token ? 'Present' : 'Missing',
                     tokenLength: token ? token.length : 0
                 });
@@ -9713,7 +9722,8 @@
                 
                 console.log('🔌 Connecting to SignalR hub:', hubUrl);
                 
-                const token = storage.get('ra_admin_token') || storage.get('jwtToken');
+                // Use consistent token keys matching mobile app and realtime.js
+                const token = storage.get('ra_admin_token') || storage.get('jwtToken') || storage.get('241runners_access_token');
                 console.log('🔑 Using token for SignalR:', token ? `Present (length: ${token.length})` : 'Missing');
                 
                 if (!token) {
@@ -9755,7 +9765,8 @@
                 realTimeConnection = new signalR.HubConnectionBuilder()
                     .withUrl(hubUrl, {
                         accessTokenFactory: () => {
-                            const currentToken = storage.get('ra_admin_token') || storage.get('jwtToken');
+                            // Use consistent token keys matching mobile app and realtime.js
+                            const currentToken = storage.get('ra_admin_token') || storage.get('jwtToken') || storage.get('241runners_access_token');
                             console.log('🔑 SignalR accessTokenFactory called, token:', currentToken ? `Present (length: ${currentToken.length})` : 'Missing');
                             return currentToken || '';
                         },
@@ -10149,8 +10160,13 @@
                 // Initialize real-time system using new realtime client
                 if (typeof window.realtimeClient !== 'undefined' && window.realtimeClient.start) {
                     try {
-                        await window.realtimeClient.start();
-                        console.log('✅ New realtime client initialized successfully');
+                        // Check if already connected before starting
+                        if (window.realtimeClient.isConnected && window.realtimeClient.isConnected()) {
+                            console.log('✅ RealtimeClient already connected, skipping start');
+                        } else {
+                            await window.realtimeClient.start();
+                            console.log('✅ New realtime client initialized successfully');
+                        }
                         
                         // Set up connection status callbacks
                         if (window.realtimeClient.connection) {
