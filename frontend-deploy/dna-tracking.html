@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DNA Tracking - 241Runners Awareness</title>
+  <link rel="stylesheet" href="styles.css?v=20250905" />
+  <script src="assets/js/config.js?v=20250905"></script>
+</head>
+<body>
+  <header role="banner">
+    <div class="header-bar">
+      <img src="assets/images/241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
+      <h1>241 Runners Awareness</h1>
+    </div>
+
+    <nav role="navigation" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="aboutus.html">About Us</a>
+      <a href="cases.html">Cases</a>
+      <a href="map.html">🗺️ Map</a>
+      <a href="dna-tracking.html">🧬 DNA Tracking</a>
+      <a href="signup.html" id="signupLink">Sign Up</a>
+      <a href="login.html" id="loginLink">Login</a>
+      <button id="logoutBtn" style="display: none;" class="logout-btn">Logout</button>
+      <a href="https://www.zeffy.com/en-US/donation-form/donate-to-241-runners-awareness-initiative" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
+      <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
+    </nav>
+    
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
+      ☀️
+    </button>
+    
+    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <main role="main">
+    <div class="dna-page-wrapper">
+      <div class="dna-container">
+        <!-- Hero Section -->
+        <div class="dna-hero-section">
+        <h1>🧬 Advanced DNA Technology</h1>
+        <p>State-of-the-art DNA tracking and identification system for missing persons cases. Every sample helps bring families closure.</p>
+        <div class="dna-nav-buttons">
+          <button class="dna-nav-btn" onclick="scrollToSection('stats')">📊 Statistics</button>
+          <button class="dna-nav-btn" onclick="scrollToSection('features')">🔬 Features</button>
+          <button class="dna-nav-btn" onclick="scrollToSection('databases')">🗄️ Databases</button>
+        </div>
+      </div>
+
+      <!-- Statistics Section -->
+      <div class="dna-stats-section" id="stats">
+        <h2>DNA Collection Statistics</h2>
+        <div class="dna-stats-grid">
+          <div class="dna-stat-card">
+            <span class="dna-stat-number">1,250</span>
+            <span class="dna-stat-label">Total Samples Collected</span>
+          </div>
+          <div class="dna-stat-card">
+            <span class="dna-stat-number">45</span>
+            <span class="dna-stat-label">Samples This Month</span>
+          </div>
+          <div class="dna-stat-card">
+            <span class="dna-stat-number">98.5%</span>
+            <span class="dna-stat-label">Success Rate</span>
+          </div>
+          <div class="dna-stat-card">
+            <span class="dna-stat-number">3.2 days</span>
+            <span class="dna-stat-label">Average Processing Time</span>
+          </div>
+          <div class="dna-stat-card">
+            <span class="dna-stat-number">156</span>
+            <span class="dna-stat-label">Active Cases</span>
+          </div>
+          <div class="dna-stat-card">
+            <span class="dna-stat-number">89</span>
+            <span class="dna-stat-label">Resolved Cases</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DNA Features -->
+      <div class="dna-content-section" id="features">
+        <h2>DNA Technology Features</h2>
+        <div class="dna-features-grid">
+          <div class="dna-feature-card">
+            <div class="dna-feature-icon">🧬</div>
+            <div class="dna-feature-title">DNA Sample Collection</div>
+            <div class="dna-feature-description">
+              Secure collection of DNA samples using buccal swabs, blood samples, and hair follicles. 
+              All samples are encrypted and stored with military-grade security protocols.
+            </div>
+          </div>
+
+          <div class="dna-feature-card">
+            <div class="dna-feature-icon">🔍</div>
+            <div class="dna-feature-title">Advanced Analysis</div>
+            <div class="dna-feature-description">
+              Sophisticated DNA analysis including STR markers, SNP analysis, and haplotype determination. 
+              Results are compared against national databases for matches.
+            </div>
+          </div>
+
+          <div class="dna-feature-card">
+            <div class="dna-feature-icon">🗄️</div>
+            <div class="dna-feature-title">Database Integration</div>
+            <div class="dna-feature-description">
+              Automatic integration with NAMUS, CODIS, and local law enforcement databases. 
+              Real-time matching and notification systems.
+            </div>
+          </div>
+
+          <div class="dna-feature-card">
+            <div class="dna-feature-icon">📊</div>
+            <div class="dna-feature-title">Comprehensive Reports</div>
+            <div class="dna-feature-description">
+              Detailed DNA analysis reports including genetic markers, quality assessment, 
+              and comparison results with recommendations for further testing.
+            </div>
+          </div>
+
+          <div class="dna-feature-card">
+            <div class="dna-feature-icon">🔐</div>
+            <div class="dna-feature-title">Secure Storage</div>
+            <div class="dna-feature-description">
+              Encrypted DNA sequence storage with HIPAA compliance and law enforcement 
+              security standards. Access controlled by role-based permissions.
+            </div>
+          </div>
+
+          <div class="dna-feature-card">
+            <div class="dna-feature-icon">🚨</div>
+            <div class="dna-feature-title">Real-Time Alerts</div>
+            <div class="dna-feature-description">
+              Instant notifications when DNA matches are found in national databases. 
+              Automatic alerts to law enforcement and family members.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DNA Sample Form -->
+      <div class="dna-form-section">
+        <h2>Submit DNA Sample</h2>
+        <div class="form-grid">
+        <div>
+          <div class="form-group">
+            <label class="form-label">Individual ID</label>
+            <input type="text" class="form-input" id="individualId" placeholder="Enter individual ID">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Sample Type</label>
+            <select class="form-input" id="sampleType">
+              <option value="">Select sample type</option>
+              <option value="Buccal Swab">Buccal Swab</option>
+              <option value="Blood Sample">Blood Sample</option>
+              <option value="Hair Follicle">Hair Follicle</option>
+              <option value="Saliva">Saliva</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Lab Reference</label>
+            <input type="text" class="form-input" id="labReference" placeholder="Lab reference number">
+          </div>
+        </div>
+        <div>
+          <div class="form-group">
+            <label class="form-label">DNA Sequence</label>
+            <textarea class="form-textarea" id="dnaSequence" placeholder="Enter DNA sequence (A, T, C, G only)"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Notes</label>
+            <textarea class="form-textarea" id="notes" placeholder="Additional notes about the sample"></textarea>
+          </div>
+          <button class="submit-btn" onclick="submitDNASample()">Submit DNA Sample</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Database Integration -->
+    <div class="database-section" id="databases">
+      <h2>National Database Integration</h2>
+      <div class="database-grid">
+        <div class="database-card">
+          <h3>NAMUS Database</h3>
+          <p>National Missing and Unidentified Persons System integration for nationwide DNA matching</p>
+          <div class="database-stats">
+            <div class="db-stat">
+              <span class="db-stat-number">23</span>
+              <span class="db-stat-label">Matches Found</span>
+            </div>
+            <div class="db-stat">
+              <span class="db-stat-number">1,150</span>
+              <span class="db-stat-label">Samples Uploaded</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="database-card">
+          <h3>CODIS Database</h3>
+          <p>Combined DNA Index System for criminal database comparison and identification</p>
+          <div class="database-stats">
+            <div class="db-stat">
+              <span class="db-stat-number">8</span>
+              <span class="db-stat-label">Matches Found</span>
+            </div>
+            <div class="db-stat">
+              <span class="db-stat-number">890</span>
+              <span class="db-stat-label">Samples Uploaded</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="database-card">
+          <h3>Local Database</h3>
+          <p>Houston area missing persons database for local law enforcement collaboration</p>
+          <div class="database-stats">
+            <div class="db-stat">
+              <span class="db-stat-number">156</span>
+              <span class="db-stat-label">Active Cases</span>
+            </div>
+            <div class="db-stat">
+              <span class="db-stat-number">89</span>
+              <span class="db-stat-label">Resolved Cases</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lab Partnerships -->
+      <div class="labs-section">
+      <h2>Partner Laboratories</h2>
+      <div class="labs-grid">
+        <div class="lab-card">
+          <div class="lab-logo">🏥</div>
+          <h3>Houston Forensic Science Center</h3>
+          <p>Primary forensic DNA analysis laboratory</p>
+          <span style="background: #dbeafe; color: #1e40af; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">Primary Partner</span>
+        </div>
+
+        <div class="lab-card">
+          <div class="lab-logo">🔬</div>
+          <h3>Texas Department of Public Safety Crime Lab</h3>
+          <p>State crime laboratory for DNA analysis</p>
+          <span style="background: #fef3c7; color: #92400e; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">State Lab</span>
+        </div>
+
+        <div class="lab-card">
+          <div class="lab-logo">🕵️</div>
+          <h3>FBI DNA Analysis Unit</h3>
+          <p>Federal Bureau of Investigation DNA analysis</p>
+          <span style="background: #fce7f3; color: #be185d; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">Federal</span>
+        </div>
+
+        <div class="lab-card">
+          <div class="lab-logo">🎓</div>
+          <h3>University of Texas DNA Lab</h3>
+          <p>Academic research and advanced DNA analysis</p>
+          <span style="background: #dcfce7; color: #166534; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">Research</span>
+        </div>
+
+        <div class="lab-card">
+          <div class="lab-logo">🧪</div>
+          <h3>Bode Technology Group</h3>
+          <p>Private DNA analysis and forensic services</p>
+          <span style="background: #f3e8ff; color: #7c3aed; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">Private</span>
+        </div>
+
+        <div class="lab-card">
+          <div class="lab-logo">🔬</div>
+          <h3>DNA Diagnostics Center</h3>
+          <p>Specialized DNA testing and analysis</p>
+          <span style="background: #fef3c7; color: #92400e; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">Specialized</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DNA Report Generator -->
+    <div class="report-section">
+      <h2>DNA Report Generator</h2>
+      <div class="form-grid">
+        <div>
+          <div class="form-group">
+            <label class="form-label">Individual ID for Report</label>
+            <input type="text" class="form-input" id="reportIndividualId" placeholder="Enter individual ID">
+          </div>
+          <button class="submit-btn" onclick="generateDNAReport()">Generate DNA Report</button>
+        </div>
+        <div>
+          <div class="report-preview" id="reportPreview">
+            Enter an Individual ID and click "Generate DNA Report" to view a sample report.
+          </div>
+        </div>
+              </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>&copy; 2025 241Runners Awareness. Advanced DNA technology for missing persons identification.</p>
+  </div>
+
+  <script>
+    function scrollToSection(sectionId) {
+      document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function submitDNASample() {
+      const individualId = document.getElementById('individualId').value;
+      const sampleType = document.getElementById('sampleType').value;
+      const labReference = document.getElementById('labReference').value;
+      const dnaSequence = document.getElementById('dnaSequence').value;
+      const notes = document.getElementById('notes').value;
+
+      if (!individualId || !sampleType || !labReference || !dnaSequence) {
+        showNotification('Please fill in all required fields', 'error');
+        return;
+      }
+
+      // Validate DNA sequence
+      const validChars = /^[ATCGatcg]+$/;
+      if (!validChars.test(dnaSequence)) {
+        showNotification('DNA sequence must contain only A, T, C, G characters', 'error');
+        return;
+      }
+
+      if (dnaSequence.length < 10) {
+        showNotification('DNA sequence must be at least 10 characters long', 'error');
+        return;
+      }
+
+      // Remove mock submission - replace with real API call
+      showNotification('DNA sample submission requires API integration', 'info');
+      
+      // Clear form
+      document.getElementById('individualId').value = '';
+      document.getElementById('sampleType').value = '';
+      document.getElementById('labReference').value = '';
+      document.getElementById('dnaSequence').value = '';
+      document.getElementById('notes').value = '';
+    }
+
+    function generateDNAReport() {
+      const individualId = document.getElementById('reportIndividualId').value;
+      
+      if (!individualId) {
+        showNotification('Please enter an Individual ID', 'error');
+        return;
+      }
+
+      // Remove mock report generation - replace with real API call
+      const report = `DNA Analysis Report
+==================
+
+Individual ID: ${individualId}
+Report Date: ${new Date().toLocaleString()}
+Status: API Integration Required
+
+This feature requires backend API integration to generate real DNA reports.
+Please contact the development team to implement this functionality.`;
+
+      document.getElementById('reportPreview').textContent = report;
+      showNotification('DNA report generation requires API integration', 'info');
+    }
+
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#3b82f6'};
+        color: white;
+        padding: 1rem;
+        border-radius: 8px;
+        z-index: 1001;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        max-width: 300px;
+      `;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.remove();
+      }, 5000);
+    }
+
+    // Scroll to section function
+    function scrollToSection(sectionId) {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // Animate statistics on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const statNumbers = document.querySelectorAll('.dna-stat-number');
+      statNumbers.forEach(stat => {
+        const finalValue = stat.textContent;
+        const numericValue = parseInt(finalValue.replace(/[^\d]/g, ''));
+        if (!isNaN(numericValue)) {
+          animateNumber(stat, 0, numericValue, 2000);
+        }
+      });
+    });
+
+    function animateNumber(element, start, end, duration) {
+      const startTime = performance.now();
+      const animate = (currentTime) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        const current = Math.floor(start + (end - start) * progress);
+        element.textContent = current.toLocaleString();
+        
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        }
+      };
+      requestAnimationFrame(animate);
+    }
+  </script>
+  </main>
+
+  <footer role="contentinfo">
+    <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
+  </footer>
+</body>
+</html> 

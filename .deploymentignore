@@ -1,0 +1,27 @@
+# Backend API (not needed for static web app)
+241RunnersAPI/
+
+# Node modules (not needed for static web app)
+node_modules/
+
+# Build artifacts
+bin/
+obj/
+publish/
+
+# IDE files
+.vs/
+.vscode/
+*.user
+*.suo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp

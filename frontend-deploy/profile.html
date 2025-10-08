@@ -1,0 +1,3190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - 241 Runners Awareness</title>
+  <link rel="stylesheet" href="https://241runnersawareness.org/styles.css?v=20250905">
+  <link rel="stylesheet" href="https://241runnersawareness.org/forms.css">
+  <script src="/js/auth-utils.js?v=20250905" defer></script>
+  <!-- SignalR Client Library -->
+  <script src="https://unpkg.com/@microsoft/signalr@latest/dist/browser/signalr.min.js"></script>
+  <style>
+    .profile-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .profile-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding: 2rem;
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      color: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(220, 38, 38, 0.3);
+    }
+
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: white;
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: #dc2626;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .profile-name {
+      font-size: 2rem;
+      margin: 0 0 0.5rem 0;
+      font-weight: 600;
+    }
+
+    .profile-email {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .profile-role {
+      font-size: 1rem;
+      opacity: 0.8;
+      margin: 0;
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      display: inline-block;
+    }
+
+    .profile-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .profile-section {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .info-item:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .info-value {
+      color: #6b7280;
+      text-align: right;
+    }
+
+    .edit-btn {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .edit-btn:hover {
+      background: #b91c1c;
+    }
+
+    .my-cases-section {
+      grid-column: 1 / -1;
+    }
+
+    .case-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .case-item {
+      padding: 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .case-item:hover {
+      border-color: #dc2626;
+      box-shadow: 0 2px 8px rgba(220, 38, 38, 0.1);
+    }
+
+    .case-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .case-name {
+      font-weight: 600;
+      color: #111827;
+      font-size: 1.1rem;
+    }
+
+    .case-status {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .status-missing {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status-found {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-investigating {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-active {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .status-safe {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-missing {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status-found {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-closed {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .status-cancelled {
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .runner-info-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .runner-info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .runner-info-item:last-child {
+      border-bottom: none;
+    }
+
+    .runner-info-label {
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .runner-info-value {
+      color: #6b7280;
+      text-align: right;
+      max-width: 60%;
+    }
+
+    .case-status-card {
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .case-status-card:hover {
+      border-color: #dc2626;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+    }
+
+    .case-status-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .case-status-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .case-status-badge {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .case-status-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .case-detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .case-detail-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .case-detail-value {
+      font-size: 0.9rem;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .case-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+    }
+
+    .case-details {
+      color: #6b7280;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .case-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-small {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary-small {
+      background: #dc2626;
+      color: white;
+    }
+
+    .btn-primary-small:hover {
+      background: #b91c1c;
+    }
+
+    .btn-secondary-small {
+      background: #6b7280;
+      color: white;
+    }
+
+    .btn-secondary-small:hover {
+      background: #4b5563;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #6b7280;
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .empty-state h3 {
+      margin-bottom: 0.5rem;
+      color: #374151;
+    }
+
+    .empty-state p {
+      margin-bottom: 1.5rem;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #6b7280;
+    }
+
+    .error {
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    /* Edit Form Styles */
+    .edit-form {
+      display: none;
+      background: #f9fafb;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+
+    .edit-form.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    }
+
+    /* Validation Styles */
+    .form-group input.error,
+    .form-group select.error,
+    .form-group textarea.error {
+      border-color: #dc2626;
+      background-color: #fef2f2;
+    }
+
+    .field-error {
+      color: #dc2626;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .field-error::before {
+      content: "⚠️";
+      font-size: 0.75rem;
+    }
+
+    /* Message Styles */
+    .message {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .message.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .message.success::before {
+      content: "✅";
+    }
+
+    .message.error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .message.error::before {
+      content: "❌";
+    }
+
+    .message.info {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #bfdbfe;
+    }
+
+    .message.info::before {
+      content: "ℹ️";
+    }
+
+    /* Loading States */
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn.loading {
+      position: relative;
+      color: transparent;
+    }
+
+    .btn.loading::after {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 50%;
+      left: 50%;
+      margin-left: -8px;
+      margin-top: -8px;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      margin-top: 1rem;
+    }
+
+    /* Form Row Layout */
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Runner Photos Styles */
+    .runner-photos-section {
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: #f9fafb;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .photo-upload-container {
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
+    }
+
+    .current-photos {
+      flex: 1;
+      min-height: 200px;
+    }
+
+    .photo-upload-controls {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .photo-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+
+    .photo-item {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .photo-item img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .photo-item .photo-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .photo-item:hover .photo-overlay {
+      opacity: 1;
+    }
+
+    .photo-item .photo-remove-btn {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+
+    .photo-item .photo-remove-btn:hover {
+      background: #b91c1c;
+    }
+
+    /* Photo Update Reminder Styles */
+    .photo-update-required {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+
+    .photo-update-required .photo-reminder-info {
+      background: #fef2f2;
+      border-left-color: #dc2626;
+    }
+
+    /* Responsive Design for Photos */
+    @media (max-width: 768px) {
+      .photo-upload-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .photo-gallery {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      }
+
+      .photo-item img {
+        height: 120px;
+      }
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: #dc2626;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #b91c1c;
+    }
+
+    .btn-secondary {
+      background: #6b7280;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #4b5563;
+    }
+
+    /* Enhanced Responsive Design */
+    @media (max-width: 768px) {
+      .profile-container {
+        padding: 0.5rem;
+        margin: 0;
+      }
+
+      .profile-content {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .profile-header {
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .profile-name {
+        font-size: 1.5rem;
+      }
+
+      .profile-info-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+
+      .profile-info-item {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+      }
+
+      .profile-info-label {
+        font-size: 0.8rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .profile-info-value {
+        font-size: 0.9rem;
+      }
+
+      .case-status-card {
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .case-status-title {
+        font-size: 1rem;
+      }
+
+      .case-status-badge {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+      }
+
+      .btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+
+      .btn-group {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .btn-group .btn {
+        width: 100%;
+        margin: 0;
+      }
+
+      .edit-form {
+        padding: 1rem;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        padding: 0.75rem;
+        font-size: 1rem;
+      }
+
+      .image-upload-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .upload-section {
+        width: 100%;
+      }
+
+      .upload-btn, .remove-btn {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 0.9rem;
+      }
+
+      /* Mobile-specific logout button styling */
+      .nav-login {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        border-radius: 6px;
+        background: #dc2626;
+        color: white;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        transition: background-color 0.3s ease;
+      }
+
+      .nav-login:hover {
+        background: #b91c1c;
+        color: white;
+      }
+
+      /* Mobile navigation improvements */
+      .nav-menu {
+        padding: 1rem;
+      }
+
+      .nav-menu a {
+        padding: 0.75rem 0;
+        font-size: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .nav-menu a:last-child {
+        border-bottom: none;
+      }
+    }
+
+    /* Extra small devices */
+    @media (max-width: 480px) {
+      .profile-container {
+        padding: 0.25rem;
+      }
+
+      .profile-header {
+        padding: 0.75rem;
+      }
+
+      .profile-name {
+        font-size: 1.25rem;
+      }
+
+      .profile-info-item {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+      }
+
+      .case-status-card {
+        padding: 0.75rem;
+      }
+
+      .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+      }
+
+      .edit-form {
+        padding: 0.75rem;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+      }
+    }
+    
+    /* Image Upload Styles */
+    .image-upload-container {
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
+    }
+
+    .current-image-section {
+      flex: 1;
+    }
+
+    .upload-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .upload-btn, .remove-btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .upload-btn {
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      color: white;
+    }
+
+    .upload-btn:hover {
+      background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+
+    .remove-btn {
+      background: #ef4444;
+      color: white;
+    }
+
+    .remove-btn:hover {
+      background: #dc2626;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    .upload-progress {
+      margin-top: 1rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #dc2626, #b91c1c);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    @media (max-width: 768px) {
+      .image-upload-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+
+    /* Real-time Notifications Styles */
+    .notification-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      max-width: 400px;
+      pointer-events: none;
+    }
+
+    .notification {
+      background: white;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      border-left: 4px solid;
+      animation: slideInRight 0.3s ease;
+      pointer-events: auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .notification.emergency {
+      border-left-color: #dc2626;
+      background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+    }
+
+    .notification.case-update {
+      border-left-color: #2563eb;
+      background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+    }
+
+    .notification.profile-update {
+      border-left-color: #059669;
+      background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%);
+    }
+
+    .notification.system {
+      border-left-color: #7c3aed;
+      background: linear-gradient(135deg, #f3e8ff 0%, #ffffff 100%);
+    }
+
+    .notification.weather {
+      border-left-color: #ea580c;
+      background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
+    }
+
+    .notification.safety {
+      border-left-color: #ca8a04;
+      background: linear-gradient(135deg, #fefce8 0%, #ffffff 100%);
+    }
+
+    .notification-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .notification-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .notification-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: white;
+    }
+
+    .notification.emergency .notification-icon {
+      background: #dc2626;
+    }
+
+    .notification.case-update .notification-icon {
+      background: #2563eb;
+    }
+
+    .notification.profile-update .notification-icon {
+      background: #059669;
+    }
+
+    .notification.system .notification-icon {
+      background: #7c3aed;
+    }
+
+    .notification.weather .notification-icon {
+      background: #ea580c;
+    }
+
+    .notification.safety .notification-icon {
+      background: #ca8a04;
+    }
+
+    .notification-close {
+      background: none;
+      border: none;
+      color: #6b7280;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .notification-close:hover {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .notification-message {
+      font-size: 14px;
+      color: #4b5563;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .notification-time {
+      font-size: 12px;
+      color: #9ca3af;
+      text-align: right;
+    }
+
+    .notification-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .notification-btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: none;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .notification-btn.primary {
+      background: #dc2626;
+      color: white;
+    }
+
+    .notification-btn.primary:hover {
+      background: #b91c1c;
+    }
+
+    .notification-btn.secondary {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .notification-btn.secondary:hover {
+      background: #e5e7eb;
+    }
+
+    .connection-status {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: white;
+      border-radius: 8px;
+      padding: 8px 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 9999;
+    }
+
+    .connection-status.connected {
+      color: #059669;
+    }
+
+    .connection-status.disconnected {
+      color: #dc2626;
+    }
+
+    .connection-status.connecting {
+      color: #ca8a04;
+    }
+
+    .connection-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .connection-status.connected .connection-dot {
+      background: #059669;
+    }
+
+    .connection-status.disconnected .connection-dot {
+      background: #dc2626;
+    }
+
+    .connection-status.connecting .connection-dot {
+      background: #ca8a04;
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    /* Auto-hide notifications after 5 seconds */
+    .notification.auto-hide {
+      animation: slideInRight 0.3s ease, slideOutRight 0.3s ease 4.7s forwards;
+    }
+
+    @keyframes slideOutRight {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <nav class="nav-container">
+      <div class="nav-brand">
+        <a href="index.html">
+          <img src="assets/images/241-logo.jpg" alt="241 Runners Awareness" class="logo">
+          <span class="brand-text">241 Runners Awareness</span>
+        </a>
+      </div>
+      <div class="nav-menu" id="navMenu">
+        <a href="index.html">Home</a>
+        <a href="aboutus.html">About</a>
+        <a href="cases.html">Cases</a>
+        <a href="map.html">Map</a>
+        <a href="dna-tracking.html">DNA Tracking</a>
+        <a href="report-case.html">Report Case</a>
+        <a href="profile.html" class="active">Profile</a>
+        <a href="my-cases.html">My Cases</a>
+        <a href="runners.html">Runners</a>
+        <a href="#" id="logoutBtn" class="nav-login">Logout</a>
+      </div>
+      <div class="nav-toggle" id="navToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="profile-container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="profile-avatar" id="profileAvatar">
+        <img id="profileImage" src="" alt="Profile Image" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+        <div id="avatarPlaceholder" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 3rem; color: #dc2626;">👤</div>
+      </div>
+      <h1 class="profile-name" id="profileName">Loading...</h1>
+      <p class="profile-email" id="profileEmail">Loading...</p>
+      <span class="profile-role" id="profileRole">Loading...</span>
+    </div>
+
+    <!-- Profile Image Upload Section -->
+    <div class="profile-section" style="margin-bottom: 2rem;">
+      <h2 class="section-title">Profile Image</h2>
+      <div class="image-upload-container">
+        <div class="current-image-section">
+          <div class="current-image-preview" id="currentImagePreview">
+            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
+          </div>
+        </div>
+        <div class="upload-section">
+          <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
+          <button type="button" id="uploadImageBtn" class="upload-btn">
+            📷 Upload New Image
+          </button>
+          <button type="button" id="removeImageBtn" class="remove-btn" style="display: none;">
+            🗑️ Remove Image
+          </button>
+          <div class="upload-progress" id="uploadProgress" style="display: none;">
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="progress-text" id="progressText">Uploading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Content -->
+    <div class="profile-content">
+      <!-- Personal Information -->
+      <div class="profile-section">
+        <h2 class="section-title">
+          <span>👤</span>
+          Personal Information
+          <button class="edit-btn" onclick="toggleEditForm('personalInfo')">Edit</button>
+        </h2>
+        
+        <div class="info-grid" id="personalInfo">
+          <div class="info-item">
+            <span class="info-label">First Name</span>
+            <span class="info-value" id="firstName">Loading...</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Last Name</span>
+            <span class="info-value" id="lastName">Loading...</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Email</span>
+            <span class="info-value" id="email">Loading...</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Phone</span>
+            <span class="info-value" id="phone">Loading...</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Role</span>
+            <span class="info-value" id="role">Loading...</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Member Since</span>
+            <span class="info-value" id="memberSince">Loading...</span>
+          </div>
+        </div>
+
+        <!-- Edit Personal Information Form -->
+        <div class="edit-form" id="personalInfoForm">
+          <form id="updatePersonalForm">
+            <div class="form-group">
+              <label for="editFirstName">First Name</label>
+              <input type="text" id="editFirstName" name="firstName" required>
+            </div>
+            <div class="form-group">
+              <label for="editLastName">Last Name</label>
+              <input type="text" id="editLastName" name="lastName" required>
+            </div>
+            <div class="form-group">
+              <label for="editPhone">Phone Number</label>
+              <input type="tel" id="editPhone" name="phoneNumber">
+            </div>
+            <div class="form-group">
+              <label for="editRole">Role</label>
+              <select id="editRole" name="role" required>
+                <option value="user">User</option>
+                <option value="parent">Parent</option>
+                <option value="caregiver">Caregiver</option>
+                <option value="aba_therapist">ABA Therapist</option>
+                <option value="adoptive_parent">Adoptive Parent</option>
+              </select>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" onclick="toggleEditForm('personalInfo')">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Account Statistics -->
+      <div class="profile-section">
+        <h2 class="section-title">
+          <span>📊</span>
+          Account Statistics
+        </h2>
+        
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Total Cases Reported</span>
+            <span class="info-value" id="totalCases">-</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Active Cases</span>
+            <span class="info-value" id="activeCases">-</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Resolved Cases</span>
+            <span class="info-value" id="resolvedCases">-</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Cases This Month</span>
+            <span class="info-value" id="monthlyCases">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Runner Profile Section -->
+      <div class="profile-section my-cases-section">
+        <h2 class="section-title">
+          <span>🏃</span>
+          Runner Profile
+          <button class="edit-btn" onclick="toggleEditForm('runnerProfile')">Edit Runner</button>
+        </h2>
+
+        <!-- Runner Photos Section -->
+        <div class="runner-photos-section" style="margin-bottom: 2rem; padding: 1.5rem; background: #f9fafb; border-radius: 8px;">
+          <h3 style="color: #374151; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+            📸 Runner Photos
+            <span id="photoUpdateReminder" style="display: none; background: #fbbf24; color: #92400e; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 500;">
+              Update Required
+            </span>
+          </h3>
+          
+          <div class="photo-upload-container">
+            <div class="current-photos" id="currentRunnerPhotos">
+              <div id="noRunnerPhotosMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">
+                No runner photos uploaded yet
+              </div>
+            </div>
+            
+            <div class="photo-upload-controls">
+              <input type="file" id="runnerPhotosInput" accept="image/*" multiple style="display: none;">
+              <button type="button" id="uploadRunnerPhotosBtn" class="upload-btn">
+                📷 Upload Runner Photos
+              </button>
+              <button type="button" id="removeRunnerPhotosBtn" class="remove-btn" style="display: none;">
+                🗑️ Remove All Photos
+              </button>
+              <div class="upload-progress" id="runnerPhotosProgress" style="display: none;">
+                <div class="progress-bar">
+                  <div class="progress-fill" id="runnerPhotosProgressFill"></div>
+                </div>
+                <span class="progress-text" id="runnerPhotosProgressText">Uploading...</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="photo-reminder-info" style="margin-top: 1rem; padding: 1rem; background: #dbeafe; border-radius: 6px; border-left: 4px solid #2563eb;">
+            <p style="margin: 0; color: #1e40af; font-size: 0.9rem;">
+              <strong>📅 Photo Update Reminder:</strong> Please update your runner photos every 6 months to keep them fresh and accurate for case tracking purposes.
+            </p>
+            <p id="nextPhotoReminderDate" style="margin: 0.5rem 0 0 0; color: #1e40af; font-size: 0.85rem;"></p>
+          </div>
+        </div>
+        
+        <div id="runnerProfileInfo">
+          <div class="loading">Loading runner profile...</div>
+        </div>
+        
+        <!-- Create Runner Button (shown when no runner profile exists) -->
+        <div id="createRunnerSection" style="display: none; text-align: center; padding: 2rem; background: #f9fafb; border-radius: 8px; margin-top: 1rem;">
+          <h3 style="color: #374151; margin-bottom: 1rem;">No Runner Profile Found</h3>
+          <p style="color: #6b7280; margin-bottom: 1.5rem;">Create a runner profile to track your running activities and safety status.</p>
+          <button class="btn btn-primary" onclick="showCreateRunnerForm()">
+            🏃 Create Runner Profile
+          </button>
+        </div>
+
+        <!-- Edit Runner Profile Form -->
+        <div class="edit-form" id="runnerProfileForm">
+          <form id="updateRunnerForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="editFirstName">First Name *</label>
+                <input type="text" id="editFirstName" name="firstName" required>
+              </div>
+              <div class="form-group">
+                <label for="editLastName">Last Name *</label>
+                <input type="text" id="editLastName" name="lastName" required>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="editDateOfBirth">Date of Birth *</label>
+                <input type="date" id="editDateOfBirth" name="dateOfBirth" required>
+              </div>
+              <div class="form-group">
+                <label for="editGender">Gender *</label>
+                <select id="editGender" name="gender" required>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                  <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="editHeight">Height</label>
+                <input type="text" id="editHeight" name="height" placeholder="e.g., 5'8\", 175cm">
+              </div>
+              <div class="form-group">
+                <label for="editWeight">Weight</label>
+                <input type="text" id="editWeight" name="weight" placeholder="e.g., 150 lbs, 68 kg">
+              </div>
+              <div class="form-group">
+                <label for="editEyeColor">Eye Color</label>
+                <input type="text" id="editEyeColor" name="eyeColor" placeholder="e.g., Brown, Blue, Green">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="editMedicalConditions">Medical Conditions / Diagnoses</label>
+              <textarea id="editMedicalConditions" name="medicalConditions" rows="2" placeholder="Any medical conditions, diagnoses, or health issues"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="editPhysicalDescription">Physical Description</label>
+              <textarea id="editPhysicalDescription" name="physicalDescription" rows="3" placeholder="Hair color, build, distinguishing features, etc."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="editPreferredRunningLocations">Preferred Running Locations</label>
+              <textarea id="editPreferredRunningLocations" name="preferredRunningLocations" rows="2" placeholder="Where do you typically run?"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="editTypicalRunningTimes">Typical Running Times</label>
+              <textarea id="editTypicalRunningTimes" name="typicalRunningTimes" rows="2" placeholder="When do you typically run?"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="editAdditionalNotes">Additional Notes</label>
+              <textarea id="editAdditionalNotes" name="additionalNotes" rows="3" placeholder="Any other important information about your running habits, safety concerns, etc."></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" onclick="toggleEditForm('runnerProfile')">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save Runner Profile</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- My Cases -->
+      <div class="profile-section my-cases-section">
+        <h2 class="section-title">
+          <span>📋</span>
+          My Case Status
+          <a href="my-cases.html" class="btn-small btn-primary-small" style="margin-left: auto;">View All</a>
+        </h2>
+        
+        <div id="myCasesList">
+          <div class="loading">Loading your case status...</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Use</a>
+        <a href="aboutus.html">About Us</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Real-time Notifications Container -->
+  <div id="notificationContainer" class="notification-container"></div>
+
+  <!-- Connection Status Indicator -->
+  <div id="connectionStatus" class="connection-status connecting">
+    <div class="connection-dot"></div>
+    <span>Connecting...</span>
+  </div>
+
+  <script>
+    // API Configuration - use existing from auth.js
+    let PROFILE_API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net';
+    
+    // SignalR Connection
+    let userHubConnection = null;
+    
+    // Load API configuration
+    async function loadConfig() {
+      try {
+        const response = await fetch('/config.json');
+        const config = await response.json();
+        PROFILE_API_BASE_URL = config.PROFILE_API_BASE_URL || PROFILE_API_BASE_URL;
+      } catch (error) {
+        console.warn('Failed to load config.json, using default API URL');
+      }
+    }
+
+    // Initialize SignalR connection for real-time notifications
+    async function initializeRealTimeNotifications() {
+      try {
+        const apiBaseUrl = PROFILE_API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net';
+        const hubUrl = apiBaseUrl + '/hubs/user';
+        
+        console.log('🔌 Connecting to User SignalR hub:', hubUrl);
+        
+        const token = getAuthToken();
+        if (!token) {
+          console.warn('No auth token available for SignalR connection');
+          updateConnectionStatus('disconnected', 'No authentication');
+          return;
+        }
+        
+        console.log('🔑 Using token for SignalR:', token ? 'Present' : 'Missing');
+        
+        userHubConnection = new signalR.HubConnectionBuilder()
+          .withUrl(hubUrl, {
+            transport: signalR.HttpTransportType.LongPolling, // Use LongPolling instead of WebSockets
+            skipNegotiation: false,
+            accessTokenFactory: () => {
+              console.log('🔑 SignalR requesting token...');
+              return token;
+            }
+          })
+          .withAutomaticReconnect([0, 2000, 10000, 30000])
+          .configureLogging(signalR.LogLevel.Debug)
+          .build();
+
+        // Handle welcome message
+        userHubConnection.on("Welcome", (data) => {
+          console.log('👋 Welcome message received:', data);
+          showNotification('system', 'Connected to Real-time Notifications', 
+            'You will now receive live updates about your profile and cases.', false);
+        });
+
+        // Handle case updates
+        userHubConnection.on("CaseUpdate", (data) => {
+          console.log('📋 Case update received:', data);
+          showNotification('case-update', 'Case Update', 
+            `Your case status has been updated. Check your cases for more details.`, true);
+          
+          // Refresh case data
+          loadUserCases();
+        });
+
+        // Handle emergency alerts
+        userHubConnection.on("EmergencyAlert", (data) => {
+          console.log('🚨 Emergency alert received:', data);
+          showNotification('emergency', 'Emergency Alert', 
+            data.AlertData.message || 'An emergency alert has been issued. Please check your status immediately.', false);
+        });
+
+        // Handle profile updates
+        userHubConnection.on("ProfileUpdate", (data) => {
+          console.log('👤 Profile update received:', data);
+          showNotification('profile-update', 'Profile Updated', 
+            'Your profile information has been updated successfully.', true);
+          
+          // Refresh profile data
+          loadUserProfile();
+          loadRunnerProfile();
+        });
+
+        // Handle system notifications
+        userHubConnection.on("SystemNotification", (data) => {
+          console.log('📢 System notification received:', data);
+          showNotification('system', 'System Notification', 
+            data.NotificationData.message || 'A system notification has been sent.', true);
+        });
+
+        // Handle safety check reminders
+        userHubConnection.on("SafetyCheckReminder", (data) => {
+          console.log('🛡️ Safety check reminder received:', data);
+          showNotification('safety', 'Safety Check Reminder', 
+            'Please update your safety status to let others know you are safe.', false);
+        });
+
+        // Handle weather alerts
+        userHubConnection.on("WeatherAlert", (data) => {
+          console.log('🌤️ Weather alert received:', data);
+          showNotification('weather', 'Weather Alert', 
+            `Weather alert for ${data.Area}: ${data.WeatherData.message || 'Please check current conditions.'}`, true);
+        });
+
+        // Handle pong responses
+        userHubConnection.on("Pong", (timestamp) => {
+          console.log('🏓 Pong received:', timestamp);
+        });
+
+        // Connection event handlers
+        userHubConnection.onclose((error) => {
+          console.log('🔌 SignalR connection closed:', error);
+          updateConnectionStatus('disconnected', 'Connection lost');
+          
+          if (error) {
+            showNotification('system', 'Connection Lost', 
+              'Real-time notifications have been disconnected. Attempting to reconnect...', true);
+          }
+        });
+
+        userHubConnection.onreconnecting((error) => {
+          console.log('🔄 SignalR reconnecting:', error);
+          updateConnectionStatus('connecting', 'Reconnecting...');
+        });
+
+        userHubConnection.onreconnected((connectionId) => {
+          console.log('✅ SignalR reconnected:', connectionId);
+          updateConnectionStatus('connected', 'Connected');
+          showNotification('system', 'Reconnected', 
+            'Real-time notifications have been restored.', true);
+        });
+
+        // Start the connection
+        await userHubConnection.start();
+        console.log('✅ SignalR connection established');
+        updateConnectionStatus('connected', 'Connected');
+
+        // Start ping interval to keep connection alive
+        setInterval(async () => {
+          if (userHubConnection && userHubConnection.state === signalR.HubConnectionState.Connected) {
+            try {
+              await userHubConnection.invoke("Ping");
+            } catch (error) {
+              console.error('Ping failed:', error);
+            }
+          }
+        }, 30000); // Ping every 30 seconds
+
+      } catch (error) {
+        console.error('❌ Failed to initialize SignalR connection:', error);
+        console.error('❌ Error details:', {
+          message: error.message,
+          name: error.name,
+          stack: error.stack
+        });
+        updateConnectionStatus('disconnected', 'Connection failed');
+        showNotification('system', 'Connection Failed', 
+          `Unable to connect to real-time notifications: ${error.message}`, true);
+      }
+    }
+
+    // Update connection status indicator
+    function updateConnectionStatus(status, message) {
+      const statusElement = document.getElementById('connectionStatus');
+      if (statusElement) {
+        statusElement.className = `connection-status ${status}`;
+        statusElement.querySelector('span').textContent = message;
+      }
+    }
+
+    // Show notification
+    function showNotification(type, title, message, autoHide = true) {
+      const container = document.getElementById('notificationContainer');
+      if (!container) return;
+
+      const notificationId = `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const notification = document.createElement('div');
+      notification.id = notificationId;
+      notification.className = `notification ${type} ${autoHide ? 'auto-hide' : ''}`;
+      
+      const iconMap = {
+        'emergency': '🚨',
+        'case-update': '📋',
+        'profile-update': '👤',
+        'system': '📢',
+        'weather': '🌤️',
+        'safety': '🛡️'
+      };
+
+      notification.innerHTML = `
+        <div class="notification-header">
+          <div class="notification-title">
+            <div class="notification-icon">${iconMap[type] || '📢'}</div>
+            ${title}
+          </div>
+          <button class="notification-close" onclick="closeNotification('${notificationId}')">×</button>
+        </div>
+        <div class="notification-message">${message}</div>
+        <div class="notification-time">${new Date().toLocaleTimeString()}</div>
+        ${type === 'emergency' ? `
+          <div class="notification-actions">
+            <button class="notification-btn primary" onclick="handleEmergencyAlert('${notificationId}')">Mark Safe</button>
+            <button class="notification-btn secondary" onclick="closeNotification('${notificationId}')">Dismiss</button>
+          </div>
+        ` : ''}
+      `;
+
+      container.appendChild(notification);
+
+      // Auto-hide after 5 seconds if enabled
+      if (autoHide) {
+        setTimeout(() => {
+          closeNotification(notificationId);
+        }, 5000);
+      }
+
+      // Play notification sound (if supported)
+      try {
+        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTQQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScT');
+        audio.volume = 0.3;
+        audio.play().catch(() => {}); // Ignore errors if audio fails
+      } catch (error) {
+        // Ignore audio errors
+      }
+    }
+
+    // Close notification
+    function closeNotification(notificationId) {
+      const notification = document.getElementById(notificationId);
+      if (notification) {
+        notification.style.animation = 'slideOutRight 0.3s ease forwards';
+        setTimeout(() => {
+          notification.remove();
+        }, 300);
+      }
+    }
+
+    // Handle emergency alert
+    async function handleEmergencyAlert(notificationId) {
+      try {
+        // Update user status to safe - TODO: Implement this endpoint
+        // const response = await fetch(`${PROFILE_API_BASE_URL}/users/status`, {
+        //   method: 'PUT',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //     'Authorization': `Bearer ${getAuthToken()}`
+        //   },
+        //   body: JSON.stringify({ status: 'safe' })
+        // });
+
+        // TODO: Implement status update endpoint
+        showNotification('profile-update', 'Status Updated', 
+          'Your safety status has been updated to "Safe".', true);
+      } catch (error) {
+        console.error('Failed to update safety status:', error);
+        showNotification('system', 'Update Failed', 
+          'Failed to update your safety status. Please try again.', true);
+      }
+      
+      closeNotification(notificationId);
+    }
+
+    // Check authentication
+    function checkAuth() {
+      const authData = localStorage.getItem('ra_auth');
+      if (!authData) {
+        window.location.href = 'login.html';
+        return false;
+      }
+      return JSON.parse(authData);
+    }
+
+    // Get auth token
+    function getAuthToken() {
+      const authData = localStorage.getItem('ra_auth');
+      if (authData) {
+        const auth = JSON.parse(authData);
+        return auth.accessToken || auth.token;
+      }
+      return null;
+    }
+
+    // Load user profile information
+    function loadUserProfile() {
+      const authData = checkAuth();
+      if (authData && authData.user) {
+        const user = authData.user;
+        
+        // Parse name if it exists, otherwise use defaults
+        const nameParts = user.name ? user.name.split(' ') : ['User', ''];
+        const firstName = user.firstName || nameParts[0] || 'User';
+        const lastName = user.lastName || (nameParts.length > 1 ? nameParts.slice(1).join(' ') : '');
+        
+        // Don't update header here - let loadUserProfileData() handle it with fresh API data
+        // This prevents race condition where localStorage data overwrites API data
+        
+        // Update personal information
+        document.getElementById('firstName').textContent = firstName;
+        document.getElementById('lastName').textContent = lastName;
+        document.getElementById('email').textContent = user.email || 'Not provided';
+        document.getElementById('phone').textContent = user.phoneNumber || 'Not provided';
+        document.getElementById('role').textContent = user.role || 'user';
+        document.getElementById('memberSince').textContent = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown';
+        
+        // Update edit form
+        document.getElementById('editFirstName').value = firstName;
+        document.getElementById('editLastName').value = lastName;
+        document.getElementById('editPhone').value = user.phoneNumber || '';
+        document.getElementById('editRole').value = user.role || 'user';
+      } else {
+        console.error('No user data found in auth data:', authData);
+        // Show error or redirect to login
+        window.location.href = 'login.html';
+      }
+    }
+
+    // Load runner profile
+    async function loadRunnerProfile() {
+      try {
+        const token = getAuthToken();
+        if (!token) {
+          throw new Error('No authentication token');
+        }
+
+        // Get user's runners
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const runners = await response.json();
+          if (runners && runners.length > 0) {
+            // Use the first runner (users typically have one runner profile)
+            const runnerData = runners[0];
+            displayRunnerProfile(runnerData);
+            return runnerData;
+          } else {
+            // No runner profile exists yet
+            displayNoRunnerProfile();
+            return null;
+          }
+        } else if (response.status === 404) {
+          // No runner profile exists yet
+          displayNoRunnerProfile();
+          return null;
+        } else if (response.status === 500) {
+          // Server error - log but don't break the page
+          console.warn('Runner API returned 500 error - server issue. This is a known backend issue that needs to be fixed.');
+          console.warn('The Runner API is currently experiencing issues. Please try again later.');
+          displayNoRunnerProfile();
+          return null;
+        } else {
+          throw new Error(`Failed to load runner profile: ${response.status} ${response.statusText}`);
+        }
+
+      } catch (error) {
+        console.error('Error loading runner profile:', error);
+        showError('Failed to load runner profile. Please try again.');
+        return null;
+      }
+    }
+
+    // Display runner profile
+    function displayRunnerProfile(runner) {
+      const container = document.getElementById('runnerProfileInfo');
+      
+      container.innerHTML = `
+        <div class="runner-info-grid">
+          <div class="runner-info-item">
+            <span class="runner-info-label">Full Name</span>
+            <span class="runner-info-value">${runner.name || `${runner.firstName || ''} ${runner.lastName || ''}`.trim() || 'Not provided'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Age</span>
+            <span class="runner-info-value">${runner.age || 'Not provided'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Gender</span>
+            <span class="runner-info-value">${runner.gender || 'Not provided'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Height</span>
+            <span class="runner-info-value">${runner.height || 'Not provided'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Weight</span>
+            <span class="runner-info-value">${runner.weight || 'Not provided'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Eye Color</span>
+            <span class="runner-info-value">${runner.eyeColor || 'Not provided'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Status</span>
+            <span class="runner-info-value">${runner.status || 'Not provided'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Physical Description</span>
+            <span class="runner-info-value">${runner.physicalDescription || 'Not provided'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Medical Conditions</span>
+            <span class="runner-info-value">${runner.medicalConditions || 'None reported'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Preferred Running Locations</span>
+            <span class="runner-info-value">${runner.preferredRunningLocations || 'Not specified'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Typical Running Times</span>
+            <span class="runner-info-value">${runner.typicalRunningTimes || 'Not specified'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Experience Level</span>
+            <span class="runner-info-value">${runner.experienceLevel || 'Not specified'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Additional Notes</span>
+            <span class="runner-info-value">${runner.additionalNotes || 'None'}</span>
+          </div>
+          <div class="runner-info-item">
+            <span class="runner-info-label">Profile Complete</span>
+            <span class="runner-info-value">${runner.isProfileComplete ? 'Yes' : 'No'}</span>
+          </div>
+        </div>
+      `;
+
+      // Populate edit form with enhanced fields
+      document.getElementById('editFirstName').value = runner.firstName || '';
+      document.getElementById('editLastName').value = runner.lastName || '';
+      document.getElementById('editDateOfBirth').value = runner.dateOfBirth ? runner.dateOfBirth.split('T')[0] : '';
+      document.getElementById('editGender').value = runner.gender || '';
+      document.getElementById('editHeight').value = runner.height || '';
+      document.getElementById('editWeight').value = runner.weight || '';
+      document.getElementById('editEyeColor').value = runner.eyeColor || '';
+      document.getElementById('editPhysicalDescription').value = runner.physicalDescription || '';
+      document.getElementById('editMedicalConditions').value = runner.medicalConditions || '';
+      document.getElementById('editPreferredRunningLocations').value = runner.preferredRunningLocations || '';
+      document.getElementById('editTypicalRunningTimes').value = runner.typicalRunningTimes || '';
+      document.getElementById('editAdditionalNotes').value = runner.additionalNotes || '';
+      
+      // Update photo display and reminder
+      updateRunnerPhotosDisplay(runner);
+      updatePhotoReminderInfo(runner);
+      
+      // Hide the create runner section since we have a runner profile
+      const createSection = document.getElementById('createRunnerSection');
+      if (createSection) {
+        createSection.style.display = 'none';
+      }
+    }
+
+    // Update runner photos display
+    function updateRunnerPhotosDisplay(runner) {
+      const container = document.getElementById('currentRunnerPhotos');
+      const noPhotosMessage = document.getElementById('noRunnerPhotosMessage');
+      const removeBtn = document.getElementById('removeRunnerPhotosBtn');
+
+      if (runner.additionalImageUrls && runner.additionalImageUrls.length > 0) {
+        noPhotosMessage.style.display = 'none';
+        removeBtn.style.display = 'block';
+
+        container.innerHTML = `
+          <div class="photo-gallery">
+            ${runner.additionalImageUrls.map((url, index) => `
+              <div class="photo-item">
+                <img src="${url}" alt="Runner photo ${index + 1}">
+                <div class="photo-overlay">
+                  <button class="photo-remove-btn" onclick="removeRunnerPhoto(${index})">Remove</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else {
+        noPhotosMessage.style.display = 'flex';
+        removeBtn.style.display = 'none';
+        container.innerHTML = '<div id="noRunnerPhotosMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No runner photos uploaded yet</div>';
+      }
+    }
+
+    // Update photo reminder information
+    function updatePhotoReminderInfo(runner) {
+      const reminderElement = document.getElementById('photoUpdateReminder');
+      const reminderDateElement = document.getElementById('nextPhotoReminderDate');
+      const photosSection = document.querySelector('.runner-photos-section');
+
+      if (runner.nextPhotoReminder) {
+        const nextReminderDate = new Date(runner.nextPhotoReminder);
+        const isOverdue = new Date() >= nextReminderDate;
+        
+        if (isOverdue) {
+          reminderElement.style.display = 'inline-block';
+          photosSection.classList.add('photo-update-required');
+        } else {
+          reminderElement.style.display = 'none';
+          photosSection.classList.remove('photo-update-required');
+        }
+
+        reminderDateElement.textContent = `Next reminder: ${nextReminderDate.toLocaleDateString()}`;
+      } else {
+        reminderElement.style.display = 'none';
+        photosSection.classList.remove('photo-update-required');
+        reminderDateElement.textContent = 'No reminder scheduled';
+      }
+    }
+
+    // Display no runner profile message
+    function displayNoRunnerProfile() {
+      const container = document.getElementById('runnerProfileInfo');
+      const createSection = document.getElementById('createRunnerSection');
+      
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">🏃</div>
+          <h3>No Runner Profile</h3>
+          <p>You haven't created a runner profile yet. Create one to get started with case tracking.</p>
+        </div>
+      `;
+      
+      // Show the create runner section
+      if (createSection) {
+        createSection.style.display = 'block';
+      }
+    }
+
+    // Load user's case status
+    async function loadUserCases() {
+      try {
+        const token = getAuthToken();
+        if (!token) {
+          throw new Error('No authentication token');
+        }
+
+        const authData = checkAuth();
+        
+        // First get runner profile to get runner ID
+        const runnerData = await loadRunnerProfile();
+        if (!runnerData) {
+          // No runner profile, show message
+          displayNoCaseStatus();
+          return;
+        }
+
+        // Get case status for this runner - TODO: Implement this endpoint
+        // const response = await fetch(`${PROFILE_API_BASE_URL}/cases/runner/${runnerData.id}/status`, {
+        //   headers: {
+        //     'Authorization': `Bearer ${token}`
+        //   }
+        // });
+
+        // TODO: Implement case status endpoint
+        console.log('Case status endpoint not yet implemented - showing placeholder');
+        displayNoCaseStatus();
+
+      } catch (error) {
+        console.error('Error loading user cases:', error);
+        showError('Failed to load your case status. Please try again.');
+      }
+    }
+
+    // Display case status
+    function displayCaseStatus(caseData) {
+      const container = document.getElementById('myCasesList');
+      
+      const statusClass = `status-${caseData.status.toLowerCase()}`;
+      
+      container.innerHTML = `
+        <div class="case-status-card">
+          <div class="case-status-header">
+            <div class="case-status-title">My Case Status</div>
+            <div class="case-status-badge ${statusClass}">${caseData.status}</div>
+          </div>
+          <div class="case-status-details">
+            <div class="case-detail-item">
+              <span class="case-detail-label">Case ID</span>
+              <span class="case-detail-value">#${caseData.id}</span>
+            </div>
+            <div class="case-detail-item">
+              <span class="case-detail-label">Priority</span>
+              <span class="case-detail-value">${caseData.priority}</span>
+            </div>
+            <div class="case-detail-item">
+              <span class="case-detail-label">Created</span>
+              <span class="case-detail-value">${new Date(caseData.createdAt).toLocaleDateString()}</span>
+            </div>
+            <div class="case-detail-item">
+              <span class="case-detail-label">Last Updated</span>
+              <span class="case-detail-value">${new Date(caseData.updatedAt).toLocaleDateString()}</span>
+            </div>
+          </div>
+          <div class="case-actions">
+            <button class="btn-small btn-primary-small" onclick="updateCaseStatus()">Update Status</button>
+            <a href="my-cases.html" class="btn-small btn-secondary-small">View Details</a>
+          </div>
+        </div>
+      `;
+    }
+
+    // Display no case status message
+    function displayNoCaseStatus() {
+      const container = document.getElementById('myCasesList');
+      
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">📋</div>
+          <h3>No Case Yet</h3>
+          <p>Your runner profile doesn't have a case yet. Cases are automatically created when you sign up as a runner.</p>
+        </div>
+      `;
+    }
+
+    // Update case statistics
+    function updateCaseStatistics(cases) {
+      const totalCases = cases.length;
+      const activeCases = cases.filter(c => c.status === 'missing' || c.status === 'investigating').length;
+      const resolvedCases = cases.filter(c => c.status === 'found' || c.status === 'resolved').length;
+      
+      // Cases from this month
+      const thisMonth = new Date();
+      thisMonth.setDate(1);
+      const monthlyCases = cases.filter(c => new Date(c.createdAt) >= thisMonth).length;
+
+      document.getElementById('totalCases').textContent = totalCases;
+      document.getElementById('activeCases').textContent = activeCases;
+      document.getElementById('resolvedCases').textContent = resolvedCases;
+      document.getElementById('monthlyCases').textContent = monthlyCases;
+    }
+
+    // Display user cases
+    function displayUserCases(cases) {
+      const container = document.getElementById('myCasesList');
+      const recentCases = cases.slice(0, 5); // Show last 5 cases
+
+      if (recentCases.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <h3>No cases yet</h3>
+            <p>You haven't reported any cases yet.</p>
+            <a href="report-case.html" class="btn-small btn-primary-small">Report Your First Case</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <ul class="case-list">
+          ${recentCases.map(caseItem => `
+            <li class="case-item">
+              <div class="case-header">
+                <div class="case-name">${caseItem.fullName || `${caseItem.firstName} ${caseItem.lastName}`}</div>
+                <div class="case-status status-${caseItem.status}">${caseItem.status}</div>
+              </div>
+              <div class="case-details">
+                <strong>Age:</strong> ${caseItem.age} | 
+                <strong>Location:</strong> ${caseItem.city}, ${caseItem.state} | 
+                <strong>Reported:</strong> ${new Date(caseItem.createdAt).toLocaleDateString()}
+              </div>
+              <div class="case-actions">
+                <a href="my-cases.html?id=${caseItem.id}" class="btn-small btn-primary-small">View Details</a>
+                <a href="report-case.html?update=${caseItem.id}" class="btn-small btn-secondary-small">Update</a>
+              </div>
+            </li>
+          `).join('')}
+        </ul>
+      `;
+    }
+
+    // Toggle edit form
+    function toggleEditForm(section) {
+      const form = document.getElementById(section + 'Form');
+      if (form) {
+        form.classList.toggle('active');
+      }
+    }
+
+    // Update personal information
+    document.getElementById('updatePersonalForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      // Validate form before submission
+      if (!isFormValid('updatePersonalForm')) {
+        showMessage('error', 'Please fill in all required fields correctly');
+        return;
+      }
+      
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData.entries());
+      
+      // Additional validation
+      const firstNameValidation = ValidationUtils.validateName(data.firstName);
+      const lastNameValidation = ValidationUtils.validateName(data.lastName);
+      const phoneValidation = ValidationUtils.validatePhone(data.phoneNumber);
+      
+      if (!firstNameValidation.isValid) {
+        showMessage('error', firstNameValidation.message);
+        return;
+      }
+      if (!lastNameValidation.isValid) {
+        showMessage('error', lastNameValidation.message);
+        return;
+      }
+      if (!phoneValidation.isValid) {
+        showMessage('error', phoneValidation.message);
+        return;
+      }
+      
+      // Show loading state
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Saving...';
+      submitBtn.disabled = true;
+      
+      try {
+        const token = getAuthToken();
+        const authData = checkAuth();
+        
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          
+          // Update local storage
+          const updatedUser = { ...authData.user, ...data };
+          const updatedAuthData = { ...authData, user: updatedUser };
+          localStorage.setItem('ra_auth', JSON.stringify(updatedAuthData));
+          
+          // Reload profile
+          loadUserProfile();
+          toggleEditForm('personalInfo');
+          
+          showMessage('success', 'Profile updated successfully!');
+        } else {
+          const result = await response.json();
+          showMessage('error', result.message || 'Failed to update profile');
+        }
+        
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        showMessage('error', 'Network error. Please try again.');
+      } finally {
+        // Reset button state
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Update runner profile
+    document.getElementById('updateRunnerForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData.entries());
+      
+      try {
+        const token = getAuthToken();
+        
+        // Add UserId to the data
+        data.userId = currentUser.id;
+        
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+          // Reload runner profile
+          await loadRunnerProfile();
+          await loadUserCases(); // Reload cases too
+          toggleEditForm('runnerProfile');
+          
+          showMessage('success', 'Runner profile updated successfully!');
+        } else {
+          const result = await response.json();
+          showMessage('error', result.message || 'Failed to update runner profile');
+        }
+        
+      } catch (error) {
+        console.error('Error updating runner profile:', error);
+        showMessage('error', 'Network error. Please try again.');
+      }
+    });
+
+    // Validation Utilities
+    const ValidationUtils = {
+      // Validate name (letters, spaces, hyphens, apostrophes only)
+      validateName: function(name) {
+        if (!name || name.trim().length === 0) {
+          return { isValid: false, message: 'Name is required' };
+        }
+        if (name.length < 2) {
+          return { isValid: false, message: 'Name must be at least 2 characters' };
+        }
+        if (name.length > 50) {
+          return { isValid: false, message: 'Name must be less than 50 characters' };
+        }
+        const nameRegex = /^[a-zA-Z\s\-']+$/;
+        if (!nameRegex.test(name)) {
+          return { isValid: false, message: 'Name can only contain letters, spaces, hyphens, and apostrophes' };
+        }
+        return { isValid: true, message: '' };
+      },
+
+      // Validate phone number
+      validatePhone: function(phone) {
+        if (!phone || phone.trim().length === 0) {
+          return { isValid: true, message: '' }; // Phone is optional
+        }
+        const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+        if (!phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''))) {
+          return { isValid: false, message: 'Please enter a valid phone number' };
+        }
+        return { isValid: true, message: '' };
+      },
+
+      // Validate email (read-only field)
+      validateEmail: function(email) {
+        if (!email || email.trim().length === 0) {
+          return { isValid: false, message: 'Email is required' };
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          return { isValid: false, message: 'Please enter a valid email address' };
+        }
+        return { isValid: true, message: '' };
+      },
+
+      // Format phone number
+      formatPhone: function(phone) {
+        const cleaned = phone.replace(/\D/g, '');
+        if (cleaned.length === 10) {
+          return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+        }
+        return phone;
+      }
+    };
+
+    // Real-time validation
+    function setupRealTimeValidation() {
+      const firstNameInput = document.getElementById('editFirstName');
+      const lastNameInput = document.getElementById('editLastName');
+      const phoneInput = document.getElementById('editPhone');
+
+      if (firstNameInput) {
+        firstNameInput.addEventListener('input', function() {
+          validateField(this, ValidationUtils.validateName);
+        });
+      }
+
+      if (lastNameInput) {
+        lastNameInput.addEventListener('input', function() {
+          validateField(this, ValidationUtils.validateName);
+        });
+      }
+
+      if (phoneInput) {
+        phoneInput.addEventListener('input', function() {
+          // Format phone number as user types
+          const formatted = ValidationUtils.formatPhone(this.value);
+          if (formatted !== this.value) {
+            this.value = formatted;
+          }
+          validateField(this, ValidationUtils.validatePhone);
+        });
+      }
+    }
+
+    // Validate individual field
+    function validateField(field, validator) {
+      const value = field.value.trim();
+      const validation = validator(value);
+      
+      // Remove existing error styling
+      field.classList.remove('error');
+      const existingError = field.parentNode.querySelector('.field-error');
+      if (existingError) {
+        existingError.remove();
+      }
+
+      if (!validation.isValid) {
+        field.classList.add('error');
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'field-error';
+        errorDiv.textContent = validation.message;
+        field.parentNode.appendChild(errorDiv);
+      }
+    }
+
+    // Check if form is valid
+    function isFormValid(formId) {
+      const form = document.getElementById(formId);
+      if (!form) return false;
+
+      const inputs = form.querySelectorAll('input[required], select[required]');
+      let isValid = true;
+
+      inputs.forEach(input => {
+        const value = input.value.trim();
+        if (!value) {
+          isValid = false;
+          input.classList.add('error');
+        } else {
+          input.classList.remove('error');
+        }
+      });
+
+      return isValid;
+    }
+
+    // Show message
+    function showMessage(type, message) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${type}`;
+      messageDiv.textContent = message;
+      
+      const container = document.querySelector('.profile-container');
+      container.insertBefore(messageDiv, container.firstChild);
+      
+      setTimeout(() => {
+        messageDiv.remove();
+      }, 5000);
+    }
+
+    // Show error message
+    function showError(message) {
+      showMessage('error', message);
+    }
+
+    // Navigation functionality
+    const navToggle = document.getElementById('navToggle');
+    const navMenu = document.getElementById('navMenu');
+    
+    navToggle.addEventListener('click', function() {
+      navMenu.classList.toggle('active');
+      navToggle.classList.toggle('active');
+    });
+
+    // Enhanced Logout functionality
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Clear all authentication data
+        const authKeys = [
+          'ra_auth', 'ra_admin_token', 'ra_admin_role', 'ra_admin_user',
+          'ra_user_token', 'ra_user_role', 'ra_user_data',
+          'admin_token', 'admin_role', 'admin_user', 'user', 'userToken'
+        ];
+        
+        authKeys.forEach(key => {
+          localStorage.removeItem(key);
+        });
+        
+        // Clear sessionStorage as well
+        if (typeof sessionStorage !== 'undefined') {
+          authKeys.forEach(key => {
+            try {
+              sessionStorage.removeItem(key);
+            } catch (e) {
+              console.warn('Could not clear sessionStorage key:', key);
+            }
+          });
+        }
+        
+        // Disconnect SignalR if connected
+        if (typeof window.connection !== 'undefined' && window.connection.state === signalR.HubConnectionState.Connected) {
+          try {
+            window.connection.stop();
+          } catch (error) {
+            console.warn('Error disconnecting SignalR:', error);
+          }
+        }
+        
+        // Show logout confirmation
+        if (typeof showNotification !== 'undefined') {
+          showNotification('Logged out successfully', 'success');
+        }
+        
+        // Redirect to home page
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 500);
+      });
+    }
+
+    // Image Upload Functionality
+    let currentUser = null;
+
+    // Load user profile data
+    async function loadUserProfileData() {
+      try {
+        // Check if user is authenticated
+        if (!authUtils.isAuthenticated()) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        // Get user data from API
+        const result = await authUtils.getCurrentUserFromAPI();
+        console.log('API response from getCurrentUserFromAPI:', result);
+        const userData = result.user || result; // Handle both response formats
+        console.log('Extracted userData:', userData);
+        currentUser = userData;
+        updateProfileImage(userData.profileImageUrl);
+        
+        // Update profile display
+        updateProfileDisplay(userData);
+        
+      } catch (error) {
+        console.error("Error loading profile:", error);
+        authUtils.showToast("Failed to load profile data", "error");
+      }
+    }
+
+    // Update profile display with user data
+    function updateProfileDisplay(user) {
+      console.log('updateProfileDisplay called with:', user);
+      console.log('user.fullName:', user.fullName);
+      console.log('user.firstName:', user.firstName);
+      console.log('user.lastName:', user.lastName);
+      
+      // Update profile header
+      const profileName = document.querySelector('.profile-name');
+      const profileEmail = document.querySelector('.profile-email');
+      const profileRole = document.querySelector('.profile-role');
+      
+      const displayName = user.fullName || `${user.firstName || 'User'} ${user.lastName || ''}`.trim() || 'User';
+      console.log('Setting profile name to:', displayName);
+      
+      if (profileName) profileName.textContent = displayName;
+      if (profileEmail) profileEmail.textContent = user.email;
+      if (profileRole) profileRole.textContent = user.role || 'User';
+      
+      // Update profile form fields
+      const firstNameInput = document.getElementById('firstName');
+      const lastNameInput = document.getElementById('lastName');
+      const emailInput = document.getElementById('email');
+      const phoneInput = document.getElementById('phone');
+      
+      if (firstNameInput) firstNameInput.value = user.firstName || '';
+      if (lastNameInput) lastNameInput.value = user.lastName || '';
+      if (emailInput) emailInput.value = user.email || '';
+      if (phoneInput) phoneInput.value = user.phoneNumber || '';
+    }
+
+    // Update profile image display
+    function updateProfileImage(imageUrl) {
+      const profileImage = document.getElementById("profileImage");
+      const avatarPlaceholder = document.getElementById("avatarPlaceholder");
+      const currentProfileImage = document.getElementById("currentProfileImage");
+      const noImageMessage = document.getElementById("noImageMessage");
+      const removeImageBtn = document.getElementById("removeImageBtn");
+
+      if (imageUrl) {
+        // Update avatar in header
+        profileImage.src = imageUrl;
+        profileImage.style.display = "block";
+        avatarPlaceholder.style.display = "none";
+        
+        // Update preview section
+        currentProfileImage.src = imageUrl;
+        currentProfileImage.style.display = "block";
+        noImageMessage.style.display = "none";
+        removeImageBtn.style.display = "block";
+      } else {
+        // Show placeholder
+        profileImage.style.display = "none";
+        avatarPlaceholder.style.display = "flex";
+        
+        // Show no image message
+        currentProfileImage.style.display = "none";
+        noImageMessage.style.display = "flex";
+        removeImageBtn.style.display = "none";
+      }
+    }
+
+    // Setup image upload functionality
+    function setupImageUpload() {
+      const uploadBtn = document.getElementById("uploadImageBtn");
+      const removeBtn = document.getElementById("removeImageBtn");
+      const fileInput = document.getElementById("profileImageInput");
+
+      uploadBtn.addEventListener("click", () => {
+        fileInput.click();
+      });
+
+      fileInput.addEventListener("change", handleImageUpload);
+      removeBtn.addEventListener("click", handleImageRemove);
+    }
+
+    // Handle image upload
+    async function handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      // Validate file type
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
+      if (!allowedTypes.includes(file.type)) {
+        showMessage('error', 'Please select a valid image file (JPEG, PNG, GIF, or WebP)');
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        showMessage('error', 'File size must be less than 5MB');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const userData = JSON.parse(localStorage.getItem("ra_auth"));
+      if (!userData || !(userData.accessToken || userData.token)) {
+        showMessage('error', 'Please log in again');
+        window.location.href = "login.html";
+        return;
+      }
+
+      // Show progress
+      const progressContainer = document.getElementById("uploadProgress");
+      const progressFill = document.getElementById("progressFill");
+      const progressText = document.getElementById("progressText");
+      
+      progressContainer.style.display = "block";
+      progressFill.style.width = "0%";
+      progressText.textContent = "Uploading...";
+
+      try {
+        // Simulate progress
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+          progress += Math.random() * 30;
+          if (progress > 90) progress = 90;
+          progressFill.style.width = `${progress}%`;
+        }, 200);
+
+        // Upload to server
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/profile-image`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${userData.accessToken || userData.token}`
+          },
+          body: formData
+        });
+
+        clearInterval(progressInterval);
+        
+        if (response.ok) {
+          const result = await response.json();
+          progressFill.style.width = "100%";
+          progressText.textContent = "Upload successful!";
+          
+          // Update profile image display
+          updateProfileImage(result.profileImageUrl);
+          
+          // Update user data in localStorage
+          const updatedUser = { ...userData.user, profileImageUrl: result.profileImageUrl };
+          const updatedAuthData = { ...userData, user: updatedUser };
+          localStorage.setItem('ra_auth', JSON.stringify(updatedAuthData));
+          
+          showMessage('success', 'Profile image updated successfully!');
+          
+          setTimeout(() => {
+            progressContainer.style.display = "none";
+          }, 2000);
+        } else {
+          const error = await response.json();
+          throw new Error(error.message || 'Upload failed');
+        }
+      } catch (error) {
+        console.error("Upload error:", error);
+        progressFill.style.width = "0%";
+        progressText.textContent = "Upload failed";
+        showMessage('error', `Upload failed: ${error.message}`);
+        setTimeout(() => {
+          progressContainer.style.display = "none";
+        }, 3000);
+      }
+    }
+
+    // Update user profile with new image URL
+    async function updateUserProfileImage(imageUrl) {
+      try {
+        const userData = JSON.parse(localStorage.getItem("ra_auth"));
+        // TODO: Implement image update endpoint
+        console.log('Image update not yet implemented');
+      } catch (error) {
+        console.error("Error updating profile image:", error);
+        throw error;
+      }
+    }
+
+    // Handle image removal
+    async function handleImageRemove() {
+      if (!confirm("Are you sure you want to remove your profile image?")) {
+        return;
+      }
+
+      try {
+        const userData = JSON.parse(localStorage.getItem("ra_auth"));
+        if (!userData || !(userData.accessToken || userData.token)) {
+          showMessage('error', 'Please log in again');
+          window.location.href = "login.html";
+          return;
+        }
+
+        // Show loading state
+        const removeBtn = document.getElementById("removeImageBtn");
+        const originalText = removeBtn.textContent;
+        removeBtn.textContent = "Removing...";
+        removeBtn.disabled = true;
+
+        // Delete image from server
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/profile-image`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${userData.accessToken || userData.token}`
+          }
+        });
+
+        if (response.ok) {
+          // Update profile image display
+          updateProfileImage(null);
+          
+          // Update user data in localStorage
+          const updatedUser = { ...userData.user };
+          delete updatedUser.profileImageUrl;
+          const updatedAuthData = { ...userData, user: updatedUser };
+          localStorage.setItem('ra_auth', JSON.stringify(updatedAuthData));
+          
+          showMessage('success', 'Profile image removed successfully!');
+        } else {
+          const error = await response.json();
+          throw new Error(error.message || 'Failed to remove image');
+        }
+
+      } catch (error) {
+        console.error("Error removing image:", error);
+        showMessage('error', `Failed to remove image: ${error.message}`);
+      } finally {
+        // Reset button state
+        const removeBtn = document.getElementById("removeImageBtn");
+        removeBtn.textContent = "🗑️ Remove Image";
+        removeBtn.disabled = false;
+      }
+    }
+
+    // Update case status
+    async function updateCaseStatus() {
+      const newStatus = prompt('Update your case status:\n\nActive - You are active and safe\nSafe - You are confirmed safe\nMissing - You are missing\nFound - You have been found\nInvestigating - Case is under investigation\nClosed - Case is closed\nCancelled - Case is cancelled\n\nEnter new status:');
+      
+      if (!newStatus) return;
+      
+      const validStatuses = ['Active', 'Safe', 'Missing', 'Found', 'Investigating', 'Closed', 'Cancelled'];
+      if (!validStatuses.includes(newStatus)) {
+        alert('Invalid status. Please enter one of: Active, Safe, Missing, Found, Investigating, Closed, Cancelled');
+        return;
+      }
+      
+      try {
+        const token = getAuthToken();
+        const runnerData = await loadRunnerProfile();
+        
+        if (!runnerData) {
+          alert('No runner profile found. Please create a runner profile first.');
+          return;
+        }
+        
+        // TODO: Implement case status update endpoint
+        showMessage('info', 'Case status update not yet implemented');
+        
+      } catch (error) {
+        console.error('Error updating case status:', error);
+        showMessage('error', 'Network error. Please try again.');
+      }
+    }
+
+    // Setup runner photo upload functionality
+    function setupRunnerPhotoUpload() {
+      const uploadBtn = document.getElementById("uploadRunnerPhotosBtn");
+      const removeBtn = document.getElementById("removeRunnerPhotosBtn");
+      const fileInput = document.getElementById("runnerPhotosInput");
+
+      if (uploadBtn) {
+        uploadBtn.addEventListener("click", () => {
+          fileInput.click();
+        });
+      }
+
+      if (fileInput) {
+        fileInput.addEventListener("change", handleRunnerPhotoUpload);
+      }
+
+      if (removeBtn) {
+        removeBtn.addEventListener("click", handleRemoveAllRunnerPhotos);
+      }
+    }
+
+    // Handle runner photo upload
+    async function handleRunnerPhotoUpload(event) {
+      const files = Array.from(event.target.files);
+      if (files.length === 0) return;
+
+      // Validate files
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
+      for (const file of files) {
+        if (!allowedTypes.includes(file.type)) {
+          showMessage('error', `File ${file.name} is not a valid image type (JPEG, PNG, GIF, or WebP)`);
+          return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          showMessage('error', `File ${file.name} is too large. Maximum size is 10MB.`);
+          return;
+        }
+      }
+
+      const userData = JSON.parse(localStorage.getItem("ra_auth"));
+      if (!userData || !(userData.accessToken || userData.token)) {
+        showMessage('error', 'Please log in again');
+        window.location.href = "login.html";
+        return;
+      }
+
+      // Get current runner ID
+      const runnerData = await loadRunnerProfile();
+      if (!runnerData) {
+        showMessage('error', 'No runner profile found. Please create a runner profile first.');
+        return;
+      }
+
+      // Show progress
+      const progressContainer = document.getElementById("runnerPhotosProgress");
+      const progressFill = document.getElementById("runnerPhotosProgressFill");
+      const progressText = document.getElementById("runnerPhotosProgressText");
+      
+      progressContainer.style.display = "block";
+      progressFill.style.width = "0%";
+      progressText.textContent = `Uploading ${files.length} photo(s)...`;
+
+      try {
+        // Simulate progress
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+          progress += Math.random() * 20;
+          if (progress > 90) progress = 90;
+          progressFill.style.width = `${progress}%`;
+        }, 200);
+
+        // Upload photos
+        const formData = new FormData();
+        files.forEach(file => {
+          formData.append('photos', file);
+        });
+
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/enhanced-runner/${runnerData.id}/photos`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${userData.accessToken || userData.token}`
+          },
+          body: formData
+        });
+
+        clearInterval(progressInterval);
+        
+        if (response.ok) {
+          const result = await response.json();
+          progressFill.style.width = "100%";
+          progressText.textContent = "Upload successful!";
+          
+          // Reload runner profile to show new photos
+          await loadRunnerProfile();
+          
+          showMessage('success', `Successfully uploaded ${result.uploadedUrls?.length || files.length} photo(s)!`);
+          
+          setTimeout(() => {
+            progressContainer.style.display = "none";
+          }, 2000);
+        } else {
+          const error = await response.json();
+          throw new Error(error.message || 'Upload failed');
+        }
+      } catch (error) {
+        console.error("Runner photo upload error:", error);
+        progressFill.style.width = "0%";
+        progressText.textContent = "Upload failed";
+        showMessage('error', `Upload failed: ${error.message}`);
+        setTimeout(() => {
+          progressContainer.style.display = "none";
+        }, 3000);
+      }
+    }
+
+    // Handle remove all runner photos
+    async function handleRemoveAllRunnerPhotos() {
+      if (!confirm("Are you sure you want to remove all runner photos?")) {
+        return;
+      }
+
+      const userData = JSON.parse(localStorage.getItem("ra_auth"));
+      if (!userData || !(userData.accessToken || userData.token)) {
+        showMessage('error', 'Please log in again');
+        window.location.href = "login.html";
+        return;
+      }
+
+      // Get current runner ID
+      const runnerData = await loadRunnerProfile();
+      if (!runnerData) {
+        showMessage('error', 'No runner profile found.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/enhanced-runner/${runnerData.id}/photos`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${userData.accessToken || userData.token}`
+          }
+        });
+
+        if (response.ok) {
+          // Reload runner profile
+          await loadRunnerProfile();
+          showMessage('success', 'All runner photos removed successfully!');
+        } else {
+          const error = await response.json();
+          throw new Error(error.message || 'Failed to remove photos');
+        }
+      } catch (error) {
+        console.error("Error removing runner photos:", error);
+        showMessage('error', `Failed to remove photos: ${error.message}`);
+      }
+    }
+
+    // Remove individual runner photo
+    async function removeRunnerPhoto(photoIndex) {
+      if (!confirm("Are you sure you want to remove this photo?")) {
+        return;
+      }
+
+      // TODO: Implement individual photo removal
+      showMessage('info', 'Individual photo removal not yet implemented. Please use "Remove All Photos" for now.');
+    }
+
+    // Initialize profile
+    document.addEventListener('DOMContentLoaded', async function() {
+      // Check authentication first
+      if (!authUtils.requireAuth()) {
+        return;
+      }
+      
+      await loadConfig();
+      loadUserProfile();
+      await loadRunnerProfile();
+      await loadUserCases();
+      await loadUserProfileData();
+      setupImageUpload();
+      setupRunnerPhotoUpload();
+      setupRealTimeValidation();
+      
+      // Initialize real-time notifications
+      await initializeRealTimeNotifications();
+    });
+
+    // Cleanup SignalR connection on page unload
+    window.addEventListener('beforeunload', function() {
+      if (userHubConnection) {
+        userHubConnection.stop();
+      }
+    });
+
+    // ============================================
+    // EDIT FORM FUNCTIONALITY
+    // ============================================
+
+    /**
+     * Toggle edit form visibility
+     * @param {string} formId - ID of the form to toggle
+     */
+    function toggleEditForm(formId) {
+      const form = document.getElementById(formId + 'Form');
+      const info = document.getElementById(formId);
+      
+      if (form && info) {
+        const isVisible = form.style.display === 'block';
+        
+        if (isVisible) {
+          // Hide form, show info
+          form.style.display = 'none';
+          info.style.display = 'block';
+        } else {
+          // Show form, hide info
+          form.style.display = 'block';
+          info.style.display = 'none';
+          
+          // Populate form with current data
+          populateEditForm(formId);
+        }
+      }
+    }
+
+    /**
+     * Populate edit form with current data
+     * @param {string} formId - ID of the form to populate
+     */
+    function populateEditForm(formId) {
+      if (formId === 'personalInfo') {
+        const user = currentUser;
+        if (user) {
+          document.getElementById('editFirstName').value = user.firstName || '';
+          document.getElementById('editLastName').value = user.lastName || '';
+          document.getElementById('editPhone').value = user.phoneNumber || '';
+          document.getElementById('editRole').value = user.role || 'user';
+        }
+      } else if (formId === 'runnerProfile') {
+        // This will be populated when we load runner data
+        loadRunnerProfile();
+      }
+    }
+
+    /**
+     * Show create runner form
+     */
+    function showCreateRunnerForm() {
+      const createSection = document.getElementById('createRunnerSection');
+      const editForm = document.getElementById('runnerProfileForm');
+      
+      if (createSection) createSection.style.display = 'none';
+      if (editForm) {
+        editForm.style.display = 'block';
+        // Clear form for new runner
+        document.getElementById('updateRunnerForm').reset();
+      }
+    }
+
+    /**
+     * Handle personal info form submission
+     */
+    async function handlePersonalInfoUpdate(event) {
+      event.preventDefault();
+      
+      const formData = new FormData(event.target);
+      const data = {
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName'),
+        phoneNumber: formData.get('phoneNumber'),
+        role: formData.get('role')
+      };
+
+      try {
+        const response = await authUtils.apiRequest('/v1/users/me', {
+          method: 'PUT',
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          const updatedUser = await response.json();
+          console.log('Profile update API response:', updatedUser);
+          currentUser = updatedUser;
+          
+          // Update display
+          updateProfileDisplay(updatedUser);
+          
+          // Hide form
+          toggleEditForm('personalInfo');
+          
+          authUtils.showToast('Profile updated successfully!', 'success');
+        } else {
+          const error = await response.json();
+          authUtils.showToast(`Failed to update profile: ${error.message}`, 'error');
+        }
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        authUtils.showToast('Failed to update profile. Please try again.', 'error');
+      }
+    }
+
+    /**
+     * Handle runner profile form submission
+     */
+    async function handleRunnerProfileUpdate(event) {
+      event.preventDefault();
+      
+      const formData = new FormData(event.target);
+      const data = {
+        name: formData.get('name'),
+        dateOfBirth: formData.get('dateOfBirth'),
+        gender: formData.get('gender'),
+        status: formData.get('status'),
+        physicalDescription: formData.get('physicalDescription'),
+        medicalConditions: formData.get('medicalConditions'),
+        preferredRunningLocations: formData.get('preferredRunningLocations'),
+        typicalRunningTimes: formData.get('typicalRunningTimes')
+      };
+
+      try {
+        // Check if this is a new runner or update
+        const isNewRunner = !currentUser || !currentUser.runnerProfile;
+        const endpoint = isNewRunner ? '/v1/runners' : '/v1/runners/me';
+        const method = isNewRunner ? 'POST' : 'PUT';
+
+        const response = await authUtils.apiRequest(endpoint, {
+          method: method,
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          
+          // Reload runner profile
+          await loadRunnerProfile();
+          
+          // Hide form
+          toggleEditForm('runnerProfile');
+          
+          authUtils.showToast(
+            isNewRunner ? 'Runner profile created successfully!' : 'Runner profile updated successfully!', 
+            'success'
+          );
+        } else {
+          const error = await response.json();
+          authUtils.showToast(`Failed to ${isNewRunner ? 'create' : 'update'} runner profile: ${error.message}`, 'error');
+        }
+      } catch (error) {
+        console.error('Error updating runner profile:', error);
+        authUtils.showToast('Failed to update runner profile. Please try again.', 'error');
+      }
+    }
+
+    // Add event listeners for forms
+    document.addEventListener('DOMContentLoaded', function() {
+      const personalForm = document.getElementById('updatePersonalForm');
+      const runnerForm = document.getElementById('updateRunnerForm');
+      
+      if (personalForm) {
+        personalForm.addEventListener('submit', handlePersonalInfoUpdate);
+      }
+      
+      if (runnerForm) {
+        runnerForm.addEventListener('submit', handleRunnerProfileUpdate);
+      }
+    });
+  </script>
+</body>
+</html>

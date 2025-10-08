@@ -1,0 +1,43 @@
+# Code Owners for 241Runners Awareness
+# This file defines who is responsible for different parts of the codebase
+
+# Global owners - these people will be requested for review on all pull requests
+* @DekuWorks
+
+# Frontend files
+*.js @DekuWorks
+*.jsx @DekuWorks
+*.ts @DekuWorks
+*.tsx @DekuWorks
+*.css @DekuWorks
+*.html @DekuWorks
+frontend/ @DekuWorks
+
+# Backend files
+*.cs @DekuWorks
+*.csproj @DekuWorks
+backend/ @DekuWorks
+
+# Configuration files
+*.json @DekuWorks
+*.config @DekuWorks
+*.yml @DekuWorks
+*.yaml @DekuWorks
+
+# Documentation
+*.md @DekuWorks
+docs/ @DekuWorks
+
+# Deployment and scripts
+*.ps1 @DekuWorks
+*.sh @DekuWorks
+deploy-*.ps1 @DekuWorks
+
+# Security and environment files
+.env* @DekuWorks
+*.key @DekuWorks
+*.pem @DekuWorks
+
+# GitHub specific files
+.github/ @DekuWorks
+CODEOWNERS @DekuWorks

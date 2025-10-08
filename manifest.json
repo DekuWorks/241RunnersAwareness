@@ -1,0 +1,29 @@
+{
+  "name": "241 Runners Awareness",
+  "short_name": "241Runners",
+  "description": "Missing persons awareness platform for the 241 Runners community",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ff0000",
+  "theme_color": "#dc2626",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/241-logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/241-logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["social", "utilities", "news"],
+  "lang": "en",
+  "dir": "ltr",
+  "scope": "/",
+  "prefer_related_applications": false
+} 
