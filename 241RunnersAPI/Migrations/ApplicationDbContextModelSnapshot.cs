@@ -17,7 +17,7 @@ namespace _241RunnersAPI.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -207,7 +207,7 @@ namespace _241RunnersAPI.Migrations
 
                     b.HasIndex("RunnerId");
 
-                    b.ToTable("Cases");
+                    b.ToTable("Cases", (string)null);
                 });
 
             modelBuilder.Entity("_241RunnersAPI.Models.Device", b =>
@@ -274,7 +274,7 @@ namespace _241RunnersAPI.Migrations
                     b.HasIndex("UserId", "Platform")
                         .IsUnique();
 
-                    b.ToTable("Devices");
+                    b.ToTable("Devices", (string)null);
                 });
 
             modelBuilder.Entity("_241RunnersAPI.Models.Notification", b =>
@@ -377,7 +377,7 @@ namespace _241RunnersAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("_241RunnersAPI.Models.Runner", b =>
@@ -419,6 +419,10 @@ namespace _241RunnersAPI.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("EyeColor")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<string>("FirstName")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -427,6 +431,10 @@ namespace _241RunnersAPI.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Height")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -454,6 +462,9 @@ namespace _241RunnersAPI.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<DateTime?>("LastPhotoUpdate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("MedicalConditions")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
@@ -466,6 +477,15 @@ namespace _241RunnersAPI.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("NextPhotoReminder")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PhotoUpdateReminderCount")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("PhotoUpdateReminderSent")
+                        .HasColumnType("bit");
 
                     b.Property<string>("PhysicalDescription")
                         .HasMaxLength(500)
@@ -511,13 +531,17 @@ namespace _241RunnersAPI.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<string>("Weight")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Status");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Runners");
+                    b.ToTable("Runners", (string)null);
                 });
 
             modelBuilder.Entity("_241RunnersAPI.Models.TopicSubscription", b =>
@@ -566,7 +590,7 @@ namespace _241RunnersAPI.Migrations
                     b.HasIndex("UserId", "Topic")
                         .IsUnique();
 
-                    b.ToTable("TopicSubscriptions");
+                    b.ToTable("TopicSubscriptions", (string)null);
                 });
 
             modelBuilder.Entity("_241RunnersAPI.Models.User", b =>
@@ -759,37 +783,37 @@ namespace _241RunnersAPI.Migrations
                         .IsUnique()
                         .HasFilter("[PasswordResetToken] IS NOT NULL");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 10, 5, 3, 12, 3, 675, DateTimeKind.Utc).AddTicks(2760),
+                            CreatedAt = new DateTime(2025, 10, 7, 23, 45, 7, 646, DateTimeKind.Utc).AddTicks(7850),
                             Email = "admin@241runnersawareness.org",
-                            EmailVerifiedAt = new DateTime(2025, 10, 5, 3, 12, 3, 675, DateTimeKind.Utc).AddTicks(2760),
+                            EmailVerifiedAt = new DateTime(2025, 10, 7, 23, 45, 7, 646, DateTimeKind.Utc).AddTicks(7850),
                             FailedLoginAttempts = 0,
                             FirstName = "System",
                             IsActive = true,
                             IsEmailVerified = true,
                             IsPhoneVerified = false,
                             LastName = "Administrator",
-                            PasswordHash = "$2a$11$8cGGRvh4E5nosqaaYfAXp.p.7D2AdiZZWrT1WaIAltz7GFANBUGpK",
+                            PasswordHash = "$2a$11$QJmvl5/mPOYw2bH8iwbNQ.KPpiGN/3/V9AYL6.L15mzr8VrObyx96",
                             Role = "admin"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 10, 5, 3, 12, 3, 793, DateTimeKind.Utc).AddTicks(2260),
+                            CreatedAt = new DateTime(2025, 10, 7, 23, 45, 7, 759, DateTimeKind.Utc).AddTicks(1160),
                             Email = "support@241runnersawareness.org",
-                            EmailVerifiedAt = new DateTime(2025, 10, 5, 3, 12, 3, 793, DateTimeKind.Utc).AddTicks(2260),
+                            EmailVerifiedAt = new DateTime(2025, 10, 7, 23, 45, 7, 759, DateTimeKind.Utc).AddTicks(1160),
                             FailedLoginAttempts = 0,
                             FirstName = "Support",
                             IsActive = true,
                             IsEmailVerified = true,
                             IsPhoneVerified = false,
                             LastName = "Team",
-                            PasswordHash = "$2a$11$ezlrIIirdJjA4/fVMZY5iuPvgV6iuqcUzQheCnqkZmjooBnKDWBoK",
+                            PasswordHash = "$2a$11$M/lqaoDzi9RczRPB/QtmWeRvVbZx8KeLH7JmdxF3IQFCuDpvwipJe",
                             Role = "admin"
                         });
                 });

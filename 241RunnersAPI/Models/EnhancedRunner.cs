@@ -119,8 +119,8 @@ namespace _241RunnersAPI.Models
         // Photo management for 6-month update reminders
         public DateTime? LastPhotoUpdate { get; set; }
         public DateTime? NextPhotoReminder { get; set; } // 6 months from last update
-        public bool PhotoUpdateReminderSent { get; set; } = false
-        public int PhotoUpdateReminderCount { get; set; } = 0
+        public bool PhotoUpdateReminderSent { get; set; } = false;
+        public int PhotoUpdateReminderCount { get; set; } = 0;
 
         // Verification status
         public bool IsProfileComplete { get; set; } = false;

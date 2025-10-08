@@ -167,6 +167,16 @@ namespace _241RunnersAPI.Controllers
                     IsActive = runner.IsActive,
                     CreatedAt = runner.CreatedAt,
                     UpdatedAt = runner.UpdatedAt,
+                    // Enhanced fields
+                    FirstName = runner.FirstName,
+                    LastName = runner.LastName,
+                    Height = runner.Height,
+                    Weight = runner.Weight,
+                    EyeColor = runner.EyeColor,
+                    LastPhotoUpdate = runner.LastPhotoUpdate,
+                    NextPhotoReminder = runner.NextPhotoReminder,
+                    PhotoUpdateReminderSent = runner.PhotoUpdateReminderSent,
+                    PhotoUpdateReminderCount = runner.PhotoUpdateReminderCount,
                     LastKnownLocation = runner.LastKnownLocation,
                     LastLocationUpdate = runner.LastLocationUpdate,
                     PreferredContactMethod = runner.PreferredContactMethod,
@@ -290,8 +300,18 @@ namespace _241RunnersAPI.Controllers
                     SpecialNeeds = request.SpecialNeeds,
                     AdditionalNotes = request.AdditionalNotes,
                     PreferredContactMethod = request.PreferredContactMethod,
+                    // Enhanced fields
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
+                    Height = request.Height,
+                    Weight = request.Weight,
+                    EyeColor = request.EyeColor,
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow,
+                    LastPhotoUpdate = DateTime.UtcNow,
+                    NextPhotoReminder = DateTime.UtcNow.AddMonths(6),
+                    PhotoUpdateReminderSent = false,
+                    PhotoUpdateReminderCount = 0,
                     IsProfileComplete = !string.IsNullOrEmpty(request.Name) && 
                                       !string.IsNullOrEmpty(request.Gender) && 
                                       request.DateOfBirth != default
@@ -426,6 +446,12 @@ namespace _241RunnersAPI.Controllers
                 runner.SpecialNeeds = request.SpecialNeeds;
                 runner.AdditionalNotes = request.AdditionalNotes;
                 runner.PreferredContactMethod = request.PreferredContactMethod;
+                // Enhanced fields
+                runner.FirstName = request.FirstName;
+                runner.LastName = request.LastName;
+                runner.Height = request.Height;
+                runner.Weight = request.Weight;
+                runner.EyeColor = request.EyeColor;
                 runner.UpdatedAt = DateTime.UtcNow;
                 runner.IsProfileComplete = !string.IsNullOrEmpty(request.Name) && 
                                           !string.IsNullOrEmpty(request.Gender) && 

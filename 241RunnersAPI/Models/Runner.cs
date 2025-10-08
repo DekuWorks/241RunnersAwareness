@@ -40,6 +40,15 @@ namespace _241RunnersAPI.Models
         [MaxLength(100, ErrorMessage = "Last name cannot exceed 100 characters")]
         public string? LastName { get; set; }
 
+        [MaxLength(10, ErrorMessage = "Height cannot exceed 10 characters")]
+        public string? Height { get; set; } // e.g., "5'8\"", "175cm"
+
+        [MaxLength(10, ErrorMessage = "Weight cannot exceed 10 characters")]
+        public string? Weight { get; set; } // e.g., "150 lbs", "68 kg"
+
+        [MaxLength(20, ErrorMessage = "Eye color cannot exceed 20 characters")]
+        public string? EyeColor { get; set; }
+
         [Required(ErrorMessage = "Date of birth is required")]
         public DateTime DateOfBirth { get; set; }
 
@@ -102,6 +111,12 @@ namespace _241RunnersAPI.Models
 
         [MaxLength(1000, ErrorMessage = "Additional image URLs cannot exceed 1000 characters")]
         public string? AdditionalImageUrls { get; set; } // JSON array of image URLs
+
+        // Photo update reminder fields
+        public DateTime? LastPhotoUpdate { get; set; }
+        public DateTime? NextPhotoReminder { get; set; } // 6 months from last update
+        public bool PhotoUpdateReminderSent { get; set; } = false;
+        public int PhotoUpdateReminderCount { get; set; } = 0;
 
         // Verification status
         public bool IsProfileComplete { get; set; } = false;
@@ -169,6 +184,21 @@ namespace _241RunnersAPI.Models
         [MaxLength(50, ErrorMessage = "Preferred contact method cannot exceed 50 characters")]
         [RegularExpression("^(Phone|Email|Text|Emergency Contact)$", ErrorMessage = "Preferred contact method must be one of: Phone, Email, Text, Emergency Contact")]
         public string? PreferredContactMethod { get; set; }
+
+        [MaxLength(100, ErrorMessage = "First name cannot exceed 100 characters")]
+        public string? FirstName { get; set; }
+
+        [MaxLength(100, ErrorMessage = "Last name cannot exceed 100 characters")]
+        public string? LastName { get; set; }
+
+        [MaxLength(10, ErrorMessage = "Height cannot exceed 10 characters")]
+        public string? Height { get; set; }
+
+        [MaxLength(10, ErrorMessage = "Weight cannot exceed 10 characters")]
+        public string? Weight { get; set; }
+
+        [MaxLength(20, ErrorMessage = "Eye color cannot exceed 20 characters")]
+        public string? EyeColor { get; set; }
     }
 
     /// <summary>
@@ -227,6 +257,21 @@ namespace _241RunnersAPI.Models
         [MaxLength(50, ErrorMessage = "Preferred contact method cannot exceed 50 characters")]
         [RegularExpression("^(Phone|Email|Text|Emergency Contact)$", ErrorMessage = "Preferred contact method must be one of: Phone, Email, Text, Emergency Contact")]
         public string? PreferredContactMethod { get; set; }
+
+        [MaxLength(100, ErrorMessage = "First name cannot exceed 100 characters")]
+        public string? FirstName { get; set; }
+
+        [MaxLength(100, ErrorMessage = "Last name cannot exceed 100 characters")]
+        public string? LastName { get; set; }
+
+        [MaxLength(10, ErrorMessage = "Height cannot exceed 10 characters")]
+        public string? Height { get; set; }
+
+        [MaxLength(10, ErrorMessage = "Weight cannot exceed 10 characters")]
+        public string? Weight { get; set; }
+
+        [MaxLength(20, ErrorMessage = "Eye color cannot exceed 20 characters")]
+        public string? EyeColor { get; set; }
     }
 
     /// <summary>
@@ -258,10 +303,22 @@ namespace _241RunnersAPI.Models
         public DateTime? LastLocationUpdate { get; set; }
         public string? PreferredContactMethod { get; set; }
         public string? ProfileImageUrl { get; set; }
+        public string? AdditionalImageUrls { get; set; }
         public bool IsProfileComplete { get; set; }
         public bool IsVerified { get; set; }
         public DateTime? VerifiedAt { get; set; }
         public string? VerifiedBy { get; set; }
+        
+        // Enhanced fields
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Height { get; set; }
+        public string? Weight { get; set; }
+        public string? EyeColor { get; set; }
+        public DateTime? LastPhotoUpdate { get; set; }
+        public DateTime? NextPhotoReminder { get; set; }
+        public bool PhotoUpdateReminderSent { get; set; }
+        public int PhotoUpdateReminderCount { get; set; }
         
         // User information
         public string? UserEmail { get; set; }
