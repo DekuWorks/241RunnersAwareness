@@ -1172,6 +1172,207 @@
       animation: slideInRight 0.3s ease, slideOutRight 0.3s ease 4.7s forwards;
     }
 
+    /* Notification Preferences Styles */
+    .notification-preferences {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .connection-status-card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .connection-status-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .connection-status-label {
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .connection-status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #6b7280;
+    }
+
+    .status-dot.connected {
+      background: #10b981;
+    }
+
+    .status-dot.connecting {
+      background: #f59e0b;
+      animation: pulse 2s infinite;
+    }
+
+    .status-dot.disconnected {
+      background: #ef4444;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .connection-status-description {
+      color: #6b7280;
+      font-size: 0.875rem;
+      margin: 0;
+    }
+
+    .notification-types {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .notification-types-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 1rem;
+    }
+
+    .notification-type-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .notification-type-item:hover {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+    }
+
+    .notification-type-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex: 1;
+    }
+
+    .notification-type-icon {
+      font-size: 1.5rem;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e5e7eb;
+      border-radius: 8px;
+    }
+
+    .notification-type-name {
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 0.25rem;
+    }
+
+    .notification-type-description {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: #dc2626;
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(26px);
+    }
+
+    input:disabled + .toggle-slider {
+      background-color: #10b981;
+      cursor: not-allowed;
+    }
+
+    .push-notification-section {
+      background: #f0f9ff;
+      border: 1px solid #0ea5e9;
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .push-notification-description {
+      color: #0c4a6e;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+
+    .push-notification-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      color: #059669;
+      font-size: 0.875rem;
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+    }
+
     @keyframes slideOutRight {
       from {
         transform: translateX(0);
@@ -1348,6 +1549,134 @@
           <div class="info-item">
             <span class="info-label">Cases This Month</span>
             <span class="info-value" id="monthlyCases">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notification Preferences -->
+      <div class="profile-section">
+        <h2 class="section-title">
+          <span>🔔</span>
+          Notification Preferences
+        </h2>
+        
+        <div class="notification-preferences">
+          <!-- Connection Status -->
+          <div class="connection-status-card">
+            <div class="connection-status-header">
+              <span class="connection-status-label">Real-time Connection</span>
+              <span class="connection-status-indicator" id="connectionStatusBadge">
+                <span class="status-dot"></span>
+                <span id="connectionStatusText">Connecting...</span>
+              </span>
+            </div>
+            <p class="connection-status-description">
+              Live updates for cases, emergencies, and safety alerts
+            </p>
+          </div>
+
+          <!-- Notification Types -->
+          <div class="notification-types">
+            <h3 class="notification-types-title">Alert Types</h3>
+            
+            <div class="notification-type-item">
+              <div class="notification-type-info">
+                <span class="notification-type-icon">🚨</span>
+                <div>
+                  <div class="notification-type-name">Emergency Alerts</div>
+                  <div class="notification-type-description">Critical safety alerts and emergencies</div>
+                </div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="notif_emergency" checked disabled>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="notification-type-item">
+              <div class="notification-type-info">
+                <span class="notification-type-icon">📋</span>
+                <div>
+                  <div class="notification-type-name">Case Updates</div>
+                  <div class="notification-type-description">Updates on your reported cases</div>
+                </div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="notif_case_updates" checked onchange="saveNotificationPreferences()">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="notification-type-item">
+              <div class="notification-type-info">
+                <span class="notification-type-icon">👤</span>
+                <div>
+                  <div class="notification-type-name">Profile Updates</div>
+                  <div class="notification-type-description">Changes to your profile information</div>
+                </div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="notif_profile_updates" checked onchange="saveNotificationPreferences()">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="notification-type-item">
+              <div class="notification-type-info">
+                <span class="notification-type-icon">🛡️</span>
+                <div>
+                  <div class="notification-type-name">Safety Check Reminders</div>
+                  <div class="notification-type-description">Periodic reminders to check in</div>
+                </div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="notif_safety_checks" checked onchange="saveNotificationPreferences()">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="notification-type-item">
+              <div class="notification-type-info">
+                <span class="notification-type-icon">🌤️</span>
+                <div>
+                  <div class="notification-type-name">Weather Alerts</div>
+                  <div class="notification-type-description">Weather warnings in your area</div>
+                </div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="notif_weather_alerts" checked onchange="saveNotificationPreferences()">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="notification-type-item">
+              <div class="notification-type-info">
+                <span class="notification-type-icon">📢</span>
+                <div>
+                  <div class="notification-type-name">System Notifications</div>
+                  <div class="notification-type-description">Important system updates and announcements</div>
+                </div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="notif_system" checked onchange="saveNotificationPreferences()">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Push Notifications -->
+          <div class="push-notification-section">
+            <h3 class="notification-types-title">Push Notifications</h3>
+            <p class="push-notification-description">
+              Enable push notifications to receive alerts even when the app is closed
+            </p>
+            <button class="btn" id="enablePushBtn" onclick="requestPushNotificationPermission()">
+              Enable Push Notifications
+            </button>
+            <div class="push-notification-status" id="pushNotificationStatus" style="display: none;">
+              <span class="status-indicator"></span>
+              <span id="pushStatusText">Push notifications enabled</span>
+            </div>
           </div>
         </div>
       </div>
@@ -1550,7 +1879,8 @@
     async function initializeRealTimeNotifications() {
       try {
         const apiBaseUrl = PROFILE_API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net';
-        const hubUrl = apiBaseUrl + '/hubs/user';
+        const baseUrl = apiBaseUrl.replace('/api', '');
+        const hubUrl = baseUrl + '/hubs/alerts';
         
         console.log('🔌 Connecting to User SignalR hub:', hubUrl);
         
@@ -1691,10 +2021,23 @@
 
     // Update connection status indicator
     function updateConnectionStatus(status, message) {
-      const statusElement = document.getElementById('connectionStatus');
+      const statusElement = document.getElementById('connectionStatusText');
+      const statusBadge = document.getElementById('connectionStatusBadge');
+      const statusDot = statusBadge?.querySelector('.status-dot');
+      
       if (statusElement) {
-        statusElement.className = `connection-status ${status}`;
-        statusElement.querySelector('span').textContent = message;
+        statusElement.textContent = message;
+      }
+      
+      if (statusDot) {
+        statusDot.className = 'status-dot';
+        if (status === 'connected') {
+          statusDot.classList.add('connected');
+        } else if (status === 'connecting' || status === 'reconnecting') {
+          statusDot.classList.add('connecting');
+        } else if (status === 'disconnected' || status === 'error' || status === 'failed') {
+          statusDot.classList.add('disconnected');
+        }
       }
     }
 
@@ -3013,6 +3356,187 @@
         userHubConnection.stop();
       }
     });
+
+    // Notification Preferences Functions
+    async function saveNotificationPreferences() {
+      const preferences = {
+        caseUpdates: document.getElementById('notif_case_updates').checked,
+        profileUpdates: document.getElementById('notif_profile_updates').checked,
+        safetyChecks: document.getElementById('notif_safety_checks').checked,
+        weatherAlerts: document.getElementById('notif_weather_alerts').checked,
+        system: document.getElementById('notif_system').checked,
+        pushEnabled: document.getElementById('pushNotificationStatus').style.display !== 'none'
+      };
+
+      try {
+        const token = getAuthToken();
+        const response = await fetch(`${PROFILE_API_BASE_URL}/notifications/preferences`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(preferences)
+        });
+
+        if (response.ok) {
+          localStorage.setItem('notification_preferences', JSON.stringify(preferences));
+          console.log('Notification preferences saved to server:', preferences);
+        } else {
+          console.error('Failed to save preferences to server');
+          // Still save locally as fallback
+          localStorage.setItem('notification_preferences', JSON.stringify(preferences));
+        }
+      } catch (error) {
+        console.error('Error saving notification preferences:', error);
+        // Still save locally as fallback
+        localStorage.setItem('notification_preferences', JSON.stringify(preferences));
+      }
+    }
+
+    async function loadNotificationPreferences() {
+      try {
+        const token = getAuthToken();
+        const response = await fetch(`${PROFILE_API_BASE_URL}/notifications/preferences`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const preferences = await response.json();
+          document.getElementById('notif_case_updates').checked = preferences.caseUpdates !== false;
+          document.getElementById('notif_profile_updates').checked = preferences.profileUpdates !== false;
+          document.getElementById('notif_safety_checks').checked = preferences.safetyChecks !== false;
+          document.getElementById('notif_weather_alerts').checked = preferences.weatherAlerts !== false;
+          document.getElementById('notif_system').checked = preferences.system !== false;
+          
+          // Update push notification status
+          if (preferences.pushEnabled) {
+            document.getElementById('enablePushBtn').style.display = 'none';
+            document.getElementById('pushNotificationStatus').style.display = 'flex';
+          }
+          
+          console.log('Notification preferences loaded from server:', preferences);
+        } else {
+          // Fallback to local storage
+          loadNotificationPreferencesFromLocal();
+        }
+      } catch (error) {
+        console.error('Error loading notification preferences:', error);
+        // Fallback to local storage
+        loadNotificationPreferencesFromLocal();
+      }
+    }
+
+    function loadNotificationPreferencesFromLocal() {
+      const saved = localStorage.getItem('notification_preferences');
+      if (saved) {
+        const preferences = JSON.parse(saved);
+        document.getElementById('notif_case_updates').checked = preferences.case_updates !== false;
+        document.getElementById('notif_profile_updates').checked = preferences.profile_updates !== false;
+        document.getElementById('notif_safety_checks').checked = preferences.safety_checks !== false;
+        document.getElementById('notif_weather_alerts').checked = preferences.weather_alerts !== false;
+        document.getElementById('notif_system').checked = preferences.system !== false;
+      }
+    }
+
+    async function requestPushNotificationPermission() {
+      if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        alert('Push notifications are not supported in this browser.');
+        return;
+      }
+
+      try {
+        const registration = await navigator.serviceWorker.ready;
+        const permission = await Notification.requestPermission();
+
+        if (permission === 'granted') {
+          // Get subscription
+          const subscription = await registration.pushManager.getSubscription();
+          if (!subscription) {
+            // Create new subscription
+            const newSubscription = await registration.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: 'YOUR_VAPID_PUBLIC_KEY' // This should be your actual VAPID key
+            });
+
+            // Send subscription to server
+            await sendSubscriptionToServer(newSubscription);
+          }
+
+          // Update UI
+          document.getElementById('enablePushBtn').style.display = 'none';
+          document.getElementById('pushNotificationStatus').style.display = 'flex';
+          document.getElementById('pushStatusText').textContent = 'Push notifications enabled';
+        } else {
+          alert('Push notifications were blocked. Please enable them in your browser settings.');
+        }
+      } catch (error) {
+        console.error('Error requesting push permission:', error);
+        alert('Failed to enable push notifications: ' + error.message);
+      }
+    }
+
+    async function sendSubscriptionToServer(subscription) {
+      try {
+        const token = getAuthToken();
+        const response = await fetch(`${PROFILE_API_BASE_URL}/notifications/subscribe`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            subscription: subscription,
+            userId: getCurrentUserId()
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to subscribe to push notifications');
+        }
+
+        const result = await response.json();
+        console.log('Push subscription sent to server successfully:', result);
+        
+        // Update preferences to reflect push is enabled
+        await saveNotificationPreferences();
+      } catch (error) {
+        console.error('Error sending subscription to server:', error);
+        throw error;
+      }
+    }
+
+    function getCurrentUserId() {
+      return localStorage.getItem('ra_user_id') || localStorage.getItem('userId') || 'unknown';
+    }
+
+    // Initialize notification preferences on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      loadNotificationPreferences();
+      checkPushNotificationStatus();
+    });
+
+    async function checkPushNotificationStatus() {
+      if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        document.getElementById('enablePushBtn').style.display = 'none';
+        return;
+      }
+
+      try {
+        const registration = await navigator.serviceWorker.ready;
+        const subscription = await registration.pushManager.getSubscription();
+
+        if (subscription) {
+          document.getElementById('enablePushBtn').style.display = 'none';
+          document.getElementById('pushNotificationStatus').style.display = 'flex';
+          document.getElementById('pushStatusText').textContent = 'Push notifications enabled';
+        }
+      } catch (error) {
+        console.error('Error checking push status:', error);
+      }
+    }
 
     // ============================================
     // EDIT FORM FUNCTIONALITY

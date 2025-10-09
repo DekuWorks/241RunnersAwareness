@@ -310,52 +310,223 @@ async function removeOfflineReport(reportId) {
 }
 
 /**
- * Push notification handling
+ * Push notification handling with support for different alert types
  */
 self.addEventListener('push', event => {
     console.log('Push notification received:', event);
     
-    const options = {
-        body: event.data ? event.data.text() : 'New notification from 241 Runners Awareness',
-        icon: '/icon-192x192.png',
-        badge: '/badge-72x72.png',
-        vibrate: [100, 50, 100],
-        data: {
-            dateOfArrival: Date.now(),
-            primaryKey: 1
-        },
-        actions: [
-            {
-                action: 'explore',
-                title: 'View Details',
-                icon: '/icon-192x192.png'
-            },
-            {
-                action: 'close',
-                title: 'Close',
-                icon: '/icon-192x192.png'
-            }
-        ]
+    let notificationData = {
+        type: 'general',
+        title: '241 Runners Awareness',
+        body: 'New notification',
+        url: '/'
     };
     
+    // Parse notification data if available
+    if (event.data) {
+        try {
+            notificationData = event.data.json();
+        } catch (e) {
+            notificationData.body = event.data.text();
+        }
+    }
+    
+    // Customize notification based on type
+    const notificationConfig = getNotificationConfig(notificationData);
+    
     event.waitUntil(
-        self.registration.showNotification('241 Runners Awareness', options)
+        self.registration.showNotification(notificationConfig.title, notificationConfig.options)
     );
 });
 
 /**
- * Notification click handling
+ * Get notification configuration based on alert type
+ */
+function getNotificationConfig(data) {
+    const baseOptions = {
+        icon: '/assets/images/241-logo.jpg',
+        badge: '/assets/images/241-logo.jpg',
+        data: {
+            dateOfArrival: Date.now(),
+            url: data.url || '/',
+            type: data.type || 'general',
+            additionalData: data.data || {}
+        },
+        requireInteraction: false,
+        tag: data.tag || 'notification'
+    };
+    
+    // Configure based on alert type
+    switch (data.type) {
+        case 'emergency':
+        case 'EmergencyAlert':
+            return {
+                title: '🚨 EMERGENCY ALERT',
+                options: {
+                    ...baseOptions,
+                    body: data.message || data.body || 'An emergency alert has been issued',
+                    vibrate: [200, 100, 200, 100, 200],
+                    requireInteraction: true,
+                    priority: 'high',
+                    tag: 'emergency-alert',
+                    actions: [
+                        { action: 'mark_safe', title: 'Mark Safe', icon: '/assets/images/241-logo.jpg' },
+                        { action: 'view', title: 'View Details', icon: '/assets/images/241-logo.jpg' }
+                    ]
+                }
+            };
+            
+        case 'case_update':
+        case 'CaseUpdate':
+            return {
+                title: '📋 Case Update',
+                options: {
+                    ...baseOptions,
+                    body: data.message || data.body || 'Your case status has been updated',
+                    vibrate: [100, 50, 100],
+                    data: {
+                        ...baseOptions.data,
+                        url: data.url || '/my-cases.html'
+                    },
+                    actions: [
+                        { action: 'view', title: 'View Case', icon: '/assets/images/241-logo.jpg' },
+                        { action: 'close', title: 'Dismiss', icon: '/assets/images/241-logo.jpg' }
+                    ]
+                }
+            };
+            
+        case 'profile_update':
+        case 'ProfileUpdate':
+            return {
+                title: '👤 Profile Updated',
+                options: {
+                    ...baseOptions,
+                    body: data.message || data.body || 'Your profile has been updated',
+                    vibrate: [100],
+                    data: {
+                        ...baseOptions.data,
+                        url: data.url || '/profile.html'
+                    },
+                    actions: [
+                        { action: 'view', title: 'View Profile', icon: '/assets/images/241-logo.jpg' }
+                    ]
+                }
+            };
+            
+        case 'safety_check':
+        case 'SafetyCheckReminder':
+            return {
+                title: '🛡️ Safety Check Reminder',
+                options: {
+                    ...baseOptions,
+                    body: data.message || data.body || 'Please update your safety status',
+                    vibrate: [100, 50],
+                    requireInteraction: true,
+                    data: {
+                        ...baseOptions.data,
+                        url: data.url || '/profile.html'
+                    },
+                    actions: [
+                        { action: 'check_in', title: 'Check In', icon: '/assets/images/241-logo.jpg' },
+                        { action: 'view', title: 'View', icon: '/assets/images/241-logo.jpg' }
+                    ]
+                }
+            };
+            
+        case 'weather':
+        case 'WeatherAlert':
+            return {
+                title: '🌤️ Weather Alert',
+                options: {
+                    ...baseOptions,
+                    body: data.message || data.body || 'Weather alert in your area',
+                    vibrate: [100],
+                    actions: [
+                        { action: 'view', title: 'View Details', icon: '/assets/images/241-logo.jpg' }
+                    ]
+                }
+            };
+            
+        case 'system':
+        case 'SystemNotification':
+            return {
+                title: '📢 System Notification',
+                options: {
+                    ...baseOptions,
+                    body: data.message || data.body || 'System notification',
+                    vibrate: [100],
+                    actions: [
+                        { action: 'view', title: 'View', icon: '/assets/images/241-logo.jpg' }
+                    ]
+                }
+            };
+            
+        default:
+            return {
+                title: data.title || '241 Runners Awareness',
+                options: {
+                    ...baseOptions,
+                    body: data.message || data.body || 'New notification',
+                    vibrate: [100, 50, 100],
+                    actions: [
+                        { action: 'view', title: 'View', icon: '/assets/images/241-logo.jpg' },
+                        { action: 'close', title: 'Dismiss', icon: '/assets/images/241-logo.jpg' }
+                    ]
+                }
+            };
+    }
+}
+
+/**
+ * Notification click handling with support for different actions
  */
 self.addEventListener('notificationclick', event => {
     console.log('Notification clicked:', event);
     
     event.notification.close();
     
-    if (event.action === 'explore') {
-        event.waitUntil(
-            clients.openWindow('/dashboard.html')
-        );
+    const notificationData = event.notification.data;
+    let targetUrl = notificationData.url || '/';
+    
+    // Handle specific actions
+    switch (event.action) {
+        case 'mark_safe':
+            targetUrl = '/profile.html?action=mark_safe';
+            break;
+        case 'check_in':
+            targetUrl = '/profile.html?action=check_in';
+            break;
+        case 'view':
+            targetUrl = notificationData.url || '/profile.html';
+            break;
+        case 'close':
+            // Just close, don't open anything
+            return;
+        default:
+            // Default click opens the notification URL
+            targetUrl = notificationData.url || '/';
     }
+    
+    // Open the target URL
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true })
+            .then(windowClients => {
+                // Check if there's already a window open
+                for (let client of windowClients) {
+                    if (client.url.includes(window.location.hostname) && 'focus' in client) {
+                        return client.focus().then(client => {
+                            if ('navigate' in client) {
+                                return client.navigate(targetUrl);
+                            }
+                        });
+                    }
+                }
+                // No window open, open a new one
+                if (clients.openWindow) {
+                    return clients.openWindow(targetUrl);
+                }
+            })
+    );
 });
 
 /**

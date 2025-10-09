@@ -18,11 +18,20 @@ class RealtimeClient {
             const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net';
             const baseUrl = apiBaseUrl.replace('/api', '');
             
-            // Determine which hub to use based on user role
+            // Determine which hub to use based on user role and current page
             const userRole = localStorage.getItem('ra_admin_role') || 'user';
-            const hubUrl = userRole === 'admin' 
-                ? baseUrl + '/hubs/admin'    // AdminHub for admin users
-                : baseUrl + '/hubs/alerts';  // AlertsHub for regular users
+            const currentPage = window.location.pathname;
+            
+            let hubUrl;
+            if (userRole === 'admin') {
+                hubUrl = baseUrl + '/hubs/admin';    // AdminHub for admin users
+            } else if (currentPage.includes('/admin/')) {
+                hubUrl = baseUrl + '/hubs/admin';    // AdminHub for admin pages
+            } else if (currentPage.includes('/profile.html')) {
+                hubUrl = baseUrl + '/hubs/alerts';   // AlertsHub for user profile
+            } else {
+                hubUrl = baseUrl + '/hubs/alerts';   // AlertsHub for regular users
+            }
             
             console.log('🔌 Connecting to SignalR hub:', hubUrl);
             console.log('👤 User role:', userRole, '→ Using', userRole === 'admin' ? 'AdminHub' : 'AlertsHub');
