@@ -22,6 +22,62 @@ namespace _241RunnersAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("_241RunnersAPI.Models.AccountDeletionRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ProcessingNotes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("RequestedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("Pending");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasMaxLength(254)
+                        .HasColumnType("nvarchar(254)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RequestedAt");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AccountDeletionRequests");
+                });
+
             modelBuilder.Entity("_241RunnersAPI.Models.Case", b =>
                 {
                     b.Property<int>("Id")
@@ -207,7 +263,63 @@ namespace _241RunnersAPI.Migrations
 
                     b.HasIndex("RunnerId");
 
-                    b.ToTable("Cases", (string)null);
+                    b.ToTable("Cases");
+                });
+
+            modelBuilder.Entity("_241RunnersAPI.Models.DataDeletionRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("DataTypes")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ProcessingNotes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("RequestedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("Pending");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RequestedAt");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("DataDeletionRequests");
                 });
 
             modelBuilder.Entity("_241RunnersAPI.Models.Device", b =>
@@ -274,7 +386,7 @@ namespace _241RunnersAPI.Migrations
                     b.HasIndex("UserId", "Platform")
                         .IsUnique();
 
-                    b.ToTable("Devices", (string)null);
+                    b.ToTable("Devices");
                 });
 
             modelBuilder.Entity("_241RunnersAPI.Models.Notification", b =>
@@ -377,7 +489,7 @@ namespace _241RunnersAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("_241RunnersAPI.Models.Runner", b =>
@@ -541,7 +653,7 @@ namespace _241RunnersAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Runners", (string)null);
+                    b.ToTable("Runners");
                 });
 
             modelBuilder.Entity("_241RunnersAPI.Models.TopicSubscription", b =>
@@ -590,7 +702,7 @@ namespace _241RunnersAPI.Migrations
                     b.HasIndex("UserId", "Topic")
                         .IsUnique();
 
-                    b.ToTable("TopicSubscriptions", (string)null);
+                    b.ToTable("TopicSubscriptions");
                 });
 
             modelBuilder.Entity("_241RunnersAPI.Models.User", b =>
@@ -783,39 +895,50 @@ namespace _241RunnersAPI.Migrations
                         .IsUnique()
                         .HasFilter("[PasswordResetToken] IS NOT NULL");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 10, 7, 23, 45, 7, 646, DateTimeKind.Utc).AddTicks(7850),
+                            CreatedAt = new DateTime(2025, 10, 13, 22, 52, 43, 215, DateTimeKind.Utc).AddTicks(7570),
                             Email = "admin@241runnersawareness.org",
-                            EmailVerifiedAt = new DateTime(2025, 10, 7, 23, 45, 7, 646, DateTimeKind.Utc).AddTicks(7850),
+                            EmailVerifiedAt = new DateTime(2025, 10, 13, 22, 52, 43, 215, DateTimeKind.Utc).AddTicks(7570),
                             FailedLoginAttempts = 0,
                             FirstName = "System",
                             IsActive = true,
                             IsEmailVerified = true,
                             IsPhoneVerified = false,
                             LastName = "Administrator",
-                            PasswordHash = "$2a$11$QJmvl5/mPOYw2bH8iwbNQ.KPpiGN/3/V9AYL6.L15mzr8VrObyx96",
+                            PasswordHash = "$2a$11$dWOMft3nZQNG9RCqswrMnuzMQgo.NdTk.m4RhMsbz0nq9dks.v7/y",
                             Role = "admin"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 10, 7, 23, 45, 7, 759, DateTimeKind.Utc).AddTicks(1160),
+                            CreatedAt = new DateTime(2025, 10, 13, 22, 52, 43, 402, DateTimeKind.Utc).AddTicks(9680),
                             Email = "support@241runnersawareness.org",
-                            EmailVerifiedAt = new DateTime(2025, 10, 7, 23, 45, 7, 759, DateTimeKind.Utc).AddTicks(1160),
+                            EmailVerifiedAt = new DateTime(2025, 10, 13, 22, 52, 43, 402, DateTimeKind.Utc).AddTicks(9680),
                             FailedLoginAttempts = 0,
                             FirstName = "Support",
                             IsActive = true,
                             IsEmailVerified = true,
                             IsPhoneVerified = false,
                             LastName = "Team",
-                            PasswordHash = "$2a$11$M/lqaoDzi9RczRPB/QtmWeRvVbZx8KeLH7JmdxF3IQFCuDpvwipJe",
+                            PasswordHash = "$2a$11$mGXGuoLdWCPLTvhlNI1p..hZC4uL1qzpisnhq5JwNbxHSRzMdbUE2",
                             Role = "admin"
                         });
+                });
+
+            modelBuilder.Entity("_241RunnersAPI.Models.AccountDeletionRequest", b =>
+                {
+                    b.HasOne("_241RunnersAPI.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("_241RunnersAPI.Models.Case", b =>
@@ -835,6 +958,17 @@ namespace _241RunnersAPI.Migrations
                     b.Navigation("ReportedByUser");
 
                     b.Navigation("Runner");
+                });
+
+            modelBuilder.Entity("_241RunnersAPI.Models.DataDeletionRequest", b =>
+                {
+                    b.HasOne("_241RunnersAPI.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("_241RunnersAPI.Models.Device", b =>

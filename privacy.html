@@ -82,10 +82,275 @@
       box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
     }
 
+    /* Data Action Buttons */
+    .data-actions {
+      display: flex;
+      gap: 1rem;
+      margin: 2rem 0;
+      flex-wrap: wrap;
+    }
+
+    .data-action-btn {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      background: #ffffff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 280px;
+      flex: 1;
+    }
+
+    .data-action-btn:hover {
+      border-color: #dc2626;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .delete-data-btn:hover {
+      border-color: #f59e0b;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+    }
+
+    .delete-account-btn:hover {
+      border-color: #dc2626;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+    }
+
+    .btn-icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+
+    .btn-content {
+      text-align: left;
+    }
+
+    .btn-content strong {
+      display: block;
+      color: #374151;
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .btn-content small {
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 0;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: modalSlideIn 0.3s ease;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, #dc2626, #991b1b);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 12px 12px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background-color 0.3s ease;
+    }
+
+    .modal-close:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .modal-body {
+      padding: 2rem;
+    }
+
+    .modal-footer {
+      padding: 1.5rem 2rem;
+      background-color: #f8f9fa;
+      border-radius: 0 0 12px 12px;
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary {
+      background-color: #6b7280;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background-color: #4b5563;
+    }
+
+    .btn-danger {
+      background-color: #dc2626;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #b91c1c;
+    }
+
+    .warning-box {
+      background-color: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+
+    .warning-box h4 {
+      color: #dc2626;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .warning-box ul {
+      margin: 0;
+      padding-left: 1.5rem;
+    }
+
+    .warning-box li {
+      color: #374151;
+      margin-bottom: 0.25rem;
+    }
+
+    .data-type-list {
+      background-color: #f9fafb;
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+
+    .data-type-list h4 {
+      margin: 0 0 1rem 0;
+      color: #374151;
+    }
+
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      margin: 0;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 1rem;
+      resize: vertical;
+      min-height: 100px;
+    }
+
     @media (max-width: 768px) {
       .legal-container {
         margin: 1rem;
         padding: 1.5rem;
+      }
+
+      .data-actions {
+        flex-direction: column;
+      }
+
+      .data-action-btn {
+        min-width: auto;
+      }
+
+      .modal-content {
+        width: 95%;
+        margin: 10% auto;
+      }
+
+      .modal-header, .modal-body, .modal-footer {
+        padding: 1rem;
+      }
+
+      .checkbox-group {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -179,6 +444,25 @@
       <li><strong>Opt-out:</strong> Unsubscribe from non-essential communications</li>
     </ul>
 
+    <h3>Data Management Actions</h3>
+    <div class="data-actions">
+      <button class="data-action-btn delete-data-btn" onclick="openDeleteDataModal()">
+        <span class="btn-icon">🗑️</span>
+        <div class="btn-content">
+          <strong>Delete My Data</strong>
+          <small>Remove specific data while keeping your account</small>
+        </div>
+      </button>
+      
+      <button class="data-action-btn delete-account-btn" onclick="openDeleteAccountModal()">
+        <span class="btn-icon">⚠️</span>
+        <div class="btn-content">
+          <strong>Delete My Account</strong>
+          <small>Permanently delete your account and all data</small>
+        </div>
+      </button>
+    </div>
+
     <h2>7. Cookies and Tracking</h2>
     <p>We use cookies and similar technologies to:</p>
     <ul>
@@ -236,5 +520,305 @@
 
     <p><em>This Privacy Policy is effective as of January 2025 and applies to all users of 241Runners Awareness services.</em></p>
   </div>
+
+  <!-- Delete Data Modal -->
+  <div id="deleteDataModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🗑️ Delete My Data</h2>
+        <button class="modal-close" onclick="closeDeleteDataModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Select the specific data you want to delete while keeping your account active:</p>
+        
+        <div class="data-type-list">
+          <h4>Data Types</h4>
+          <div class="checkbox-group">
+            <div class="checkbox-item">
+              <input type="checkbox" id="delete-profile" value="profile">
+              <label for="delete-profile">Profile Information</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="delete-cases" value="cases">
+              <label for="delete-cases">My Cases & Reports</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="delete-notifications" value="notifications">
+              <label for="delete-notifications">Notification History</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="delete-location" value="location">
+              <label for="delete-location">Location History</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="delete-messages" value="messages">
+              <label for="delete-messages">Messages & Communications</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="delete-preferences" value="preferences">
+              <label for="delete-preferences">App Preferences & Settings</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="deleteReason">Reason for deletion (optional):</label>
+          <textarea id="deleteReason" placeholder="Please let us know why you're deleting this data so we can improve our service..."></textarea>
+        </div>
+
+        <div class="warning-box">
+          <h4>⚠️ Important Information</h4>
+          <ul>
+            <li>This action cannot be undone</li>
+            <li>Your account will remain active</li>
+            <li>Some data may be retained for legal compliance</li>
+            <li>Processing may take up to 30 days</li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeDeleteDataModal()">Cancel</button>
+        <button class="btn btn-danger" onclick="confirmDeleteData()">Delete Selected Data</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Account Modal -->
+  <div id="deleteAccountModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>⚠️ Delete My Account</h2>
+        <button class="modal-close" onclick="closeDeleteAccountModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>This will permanently delete your account and all associated data.</strong></p>
+        
+        <div class="warning-box">
+          <h4>🚨 WARNING: This action is irreversible!</h4>
+          <ul>
+            <li>Your account will be permanently deleted</li>
+            <li>All your data will be removed from our systems</li>
+            <li>You will lose access to all cases and reports</li>
+            <li>This cannot be undone</li>
+          </ul>
+        </div>
+
+        <div class="form-group">
+          <label for="accountDeleteReason">Reason for account deletion (optional):</label>
+          <textarea id="accountDeleteReason" placeholder="Please let us know why you're deleting your account so we can improve our service..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmEmail">Enter your email address to confirm:</label>
+          <input type="email" id="confirmEmail" placeholder="your.email@example.com" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem;">
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="confirmDeletion" style="margin-right: 0.5rem;">
+            I understand that this action is permanent and cannot be undone
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeDeleteAccountModal()">Cancel</button>
+        <button class="btn btn-danger" onclick="confirmDeleteAccount()" id="deleteAccountBtn" disabled>Delete My Account</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Auth utilities
+    function authHeader() {
+      const token = localStorage.getItem('ra_admin_token') || localStorage.getItem('ra_token');
+      return token ? { 'Authorization': `Bearer ${token}` } : {};
+    }
+
+    function showToast(message, type = 'info') {
+      // Create toast notification
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 1001;
+        font-weight: 500;
+        max-width: 400px;
+        animation: slideInRight 0.3s ease;
+      `;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => document.body.removeChild(toast), 300);
+      }, 5000);
+    }
+
+    // Delete Data Modal Functions
+    function openDeleteDataModal() {
+      document.getElementById('deleteDataModal').style.display = 'block';
+    }
+
+    function closeDeleteDataModal() {
+      document.getElementById('deleteDataModal').style.display = 'none';
+      // Reset form
+      document.querySelectorAll('#deleteDataModal input[type="checkbox"]').forEach(cb => cb.checked = false);
+      document.getElementById('deleteReason').value = '';
+    }
+
+    function confirmDeleteData() {
+      const selectedData = Array.from(document.querySelectorAll('#deleteDataModal input[type="checkbox"]:checked'))
+        .map(cb => cb.value);
+      
+      if (selectedData.length === 0) {
+        showToast('Please select at least one data type to delete', 'error');
+        return;
+      }
+
+      const reason = document.getElementById('deleteReason').value;
+
+      // Show confirmation
+      if (!confirm(`Are you sure you want to delete the following data?\n\n• ${selectedData.join('\n• ')}\n\nThis action cannot be undone.`)) {
+        return;
+      }
+
+      // Make API call
+      fetch('/api/users/delete-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...authHeader()
+        },
+        body: JSON.stringify({
+          dataTypes: selectedData,
+          reason: reason
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showToast('Data deletion request submitted successfully', 'success');
+          closeDeleteDataModal();
+        } else {
+          showToast(data.message || 'Failed to submit deletion request', 'error');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showToast('An error occurred. Please try again.', 'error');
+      });
+    }
+
+    // Delete Account Modal Functions
+    function openDeleteAccountModal() {
+      document.getElementById('deleteAccountModal').style.display = 'block';
+    }
+
+    function closeDeleteAccountModal() {
+      document.getElementById('deleteAccountModal').style.display = 'none';
+      // Reset form
+      document.getElementById('accountDeleteReason').value = '';
+      document.getElementById('confirmEmail').value = '';
+      document.getElementById('confirmDeletion').checked = false;
+      document.getElementById('deleteAccountBtn').disabled = true;
+    }
+
+    function confirmDeleteAccount() {
+      const email = document.getElementById('confirmEmail').value;
+      const reason = document.getElementById('accountDeleteReason').value;
+      const confirmed = document.getElementById('confirmDeletion').checked;
+
+      if (!email) {
+        showToast('Please enter your email address to confirm', 'error');
+        return;
+      }
+
+      if (!confirmed) {
+        showToast('Please confirm that you understand this action is permanent', 'error');
+        return;
+      }
+
+      // Show final confirmation
+      if (!confirm('FINAL WARNING: This will permanently delete your account and all data. This cannot be undone. Are you absolutely sure?')) {
+        return;
+      }
+
+      // Make API call
+      fetch('/api/users/delete-account', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...authHeader()
+        },
+        body: JSON.stringify({
+          email: email,
+          reason: reason
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showToast('Account deletion request submitted successfully', 'success');
+          // Clear local storage and redirect
+          setTimeout(() => {
+            localStorage.clear();
+            window.location.href = '/';
+          }, 2000);
+        } else {
+          showToast(data.message || 'Failed to submit account deletion request', 'error');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showToast('An error occurred. Please try again.', 'error');
+      });
+    }
+
+    // Enable delete account button when checkbox is checked
+    document.getElementById('confirmDeletion').addEventListener('change', function() {
+      document.getElementById('deleteAccountBtn').disabled = !this.checked;
+    });
+
+    // Close modals when clicking outside
+    window.addEventListener('click', function(event) {
+      const deleteDataModal = document.getElementById('deleteDataModal');
+      const deleteAccountModal = document.getElementById('deleteAccountModal');
+      
+      if (event.target === deleteDataModal) {
+        closeDeleteDataModal();
+      }
+      if (event.target === deleteAccountModal) {
+        closeDeleteAccountModal();
+      }
+    });
+
+    // Close modals with Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeDeleteDataModal();
+        closeDeleteAccountModal();
+      }
+    });
+
+    // Add CSS animations
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideInRight {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes slideOutRight {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
 </body>
 </html> 

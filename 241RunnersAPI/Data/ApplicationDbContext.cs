@@ -18,6 +18,8 @@ namespace _241RunnersAPI.Data
         public DbSet<Device> Devices { get; set; }
         public DbSet<TopicSubscription> TopicSubscriptions { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<DataDeletionRequest> DataDeletionRequests { get; set; }
+        public DbSet<AccountDeletionRequest> AccountDeletionRequests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -290,6 +292,62 @@ namespace _241RunnersAPI.Data
                 entity.HasIndex(e => e.Topic);
                 entity.HasIndex(e => e.CreatedAt);
                 entity.HasIndex(e => e.IsSent);
+            });
+
+            // DataDeletionRequest configuration
+            modelBuilder.Entity<DataDeletionRequest>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                
+                // Foreign key relationship
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                
+                // Required fields
+                entity.Property(e => e.UserId).IsRequired();
+                entity.Property(e => e.DataTypes).IsRequired().HasMaxLength(500);
+                entity.Property(e => e.Status).IsRequired().HasMaxLength(50).HasDefaultValue("Pending");
+                entity.Property(e => e.RequestedAt).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
+                
+                // String length constraints
+                entity.Property(e => e.Reason).HasMaxLength(1000);
+                entity.Property(e => e.ProcessingNotes).HasMaxLength(1000);
+                
+                // Indexes for performance
+                entity.HasIndex(e => e.UserId);
+                entity.HasIndex(e => e.Status);
+                entity.HasIndex(e => e.RequestedAt);
+            });
+
+            // AccountDeletionRequest configuration
+            modelBuilder.Entity<AccountDeletionRequest>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                
+                // Foreign key relationship
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                
+                // Required fields
+                entity.Property(e => e.UserId).IsRequired();
+                entity.Property(e => e.UserEmail).IsRequired().HasMaxLength(254);
+                entity.Property(e => e.Status).IsRequired().HasMaxLength(50).HasDefaultValue("Pending");
+                entity.Property(e => e.RequestedAt).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
+                
+                // String length constraints
+                entity.Property(e => e.Reason).HasMaxLength(1000);
+                entity.Property(e => e.ProcessingNotes).HasMaxLength(1000);
+                
+                // Indexes for performance
+                entity.HasIndex(e => e.UserId);
+                entity.HasIndex(e => e.Status);
+                entity.HasIndex(e => e.RequestedAt);
             });
 
             // Seed data

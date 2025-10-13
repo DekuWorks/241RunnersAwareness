@@ -250,8 +250,8 @@ namespace _241RunnersAPI.Controllers
                 
                 // For now, just log the subscription
                 // In a real implementation, you'd store the subscription in the database
-                _logger.LogInformation("Push notification subscription created for user {UserId}: {Endpoint}", 
-                    userId, request.Subscription?.Endpoint);
+                _logger.LogInformation("Push notification subscription created for user {UserId}: {Subscription}", 
+                    userId, request.Subscription);
 
                 return Ok(new
                 {

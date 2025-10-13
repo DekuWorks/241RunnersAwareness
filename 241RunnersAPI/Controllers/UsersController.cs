@@ -431,6 +431,125 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
+        /// Request deletion of specific user data (requires auth)
+        /// </summary>
+        [HttpPost("delete-data")]
+        [Authorize]
+        public async Task<IActionResult> DeleteUserData([FromBody] DeleteDataRequest request)
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
+                {
+                    return Unauthorized(new { success = false, message = "Invalid user token" });
+                }
+
+                var user = await _context.Users.FindAsync(userId);
+                if (user == null)
+                {
+                    return NotFound(new { success = false, message = "User not found" });
+                }
+
+                // Create data deletion request record
+                var deletionRequest = new DataDeletionRequest
+                {
+                    UserId = userId,
+                    DataTypes = string.Join(",", request.DataTypes),
+                    Reason = request.Reason,
+                    Status = "Pending",
+                    RequestedAt = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.DataDeletionRequests.Add(deletionRequest);
+                await _context.SaveChangesAsync();
+
+                // Log the request
+                _logger.LogInformation("Data deletion request created for user {UserId}: {DataTypes}", userId, string.Join(",", request.DataTypes));
+
+                // TODO: Send notification to admin team
+                // TODO: Process deletion request (implement background job)
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Data deletion request submitted successfully",
+                    requestId = deletionRequest.Id,
+                    estimatedProcessingTime = "Up to 30 days"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating data deletion request");
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
+        /// Request account deletion (requires auth)
+        /// </summary>
+        [HttpPost("delete-account")]
+        [Authorize]
+        public async Task<IActionResult> DeleteUserAccount([FromBody] DeleteAccountRequest request)
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
+                {
+                    return Unauthorized(new { success = false, message = "Invalid user token" });
+                }
+
+                var user = await _context.Users.FindAsync(userId);
+                if (user == null)
+                {
+                    return NotFound(new { success = false, message = "User not found" });
+                }
+
+                // Verify email matches
+                if (user.Email != request.Email)
+                {
+                    return BadRequest(new { success = false, message = "Email address does not match your account" });
+                }
+
+                // Create account deletion request record
+                var deletionRequest = new AccountDeletionRequest
+                {
+                    UserId = userId,
+                    UserEmail = request.Email,
+                    Reason = request.Reason,
+                    Status = "Pending",
+                    RequestedAt = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.AccountDeletionRequests.Add(deletionRequest);
+                await _context.SaveChangesAsync();
+
+                // Log the request
+                _logger.LogInformation("Account deletion request created for user {UserId} ({Email})", userId, request.Email);
+
+                // TODO: Send notification to admin team
+                // TODO: Process deletion request (implement background job)
+                // TODO: Send confirmation email to user
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Account deletion request submitted successfully",
+                    requestId = deletionRequest.Id,
+                    estimatedProcessingTime = "Up to 30 days"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating account deletion request");
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
         /// Delete a user
         /// </summary>
         [HttpDelete("{id}")]
@@ -560,5 +679,17 @@ namespace _241RunnersAPI.Controllers
         public string? Name { get; set; }
         public string? Role { get; set; }
         public bool? Disabled { get; set; }
+    }
+
+    public class DeleteDataRequest
+    {
+        public List<string> DataTypes { get; set; } = new();
+        public string? Reason { get; set; }
+    }
+
+    public class DeleteAccountRequest
+    {
+        public string Email { get; set; } = string.Empty;
+        public string? Reason { get; set; }
     }
 }
