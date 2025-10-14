@@ -53,6 +53,10 @@ namespace _241RunnersAPI.Models
             ErrorMessage = "Role must be one of: user, parent, caregiver, therapist, adoptiveparent, admin")]
         public string Role { get; set; } = "user";
 
+        // Additional roles for dual-role support (e.g., admin can also be user/parent/caregiver)
+        [MaxLength(200, ErrorMessage = "Additional roles cannot exceed 200 characters")]
+        public string? AdditionalRoles { get; set; } // JSON array of additional roles
+
         [Required]
         public bool IsActive { get; set; } = true;
 
@@ -149,6 +153,71 @@ namespace _241RunnersAPI.Models
         public DateTime? ResetTokenExpires { get; set; }
         public int FailedLoginAttempts { get; set; } = 0;
         public DateTime? LockedUntil { get; set; }
+
+        // Helper methods for dual role support
+        [NotMapped]
+        public List<string> AllRoles
+        {
+            get
+            {
+                var roles = new List<string> { Role };
+                if (!string.IsNullOrEmpty(AdditionalRoles))
+                {
+                    try
+                    {
+                        var additionalRoles = System.Text.Json.JsonSerializer.Deserialize<List<string>>(AdditionalRoles);
+                        if (additionalRoles != null)
+                        {
+                            roles.AddRange(additionalRoles.Where(r => !roles.Contains(r)));
+                        }
+                    }
+                    catch
+                    {
+                        // If JSON deserialization fails, ignore additional roles
+                    }
+                }
+                return roles;
+            }
+        }
+
+        public bool HasRole(string role)
+        {
+            return AllRoles.Contains(role, StringComparer.OrdinalIgnoreCase);
+        }
+
+        [NotMapped]
+        public bool IsAdminUser
+        {
+            get
+            {
+                return HasRole("admin");
+            }
+        }
+
+        [NotMapped]
+        public string PrimaryUserRole
+        {
+            get
+            {
+                // If admin, return the first non-admin role, otherwise return the primary role
+                if (Role == "admin" && !string.IsNullOrEmpty(AdditionalRoles))
+                {
+                    try
+                    {
+                        var additionalRoles = System.Text.Json.JsonSerializer.Deserialize<List<string>>(AdditionalRoles);
+                        if (additionalRoles != null && additionalRoles.Any())
+                        {
+                            return additionalRoles.FirstOrDefault() ?? "user";
+                        }
+                    }
+                    catch
+                    {
+                        // If JSON deserialization fails, fall back to default
+                    }
+                }
+                return Role == "admin" ? "user" : Role;
+            }
+        }
     }
 
     /// <summary>
@@ -322,6 +391,9 @@ namespace _241RunnersAPI.Models
 
         [MaxLength(2000, ErrorMessage = "Notes cannot exceed 2000 characters")]
         public string? Notes { get; set; }
+
+        [MaxLength(200, ErrorMessage = "Additional roles cannot exceed 200 characters")]
+        public string? AdditionalRoles { get; set; } // JSON array of additional roles
     }
 
     /// <summary>
@@ -355,6 +427,9 @@ namespace _241RunnersAPI.Models
         public string LastName { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
+        public List<string> AllRoles { get; set; } = new();
+        public string PrimaryUserRole { get; set; } = string.Empty;
+        public bool IsAdminUser { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? LastLoginAt { get; set; }

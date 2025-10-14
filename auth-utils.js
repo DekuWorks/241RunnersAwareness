@@ -207,11 +207,9 @@ async function handleLogin(email, password) {
             }
             
             // Redirect based on role
-            if (userData.role === 'admin') {
-                window.location.href = 'admin/index.html';
-            } else {
-                window.location.href = 'dashboard.html';
-            }
+            // All users (including admins) go to their user profile when using regular login
+            // Admins can access admin features through the admin login page
+            window.location.href = 'profile.html';
             
             return true;
         } else {
@@ -406,7 +404,50 @@ function getUserToken() {
  */
 function isAdmin() {
     const user = getCurrentUser();
-    return user && user.role === 'admin';
+    return user && (user.role === 'admin' || (user.allRoles && user.allRoles.includes('admin')));
+}
+
+/**
+ * Check if current user has a specific role
+ * @param {string} role - Role to check for
+ * @returns {boolean} - True if current user has the role
+ */
+function hasRole(role) {
+    const user = getCurrentUser();
+    if (!user) return false;
+    
+    // Check primary role
+    if (user.role === role) return true;
+    
+    // Check additional roles
+    if (user.allRoles && user.allRoles.includes(role)) return true;
+    
+    return false;
+}
+
+/**
+ * Get the primary user role (for UI display)
+ * @returns {string} - Primary user role
+ */
+function getPrimaryUserRole() {
+    const user = getCurrentUser();
+    if (!user) return 'user';
+    
+    // If user is admin but has additional roles, return the first non-admin role
+    if (user.role === 'admin' && user.allRoles && user.allRoles.length > 1) {
+        return user.primaryUserRole || user.allRoles.find(r => r !== 'admin') || 'user';
+    }
+    
+    return user.role || 'user';
+}
+
+/**
+ * Check if current user is an admin user (has admin privileges)
+ * @returns {boolean} - True if user has admin privileges
+ */
+function isAdminUser() {
+    const user = getCurrentUser();
+    return user && (user.role === 'admin' || user.isAdminUser === true);
 }
 
 /**
@@ -497,11 +538,7 @@ function getCurrentUser() {
   return userData ? JSON.parse(userData) : null;
 }
 
-// Check if user has admin role
-function isAdmin() {
-  const user = getCurrentUser();
-  return user && user.role === 'admin';
-}
+// Check if user has admin role (handled by isAdmin() function above)
 
 /**
  * ============================================

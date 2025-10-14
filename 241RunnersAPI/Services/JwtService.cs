@@ -43,7 +43,7 @@ namespace _241RunnersAPI.Services
                 var jti = Guid.NewGuid().ToString();
                 var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                 
-                var claims = new[]
+                var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Email, user.Email),
@@ -60,8 +60,17 @@ namespace _241RunnersAPI.Services
                     new Claim(JwtRegisteredClaimNames.Iat, iat.ToString(), ClaimValueTypes.Integer64),
                     new Claim("SessionId", Guid.NewGuid().ToString()), // Track individual sessions
                     new Claim("TokenVersion", "1.0"), // For token versioning
-                    new Claim("IssuedFor", "241RunnersAwareness") // Additional validation
+                    new Claim("IssuedFor", "241RunnersAwareness"), // Additional validation
+                    new Claim("AllRoles", System.Text.Json.JsonSerializer.Serialize(user.AllRoles)),
+                    new Claim("PrimaryUserRole", user.PrimaryUserRole),
+                    new Claim("IsAdminUser", user.IsAdminUser.ToString())
                 };
+
+                // Add additional roles as separate claims for easier access
+                foreach (var role in user.AllRoles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
 
                 var token = new JwtSecurityToken(
                     issuer: jwtIssuer,

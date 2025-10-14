@@ -127,40 +127,11 @@ namespace _241RunnersAPI.Controllers
         {
             try
             {
-                var admins = await _context.Users
+                var adminUsers = await _context.Users
                     .Where(u => u.Role == "admin")
-                    .Select(u => new UserResponseDto
-                    {
-                        Id = u.Id,
-                        Email = u.Email,
-                        FirstName = u.FirstName,
-                        LastName = u.LastName,
-                        FullName = $"{u.FirstName} {u.LastName}",
-                        Role = u.Role,
-                        IsActive = u.IsActive,
-                        CreatedAt = u.CreatedAt,
-                        LastLoginAt = u.LastLoginAt,
-                        UpdatedAt = u.UpdatedAt,
-                        PhoneNumber = u.PhoneNumber,
-                        Address = u.Address,
-                        City = u.City,
-                        State = u.State,
-                        ZipCode = u.ZipCode,
-                        Organization = u.Organization,
-                        Title = u.Title,
-                        Credentials = u.Credentials,
-                        Specialization = u.Specialization,
-                        YearsOfExperience = u.YearsOfExperience,
-                        ProfileImageUrl = u.ProfileImageUrl,
-                        EmergencyContactName = u.EmergencyContactName,
-                        EmergencyContactPhone = u.EmergencyContactPhone,
-                        EmergencyContactRelationship = u.EmergencyContactRelationship,
-                        IsEmailVerified = u.IsEmailVerified,
-                        IsPhoneVerified = u.IsPhoneVerified,
-                        EmailVerifiedAt = u.EmailVerifiedAt,
-                        PhoneVerifiedAt = u.PhoneVerifiedAt
-                    })
                     .ToListAsync();
+
+                var admins = adminUsers.Select(MapToUserResponseDto).ToList();
 
                 return Ok(new { success = true, admins = admins, count = admins.Count });
             }
@@ -483,39 +454,8 @@ namespace _241RunnersAPI.Controllers
         {
             try
             {
-                var users = await _cachingService.GetOrSetAdminDataAsync("users", async () => await _context.Users
-                    .Select(u => new UserResponseDto
-                    {
-                        Id = u.Id,
-                        Email = u.Email,
-                        FirstName = u.FirstName,
-                        LastName = u.LastName,
-                        FullName = $"{u.FirstName} {u.LastName}",
-                        Role = u.Role,
-                        IsActive = u.IsActive,
-                        CreatedAt = u.CreatedAt,
-                        LastLoginAt = u.LastLoginAt,
-                        UpdatedAt = u.UpdatedAt,
-                        PhoneNumber = u.PhoneNumber,
-                        Address = u.Address,
-                        City = u.City,
-                        State = u.State,
-                        ZipCode = u.ZipCode,
-                        Organization = u.Organization,
-                        Title = u.Title,
-                        Credentials = u.Credentials,
-                        Specialization = u.Specialization,
-                        YearsOfExperience = u.YearsOfExperience,
-                        ProfileImageUrl = u.ProfileImageUrl,
-                        EmergencyContactName = u.EmergencyContactName,
-                        EmergencyContactPhone = u.EmergencyContactPhone,
-                        EmergencyContactRelationship = u.EmergencyContactRelationship,
-                        IsEmailVerified = u.IsEmailVerified,
-                        IsPhoneVerified = u.IsPhoneVerified,
-                        EmailVerifiedAt = u.EmailVerifiedAt,
-                        PhoneVerifiedAt = u.PhoneVerifiedAt
-                    })
-                    .ToListAsync(), TimeSpan.FromMinutes(5));
+                var userEntities = await _cachingService.GetOrSetAdminDataAsync("users", async () => await _context.Users.ToListAsync(), TimeSpan.FromMinutes(5));
+                var users = userEntities.Select(MapToUserResponseDto).ToList();
 
                 return Ok(new { success = true, users = users, count = users.Count });
             }
@@ -608,34 +548,7 @@ namespace _241RunnersAPI.Controllers
                 _logger.LogInformation("User profile updated for user {UserId} ({Email})", user.Id, user.Email);
 
                 // Return updated user data
-                var userResponse = new UserResponseDto
-                {
-                    Id = user.Id,
-                    Email = user.Email,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    FullName = user.FullName,
-                    Role = user.Role,
-                    IsActive = user.IsActive,
-                    CreatedAt = user.CreatedAt,
-                    LastLoginAt = user.LastLoginAt,
-                    UpdatedAt = user.UpdatedAt,
-                    PhoneNumber = user.PhoneNumber,
-                    Address = user.Address,
-                    City = user.City,
-                    State = user.State,
-                    ZipCode = user.ZipCode,
-                    Organization = user.Organization,
-                    Title = user.Title,
-                    Credentials = user.Credentials,
-                    Specialization = user.Specialization,
-                    YearsOfExperience = user.YearsOfExperience,
-                    EmergencyContactName = user.EmergencyContactName,
-                    EmergencyContactPhone = user.EmergencyContactPhone,
-                    EmergencyContactRelationship = user.EmergencyContactRelationship,
-                    IsEmailVerified = user.IsEmailVerified,
-                    IsPhoneVerified = user.IsPhoneVerified
-                };
+                var userResponse = MapToUserResponseDto(user);
 
                 return Ok(new { 
                     success = true, 
@@ -660,39 +573,8 @@ namespace _241RunnersAPI.Controllers
         {
             try
             {
-                var users = await _context.Users
-                    .Select(u => new UserResponseDto
-                    {
-                        Id = u.Id,
-                        Email = u.Email,
-                        FirstName = u.FirstName,
-                        LastName = u.LastName,
-                        FullName = $"{u.FirstName} {u.LastName}",
-                        Role = u.Role,
-                        IsActive = u.IsActive,
-                        CreatedAt = u.CreatedAt,
-                        LastLoginAt = u.LastLoginAt,
-                        UpdatedAt = u.UpdatedAt,
-                        PhoneNumber = u.PhoneNumber,
-                        Address = u.Address,
-                        City = u.City,
-                        State = u.State,
-                        ZipCode = u.ZipCode,
-                        Organization = u.Organization,
-                        Title = u.Title,
-                        Credentials = u.Credentials,
-                        Specialization = u.Specialization,
-                        YearsOfExperience = u.YearsOfExperience,
-                        ProfileImageUrl = u.ProfileImageUrl,
-                        EmergencyContactName = u.EmergencyContactName,
-                        EmergencyContactPhone = u.EmergencyContactPhone,
-                        EmergencyContactRelationship = u.EmergencyContactRelationship,
-                        IsEmailVerified = u.IsEmailVerified,
-                        IsPhoneVerified = u.IsPhoneVerified,
-                        EmailVerifiedAt = u.EmailVerifiedAt,
-                        PhoneVerifiedAt = u.PhoneVerifiedAt
-                    })
-                    .ToListAsync();
+                var userEntities = await _context.Users.ToListAsync();
+                var users = userEntities.Select(MapToUserResponseDto).ToList();
 
                 return Ok(new { success = true, users = users, count = users.Count });
             }
@@ -1358,6 +1240,47 @@ namespace _241RunnersAPI.Controllers
                 _logger.LogError(ex, "Error processing error report");
                 return StatusCode(500, new { success = false, message = "Failed to process error report" });
             }
+        }
+
+        /// <summary>
+        /// Helper method to map User to UserResponseDto with dual role support
+        /// </summary>
+        private UserResponseDto MapToUserResponseDto(User user)
+        {
+            return new UserResponseDto
+            {
+                Id = user.Id,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                FullName = user.FullName,
+                Role = user.Role,
+                AllRoles = user.AllRoles,
+                PrimaryUserRole = user.PrimaryUserRole,
+                IsAdminUser = user.IsAdminUser,
+                IsActive = user.IsActive,
+                CreatedAt = user.CreatedAt,
+                LastLoginAt = user.LastLoginAt,
+                UpdatedAt = user.UpdatedAt,
+                PhoneNumber = user.PhoneNumber,
+                Address = user.Address,
+                City = user.City,
+                State = user.State,
+                ZipCode = user.ZipCode,
+                Organization = user.Organization,
+                Title = user.Title,
+                Credentials = user.Credentials,
+                Specialization = user.Specialization,
+                YearsOfExperience = user.YearsOfExperience,
+                ProfileImageUrl = user.ProfileImageUrl,
+                EmergencyContactName = user.EmergencyContactName,
+                EmergencyContactPhone = user.EmergencyContactPhone,
+                EmergencyContactRelationship = user.EmergencyContactRelationship,
+                IsEmailVerified = user.IsEmailVerified,
+                IsPhoneVerified = user.IsPhoneVerified,
+                EmailVerifiedAt = user.EmailVerifiedAt,
+                PhoneVerifiedAt = user.PhoneVerifiedAt
+            };
         }
     }
 

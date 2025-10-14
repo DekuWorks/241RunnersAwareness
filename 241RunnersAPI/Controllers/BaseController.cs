@@ -45,6 +45,40 @@ namespace _241RunnersAPI.Controllers
             return role == "admin" || role == "staff";
         }
 
+        protected bool HasRole(string role)
+        {
+            var userRoles = User.FindAll(ClaimTypes.Role).Select(c => c.Value.ToLower()).ToList();
+            return userRoles.Contains(role.ToLower());
+        }
+
+        protected List<string> GetAllUserRoles()
+        {
+            var allRolesClaim = User.FindFirst("AllRoles")?.Value;
+            if (!string.IsNullOrEmpty(allRolesClaim))
+            {
+                try
+                {
+                    return System.Text.Json.JsonSerializer.Deserialize<List<string>>(allRolesClaim) ?? new List<string>();
+                }
+                catch
+                {
+                    // Fall back to single role
+                }
+            }
+            return new List<string> { GetCurrentUserRole() ?? "user" };
+        }
+
+        protected string GetPrimaryUserRole()
+        {
+            return User.FindFirst("PrimaryUserRole")?.Value ?? GetCurrentUserRole() ?? "user";
+        }
+
+        protected bool IsAdminUser()
+        {
+            var isAdminUserClaim = User.FindFirst("IsAdminUser")?.Value;
+            return isAdminUserClaim?.ToLower() == "true" || IsAdmin();
+        }
+
         protected string GetCurrentApiVersion()
         {
             return HttpContext.GetRequestedApiVersion()?.ToString() ?? "1.0";

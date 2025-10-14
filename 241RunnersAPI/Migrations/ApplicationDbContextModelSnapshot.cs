@@ -717,6 +717,10 @@ namespace _241RunnersAPI.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<string>("AdditionalRoles")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<string>("Address")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
@@ -901,31 +905,31 @@ namespace _241RunnersAPI.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 10, 13, 22, 52, 43, 215, DateTimeKind.Utc).AddTicks(7570),
+                            CreatedAt = new DateTime(2025, 10, 14, 23, 15, 12, 443, DateTimeKind.Utc).AddTicks(3680),
                             Email = "admin@241runnersawareness.org",
-                            EmailVerifiedAt = new DateTime(2025, 10, 13, 22, 52, 43, 215, DateTimeKind.Utc).AddTicks(7570),
+                            EmailVerifiedAt = new DateTime(2025, 10, 14, 23, 15, 12, 443, DateTimeKind.Utc).AddTicks(3680),
                             FailedLoginAttempts = 0,
                             FirstName = "System",
                             IsActive = true,
                             IsEmailVerified = true,
                             IsPhoneVerified = false,
                             LastName = "Administrator",
-                            PasswordHash = "$2a$11$dWOMft3nZQNG9RCqswrMnuzMQgo.NdTk.m4RhMsbz0nq9dks.v7/y",
+                            PasswordHash = "$2a$11$Tyg7vZXxQuAIvy6rARu7QecaU60TjaGYm7W7/Td1/mWrKmVRz0oWS",
                             Role = "admin"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 10, 13, 22, 52, 43, 402, DateTimeKind.Utc).AddTicks(9680),
+                            CreatedAt = new DateTime(2025, 10, 14, 23, 15, 12, 559, DateTimeKind.Utc).AddTicks(1840),
                             Email = "support@241runnersawareness.org",
-                            EmailVerifiedAt = new DateTime(2025, 10, 13, 22, 52, 43, 402, DateTimeKind.Utc).AddTicks(9680),
+                            EmailVerifiedAt = new DateTime(2025, 10, 14, 23, 15, 12, 559, DateTimeKind.Utc).AddTicks(1840),
                             FailedLoginAttempts = 0,
                             FirstName = "Support",
                             IsActive = true,
                             IsEmailVerified = true,
                             IsPhoneVerified = false,
                             LastName = "Team",
-                            PasswordHash = "$2a$11$mGXGuoLdWCPLTvhlNI1p..hZC4uL1qzpisnhq5JwNbxHSRzMdbUE2",
+                            PasswordHash = "$2a$11$rqPTJapvpifCyiFiLNroG.SL2iRV59wHSakde/GXuh97kBwPOGrle",
                             Role = "admin"
                         });
                 });

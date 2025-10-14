@@ -315,15 +315,42 @@ namespace _241RunnersAPI.Controllers
 
                 return Ok(new
                 {
+                    success = true,
+                    message = "Login successful",
                     accessToken = token,
+                    token = token, // For backward compatibility
                     refreshToken = refreshToken,
                     expiresIn = 3600,
+                    expiresAt = DateTime.UtcNow.AddHours(24),
                     user = new
                     {
-                        id = $"u_{user.Id}",
+                        id = user.Id,
                         email = user.Email,
+                        firstName = user.FirstName,
+                        lastName = user.LastName,
+                        fullName = user.FullName,
                         role = user.Role,
-                        name = $"{user.FirstName} {user.LastName}"
+                        allRoles = user.AllRoles,
+                        primaryUserRole = user.PrimaryUserRole,
+                        isAdminUser = user.IsAdminUser,
+                        isActive = user.IsActive,
+                        createdAt = user.CreatedAt,
+                        lastLoginAt = user.LastLoginAt,
+                        phoneNumber = user.PhoneNumber,
+                        address = user.Address,
+                        city = user.City,
+                        state = user.State,
+                        zipCode = user.ZipCode,
+                        organization = user.Organization,
+                        title = user.Title,
+                        credentials = user.Credentials,
+                        specialization = user.Specialization,
+                        yearsOfExperience = user.YearsOfExperience,
+                        emergencyContactName = user.EmergencyContactName,
+                        emergencyContactPhone = user.EmergencyContactPhone,
+                        emergencyContactRelationship = user.EmergencyContactRelationship,
+                        isEmailVerified = user.IsEmailVerified,
+                        isPhoneVerified = user.IsPhoneVerified
                     }
                 });
             }
