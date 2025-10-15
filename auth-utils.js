@@ -207,9 +207,15 @@ async function handleLogin(email, password) {
             }
             
             // Redirect based on role
-            // All users (including admins) go to their user profile when using regular login
-            // Admins can access admin features through the admin login page
-            window.location.href = 'profile.html';
+            // If user is admin, redirect to full admin dashboard
+            // If user has dual roles, they can access both admin and user features
+            if (userData.role === 'admin' || (userData.allRoles && userData.allRoles.includes('admin'))) {
+                // Always redirect admins to full admin dashboard from regular login
+                window.location.href = 'admin/admindash.html';
+            } else {
+                // Regular users go to profile
+                window.location.href = 'profile.html';
+            }
             
             return true;
         } else {

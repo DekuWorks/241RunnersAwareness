@@ -332,7 +332,7 @@
             
             if (token && role === 'admin') {
                 // Redirect to admin dashboard if already authenticated
-                window.location.href = '/admin/index.html';
+                window.location.href = '/admin/admindash.html';
                 return true;
             }
             return false;
@@ -444,8 +444,8 @@
                         console.log('  - Role:', localStorage.getItem('ra_admin_role'));
                         console.log('  - User:', localStorage.getItem('ra_admin_user') ? 'Present' : 'Missing');
                         
-                        // Redirect to the new admin dashboard
-                        window.location.href = '/admin/index.html';
+                        // Redirect to the full admin dashboard with analytics
+                        window.location.href = '/admin/admindash.html';
                     }, 1000); // Reduced delay for faster redirect
                     
                 } catch (error) {
