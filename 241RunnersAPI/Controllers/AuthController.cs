@@ -952,6 +952,45 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
+        /// Get available user roles for registration
+        /// </summary>
+        [HttpGet("roles")]
+        public IActionResult GetAvailableRoles()
+        {
+            try
+            {
+                var roles = new[]
+                {
+                    new { value = "user", label = "General User", description = "Basic access to view cases and report information" },
+                    new { value = "parent", label = "Parent/Guardian", description = "Access for parents and guardians of missing persons" },
+                    new { value = "caregiver", label = "Caregiver", description = "Access for professional caregivers and support staff" },
+                    new { value = "aba_therapist", label = "ABA Therapist", description = "Access for Applied Behavior Analysis therapists" },
+                    new { value = "adoptive_parent", label = "Adoptive Parent", description = "Access for adoptive parents and foster families" }
+                };
+
+                return Ok(new
+                {
+                    success = true,
+                    roles = roles,
+                    message = "Available roles retrieved successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving available roles");
+                return StatusCode(500, new
+                {
+                    success = false,
+                    error = new
+                    {
+                        code = "ROLES_RETRIEVAL_FAILED",
+                        message = "Failed to retrieve available roles"
+                    }
+                });
+            }
+        }
+
+        /// <summary>
         /// Health check endpoint for authentication service
         /// </summary>
         [HttpGet("health")]
