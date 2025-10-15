@@ -671,9 +671,21 @@
         // Load available roles from API
         async function loadAvailableRoles() {
             try {
-                console.log('Loading roles from:', `${API_BASE_URL}/Auth/roles`);
-                const response = await fetch(`${API_BASE_URL}/Auth/roles`);
+                // Ensure API_BASE_URL is available
+                if (!API_BASE_URL) {
+                    console.warn('API_BASE_URL not available, skipping roles load');
+                    return;
+                }
+                
+                const rolesUrl = `${API_BASE_URL}/api/v1/auth/roles`;
+                console.log('Loading roles from:', rolesUrl);
+                const response = await fetch(rolesUrl);
                 console.log('Roles response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
                 const result = await response.json();
                 
                 if (result.success && result.roles) {
@@ -691,6 +703,8 @@
                 }
             } catch (error) {
                 console.warn("Failed to load roles from API, using default options:", error);
+                // Show a subtle notification to user that roles are loaded from defaults
+                showToast("warning", "Notice", "Using default role options. Some features may be limited.", 3000);
             }
         }
         
