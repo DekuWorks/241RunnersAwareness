@@ -1,10 +1,12 @@
-name: Deploy to GitHub Pages
+name: Deploy to GitHub Pages (DISABLED - Using pages.yml instead)
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  # DISABLED - This workflow conflicts with pages.yml
+  # push:
+  #   branches: [ main ]
+  # pull_request:
+  #   branches: [ main ]
+  workflow_dispatch: # Only allow manual triggers
 
 jobs:
   deploy:

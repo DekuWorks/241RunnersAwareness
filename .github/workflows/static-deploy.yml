@@ -1,23 +1,25 @@
-name: Static Site Deploy
+name: Static Site Deploy (DISABLED - Using pages.yml instead)
 
 on:
-  push:
-    branches: [ "main" ]
-    paths:
-      - '*.html'
-      - 'js/**'
-      - 'admin/**'
-      - 'assets/**'
-      - 'config.json'
-      - '.github/workflows/static-deploy.yml'
-  pull_request:
-    branches: [ "main" ]
-    paths:
-      - '*.html'
-      - 'js/**'
-      - 'admin/**'
-      - 'assets/**'
-      - 'config.json'
+  # DISABLED - This workflow conflicts with pages.yml
+  # push:
+  #   branches: [ "main" ]
+  #   paths:
+  #     - '*.html'
+  #     - 'js/**'
+  #     - 'admin/**'
+  #     - 'assets/**'
+  #     - 'config.json'
+  #     - '.github/workflows/static-deploy.yml'
+  # pull_request:
+  #   branches: [ "main" ]
+  #   paths:
+  #     - '*.html'
+  #     - 'js/**'
+  #     - 'admin/**'
+  #     - 'assets/**'
+  #     - 'config.json'
+  workflow_dispatch: # Only allow manual triggers
 
 jobs:
   deploy:
