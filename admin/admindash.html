@@ -11568,7 +11568,7 @@
                             return currentToken || '';
                         },
                         transport: signalR.HttpTransportType.LongPolling, // Use LongPolling for better CSP compatibility
-                        skipNegotiation: false,
+                        skipNegotiation: true,
                         withCredentials: false, // Disable credentials to avoid CORS issues
                         timeout: 20000 // 20 second timeout
                     })

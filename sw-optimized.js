@@ -47,7 +47,15 @@ self.addEventListener('install', (event) => {
         caches.open(STATIC_CACHE)
             .then(cache => {
                 console.log('Caching static files');
-                return cache.addAll(STATIC_FILES);
+                // Cache files individually to handle failures gracefully
+                return Promise.allSettled(
+                    STATIC_FILES.map(file => 
+                        cache.add(file).catch(err => {
+                            console.warn(`Failed to cache ${file}:`, err);
+                            return null; // Continue with other files
+                        })
+                    )
+                );
             })
             .then(() => {
                 // Skip waiting to activate immediately
