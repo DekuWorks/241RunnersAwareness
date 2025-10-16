@@ -5949,7 +5949,8 @@
                     const testResponse = await fetch(`${apiUrl}/Admin/stats`, {
                         method: 'GET',
                         headers: {
-                            'Accept': 'application/json'
+                            'Accept': 'application/json',
+                            'Authorization': token ? `Bearer ${token}` : ''
                         }
                     });
                     console.log('🧪 API connectivity test:', testResponse.status, testResponse.statusText);
@@ -11957,7 +11958,8 @@
                 if (typeof window.realtimeClient !== 'undefined' && window.realtimeClient.start) {
                     try {
                         // Check if already connected before starting
-                        if (window.realtimeClient.isConnected && window.realtimeClient.isConnected()) {
+                        const isConnected = window.realtimeClient.isConnected;
+                        if (isConnected && (typeof isConnected === 'function' ? isConnected() : isConnected)) {
                             console.log('✅ RealtimeClient already connected, skipping start');
                         } else {
                             await window.realtimeClient.start();
