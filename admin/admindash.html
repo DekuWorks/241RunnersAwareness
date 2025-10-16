@@ -11561,6 +11561,8 @@
                 
                 realTimeConnection = new signalR.HubConnectionBuilder()
                     .withUrl(hubUrl, {
+                        transport: signalR.HttpTransportType.WebSockets,
+                        skipNegotiation: true,
                         accessTokenFactory: () => {
                             // Use consistent token keys matching mobile app and realtime.js
                             const currentToken = storage.get('ra_admin_token') || storage.get('jwtToken') || storage.get('241runners_access_token');
@@ -11590,12 +11592,9 @@
                                 console.error('🔑 Error parsing token:', error);
                                 return '';
                             }
-                        },
-                        transport: signalR.HttpTransportType.WebSockets, // Use WebSockets for better performance
-                        skipNegotiation: true,
-                        withCredentials: false, // Disable credentials to avoid CORS issues
-                        timeout: 20000 // 20 second timeout
+                        }
                     })
+                    .configureLogging(signalR.LogLevel.Information)
                     .withAutomaticReconnect({
                         nextRetryDelayInMilliseconds: retryContext => {
                             console.log(`🔄 SignalR retry attempt ${retryContext.previousRetryCount + 1}`);

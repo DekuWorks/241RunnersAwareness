@@ -43,13 +43,13 @@ class RealtimeClient {
             // Create SignalR connection
             this.connection = new signalR.HubConnectionBuilder()
                 .withUrl(hubUrl, {
+                    transport: signalR.HttpTransportType.WebSockets,
+                    skipNegotiation: true,
                     accessTokenFactory: () => {
                         const authToken = localStorage.getItem("ra_admin_token") || localStorage.getItem("jwtToken") || localStorage.getItem("241runners_access_token");
                         console.log('🔑 SignalR accessTokenFactory token:', authToken ? `Present (${authToken.length} chars)` : 'Missing');
                         return authToken || "";
-                    },
-                    skipNegotiation: true, // Skip negotiation for better compatibility
-                    transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling
+                    }
                 })
                 .withAutomaticReconnect([0, 2000, 10000, 30000]) // Reconnect attempts
                 .configureLogging(signalR.LogLevel.Information)
