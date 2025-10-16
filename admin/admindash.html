@@ -11564,10 +11564,34 @@
                         accessTokenFactory: () => {
                             // Use consistent token keys matching mobile app and realtime.js
                             const currentToken = storage.get('ra_admin_token') || storage.get('jwtToken') || storage.get('241runners_access_token');
-                            console.log('🔑 SignalR accessTokenFactory called, token:', currentToken ? `Present (length: ${currentToken.length})` : 'Missing');
-                            return currentToken || '';
+                            
+                            if (!currentToken) {
+                                console.warn('🔑 No token found for SignalR connection');
+                                return '';
+                            }
+                            
+                            // Check if token is expired
+                            try {
+                                const payload = JSON.parse(atob(currentToken.split('.')[1]));
+                                const now = Math.floor(Date.now() / 1000);
+                                
+                                if (payload.exp && payload.exp < now) {
+                                    console.warn('🔑 Token expired, clearing and redirecting to login');
+                                    localStorage.removeItem('ra_admin_token');
+                                    localStorage.removeItem('jwtToken');
+                                    localStorage.removeItem('241runners_access_token');
+                                    window.location.href = '/admin/login.html';
+                                    return '';
+                                }
+                                
+                                console.log('🔑 SignalR accessTokenFactory called, token:', `Present (length: ${currentToken.length}), expires: ${new Date(payload.exp * 1000).toISOString()}`);
+                                return currentToken;
+                            } catch (error) {
+                                console.error('🔑 Error parsing token:', error);
+                                return '';
+                            }
                         },
-                        transport: signalR.HttpTransportType.LongPolling, // Use LongPolling for better CSP compatibility
+                        transport: signalR.HttpTransportType.WebSockets, // Use WebSockets for better performance
                         skipNegotiation: true,
                         withCredentials: false, // Disable credentials to avoid CORS issues
                         timeout: 20000 // 20 second timeout
@@ -11955,15 +11979,15 @@
                 }
                 
                 // Initialize real-time system using new realtime client
-                if (typeof window.realtimeClient !== 'undefined' && window.realtimeClient.start) {
+                if (typeof window.realtimeClient !== 'undefined' && window.realtimeClient.startConnection) {
                     try {
                         // Check if already connected before starting
                         const isConnected = window.realtimeClient.isConnected;
                         if (isConnected && (typeof isConnected === 'function' ? isConnected() : isConnected)) {
                             console.log('✅ RealtimeClient already connected, skipping start');
                         } else {
-                            await window.realtimeClient.start();
-                            console.log('✅ New realtime client initialized successfully');
+                            await window.realtimeClient.startConnection();
+                            console.log('✅ New realtime client initialized successfully with improved reconnection logic');
                         }
                         
                         // Set up connection status callbacks

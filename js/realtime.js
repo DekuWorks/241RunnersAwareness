@@ -206,6 +206,32 @@ class RealtimeClient {
         }
     }
 
+    async startConnection() {
+        let retries = 0;
+        const maxRetries = 5;
+        
+        while (retries < maxRetries) {
+            try {
+                await this.start();
+                return; // Success, exit the loop
+            } catch (error) {
+                retries++;
+                console.warn(`⚠️ Connection attempt ${retries}/${maxRetries} failed:`, error);
+                
+                if (retries >= maxRetries) {
+                    console.error('❌ Max reconnection attempts reached');
+                    this.updateConnectionStatus('failed');
+                    return;
+                }
+                
+                // Exponential backoff: 1s, 2s, 4s, 8s, 16s
+                const delay = Math.pow(2, retries - 1) * 1000;
+                console.log(`⏳ Retrying in ${delay}ms...`);
+                await new Promise(resolve => setTimeout(resolve, delay));
+            }
+        }
+    }
+
     async stop() {
         if (this.connection) {
             await this.connection.stop();
