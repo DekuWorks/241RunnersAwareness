@@ -1892,7 +1892,7 @@
       try {
         const response = await fetch('/config.json');
         const config = await response.json();
-        PROFILE_API_BASE_URL = config.PROFILE_API_BASE_URL || PROFILE_API_BASE_URL;
+        PROFILE_API_BASE_URL = config.API_BASE_URL || PROFILE_API_BASE_URL;
       } catch (error) {
         console.warn('Failed to load config.json, using default API URL');
       }
@@ -2051,7 +2051,7 @@
             skipNegotiation: false,
             accessTokenFactory: () => {
               console.log('🔑 SignalR requesting token...');
-              return token;
+              return Promise.resolve(token);
             }
           })
           .withAutomaticReconnect([0, 2000, 10000, 30000])
@@ -2865,9 +2865,16 @@
           
           showMessage('success', 'Runner profile saved successfully!');
         } else {
-          const result = await response.json();
-          console.error('Runner profile save failed:', result);
-          showMessage('error', result.message || 'Failed to save runner profile');
+          let errorMessage = 'Failed to save runner profile';
+          try {
+            const result = await response.json();
+            console.error('Runner profile save failed:', result);
+            errorMessage = result.message || errorMessage;
+          } catch (jsonError) {
+            console.error('Failed to parse error response:', jsonError);
+            errorMessage = `Server error (${response.status}): ${response.statusText}`;
+          }
+          showMessage('error', errorMessage);
         }
         
       } catch (error) {
@@ -3933,7 +3940,7 @@
       try {
         // Check if this is a new runner or update
         const isNewRunner = !currentUser || !currentUser.runnerProfile;
-        const endpoint = isNewRunner ? '/v1/runners' : '/v1/runners/me';
+        const endpoint = isNewRunner ? '/v1.0/Runner' : '/v1.0/Runner/me';
         const method = isNewRunner ? 'POST' : 'PUT';
 
         const response = await authUtils.apiRequest(endpoint, {

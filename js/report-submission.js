@@ -221,7 +221,7 @@ class ReportSubmission {
         const API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
         
         try {
-            const response = await fetch(`${API_BASE_URL}/v1/runners`, {
+            const response = await fetch(`${API_BASE_URL}/v1.0/Runner`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -254,7 +254,7 @@ class ReportSubmission {
         const API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
         
         try {
-            const response = await fetch(`${API_BASE_URL}/v1/runners/${runnerId}`, {
+            const response = await fetch(`${API_BASE_URL}/v1.0/Runner/${runnerId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

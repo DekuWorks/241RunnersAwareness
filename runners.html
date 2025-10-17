@@ -1337,7 +1337,7 @@
           return;
         }
 
-        const endpoint = currentView === 'all' ? '/v1/runners' : '/v1/runners/my';
+        const endpoint = currentView === 'all' ? '/v1.0/Runner' : '/v1.0/Runner/my';
         const response = await authUtils.apiRequest(endpoint);
         
         if (response.ok) {
@@ -1445,7 +1445,7 @@
       }
 
       try {
-        const response = await authUtils.apiRequest(`/v1/runners/${runnerId}`, {
+        const response = await authUtils.apiRequest(`/v1.0/Runner/${runnerId}`, {
           method: 'DELETE'
         });
 
