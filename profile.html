@@ -1818,6 +1818,24 @@
               <textarea id="editAdditionalNotes" name="additionalNotes" rows="3" placeholder="Any other important information about your running habits, safety concerns, etc."></textarea>
             </div>
 
+            <!-- Runner Photos Section -->
+            <div class="form-group">
+              <label>Runner Photos</label>
+              <div class="photo-upload-section">
+                <div class="photo-upload-area" id="runnerPhotoUploadArea">
+                  <input type="file" id="runnerPhotoInput" accept="image/*" multiple style="display: none;" onchange="handleRunnerPhotoUpload(event)">
+                  <div class="upload-prompt" onclick="document.getElementById('runnerPhotoInput').click()">
+                    <div class="upload-icon">📷</div>
+                    <div class="upload-text">Click to upload photos</div>
+                    <div class="upload-subtext">JPG, PNG, GIF, WebP (max 5MB each)</div>
+                  </div>
+                </div>
+                <div class="photo-preview-container" id="runnerPhotoPreview">
+                  <!-- Photo previews will be added here -->
+                </div>
+              </div>
+            </div>
+
             <div class="form-actions">
               <button type="button" class="btn btn-secondary" onclick="toggleEditForm('runnerProfile')">Cancel</button>
               <button type="submit" class="btn btn-primary">Save Runner Profile</button>
