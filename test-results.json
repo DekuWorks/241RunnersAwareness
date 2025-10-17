@@ -1,0 +1,26 @@
+{
+  "passed": 24,
+  "failed": 19,
+  "errors": [
+    "Get User Profile: Expected 200, got 405",
+    "Get All Cases: Expected 200, got 500",
+    "Get Runner Cases: Expected 200, got 500",
+    "Get Enhanced Runner: Expected 200, got 405",
+    "Get Photo Reminders: Expected 200, got 500",
+    "Get Notification Subscriptions: Expected 200, got 405",
+    "Get Topic Subscriptions: Expected 200, got 500",
+    "Get Topic Stats: Expected 200, got 500",
+    "Get Device Stats: Expected 200, got 500",
+    "Get Devices: Expected 200, got 500",
+    "Database Health: Expected 200, got 500",
+    "Database Stats: Expected 200, got 500",
+    "Database Performance: Expected 200, got 500",
+    "Security Health: Expected 200, got 500",
+    "Security Audit Statistics: Expected 200, got 500",
+    "Security Token Statistics: Expected 200, got 500",
+    "Monitoring Health: Expected 200, got 500",
+    "Monitoring Statistics: Expected 200, got 500",
+    "Monitoring Sessions: Expected 200, got 500"
+  ],
+  "missing": []
+}

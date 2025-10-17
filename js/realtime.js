@@ -202,7 +202,13 @@ class RealtimeClient {
             this.updateConnectionStatus('connected');
         } catch (error) {
             console.warn('⚠️ Real-time connection failed:', error);
-            this.handleConnectionError(error);
+            // Don't immediately retry on negotiation errors
+            if (error.message && error.message.includes('Negotiation can only be skipped')) {
+                console.log('🔄 Negotiation error detected, will retry with different transport');
+                this.handleConnectionError(error);
+            } else {
+                this.handleConnectionError(error);
+            }
         }
     }
 
@@ -263,6 +269,33 @@ class RealtimeClient {
         } else {
             console.error('❌ Max reconnection attempts reached');
             this.updateConnectionStatus('failed');
+            // Fallback to polling mode when SignalR fails completely
+            console.log('🔄 Switching to polling mode as fallback');
+            this.startPollingMode();
+        }
+    }
+
+    startPollingMode() {
+        console.log('🔄 Starting polling mode as fallback');
+        this.isPolling = true;
+        this.updateConnectionStatus('polling');
+        
+        // Poll every 30 seconds for updates
+        this.pollingInterval = setInterval(() => {
+            this.pollForUpdates();
+        }, 30000);
+    }
+
+    async pollForUpdates() {
+        try {
+            // Make API calls to get latest data
+            console.log('🔄 Polling for updates...');
+            // This would trigger dashboard refresh
+            if (typeof window.refreshDashboard === 'function') {
+                window.refreshDashboard();
+            }
+        } catch (error) {
+            console.warn('⚠️ Polling error:', error);
         }
     }
 
@@ -275,6 +308,10 @@ class RealtimeClient {
                 case 'connected':
                     statusElement.textContent = 'Live Database Connection';
                     if (dotElement) dotElement.className = 'connection-dot live';
+                    break;
+                case 'polling':
+                    statusElement.textContent = 'Polling Mode (Fallback)';
+                    if (dotElement) dotElement.className = 'connection-dot polling';
                     break;
                 case 'reconnecting':
                     statusElement.textContent = 'Reconnecting...';

@@ -2704,6 +2704,11 @@
             background: currentColor;
         }
         
+        .connection-dot.polling {
+            background: #3b82f6;
+            animation: pulse 2s infinite;
+        }
+        
         /* Modal Styles */
         .modal {
             display: none;
@@ -6069,7 +6074,7 @@
                     return;
                 }
                 
-                // Try to load runners from API
+                // Try to load runners from API with better error handling
                 try {
                     const response = await fetch(`${apiUrl}/Runner`, {
                         method: 'GET',
@@ -6086,7 +6091,7 @@
                         dashboardData.runners = responseData.runners || responseData || [];
                         console.log('✅ Real runners loaded from API:', dashboardData.runners.length);
                     } else {
-                        console.warn('⚠️ Runners endpoint not available, setting empty array');
+                        console.warn(`⚠️ Runners endpoint returned ${response.status}: ${response.statusText}`);
                         dashboardData.runners = [];
                         // Show a helpful message in the UI
                         updateElement('totalRunners', 0, {
@@ -6095,7 +6100,7 @@
                         });
                     }
                 } catch (runnerError) {
-                    console.warn('⚠️ Runners endpoint not available:', runnerError.message);
+                    console.warn('⚠️ Runners endpoint error:', runnerError.message);
                     dashboardData.runners = [];
                     // Show a helpful message in the UI
                     updateElement('totalRunners', 0, {
@@ -11562,7 +11567,7 @@
                 realTimeConnection = new signalR.HubConnectionBuilder()
                     .withUrl(hubUrl, {
                         transport: signalR.HttpTransportType.WebSockets,
-                        skipNegotiation: true,
+                        skipNegotiation: false, // Allow negotiation for proper WebSocket setup
                         accessTokenFactory: () => {
                             // Use consistent token keys matching mobile app and realtime.js
                             const currentToken = storage.get('ra_admin_token') || storage.get('jwtToken') || storage.get('241runners_access_token');
@@ -12035,6 +12040,14 @@
         }
         
         // ===== EVENT LISTENERS =====
+        
+        // Global refresh function for polling fallback
+        window.refreshDashboard = function() {
+            console.log('🔄 Manual dashboard refresh triggered');
+            if (typeof loadDashboardData === 'function') {
+                loadDashboardData();
+            }
+        };
         
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Admin Dashboard DOM loaded');

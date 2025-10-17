@@ -1,0 +1,132 @@
+{
+  "coreEndpoints": [
+    "POST /api/v1/auth/login",
+    "POST /api/v1/auth/register",
+    "GET /api/v1/auth/me",
+    "GET /api/v1/auth/profile",
+    "PUT /api/v1/auth/profile",
+    "POST /api/v1/auth/logout",
+    "POST /api/v1/auth/change-password",
+    "POST /api/v1/auth/reset-password",
+    "GET /api/v1/auth/verify-email",
+    "GET /api/v1/cases",
+    "GET /api/v1/cases/public",
+    "GET /api/v1/cases/my-cases",
+    "GET /api/v1/cases/{id}",
+    "POST /api/v1/cases",
+    "PUT /api/v1/cases/{id}",
+    "DELETE /api/v1/cases/{id}",
+    "GET /api/v1/Admin/users",
+    "GET /api/v1/Admin/stats",
+    "GET /api/v1/Admin/system-status",
+    "POST /api/v1/Admin/users",
+    "PUT /api/v1/Admin/users/{id}",
+    "DELETE /api/v1/Admin/users/{id}",
+    "GET /api/v1/Admin/activity",
+    "GET /api/v1/Admin/monitoring-data",
+    "GET /api/v1/users",
+    "GET /api/v1/users/me",
+    "PUT /api/v1/users/me",
+    "DELETE /api/v1/users/me",
+    "GET /api/v1/Runner/my-profile",
+    "GET /api/v1/Runner/my-cases",
+    "PUT /api/v1/Runner/my-profile",
+    "GET /api/notifications",
+    "POST /api/notifications",
+    "PUT /api/notifications/{id}",
+    "DELETE /api/notifications/{id}",
+    "GET /api/notifications/preferences",
+    "PUT /api/notifications/preferences",
+    "POST /api/ImageUpload/upload",
+    "GET /api/ImageUpload/{fileName}",
+    "DELETE /api/ImageUpload/{fileName}",
+    "GET /api/map/points",
+    "GET /api/map/points/raw",
+    "POST /api/map/points",
+    "GET /api/health",
+    "GET /healthz",
+    "GET /readyz"
+  ],
+  "failingEndpoints": [
+    "GET /api/v1/cases",
+    "GET /api/v1/Runner/my-cases",
+    "GET /api/v1/enhanced-runner",
+    "GET /api/v1/enhanced-runner/photo-reminders",
+    "GET /api/notifications/subscribe",
+    "GET /api/Topics/subscriptions",
+    "GET /api/Topics/stats",
+    "GET /api/Devices/stats",
+    "GET /api/Devices",
+    "GET /api/v1/Database/health",
+    "GET /api/v1/Database/stats",
+    "GET /api/v1/Database/performance",
+    "GET /api/v1/Security/health",
+    "GET /api/v1/Security/audit/statistics",
+    "GET /api/v1/Security/tokens/statistics",
+    "GET /api/v1/Monitoring/health",
+    "GET /api/v1/Monitoring/statistics",
+    "GET /api/v1/Monitoring/sessions"
+  ],
+  "missingFunctionality": [
+    {
+      "feature": "Case Management",
+      "missing": [
+        "POST /api/v1/cases - Create new case",
+        "PUT /api/v1/cases/{id} - Update case",
+        "DELETE /api/v1/cases/{id} - Delete case",
+        "GET /api/v1/cases/{id} - Get specific case"
+      ]
+    },
+    {
+      "feature": "User Profile Management",
+      "missing": [
+        "PUT /api/v1/users/me - Update user profile",
+        "POST /api/v1/users/me/avatar - Upload profile picture",
+        "GET /api/v1/users/me/notifications - Get user notifications"
+      ]
+    },
+    {
+      "feature": "Admin Dashboard",
+      "missing": [
+        "POST /api/v1/Admin/users - Create new user",
+        "PUT /api/v1/Admin/users/{id} - Update user",
+        "DELETE /api/v1/Admin/users/{id} - Delete user",
+        "GET /api/v1/Admin/users/{id} - Get specific user",
+        "POST /api/v1/Admin/users/bulk-update - Bulk user operations"
+      ]
+    },
+    {
+      "feature": "File Upload",
+      "missing": [
+        "POST /api/ImageUpload/upload - Upload images",
+        "GET /api/ImageUpload/{fileName} - Get uploaded image",
+        "DELETE /api/ImageUpload/{fileName} - Delete image"
+      ]
+    },
+    {
+      "feature": "Notifications",
+      "missing": [
+        "POST /api/notifications - Send notification",
+        "PUT /api/notifications/{id} - Update notification",
+        "DELETE /api/notifications/{id} - Delete notification",
+        "POST /api/notifications/broadcast - Broadcast notification"
+      ]
+    },
+    {
+      "feature": "Search and Filtering",
+      "missing": [
+        "GET /api/v1/cases/search - Search cases",
+        "GET /api/v1/cases/filter - Filter cases",
+        "GET /api/v1/cases/stats - Case statistics"
+      ]
+    },
+    {
+      "feature": "Reporting",
+      "missing": [
+        "POST /api/v1/reports - Create report",
+        "GET /api/v1/reports - Get reports",
+        "GET /api/v1/reports/{id} - Get specific report"
+      ]
+    }
+  ]
+}

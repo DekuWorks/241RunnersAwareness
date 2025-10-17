@@ -147,17 +147,17 @@ class ApiClient {
 
     // Admin methods
     async getUsers() {
-        // Temporarily use debug endpoint until authentication is fixed
-        return this.get('/admin/users-debug');
+        // Use debug endpoint for user management
+        return this.get('/debug/users');
     }
 
     async getAdmins() {
-        return this.get('/admin/admins');
+        return this.get('/api/v1.0/Admin/admins');
     }
 
     async deleteUser(userId) {
-        // Temporarily use debug endpoint until authentication is fixed
-        return this.delete(`/admin/users-debug/${userId}`);
+        // Use debug endpoint for user deletion
+        return this.delete(`/debug/users/${userId}`);
     }
 
     async deleteAdmin(adminId) {

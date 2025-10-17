@@ -635,6 +635,200 @@ app.MapGet("/debug/runners", async (ApplicationDbContext db) => {
     }
 });
 
+// Temporary endpoint to apply OAuth migration
+app.MapPost("/debug/apply-oauth-migration", async (ApplicationDbContext db) => {
+    try {
+        // Apply OAuth migration by adding missing columns
+        await db.Database.ExecuteSqlRawAsync(@"
+            IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Users' AND COLUMN_NAME = 'AuthProvider')
+                ALTER TABLE Users ADD AuthProvider NVARCHAR(50) NULL;
+            
+            IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Users' AND COLUMN_NAME = 'ProviderUserId')
+                ALTER TABLE Users ADD ProviderUserId NVARCHAR(255) NULL;
+            
+            IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Users' AND COLUMN_NAME = 'ProviderAccessToken')
+                ALTER TABLE Users ADD ProviderAccessToken NVARCHAR(500) NULL;
+            
+            IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Users' AND COLUMN_NAME = 'ProviderRefreshToken')
+                ALTER TABLE Users ADD ProviderRefreshToken NVARCHAR(500) NULL;
+            
+            IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Users' AND COLUMN_NAME = 'ProviderTokenExpires')
+                ALTER TABLE Users ADD ProviderTokenExpires DATETIME2 NULL;
+            
+            IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Users' AND COLUMN_NAME = 'AdditionalRoles')
+                ALTER TABLE Users ADD AdditionalRoles NVARCHAR(200) NULL;
+        ");
+        
+        return Results.Ok(new { 
+            message = "OAuth migration applied successfully",
+            timestamp = DateTime.UtcNow
+        });
+    } catch (Exception ex) {
+        return Results.Ok(new { 
+            error = ex.Message,
+            stackTrace = ex.StackTrace
+        });
+    }
+});
+
+// Comprehensive database structure creation endpoint
+app.MapPost("/debug/apply-database-structure", async (ApplicationDbContext db, HttpRequest request) => {
+    try {
+        var body = await new StreamReader(request.Body).ReadToEndAsync();
+        var requestData = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(body);
+        var sql = requestData["sql"];
+        
+        // Execute the comprehensive SQL script
+        await db.Database.ExecuteSqlRawAsync(sql);
+        
+        return Results.Ok(new { 
+            message = "Database structure created successfully",
+            timestamp = DateTime.UtcNow
+        });
+    } catch (Exception ex) {
+        return Results.Ok(new { 
+            error = ex.Message,
+            stackTrace = ex.StackTrace
+        });
+    }
+});
+
+// Initialize database tables endpoint
+app.MapPost("/debug/initialize-database", async (ApplicationDbContext db) => {
+    try {
+        // Ensure database is created
+        await db.Database.EnsureCreatedAsync();
+        
+        // Create missing tables if they don't exist
+        await db.Database.ExecuteSqlRawAsync(@"
+            -- Create Cases table if it doesn't exist
+            IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Cases' AND xtype='U')
+            BEGIN
+                CREATE TABLE Cases (
+                    Id INT IDENTITY(1,1) PRIMARY KEY,
+                    CaseNumber NVARCHAR(50) NOT NULL UNIQUE,
+                    Title NVARCHAR(255) NOT NULL,
+                    Description NVARCHAR(MAX),
+                    Status NVARCHAR(50) NOT NULL DEFAULT 'Open',
+                    Priority NVARCHAR(20) NOT NULL DEFAULT 'Medium',
+                    Category NVARCHAR(100),
+                    Location NVARCHAR(255),
+                    Latitude DECIMAL(10,8),
+                    Longitude DECIMAL(11,8),
+                    CreatedBy INT NOT NULL,
+                    AssignedTo INT,
+                    CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+                    UpdatedAt DATETIME2,
+                    ClosedAt DATETIME2,
+                    IsPublic BIT NOT NULL DEFAULT 0,
+                    IsActive BIT NOT NULL DEFAULT 1,
+                    Tags NVARCHAR(500),
+                    Notes NVARCHAR(MAX),
+                    Evidence NVARCHAR(MAX),
+                    ContactInfo NVARCHAR(255),
+                    ContactPhone NVARCHAR(20),
+                    ContactEmail NVARCHAR(255),
+                    Resolution NVARCHAR(MAX),
+                    FOREIGN KEY (CreatedBy) REFERENCES Users(Id),
+                    FOREIGN KEY (AssignedTo) REFERENCES Users(Id)
+                );
+            END
+
+            -- Create Notifications table if it doesn't exist
+            IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Notifications' AND xtype='U')
+            BEGIN
+                CREATE TABLE Notifications (
+                    Id INT IDENTITY(1,1) PRIMARY KEY,
+                    UserId INT NOT NULL,
+                    Title NVARCHAR(255) NOT NULL,
+                    Message NVARCHAR(MAX) NOT NULL,
+                    Type NVARCHAR(50) NOT NULL,
+                    Priority NVARCHAR(20) DEFAULT 'Normal',
+                    IsRead BIT NOT NULL DEFAULT 0,
+                    IsActive BIT NOT NULL DEFAULT 1,
+                    CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+                    ReadAt DATETIME2,
+                    ExpiresAt DATETIME2,
+                    ActionUrl NVARCHAR(500),
+                    Metadata NVARCHAR(MAX),
+                    FOREIGN KEY (UserId) REFERENCES Users(Id)
+                );
+            END
+
+            -- Create Topics table if it doesn't exist
+            IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Topics' AND xtype='U')
+            BEGIN
+                CREATE TABLE Topics (
+                    Id INT IDENTITY(1,1) PRIMARY KEY,
+                    Name NVARCHAR(100) NOT NULL UNIQUE,
+                    Description NVARCHAR(500),
+                    Category NVARCHAR(50),
+                    IsActive BIT NOT NULL DEFAULT 1,
+                    CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+                    UpdatedAt DATETIME2
+                );
+            END
+
+            -- Create Devices table if it doesn't exist
+            IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Devices' AND xtype='U')
+            BEGIN
+                CREATE TABLE Devices (
+                    Id INT IDENTITY(1,1) PRIMARY KEY,
+                    UserId INT NOT NULL,
+                    DeviceId NVARCHAR(255) NOT NULL,
+                    DeviceType NVARCHAR(50) NOT NULL,
+                    DeviceName NVARCHAR(255),
+                    Platform NVARCHAR(50),
+                    Version NVARCHAR(50),
+                    IsActive BIT NOT NULL DEFAULT 1,
+                    LastSeen DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+                    CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+                    PushToken NVARCHAR(500),
+                    FOREIGN KEY (UserId) REFERENCES Users(Id)
+                );
+            END
+
+            -- Create Reports table if it doesn't exist
+            IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Reports' AND xtype='U')
+            BEGIN
+                CREATE TABLE Reports (
+                    Id INT IDENTITY(1,1) PRIMARY KEY,
+                    UserId INT NOT NULL,
+                    Title NVARCHAR(255) NOT NULL,
+                    Description NVARCHAR(MAX),
+                    Type NVARCHAR(50) NOT NULL,
+                    Status NVARCHAR(50) DEFAULT 'Draft',
+                    GeneratedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+                    Data NVARCHAR(MAX),
+                    FilePath NVARCHAR(500),
+                    IsPublic BIT NOT NULL DEFAULT 0,
+                    FOREIGN KEY (UserId) REFERENCES Users(Id)
+                );
+            END
+
+            -- Insert default topics if they don't exist
+            IF NOT EXISTS (SELECT * FROM Topics WHERE Name = 'Missing Person')
+                INSERT INTO Topics (Name, Description, Category) VALUES ('Missing Person', 'Reports about missing individuals', 'General');
+
+            IF NOT EXISTS (SELECT * FROM Topics WHERE Name = 'Emergency')
+                INSERT INTO Topics (Name, Description, Category) VALUES ('Emergency', 'Urgent situations requiring immediate attention', 'Emergency');
+
+            IF NOT EXISTS (SELECT * FROM Topics WHERE Name = 'Safety Alert')
+                INSERT INTO Topics (Name, Description, Category) VALUES ('Safety Alert', 'Safety-related notifications and alerts', 'Safety');
+        ");
+        
+        return Results.Ok(new { 
+            message = "Database initialized successfully with all required tables",
+            timestamp = DateTime.UtcNow
+        });
+    } catch (Exception ex) {
+        return Results.Ok(new { 
+            error = ex.Message,
+            stackTrace = ex.StackTrace
+        });
+    }
+});
+
 // Comprehensive health check endpoints
 app.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
 {
