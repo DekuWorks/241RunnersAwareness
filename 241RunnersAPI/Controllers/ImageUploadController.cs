@@ -34,12 +34,37 @@ namespace _241RunnersAPI.Controllers
                 }
 
                 var uploadedFiles = new List<object>();
-                var uploadsPath = Path.Combine(_environment.WebRootPath ?? _environment.ContentRootPath, "uploads", "images");
-
-                // Create uploads directory if it doesn't exist
-                if (!Directory.Exists(uploadsPath))
+                
+                // Use Azure-compatible path
+                var uploadsPath = Path.Combine("/tmp", "uploads", "images");
+                
+                try
                 {
-                    Directory.CreateDirectory(uploadsPath);
+                    // Create uploads directory if it doesn't exist
+                    if (!Directory.Exists(uploadsPath))
+                    {
+                        Directory.CreateDirectory(uploadsPath);
+                        _logger.LogInformation("Created uploads directory: {UploadsPath}", uploadsPath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to create uploads directory: {UploadsPath}", uploadsPath);
+                    // Try alternative path
+                    uploadsPath = Path.Combine(_environment.ContentRootPath, "uploads", "images");
+                    try
+                    {
+                        if (!Directory.Exists(uploadsPath))
+                        {
+                            Directory.CreateDirectory(uploadsPath);
+                            _logger.LogInformation("Created alternative uploads directory: {UploadsPath}", uploadsPath);
+                        }
+                    }
+                    catch (Exception ex2)
+                    {
+                        _logger.LogError(ex2, "Failed to create alternative uploads directory: {UploadsPath}", uploadsPath);
+                        return StatusCode(500, new { success = false, message = "Failed to create uploads directory. Please contact administrator." });
+                    }
                 }
 
                 // Enhanced security validation
@@ -119,7 +144,12 @@ namespace _241RunnersAPI.Controllers
         {
             try
             {
-                var uploadsPath = Path.Combine(_environment.WebRootPath ?? _environment.ContentRootPath, "uploads", "images");
+                // Try Azure-compatible path first, then fallback
+                var uploadsPath = Path.Combine("/tmp", "uploads", "images");
+                if (!Directory.Exists(uploadsPath))
+                {
+                    uploadsPath = Path.Combine(_environment.ContentRootPath, "uploads", "images");
+                }
                 var filePath = Path.Combine(uploadsPath, fileName);
 
                 if (!System.IO.File.Exists(filePath))
