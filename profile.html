@@ -2833,6 +2833,10 @@
         };
         
         // Check if runner profile already exists
+        console.log('Current user:', currentUser);
+        console.log('Runner ID:', currentUser.runnerId);
+        console.log('API Data being sent:', apiData);
+        
         let response;
         if (currentUser.runnerId) {
           // Update existing runner profile
@@ -2873,12 +2877,17 @@
           showMessage('success', 'Runner profile saved successfully!');
         } else {
           let errorMessage = 'Failed to save runner profile';
+          console.error('Response status:', response.status);
+          console.error('Response headers:', response.headers);
+          
           try {
             const result = await response.json();
             console.error('Runner profile save failed:', result);
-            errorMessage = result.message || errorMessage;
+            errorMessage = result.message || result.error || errorMessage;
           } catch (jsonError) {
             console.error('Failed to parse error response:', jsonError);
+            const responseText = await response.text();
+            console.error('Raw response:', responseText);
             errorMessage = `Server error (${response.status}): ${response.statusText}`;
           }
           showMessage('error', errorMessage);
