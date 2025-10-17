@@ -1420,9 +1420,11 @@
   <main class="profile-container">
     <!-- Profile Header -->
     <div class="profile-header">
-      <div class="profile-avatar" id="profileAvatar">
+      <div class="profile-avatar" id="profileAvatar" style="cursor: pointer; position: relative;" onclick="document.getElementById('avatarUploadInput').click()">
         <img id="profileImage" src="" alt="Profile Image" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
         <div id="avatarPlaceholder" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 3rem; color: #dc2626;">👤</div>
+        <input type="file" id="avatarUploadInput" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)">
+        <div style="position: absolute; bottom: 0; right: 0; background: #dc2626; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 14px;">📷</div>
       </div>
       <h1 class="profile-name" id="profileName">Loading...</h1>
       <p class="profile-email" id="profileEmail">Loading...</p>
@@ -1801,7 +1803,7 @@
             </div>
 
             <div class="form-group">
-              <label for="editPreferredRunningLocations">Preferred Running Locations</label>
+              <label for="editPreferredRunningLocations">Possible Running Locations</label>
               <textarea id="editPreferredRunningLocations" name="preferredRunningLocations" rows="2" placeholder="Where do you typically run?"></textarea>
             </div>
 
@@ -1874,6 +1876,29 @@
         PROFILE_API_BASE_URL = config.PROFILE_API_BASE_URL || PROFILE_API_BASE_URL;
       } catch (error) {
         console.warn('Failed to load config.json, using default API URL');
+      }
+    }
+
+    // Handle avatar upload
+    function handleAvatarUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const profileImage = document.getElementById('profileImage');
+          const avatarPlaceholder = document.getElementById('avatarPlaceholder');
+          
+          profileImage.src = e.target.result;
+          profileImage.style.display = 'block';
+          avatarPlaceholder.style.display = 'none';
+          
+          // Store in localStorage as temporary solution
+          localStorage.setItem('userAvatar', e.target.result);
+          
+          showNotification('profile-update', 'Avatar Updated', 
+            'Your profile image has been updated successfully!', true);
+        };
+        reader.readAsDataURL(file);
       }
     }
 
@@ -2280,7 +2305,7 @@
             <span class="runner-info-value">${runner.medicalConditions || 'None reported'}</span>
           </div>
           <div class="runner-info-item">
-            <span class="runner-info-label">Preferred Running Locations</span>
+            <span class="runner-info-label">Possible Running Locations</span>
             <span class="runner-info-value">${runner.preferredRunningLocations || 'Not specified'}</span>
           </div>
           <div class="runner-info-item">
@@ -2876,6 +2901,19 @@
     // Image Upload Functionality
     let currentUser = null;
 
+    // Load saved avatar from localStorage
+    function loadSavedAvatar() {
+      const savedAvatar = localStorage.getItem('userAvatar');
+      if (savedAvatar) {
+        const profileImage = document.getElementById('profileImage');
+        const avatarPlaceholder = document.getElementById('avatarPlaceholder');
+        
+        profileImage.src = savedAvatar;
+        profileImage.style.display = 'block';
+        avatarPlaceholder.style.display = 'none';
+      }
+    }
+
     // Load user profile data
     async function loadUserProfileData() {
       try {
@@ -3025,7 +3063,7 @@
         }, 200);
 
         // Upload to server
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/profile-image`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me/profile-image`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${userData.accessToken || userData.token}`
@@ -3101,7 +3139,7 @@
         removeBtn.disabled = true;
 
         // Delete image from server
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/profile-image`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me/profile-image`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${userData.accessToken || userData.token}`
@@ -3334,6 +3372,9 @@
 
     // Initialize profile
     document.addEventListener('DOMContentLoaded', async function() {
+      // Load saved avatar first
+      loadSavedAvatar();
+      
       // Check authentication first
       if (!authUtils.requireAuth()) {
         return;
@@ -3372,7 +3413,7 @@
 
       try {
         const token = getAuthToken();
-        const response = await fetch(`${PROFILE_API_BASE_URL}/notifications/preferences`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/notifications/preferences`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -3399,7 +3440,7 @@
     async function loadNotificationPreferences() {
       try {
         const token = getAuthToken();
-        const response = await fetch(`${PROFILE_API_BASE_URL}/notifications/preferences`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/notifications/preferences`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -3483,7 +3524,7 @@
     async function sendSubscriptionToServer(subscription) {
       try {
         const token = getAuthToken();
-        const response = await fetch(`${PROFILE_API_BASE_URL}/notifications/subscribe`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/notifications/subscribe`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
