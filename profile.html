@@ -1431,6 +1431,13 @@
       <p class="profile-email" id="profileEmail">Loading...</p>
       <span class="profile-role" id="profileRole">Loading...</span>
       
+      <!-- Logout Button -->
+      <div style="margin-top: 1rem;">
+        <button onclick="logout()" style="background: rgba(255, 255, 255, 0.2); color: white; border: 2px solid white; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'">
+          🚪 Logout
+        </button>
+      </div>
+      
     </div>
 
     <!-- Profile Image Upload Section -->
@@ -3114,6 +3121,23 @@
       }
     }
 
+    // Logout function
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        // Clear authentication data
+        localStorage.removeItem('ra_auth');
+        sessionStorage.clear();
+        
+        // Stop SignalR connection if active
+        if (userHubConnection) {
+          userHubConnection.stop();
+        }
+        
+        // Redirect to login page
+        window.location.href = 'login.html';
+      }
+    }
+
     // Load user's profile image from server
     async function loadUserProfileImage() {
       try {
@@ -3645,7 +3669,7 @@
 
       try {
         const token = getAuthToken();
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/notifications/preferences`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/notifications/preferences`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -3672,7 +3696,7 @@
     async function loadNotificationPreferences() {
       try {
         const token = getAuthToken();
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/notifications/preferences`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/notifications/preferences`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -3756,7 +3780,7 @@
     async function sendSubscriptionToServer(subscription) {
       try {
         const token = getAuthToken();
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/notifications/subscribe`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/notifications/subscribe`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
