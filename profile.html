@@ -1424,7 +1424,8 @@
         <img id="profileImage" src="" alt="Profile Image" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
         <div id="avatarPlaceholder" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 3rem; color: #dc2626;">👤</div>
         <input type="file" id="avatarUploadInput" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)">
-        <div style="position: absolute; bottom: 0; right: 0; background: #dc2626; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 14px;">📷</div>
+        <div style="position: absolute; bottom: 0; right: 0; background: #dc2626; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer;" title="Upload Image">📷</div>
+        <div id="removeImageBtn" style="position: absolute; top: 0; right: 0; background: #dc2626; color: white; border-radius: 50%; width: 30px; height: 30px; display: none; align-items: center; justify-content: center; font-size: 14px; cursor: pointer;" onclick="event.stopPropagation(); removeProfileImage();" title="Remove Image">🗑️</div>
       </div>
       <h1 class="profile-name" id="profileName">Loading...</h1>
       <p class="profile-email" id="profileEmail">Loading...</p>
@@ -1880,25 +1881,131 @@
     }
 
     // Handle avatar upload
-    function handleAvatarUpload(event) {
+    async function handleAvatarUpload(event) {
       const file = event.target.files[0];
       if (file) {
+        // Validate file type and size
+        if (!file.type.startsWith('image/')) {
+          showNotification('system', 'Invalid File', 'Please select an image file.', false);
+          return;
+        }
+        
+        if (file.size > 5 * 1024 * 1024) { // 5MB limit
+          showNotification('system', 'File Too Large', 'Please select an image smaller than 5MB.', false);
+          return;
+        }
+
+        // Show loading state
+        const profileImage = document.getElementById('profileImage');
+        const avatarPlaceholder = document.getElementById('avatarPlaceholder');
+        const uploadBtn = document.querySelector('#avatarUploadInput');
+        
+        // Show preview immediately
         const reader = new FileReader();
         reader.onload = function(e) {
-          const profileImage = document.getElementById('profileImage');
-          const avatarPlaceholder = document.getElementById('avatarPlaceholder');
-          
           profileImage.src = e.target.result;
           profileImage.style.display = 'block';
           avatarPlaceholder.style.display = 'none';
-          
-          // Store in localStorage as temporary solution
-          localStorage.setItem('userAvatar', e.target.result);
-          
-          showNotification('profile-update', 'Avatar Updated', 
-            'Your profile image has been updated successfully!', true);
+          document.getElementById('removeImageBtn').style.display = 'flex';
         };
         reader.readAsDataURL(file);
+
+        try {
+          // Upload to server
+          const formData = new FormData();
+          formData.append('files', file);
+          
+          const token = getAuthToken();
+          const response = await fetch(`${PROFILE_API_BASE_URL}/api/ImageUpload/upload`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            body: formData
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            console.log('Image upload successful:', result);
+            
+            // Update user profile with image URL
+            await updateUserProfileImage(result.url || result.filePath);
+            
+            showNotification('profile-update', 'Avatar Updated', 
+              'Your profile image has been uploaded successfully!', true);
+          } else {
+            throw new Error(`Upload failed: ${response.status}`);
+          }
+        } catch (error) {
+          console.error('Image upload failed:', error);
+          showNotification('system', 'Upload Failed', 
+            'Failed to upload image. Please try again.', false);
+          
+          // Revert to placeholder
+          profileImage.style.display = 'none';
+          avatarPlaceholder.style.display = 'flex';
+        }
+      }
+    }
+
+    // Update user profile with image URL
+    async function updateUserProfileImage(imageUrl) {
+      try {
+        const token = getAuthToken();
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            profileImageUrl: imageUrl
+          })
+        });
+
+        if (response.ok) {
+          console.log('Profile image URL updated successfully');
+        } else {
+          console.warn('Failed to update profile image URL');
+        }
+      } catch (error) {
+        console.error('Error updating profile image URL:', error);
+      }
+    }
+
+    // Remove profile image
+    async function removeProfileImage() {
+      try {
+        const token = getAuthToken();
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            profileImageUrl: null
+          })
+        });
+
+        if (response.ok) {
+          // Hide image and show placeholder
+          const profileImage = document.getElementById('profileImage');
+          const avatarPlaceholder = document.getElementById('avatarPlaceholder');
+          
+          profileImage.style.display = 'none';
+          avatarPlaceholder.style.display = 'flex';
+          document.getElementById('removeImageBtn').style.display = 'none';
+          
+          showNotification('profile-update', 'Image Removed', 
+            'Your profile image has been removed successfully!', true);
+        } else {
+          throw new Error('Failed to remove profile image');
+        }
+      } catch (error) {
+        console.error('Error removing profile image:', error);
+        showNotification('system', 'Remove Failed', 
+          'Failed to remove profile image. Please try again.', false);
       }
     }
 
@@ -2901,16 +3008,32 @@
     // Image Upload Functionality
     let currentUser = null;
 
-    // Load saved avatar from localStorage
-    function loadSavedAvatar() {
-      const savedAvatar = localStorage.getItem('userAvatar');
-      if (savedAvatar) {
-        const profileImage = document.getElementById('profileImage');
-        const avatarPlaceholder = document.getElementById('avatarPlaceholder');
-        
-        profileImage.src = savedAvatar;
-        profileImage.style.display = 'block';
-        avatarPlaceholder.style.display = 'none';
+    // Load user's profile image from server
+    async function loadUserProfileImage() {
+      try {
+        const token = getAuthToken();
+        if (!token) return;
+
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const userData = await response.json();
+          if (userData.profileImageUrl) {
+            const profileImage = document.getElementById('profileImage');
+            const avatarPlaceholder = document.getElementById('avatarPlaceholder');
+            
+            profileImage.src = userData.profileImageUrl;
+            profileImage.style.display = 'block';
+            avatarPlaceholder.style.display = 'none';
+            document.getElementById('removeImageBtn').style.display = 'flex';
+          }
+        }
+      } catch (error) {
+        console.error('Error loading profile image:', error);
       }
     }
 
@@ -3372,13 +3495,13 @@
 
     // Initialize profile
     document.addEventListener('DOMContentLoaded', async function() {
-      // Load saved avatar first
-      loadSavedAvatar();
-      
       // Check authentication first
       if (!authUtils.requireAuth()) {
         return;
       }
+      
+      // Load user's profile image from server
+      await loadUserProfileImage();
       
       await loadConfig();
       loadUserProfile();
