@@ -1384,6 +1384,55 @@
         opacity: 0;
       }
     }
+    
+    /* Runner Photos Display */
+    .runner-photos-section {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .runner-photos-section h4 {
+      margin: 0 0 1rem 0;
+      color: #333;
+      font-size: 1.1rem;
+    }
+    
+    .runner-photos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+    
+    .runner-photo-item {
+      position: relative;
+    }
+    
+    .runner-photo {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid #ddd;
+      transition: transform 0.2s ease;
+    }
+    
+    .runner-photo:hover {
+      transform: scale(1.05);
+      border-color: #007bff;
+    }
+    
+    .no-photos-message {
+      color: #666;
+      font-style: italic;
+      text-align: center;
+      padding: 2rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 2px dashed #ddd;
+    }
   </style>
 </head>
 <body>
@@ -2440,6 +2489,24 @@
             <span class="runner-info-value">${runner.isProfileComplete ? 'Yes' : 'No'}</span>
           </div>
         </div>
+        
+        ${runner.additionalImageUrls && runner.additionalImageUrls.length > 0 ? `
+          <div class="runner-photos-section">
+            <h4>Runner Photos</h4>
+            <div class="runner-photos-grid">
+              ${runner.additionalImageUrls.map(photoUrl => `
+                <div class="runner-photo-item">
+                  <img src="${photoUrl}" alt="Runner photo" class="runner-photo" />
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : `
+          <div class="runner-photos-section">
+            <h4>Runner Photos</h4>
+            <p class="no-photos-message">No photos uploaded yet. Use the "📷 Upload Runner Photos" button to add photos.</p>
+          </div>
+        `}
       `;
 
       // Populate edit form with enhanced fields
@@ -2457,6 +2524,7 @@
       document.getElementById('editAdditionalNotes').value = runner.additionalNotes || '';
       
       // Update photo display and reminder
+      updatePhotoDisplay(runner);
       updateRunnerPhotosDisplay(runner);
       updatePhotoReminderInfo(runner);
       
@@ -2822,6 +2890,8 @@
         
         // First, try to get the runner profile to see if it exists
         let existingRunner = null;
+        let response;
+        
         try {
           const runnerResponse = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner/me`, {
             headers: {
@@ -2833,12 +2903,12 @@
             console.log('Existing runner found:', existingRunner);
           }
         } catch (error) {
-          console.log('No existing runner profile found');
+          console.log('No existing runner profile found, will create new one');
         }
         
-        let response;
         if (existingRunner && existingRunner.id) {
           // Update existing runner profile
+          console.log('Updating existing runner profile with ID:', existingRunner.id);
           response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner/${existingRunner.id}`, {
             method: 'PUT',
             headers: {
@@ -2849,6 +2919,7 @@
           });
         } else {
           // Create new runner profile
+          console.log('Creating new runner profile');
           response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner`, {
             method: 'POST',
             headers: {
