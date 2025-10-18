@@ -6570,26 +6570,55 @@
             }
         }
         
+        // View runner
+        function viewRunner(runnerId) {
+            const runner = dashboardData.runners.find(r => r.id === runnerId);
+            if (runner) {
+                showToast(`Viewing runner: ${runner.firstName} ${runner.lastName}`, 'info');
+                // TODO: Implement runner view modal
+            }
+        }
+        
+        // Edit runner
+        function editRunner(runnerId) {
+            const runner = dashboardData.runners.find(r => r.id === runnerId);
+            if (runner) {
+                showToast(`Editing runner: ${runner.firstName} ${runner.lastName}`, 'info');
+                // TODO: Implement runner edit modal
+            }
+        }
+        
         // Delete runner
         async function deleteRunner(runnerId) {
             if (confirm('Are you sure you want to delete this runner?')) {
                 try {
-                    const response = await fetch(`/api/v1.0/Runner/${runnerId}`, {
+                    const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
+                    console.log('🗑️ Deleting runner:', runnerId);
+                    
+                    const response = await fetch(`${apiBaseUrl}/Runner/${runnerId}`, {
                         method: 'DELETE',
                         headers: {
-                            'Authorization': `Bearer ${getAuthToken()}`
+                            'Authorization': `Bearer ${getAuthToken()}`,
+                            'Content-Type': 'application/json'
                         }
                     });
                     
+                    console.log('🗑️ Delete runner response:', response.status, response.statusText);
+                    
                     if (response.ok) {
                         showToast('Runner deleted successfully', 'success');
-                        await loadRunnersData();
+                        // Remove from local data
+                        dashboardData.runners = dashboardData.runners.filter(r => r.id !== runnerId);
+                        updateRunnersUI();
+                        updateDashboardUI();
                     } else {
-                        showToast('Failed to delete runner', 'error');
+                        const errorText = await response.text();
+                        console.error('🗑️ Delete runner error:', errorText);
+                        showToast(`Failed to delete runner: ${response.status} ${response.statusText}`, 'error');
                     }
                 } catch (error) {
                     console.error('Error deleting runner:', error);
-                    showToast('Error deleting runner', 'error');
+                    showToast(`Error deleting runner: ${error.message}`, 'error');
                 }
             }
         }
@@ -6735,26 +6764,55 @@
             }
         }
         
+        // View case
+        function viewCase(caseId) {
+            const case_ = dashboardData.publicCases.find(c => c.id === caseId);
+            if (case_) {
+                showToast(`Viewing case: ${case_.id}`, 'info');
+                // TODO: Implement case view modal
+            }
+        }
+        
+        // Edit case
+        function editCase(caseId) {
+            const case_ = dashboardData.publicCases.find(c => c.id === caseId);
+            if (case_) {
+                showToast(`Editing case: ${case_.id}`, 'info');
+                // TODO: Implement case edit modal
+            }
+        }
+        
         // Delete case
         async function deleteCase(caseId) {
             if (confirm('Are you sure you want to delete this case?')) {
                 try {
-                    const response = await fetch(`/api/v1.0/cases/${caseId}`, {
+                    const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
+                    console.log('🗑️ Deleting case:', caseId);
+                    
+                    const response = await fetch(`${apiBaseUrl}/cases/${caseId}`, {
                         method: 'DELETE',
                         headers: {
-                            'Authorization': `Bearer ${getAuthToken()}`
+                            'Authorization': `Bearer ${getAuthToken()}`,
+                            'Content-Type': 'application/json'
                         }
                     });
                     
+                    console.log('🗑️ Delete case response:', response.status, response.statusText);
+                    
                     if (response.ok) {
                         showToast('Case deleted successfully', 'success');
-                        await loadCasesData();
+                        // Remove from local data
+                        dashboardData.publicCases = dashboardData.publicCases.filter(c => c.id !== caseId);
+                        updateCasesUI();
+                        updateDashboardUI();
                     } else {
-                        showToast('Failed to delete case', 'error');
+                        const errorText = await response.text();
+                        console.error('🗑️ Delete case error:', errorText);
+                        showToast(`Failed to delete case: ${response.status} ${response.statusText}`, 'error');
                     }
                 } catch (error) {
                     console.error('Error deleting case:', error);
-                    showToast('Error deleting case', 'error');
+                    showToast(`Error deleting case: ${error.message}`, 'error');
                 }
             }
         }
@@ -6946,8 +7004,9 @@
                 
                 console.log('📊 Updating monitoring data...');
                 
-                // Load monitoring statistics
-                const response = await fetch('/api/v1/monitoring/statistics', {
+                // Load monitoring statistics (using admin stats endpoint)
+                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
+                const response = await fetch(`${apiBaseUrl}/Admin/stats`, {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
                     }
@@ -7020,7 +7079,8 @@
         // Update system health
         async function updateSystemHealth() {
             try {
-                const response = await fetch('/api/v1/monitoring/health', {
+                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
+                const response = await fetch(`${apiBaseUrl.replace('/v1.0', '')}/health`, {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
                     }
@@ -7038,7 +7098,8 @@
         // Update active sessions
         async function updateActiveSessions() {
             try {
-                const response = await fetch('/api/v1/monitoring/sessions', {
+                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
+                const response = await fetch(`${apiBaseUrl}/Admin/active-sessions`, {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
                     }
@@ -7164,7 +7225,8 @@
         // Send test alert
         async function sendTestAlert() {
             try {
-                const response = await fetch('/api/v1/monitoring/alerts/test', {
+                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
+                const response = await fetch(`${apiBaseUrl}/Admin/errors`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -7211,10 +7273,34 @@
             }
         }
 
+        // Clear all alerts
+        function clearAllAlerts() {
+            const alertsContainer = document.getElementById('alertsContainer');
+            if (alertsContainer) {
+                alertsContainer.innerHTML = '';
+                showToast('All alerts cleared', 'success');
+            }
+        }
+        
+        // Refresh monitoring data
+        async function refreshMonitoringData() {
+            try {
+                showToast('Refreshing monitoring data...', 'info', 2000);
+                await updateMonitoringData();
+                await updateSystemHealth();
+                await updateActiveSessions();
+                showToast('Monitoring data refreshed', 'success');
+            } catch (error) {
+                console.error('Failed to refresh monitoring data:', error);
+                showToast('Failed to refresh monitoring data', 'error');
+            }
+        }
+        
         // Export monitoring data
         async function exportMonitoringData() {
             try {
-                const response = await fetch('/api/v1/monitoring/statistics', {
+                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
+                const response = await fetch(`${apiBaseUrl}/Admin/stats`, {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
                     }
@@ -8078,7 +8164,16 @@
         function editUser(userId) {
             const user = dashboardData.users.find(u => u.id === userId);
             if (user) {
-                openEditUserModal(user);
+                showToast(`Editing user: ${user.email}`, 'info');
+                // TODO: Implement user edit modal
+            }
+        }
+        
+        function editAdmin(adminId) {
+            const admin = dashboardData.admins.find(a => a.id === adminId);
+            if (admin) {
+                showToast(`Editing admin: ${admin.email}`, 'info');
+                // TODO: Implement admin edit modal
             }
         }
         
@@ -8147,10 +8242,11 @@
                     tokenLength: token ? token.length : 0
                 });
                 
-                const response = await apiFetch(`${apiUrl}/Admin/users/${userId}`, {
+                const response = await fetch(`${apiUrl}/Admin/users/${userId}`, {
                     method: 'DELETE',
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     }
                 });
 
@@ -8248,10 +8344,11 @@
                     tokenLength: token ? token.length : 0
                 });
                 
-                const response = await apiFetch(`${apiUrl}/Admin/admins/${adminId}`, {
+                const response = await fetch(`${apiUrl}/Admin/admins/${adminId}`, {
                     method: 'DELETE',
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     }
                 });
 
