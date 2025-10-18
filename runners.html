@@ -582,31 +582,31 @@
 <body>
   <!-- Header -->
   <header class="header">
-    <nav class="nav-container">
-      <div class="nav-brand">
-        <a href="index.html">
-          <img src="assets/images/241-logo.jpg" alt="241 Runners Awareness" class="logo">
-          <span class="brand-text">241 Runners Awareness</span>
-        </a>
-      </div>
-      <div class="nav-menu" id="navMenu">
-        <a href="index.html">Home</a>
-        <a href="aboutus.html">About</a>
-        <a href="cases.html">Cases</a>
-        <a href="map.html">Map</a>
-        <a href="dna-tracking.html">DNA Tracking</a>
-        <a href="report-case.html">Report Case</a>
-        <a href="profile.html">Profile</a>
-        <a href="my-cases.html">My Cases</a>
-        <a href="runners.html" class="active">Runners</a>
-        <a href="#" id="logoutBtn" class="nav-login">Logout</a>
-      </div>
-      <div class="nav-toggle" id="navToggle">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
+    <div class="header-bar">
+      <img src="assets/images/241-logo.jpg" alt="241 Runners Awareness Logo - Supporting missing and vulnerable individuals" class="logo" />
+      <h1>241 Runners Awareness</h1>
+    </div>
+
+    <nav role="navigation" aria-label="Main navigation">
+      <a href="/">Home</a>
+      <a href="/aboutus.html">About Us</a>
+      <a href="/cases.html">Cases</a>
+      <a href="/map.html">🗺️ Map</a>
+      <a href="/signup.html" id="signupLink">Sign Up</a>
+      <a href="/login.html" id="loginLink">Login</a>
+      <a href="https://www.zeffy.com/en-US/donation-form/donate-to-241-runners-awareness-initiative" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
+      <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
     </nav>
+    
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
+      ☀️
+    </button>
+    
+    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </header>
 
   <!-- Main Content -->
