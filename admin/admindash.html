@@ -2986,6 +2986,16 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             margin: 20px 0;
             overflow: hidden;
+            width: 100%;
+            max-width: none; /* Remove width restrictions */
+        }
+        
+        /* Make case management section wider */
+        .case-management-section {
+            width: 100%;
+            max-width: none;
+            margin: 0;
+            padding: 0;
         }
         
         .section-header {
@@ -3131,7 +3141,7 @@
         
         .cases-table {
             width: 100%;
-            min-width: 800px; /* Ensure minimum width for all columns */
+            min-width: 1000px; /* Increased minimum width for better visibility */
             table-layout: auto; /* Allow flexible column sizing */
         }
         
@@ -3150,8 +3160,8 @@
         
         .cases-table th:nth-child(2), /* Runner */
         .cases-table td:nth-child(2) {
-            width: 120px;
-            min-width: 120px;
+            width: 150px; /* Increased width for runner names */
+            min-width: 150px;
         }
         
         .cases-table th:nth-child(3), /* Status */
@@ -3168,24 +3178,24 @@
         
         .cases-table th:nth-child(5), /* Created */
         .cases-table td:nth-child(5) {
-            width: 120px;
-            min-width: 120px;
+            width: 140px; /* Increased width for dates */
+            min-width: 140px;
         }
         
         .cases-table th:nth-child(6), /* Last Updated */
         .cases-table td:nth-child(6) {
-            width: 120px;
-            min-width: 120px;
+            width: 140px; /* Increased width for dates */
+            min-width: 140px;
         }
         
         /* Responsive design for case table */
-        @media (max-width: 1200px) {
+        @media (max-width: 1400px) {
             .cases-table-wrapper {
                 overflow-x: scroll; /* Force horizontal scroll on smaller screens */
             }
             
             .cases-table {
-                min-width: 900px; /* Ensure table is wide enough */
+                min-width: 1100px; /* Ensure table is wide enough for all columns */
             }
         }
         
@@ -6382,6 +6392,8 @@
                 if (response.ok) {
                     const data = await response.json();
                     casesData = data.data;
+                    console.log('📊 Raw cases data:', casesData);
+                    console.log('📊 First case example:', casesData[0]);
                     updateCasesUI();
                     console.log('✅ Cases data loaded:', casesData.length);
                 } else {
@@ -6427,21 +6439,31 @@
                 return;
             }
             
-            tbody.innerHTML = casesData.map(caseItem => `
-                <tr>
-                    <td>${caseItem.id}</td>
-                    <td>${caseItem.runnerName || 'Unknown Runner'}</td>
-                    <td><span class="status-badge status-${caseItem.status?.toLowerCase() || 'unknown'}">${caseItem.status || 'Unknown'}</span></td>
-                    <td><span class="priority-badge priority-${caseItem.priority?.toLowerCase() || 'medium'}">${caseItem.priority || 'Medium'}</span></td>
-                    <td>${formatDate(caseItem.createdAt)}</td>
-                    <td>${formatDate(caseItem.updatedAt)}</td>
-                    <td>
-                        <button class="action-btn" onclick="viewCase(${caseItem.id})">👁️</button>
-                        <button class="action-btn" onclick="editCase(${caseItem.id})">✏️</button>
-                        <button class="action-btn danger" onclick="deleteCase(${caseItem.id})">🗑️</button>
-                    </td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = casesData.map(caseItem => {
+                // Handle missing or null data
+                const caseId = caseItem.id || 'N/A';
+                const runnerName = caseItem.runnerName || caseItem.runner?.name || caseItem.runnerName || 'No Runner Assigned';
+                const status = caseItem.status || 'Unknown';
+                const priority = caseItem.priority || 'Medium';
+                const createdAt = caseItem.createdAt || caseItem.created || 'N/A';
+                const updatedAt = caseItem.updatedAt || caseItem.updated || 'N/A';
+                
+                return `
+                    <tr>
+                        <td>${caseId}</td>
+                        <td>${runnerName}</td>
+                        <td><span class="status-badge status-${status.toLowerCase()}">${status}</span></td>
+                        <td><span class="priority-badge priority-${priority.toLowerCase()}">${priority}</span></td>
+                        <td>${formatDate(createdAt)}</td>
+                        <td>${formatDate(updatedAt)}</td>
+                        <td>
+                            <button class="action-btn" onclick="viewCase(${caseId})">👁️</button>
+                            <button class="action-btn" onclick="editCase(${caseId})">✏️</button>
+                            <button class="action-btn danger" onclick="deleteCase(${caseId})">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
         
         // Refresh cases
