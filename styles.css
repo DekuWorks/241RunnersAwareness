@@ -287,8 +287,8 @@ nav {
   background: #000 !important;
   display: flex;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 12px 10px;
+  gap: 0.3rem;
+  padding: 8px 5px;
   flex-wrap: nowrap;
   width: 100%;
   left: 0;
@@ -403,8 +403,8 @@ html header {
 nav a {
   color: #fff;
   text-decoration: none;
-  padding: 6px 12px;
-  border-radius: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
   -webkit-transition: all 0.3s ease; /* Safari/Chrome */
   -moz-transition: all 0.3s ease; /* Firefox */
   -o-transition: all 0.3s ease; /* Opera */
@@ -412,7 +412,7 @@ nav a {
   font-weight: 500;
   white-space: nowrap;
   flex-shrink: 0;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 /* Traffic light color system for navigation */
