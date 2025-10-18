@@ -14,7 +14,18 @@
             
             if (typeof window.GOOGLE_MAPS_CONFIG === 'undefined') {
                 console.error('❌ Google Maps configuration not loaded, retrying in 500ms...');
-                setTimeout(loadGoogleMaps, 500);
+                // Try to load config manually
+                const script = document.createElement('script');
+                script.src = 'google-maps-config.js?v=' + Date.now();
+                script.onload = function() {
+                    console.log('✅ Config loaded manually, retrying...');
+                    setTimeout(loadGoogleMaps, 100);
+                };
+                script.onerror = function() {
+                    console.error('❌ Failed to load config file');
+                    showApiKeyError();
+                };
+                document.head.appendChild(script);
                 return;
             }
             
@@ -22,8 +33,8 @@
             console.log('🔍 API Key:', apiKey ? `${apiKey.substring(0, 10)}...` : 'undefined');
             
             if (!apiKey || apiKey === 'YOUR_GOOGLE_MAPS_API_KEY') {
-                console.error('❌ Google Maps API key not configured');
-                showApiKeyError();
+                console.log('⚠️ No Google Maps API key configured, showing fallback map');
+                showFallbackMap();
                 return;
             }
             
@@ -55,13 +66,52 @@
             }
         }
         
+        function showFallbackMap() {
+            const mapContainer = document.getElementById("map");
+            if (mapContainer) {
+                mapContainer.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 15px; padding: 40px;">
+                        <div style="text-align: center; max-width: 500px;">
+                            <div style="font-size: 4rem; margin-bottom: 20px;">🗺️</div>
+                            <h3 style="color: #1f2937; margin-bottom: 15px; font-size: 1.5rem;">Interactive Map Dashboard</h3>
+                            <p style="color: #6b7280; margin-bottom: 20px; line-height: 1.6;">
+                                This map displays real-time tracking of missing persons cases and community safety incidents in the Houston area.
+                            </p>
+                            <div style="background: white; border-radius: 10px; padding: 20px; margin: 20px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                <h4 style="color: #dc2626; margin-bottom: 10px;">📍 Houston Metropolitan Area</h4>
+                                <p style="color: #6b7280; font-size: 0.9rem; margin: 0;">
+                                    Coverage: 64.4-mile radius<br>
+                                    Population: ~7.2 million<br>
+                                    Active monitoring area
+                                </p>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px;">
+                                <div style="background: #fef3c7; padding: 15px; border-radius: 8px; text-align: center;">
+                                    <div style="font-size: 1.5rem; color: #f59e0b;">⚠️</div>
+                                    <div style="font-size: 0.9rem; color: #92400e; font-weight: 600;">Missing Cases</div>
+                                </div>
+                                <div style="background: #d1fae5; padding: 15px; border-radius: 8px; text-align: center;">
+                                    <div style="font-size: 1.5rem; color: #10b981;">✅</div>
+                                    <div style="font-size: 0.9rem; color: #065f46; font-weight: 600;">Resolved Cases</div>
+                                </div>
+                            </div>
+                            <p style="color: #9ca3af; font-size: 0.8rem; margin-top: 20px;">
+                                To enable full interactive map functionality, configure your Google Maps API key.
+                            </p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
         // Load Google Maps when DOM is ready with a small delay to ensure config loads
         document.addEventListener('DOMContentLoaded', function() {
             // Add a small delay to ensure google-maps-config.js loads first
             setTimeout(() => {
                 console.log('🔍 DOM loaded, attempting to load Google Maps...');
+                console.log('🔍 Config available:', typeof window.GOOGLE_MAPS_CONFIG);
                 loadGoogleMaps();
-            }, 200);
+            }, 500); // Increased delay to ensure config loads
         });
     </script>
     <!-- MarkerClusterer library -->
