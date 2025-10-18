@@ -15,12 +15,17 @@
   <link rel="apple-touch-icon" href="assets/images/241-logo.jpg">
   
   <!-- Google OAuth Integration -->
-  <script src="https://accounts.google.com/gsi/client" async defer crossorigin="anonymous"></script>
   
   <!-- Cache Control Headers -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
+  
+  <!-- Security Headers -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
   
 
   
@@ -48,25 +53,12 @@
   <!-- Performance Optimization -->
   <script src="/performance.js" defer></script>
   
-  <!-- Sentry Error Monitoring -->
-  <script
-    src="https://browser.sentry-cdn.com/7.101.1/bundle.min.js"
-    crossorigin="anonymous"
-  ></script>
+  <!-- Service Worker Registration -->
   <script>
-    Sentry.init({
-      dsn: "https://YOUR_ACTUAL_SENTRY_DSN@YOUR_INSTANCE.ingest.sentry.io/YOUR_PROJECT_ID",
-      environment: "production",
-      release: "241runners-awareness@1.0.0",
-      tracesSampleRate: 1.0,
-      replaysSessionSampleRate: 0.1,
-      replaysOnErrorSampleRate: 1.0,
-    });
-    
-    // Register optimized service worker
+    // Register service worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('https://241runnersawareness.org/sw-optimized.js')
+        navigator.serviceWorker.register('/sw-optimized.js')
           .then(function(registration) {
             console.log('Service Worker registered successfully:', registration.scope);
           })
