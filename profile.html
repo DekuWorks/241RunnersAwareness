@@ -3741,6 +3741,8 @@
 
     // Update profile display with user data
     function updateProfileDisplay(user) {
+      console.log('Updating profile display with user data:', user);
+      
       // Update profile header
       const profileName = document.querySelector('.profile-name');
       const profileEmail = document.querySelector('.profile-email');
@@ -3752,11 +3754,22 @@
       if (profileEmail) profileEmail.textContent = user.email;
       if (profileRole) profileRole.textContent = user.role || 'User';
       
+      // Update profile display elements (the ones showing "Loading...")
+      const firstNameDisplay = document.getElementById('firstName');
+      const lastNameDisplay = document.getElementById('lastName');
+      const emailDisplay = document.getElementById('email');
+      const phoneDisplay = document.getElementById('phone');
+      
+      if (firstNameDisplay) firstNameDisplay.textContent = user.firstName || 'Not provided';
+      if (lastNameDisplay) lastNameDisplay.textContent = user.lastName || 'Not provided';
+      if (emailDisplay) emailDisplay.textContent = user.email || 'Not provided';
+      if (phoneDisplay) phoneDisplay.textContent = user.phoneNumber || 'Not provided';
+      
       // Update profile form fields
-      const firstNameInput = document.getElementById('firstName');
-      const lastNameInput = document.getElementById('lastName');
-      const emailInput = document.getElementById('email');
-      const phoneInput = document.getElementById('phone');
+      const firstNameInput = document.getElementById('editFirstName');
+      const lastNameInput = document.getElementById('editLastName');
+      const emailInput = document.getElementById('editEmail');
+      const phoneInput = document.getElementById('editPhone');
       
       if (firstNameInput) firstNameInput.value = user.firstName || '';
       if (lastNameInput) lastNameInput.value = user.lastName || '';
