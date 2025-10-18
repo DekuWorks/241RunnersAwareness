@@ -488,14 +488,14 @@ body.dark-mode section {
 
 /* ===== Theme Toggle ===== */
 .theme-toggle {
-  position: absolute;
-  right: 80px;
+  position: fixed;
+  right: 20px;
   top: 20px;
-  background: none;
+  background: rgba(0, 0, 0, 0.8);
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  padding: 5px;
+  padding: 8px;
   border-radius: 50%;
   -webkit-transition: all 0.3s ease; /* Safari/Chrome */
   -moz-transition: all 0.3s ease; /* Firefox */
@@ -505,7 +505,7 @@ body.dark-mode section {
 }
 
 .theme-toggle:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.9);
   -webkit-transform: scale(1.1); /* Safari/Chrome */
   -ms-transform: scale(1.1); /* IE */
   transform: scale(1.1);
