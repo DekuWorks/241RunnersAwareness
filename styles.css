@@ -287,12 +287,14 @@ nav {
   background: #000 !important;
   display: flex;
   justify-content: center;
-  gap: 1.5rem;
-  padding: 12px 0;
-  flex-wrap: wrap;
+  gap: 0.8rem;
+  padding: 12px 20px;
+  flex-wrap: nowrap;
   width: 100%;
   left: 0;
   right: 0;
+  box-sizing: border-box;
+  overflow-x: auto;
 }
 
 /* Dark mode navigation */
@@ -408,6 +410,8 @@ nav a {
   -o-transition: all 0.3s ease; /* Opera */
   transition: all 0.3s ease;
   font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* Traffic light color system for navigation */
