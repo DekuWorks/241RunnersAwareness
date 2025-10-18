@@ -6103,14 +6103,29 @@
         async function loadRunnersData() {
             try {
                 console.log('🏃‍♂️ Loading runners data...');
-                const response = await fetch('/api/v1.0/Runner', {
+                
+                // Load runner statistics
+                const statsResponse = await fetch('/api/v1.0/Runner/admin/statistics', {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+                
+                if (statsResponse.ok) {
+                    const statsData = await statsResponse.json();
+                    updateRunnerStats(statsData.data);
+                }
+                
+                // Load runners list
+                const response = await fetch('/api/v1.0/Runner/admin/search', {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
                     }
                 });
                 
                 if (response.ok) {
-                    runnersData = await response.json();
+                    const data = await response.json();
+                    runnersData = data.data;
                     updateRunnersUI();
                     console.log('✅ Runners data loaded:', runnersData.length);
                 } else {
@@ -6123,14 +6138,18 @@
             }
         }
         
+        // Update runner statistics
+        function updateRunnerStats(statsData) {
+            if (statsData) {
+                document.getElementById('totalRunnersCount').textContent = statsData.totalRunners || 0;
+                document.getElementById('activeRunnersCount').textContent = statsData.activeRunners || 0;
+                document.getElementById('newRunnersCount').textContent = statsData.newThisWeek || 0;
+                document.getElementById('runnersWithPhotosCount').textContent = statsData.withPhotos || 0;
+            }
+        }
+        
         // Update runners UI
         function updateRunnersUI() {
-            // Update stats
-            document.getElementById('totalRunnersCount').textContent = runnersData.length;
-            document.getElementById('activeRunnersCount').textContent = runnersData.filter(r => r.status === 'Active').length;
-            document.getElementById('newRunnersCount').textContent = getNewRunnersThisWeek();
-            document.getElementById('runnersWithPhotosCount').textContent = runnersData.filter(r => r.additionalImageUrls && r.additionalImageUrls.length > 0).length;
-            
             // Update table
             updateRunnersTable();
         }
@@ -6260,14 +6279,29 @@
         async function loadCasesData() {
             try {
                 console.log('📋 Loading cases data...');
-                const response = await fetch('/api/v1.0/Case', {
+                
+                // Load case statistics
+                const statsResponse = await fetch('/api/v1.0/cases/admin/statistics', {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+                
+                if (statsResponse.ok) {
+                    const statsData = await statsResponse.json();
+                    updateCaseStats(statsData.data);
+                }
+                
+                // Load cases list
+                const response = await fetch('/api/v1.0/cases/admin/search', {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
                     }
                 });
                 
                 if (response.ok) {
-                    casesData = await response.json();
+                    const data = await response.json();
+                    casesData = data.data;
                     updateCasesUI();
                     console.log('✅ Cases data loaded:', casesData.length);
                 } else {
@@ -6280,14 +6314,18 @@
             }
         }
         
+        // Update case statistics
+        function updateCaseStats(statsData) {
+            if (statsData) {
+                document.getElementById('totalCasesCount').textContent = statsData.totalCases || 0;
+                document.getElementById('openCasesCount').textContent = statsData.openCases || 0;
+                document.getElementById('resolvedCasesCount').textContent = statsData.resolvedCases || 0;
+                document.getElementById('casesThisMonthCount').textContent = statsData.thisMonth || 0;
+            }
+        }
+        
         // Update cases UI
         function updateCasesUI() {
-            // Update stats
-            document.getElementById('totalCasesCount').textContent = casesData.length;
-            document.getElementById('openCasesCount').textContent = casesData.filter(c => c.status === 'Open').length;
-            document.getElementById('resolvedCasesCount').textContent = casesData.filter(c => c.status === 'Resolved').length;
-            document.getElementById('casesThisMonthCount').textContent = getCasesThisMonth();
-            
             // Update table
             updateCasesTable();
         }
@@ -6367,7 +6405,7 @@
         async function deleteCase(caseId) {
             if (confirm('Are you sure you want to delete this case?')) {
                 try {
-                    const response = await fetch(`/api/v1.0/Case/${caseId}`, {
+                    const response = await fetch(`/api/v1.0/cases/${caseId}`, {
                         method: 'DELETE',
                         headers: {
                             'Authorization': `Bearer ${getAuthToken()}`
@@ -6393,7 +6431,31 @@
         async function loadAnalyticsData() {
             try {
                 console.log('📊 Loading analytics data...');
-                // TODO: Implement analytics API calls
+                
+                // Load KPIs
+                const kpisResponse = await fetch('/api/v1.0/Analytics/kpis', {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+                
+                if (kpisResponse.ok) {
+                    const kpisData = await kpisResponse.json();
+                    updateKPIs(kpisData.data);
+                }
+                
+                // Load insights
+                const insightsResponse = await fetch('/api/v1.0/Analytics/insights', {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+                
+                if (insightsResponse.ok) {
+                    const insightsData = await insightsResponse.json();
+                    updateInsights(insightsData.data);
+                }
+                
                 updateAnalyticsUI();
                 console.log('✅ Analytics data loaded');
             } catch (error) {
@@ -6402,15 +6464,42 @@
             }
         }
         
+        // Update KPIs
+        function updateKPIs(kpisData) {
+            if (kpisData) {
+                document.getElementById('userGrowthRate').textContent = `${kpisData.userGrowthRate}%`;
+                document.getElementById('caseResolutionRate').textContent = `${kpisData.caseResolutionRate}%`;
+                document.getElementById('avgResponseTime').textContent = `${kpisData.avgResponseTime}h`;
+                document.getElementById('userEngagement').textContent = `${kpisData.userEngagement}%`;
+            }
+        }
+        
+        // Update insights
+        function updateInsights(insightsData) {
+            if (insightsData) {
+                // Update peak usage times
+                const peakUsageElement = document.querySelector('.insight-item:nth-child(1) p');
+                if (peakUsageElement) {
+                    peakUsageElement.textContent = `Most active between ${insightsData.peakUsageTimes}`;
+                }
+                
+                // Update top locations
+                const topLocationsElement = document.querySelector('.insight-item:nth-child(2) p');
+                if (topLocationsElement && insightsData.topLocations) {
+                    topLocationsElement.textContent = insightsData.topLocations.join(', ');
+                }
+                
+                // Update performance
+                const performanceElement = document.querySelector('.insight-item:nth-child(3) p');
+                if (performanceElement) {
+                    performanceElement.textContent = insightsData.performance;
+                }
+            }
+        }
+        
         // Update analytics UI
         function updateAnalyticsUI() {
-            // Update KPI values
-            document.getElementById('userGrowthRate').textContent = '12.5%';
-            document.getElementById('caseResolutionRate').textContent = '85.3%';
-            document.getElementById('avgResponseTime').textContent = '2.1h';
-            document.getElementById('userEngagement').textContent = '78.2%';
-            
-            // TODO: Initialize charts
+            // Initialize charts
             initializeAnalyticsCharts();
         }
         

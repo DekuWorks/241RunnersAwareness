@@ -749,6 +749,111 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
+        /// Get case statistics for admin dashboard
+        /// </summary>
+        [HttpGet("admin/statistics")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetCaseStatistics()
+        {
+            try
+            {
+                var totalCases = await _context.Cases.CountAsync();
+                var openCases = await _context.Cases.CountAsync(c => c.Status == "Open");
+                var resolvedCases = await _context.Cases.CountAsync(c => c.Status == "Resolved");
+                var thisMonth = await _context.Cases.CountAsync(c => c.CreatedAt >= DateTime.UtcNow.AddDays(-30));
+
+                return Ok(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        totalCases,
+                        openCases,
+                        resolvedCases,
+                        thisMonth
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting case statistics");
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
+        /// Get cases with advanced filtering for admin dashboard
+        /// </summary>
+        [HttpGet("admin/search")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> SearchCases([FromQuery] string? search, [FromQuery] string? status, [FromQuery] int page = 1, [FromQuery] int pageSize = 25)
+        {
+            try
+            {
+                var query = _context.Cases.Include(c => c.Runner).AsQueryable();
+
+                // Apply search filter
+                if (!string.IsNullOrEmpty(search))
+                {
+                    var searchTerm = search.ToLower();
+                    query = query.Where(c => 
+                        c.Title.ToLower().Contains(searchTerm) ||
+                        c.Description.ToLower().Contains(searchTerm) ||
+                        c.Runner.FirstName.ToLower().Contains(searchTerm) ||
+                        c.Runner.LastName.ToLower().Contains(searchTerm));
+                }
+
+                // Apply status filter
+                if (!string.IsNullOrEmpty(status))
+                {
+                    query = query.Where(c => c.Status == status);
+                }
+
+                // Get total count
+                var total = await query.CountAsync();
+
+                // Apply pagination
+                var cases = await query
+                    .OrderByDescending(c => c.UpdatedAt ?? c.CreatedAt)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(c => new
+                    {
+                        id = c.Id,
+                        runnerId = c.RunnerId,
+                        runnerName = c.Runner.FirstName + " " + c.Runner.LastName,
+                        title = c.Title,
+                        description = c.Description,
+                        status = c.Status,
+                        priority = c.Priority,
+                        createdAt = c.CreatedAt,
+                        updatedAt = c.UpdatedAt,
+                        isPublic = c.IsPublic,
+                        isApproved = c.IsApproved
+                    })
+                    .ToListAsync();
+
+                return Ok(new
+                {
+                    success = true,
+                    data = cases,
+                    pagination = new
+                    {
+                        page,
+                        pageSize,
+                        total,
+                        totalPages = (int)Math.Ceiling((double)total / pageSize)
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error searching cases");
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
         /// Delete a case
         /// </summary>
         [HttpDelete("{id}")]

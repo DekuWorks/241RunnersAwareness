@@ -642,6 +642,113 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
+        /// Get runner statistics for admin dashboard
+        /// </summary>
+        [HttpGet("admin/statistics")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetRunnerStatistics()
+        {
+            try
+            {
+                var totalRunners = await _context.Runners.CountAsync();
+                var activeRunners = await _context.Runners.CountAsync(r => r.IsActive);
+                var newThisWeek = await _context.Runners.CountAsync(r => r.CreatedAt >= DateTime.UtcNow.AddDays(-7));
+                var withPhotos = await _context.Runners.CountAsync(r => !string.IsNullOrEmpty(r.ProfileImageUrl));
+
+                return Ok(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        totalRunners,
+                        activeRunners,
+                        newThisWeek,
+                        withPhotos
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting runner statistics");
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
+        /// Get runners with advanced filtering for admin dashboard
+        /// </summary>
+        [HttpGet("admin/search")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> SearchRunners([FromQuery] string? search, [FromQuery] string? status, [FromQuery] int page = 1, [FromQuery] int pageSize = 25)
+        {
+            try
+            {
+                var query = _context.Runners.AsQueryable();
+
+                // Apply search filter
+                if (!string.IsNullOrEmpty(search))
+                {
+                    var searchTerm = search.ToLower();
+                    query = query.Where(r => 
+                        r.Name.ToLower().Contains(searchTerm) ||
+                        r.FirstName.ToLower().Contains(searchTerm) ||
+                        r.LastName.ToLower().Contains(searchTerm) ||
+                        r.PhysicalDescription.ToLower().Contains(searchTerm));
+                }
+
+                // Apply status filter
+                if (!string.IsNullOrEmpty(status))
+                {
+                    query = query.Where(r => r.Status == status);
+                }
+
+                // Get total count
+                var total = await query.CountAsync();
+
+                // Apply pagination
+                var runners = await query
+                    .OrderByDescending(r => r.UpdatedAt ?? r.CreatedAt)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(r => new
+                    {
+                        id = r.Id,
+                        firstName = r.FirstName,
+                        lastName = r.LastName,
+                        name = r.Name,
+                        age = DateTime.UtcNow.Year - r.DateOfBirth.Year - (DateTime.UtcNow.DayOfYear < r.DateOfBirth.DayOfYear ? 1 : 0),
+                        status = r.Status,
+                        lastSeen = r.LastLocationUpdate,
+                        location = r.PreferredRunningLocations,
+                        profileImageUrl = r.ProfileImageUrl,
+                        isActive = r.IsActive,
+                        isVerified = r.IsVerified,
+                        createdAt = r.CreatedAt,
+                        updatedAt = r.UpdatedAt
+                    })
+                    .ToListAsync();
+
+                return Ok(new
+                {
+                    success = true,
+                    data = runners,
+                    pagination = new
+                    {
+                        page,
+                        pageSize,
+                        total,
+                        totalPages = (int)Math.Ceiling((double)total / pageSize)
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error searching runners");
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
         /// Delete runner profile (owner or admin only - soft delete)
         /// </summary>
         [HttpDelete("{id}")]
