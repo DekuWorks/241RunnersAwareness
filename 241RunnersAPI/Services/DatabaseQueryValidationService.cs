@@ -122,7 +122,7 @@ namespace _241RunnersAPI.Services
         /// <summary>
         /// Validates dynamic SQL queries for security risks
         /// </summary>
-        public QueryValidationResult ValidateDynamicQuery(string query, Dictionary<string, object> parameters = null)
+        public QueryValidationResult ValidateDynamicQuery(string query, Dictionary<string, object>? parameters = null)
         {
             var result = new QueryValidationResult { IsValid = true };
 
@@ -485,7 +485,7 @@ namespace _241RunnersAPI.Services
         /// <summary>
         /// Logs database query security events
         /// </summary>
-        public void LogQuerySecurityEvent(string eventType, string query, QueryValidationResult result, string userId = null)
+        public void LogQuerySecurityEvent(string eventType, string query, QueryValidationResult result, string? userId = null)
         {
             try
             {

@@ -485,7 +485,7 @@ namespace _241RunnersAPI.Services
         /// <summary>
         /// Logs content security events for monitoring
         /// </summary>
-        public void LogContentSecurityEvent(string eventType, string content, ContentValidationResult result, string userId = null)
+        public void LogContentSecurityEvent(string eventType, string content, ContentValidationResult result, string? userId = null)
         {
             try
             {

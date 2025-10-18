@@ -2,6 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Cryptography;
 using System.Text;
+using System.Linq;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using Azure.Storage.Sas;
+using Azure.Storage;
 
 namespace _241RunnersAPI.Controllers
 {
@@ -11,11 +16,39 @@ namespace _241RunnersAPI.Controllers
     {
         private readonly ILogger<ImageUploadController> _logger;
         private readonly IWebHostEnvironment _environment;
+        private readonly IConfiguration _configuration;
+        private readonly BlobServiceClient _blobServiceClient;
 
-        public ImageUploadController(ILogger<ImageUploadController> logger, IWebHostEnvironment environment)
+        public ImageUploadController(ILogger<ImageUploadController> logger, IWebHostEnvironment environment, IConfiguration configuration)
         {
             _logger = logger;
             _environment = environment;
+            _configuration = configuration;
+            
+            // Initialize Blob Service Client
+            var connectionString = _configuration.GetConnectionString("AzureStorageConnectionString") ?? 
+                                 _configuration["AzureStorageConnectionString"] ?? string.Empty;
+            
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                _logger.LogError("Azure Storage connection string is not configured");
+                throw new InvalidOperationException("Azure Storage connection string is not configured");
+            }
+            
+            _logger.LogInformation("Azure Storage connection string found: {ConnectionString}", 
+                connectionString.Substring(0, Math.Min(50, connectionString.Length)) + "...");
+            
+            try
+            {
+                _blobServiceClient = new BlobServiceClient(connectionString);
+                _logger.LogInformation("BlobServiceClient initialized successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to initialize BlobServiceClient with connection string: {ConnectionString}", 
+                    connectionString.Substring(0, Math.Min(50, connectionString.Length)) + "...");
+                throw;
+            }
         }
 
         /// <summary>
@@ -35,36 +68,19 @@ namespace _241RunnersAPI.Controllers
 
                 var uploadedFiles = new List<object>();
                 
-                // Use Azure-compatible path
-                var uploadsPath = Path.Combine("/tmp", "uploads", "images");
+                // Get or create blob container
+                var containerName = "images";
+                var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
                 
                 try
                 {
-                    // Create uploads directory if it doesn't exist
-                    if (!Directory.Exists(uploadsPath))
-                    {
-                        Directory.CreateDirectory(uploadsPath);
-                        _logger.LogInformation("Created uploads directory: {UploadsPath}", uploadsPath);
-                    }
+                    await containerClient.CreateIfNotExistsAsync();
+                    _logger.LogInformation("Ensured blob container exists: {ContainerName}", containerName);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Failed to create uploads directory: {UploadsPath}", uploadsPath);
-                    // Try alternative path
-                    uploadsPath = Path.Combine(_environment.ContentRootPath, "uploads", "images");
-                    try
-                    {
-                        if (!Directory.Exists(uploadsPath))
-                        {
-                            Directory.CreateDirectory(uploadsPath);
-                            _logger.LogInformation("Created alternative uploads directory: {UploadsPath}", uploadsPath);
-                        }
-                    }
-                    catch (Exception ex2)
-                    {
-                        _logger.LogError(ex2, "Failed to create alternative uploads directory: {UploadsPath}", uploadsPath);
-                        return StatusCode(500, new { success = false, message = "Failed to create uploads directory. Please contact administrator." });
-                    }
+                    _logger.LogError(ex, "Failed to create blob container: {ContainerName}. Error: {ErrorMessage}", containerName, ex.Message);
+                    return StatusCode(500, new { success = false, message = $"Failed to initialize storage: {ex.Message}" });
                 }
 
                 // Enhanced security validation
@@ -104,23 +120,30 @@ namespace _241RunnersAPI.Controllers
                     }
 
                     var fileName = $"{Guid.NewGuid()}{fileExtension}";
-                    var filePath = Path.Combine(uploadsPath, fileName);
+                    var blobClient = containerClient.GetBlobClient(fileName);
 
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    // Upload to Azure Blob Storage
+                    using var stream = file.OpenReadStream();
+                    var blobHttpHeaders = new BlobHttpHeaders
                     {
-                        await file.CopyToAsync(stream);
-                    }
+                        ContentType = GetContentType(fileName)
+                    };
+
+                    await blobClient.UploadAsync(stream, new BlobUploadOptions
+                    {
+                        HttpHeaders = blobHttpHeaders
+                    });
 
                     uploadedFiles.Add(new
                     {
                         originalName = file.FileName,
                         fileName = fileName,
-                        url = $"/uploads/images/{fileName}",
+                        url = blobClient.Uri.ToString(),
                         size = file.Length
                     });
                 }
 
-                _logger.LogInformation($"Successfully uploaded {uploadedFiles.Count} images");
+                _logger.LogInformation($"Successfully uploaded {uploadedFiles.Count} images to Azure Blob Storage");
 
                 return Ok(new
                 {
@@ -131,40 +154,107 @@ namespace _241RunnersAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error uploading images");
+                _logger.LogError(ex, "Error uploading images to Azure Blob Storage");
                 return StatusCode(500, new { success = false, message = "Internal server error during upload" });
             }
         }
 
         /// <summary>
-        /// Get uploaded image by filename
+        /// Get a secure SAS token for accessing an image
         /// </summary>
-        [HttpGet("{fileName}")]
-        public IActionResult GetImage(string fileName)
+        [HttpGet("sas-token/{fileName}")]
+        public async Task<IActionResult> GetImageSasToken(string fileName)
         {
             try
             {
-                // Try Azure-compatible path first, then fallback
-                var uploadsPath = Path.Combine("/tmp", "uploads", "images");
-                if (!Directory.Exists(uploadsPath))
-                {
-                    uploadsPath = Path.Combine(_environment.ContentRootPath, "uploads", "images");
-                }
-                var filePath = Path.Combine(uploadsPath, fileName);
+                var containerName = "images";
+                var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+                var blobClient = containerClient.GetBlobClient(fileName);
 
-                if (!System.IO.File.Exists(filePath))
+                // Check if blob exists
+                var exists = await blobClient.ExistsAsync();
+                if (!exists.Value)
                 {
                     return NotFound(new { success = false, message = "Image not found" });
                 }
 
-                var fileBytes = System.IO.File.ReadAllBytes(filePath);
-                var contentType = GetContentType(fileName);
+                // Generate SAS token with read permissions, valid for 1 hour
+                var sasBuilder = new BlobSasBuilder
+                {
+                    BlobContainerName = containerName,
+                    BlobName = fileName,
+                    Resource = "b", // blob
+                    ExpiresOn = DateTimeOffset.UtcNow.AddHours(1),
+                    StartsOn = DateTimeOffset.UtcNow.AddMinutes(-5) // Allow 5 minutes clock skew
+                };
 
-                return File(fileBytes, contentType);
+                sasBuilder.SetPermissions(BlobSasPermissions.Read);
+
+                // Get the storage account key for signing
+                var connectionString = _configuration.GetConnectionString("AzureStorageConnectionString") ?? 
+                                     _configuration["AzureStorageConnectionString"] ?? string.Empty;
+                
+                _logger.LogInformation("Generating SAS token for blob: {BlobName}", fileName);
+                
+                // Parse connection string to get account name and key
+                var connectionStringParts = connectionString.Split(';');
+                var accountNamePart = connectionStringParts.First(p => p.StartsWith("AccountName="));
+                var accountKeyPart = connectionStringParts.First(p => p.StartsWith("AccountKey="));
+                
+                var accountName = accountNamePart.Substring(accountNamePart.IndexOf('=') + 1);
+                var accountKey = accountKeyPart.Substring(accountKeyPart.IndexOf('=') + 1);
+                
+                _logger.LogInformation("Using account name: {AccountName}", accountName);
+                
+                var credential = new StorageSharedKeyCredential(accountName, accountKey);
+                var sasToken = sasBuilder.ToSasQueryParameters(credential).ToString();
+
+                var sasUrl = $"{blobClient.Uri}?{sasToken}";
+
+                return Ok(new
+                {
+                    success = true,
+                    sasUrl = sasUrl,
+                    expiresAt = DateTimeOffset.UtcNow.AddHours(1).ToString("yyyy-MM-ddTHH:mm:ssZ")
+                });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving image {FileName}", fileName);
+                _logger.LogError(ex, "Error generating SAS token for image {FileName}: {ErrorMessage}", fileName, ex.Message);
+                return StatusCode(500, new { success = false, message = $"Internal server error: {ex.Message}" });
+            }
+        }
+
+        /// <summary>
+        /// Get uploaded image by filename from Azure Blob Storage
+        /// </summary>
+        [HttpGet("{fileName}")]
+        public async Task<IActionResult> GetImage(string fileName)
+        {
+            try
+            {
+                var containerName = "images";
+                var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+                var blobClient = containerClient.GetBlobClient(fileName);
+
+                // Check if blob exists
+                var exists = await blobClient.ExistsAsync();
+                if (!exists.Value)
+                {
+                    return NotFound(new { success = false, message = "Image not found" });
+                }
+
+                // Get blob properties to determine content type
+                var properties = await blobClient.GetPropertiesAsync();
+                var contentType = properties.Value.ContentType ?? GetContentType(fileName);
+
+                // Download blob content and return it directly
+                var blobStream = await blobClient.OpenReadAsync();
+                return File(blobStream, contentType, fileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving image {FileName} from Azure Blob Storage", fileName);
                 return StatusCode(500, new { success = false, message = "Internal server error" });
             }
         }

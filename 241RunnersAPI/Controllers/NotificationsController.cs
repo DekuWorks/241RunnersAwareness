@@ -24,7 +24,7 @@ namespace _241RunnersAPI.Controllers
         /// Get notifications for the current user
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> GetNotifications([FromQuery] NotificationQuery query)
+        public Task<IActionResult> GetNotifications([FromQuery] NotificationQuery query)
         {
             try
             {
@@ -63,25 +63,25 @@ namespace _241RunnersAPI.Controllers
                     .Take(query.PageSize)
                     .ToList();
 
-                return Ok(new
+                return Task.FromResult<IActionResult>(Ok(new
                 {
                     data = pagedNotifications,
                     page = query.Page,
                     pageSize = query.PageSize,
                     total
-                });
+                }));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving notifications");
-                return StatusCode(500, new
+                return Task.FromResult<IActionResult>(StatusCode(500, new
                 {
                     error = new
                     {
                         code = "INTERNAL_ERROR",
                         message = "An error occurred while retrieving notifications"
                     }
-                });
+                }));
             }
         }
 
@@ -90,7 +90,7 @@ namespace _241RunnersAPI.Controllers
         /// </summary>
         [HttpPost]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> CreateNotification([FromBody] CreateNotificationRequest request)
+        public Task<IActionResult> CreateNotification([FromBody] CreateNotificationRequest request)
         {
             try
             {
@@ -98,26 +98,26 @@ namespace _241RunnersAPI.Controllers
                 // In a real implementation, you'd create a notification record
                 _logger.LogInformation("Notification created: {Title} for user {UserId}", request.Title, request.UserId);
 
-                return CreatedAtAction(nameof(CreateNotification), new { id = "n_new" }, new
+                return Task.FromResult<IActionResult>(CreatedAtAction(nameof(CreateNotification), new { id = "n_new" }, new
                 {
                     id = "n_new",
                     type = request.Type,
                     title = request.Title,
                     body = request.Body,
                     userId = request.UserId
-                });
+                }));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating notification");
-                return StatusCode(500, new
+                return Task.FromResult<IActionResult>(StatusCode(500, new
                 {
                     error = new
                     {
                         code = "INTERNAL_ERROR",
                         message = "An error occurred while creating notification"
                     }
-                });
+                }));
             }
         }
 
@@ -125,7 +125,7 @@ namespace _241RunnersAPI.Controllers
         /// Mark notification as read
         /// </summary>
         [HttpPost("{id}/read")]
-        public async Task<IActionResult> MarkAsRead(string id)
+        public Task<IActionResult> MarkAsRead(string id)
         {
             try
             {
@@ -133,23 +133,23 @@ namespace _241RunnersAPI.Controllers
                 // In a real implementation, you'd update the notification record
                 _logger.LogInformation("Notification marked as read: {NotificationId}", id);
 
-                return Ok(new
+                return Task.FromResult<IActionResult>(Ok(new
                 {
                     id,
                     read = true
-                });
+                }));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error marking notification as read");
-                return StatusCode(500, new
+                return Task.FromResult<IActionResult>(StatusCode(500, new
                 {
                     error = new
                     {
                         code = "INTERNAL_ERROR",
                         message = "An error occurred while marking notification as read"
                     }
-                });
+                }));
             }
         }
 
@@ -157,7 +157,7 @@ namespace _241RunnersAPI.Controllers
         /// Get user's notification preferences
         /// </summary>
         [HttpGet("preferences")]
-        public async Task<IActionResult> GetNotificationPreferences()
+        public Task<IActionResult> GetNotificationPreferences()
         {
             try
             {
@@ -178,19 +178,19 @@ namespace _241RunnersAPI.Controllers
                     updatedAt = DateTime.UtcNow
                 };
 
-                return Ok(preferences);
+                return Task.FromResult<IActionResult>(Ok(preferences));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving notification preferences");
-                return StatusCode(500, new
+                return Task.FromResult<IActionResult>(StatusCode(500, new
                 {
                     error = new
                     {
                         code = "INTERNAL_ERROR",
                         message = "An error occurred while retrieving notification preferences"
                     }
-                });
+                }));
             }
         }
 
@@ -198,7 +198,7 @@ namespace _241RunnersAPI.Controllers
         /// Update user's notification preferences
         /// </summary>
         [HttpPost("preferences")]
-        public async Task<IActionResult> UpdateNotificationPreferences([FromBody] NotificationPreferencesRequest request)
+        public Task<IActionResult> UpdateNotificationPreferences([FromBody] NotificationPreferencesRequest request)
         {
             try
             {
@@ -222,19 +222,19 @@ namespace _241RunnersAPI.Controllers
                     updatedAt = DateTime.UtcNow
                 };
 
-                return Ok(preferences);
+                return Task.FromResult<IActionResult>(Ok(preferences));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating notification preferences");
-                return StatusCode(500, new
+                return Task.FromResult<IActionResult>(StatusCode(500, new
                 {
                     error = new
                     {
                         code = "INTERNAL_ERROR",
                         message = "An error occurred while updating notification preferences"
                     }
-                });
+                }));
             }
         }
 
@@ -242,7 +242,7 @@ namespace _241RunnersAPI.Controllers
         /// Subscribe to push notifications
         /// </summary>
         [HttpPost("subscribe")]
-        public async Task<IActionResult> SubscribeToPushNotifications([FromBody] PushSubscriptionRequest request)
+        public Task<IActionResult> SubscribeToPushNotifications([FromBody] PushSubscriptionRequest request)
         {
             try
             {
@@ -253,25 +253,25 @@ namespace _241RunnersAPI.Controllers
                 _logger.LogInformation("Push notification subscription created for user {UserId}: {Subscription}", 
                     userId, request.Subscription);
 
-                return Ok(new
+                return Task.FromResult<IActionResult>(Ok(new
                 {
                     userId,
                     subscribed = true,
                     subscription = request.Subscription,
                     subscribedAt = DateTime.UtcNow
-                });
+                }));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error subscribing to push notifications");
-                return StatusCode(500, new
+                return Task.FromResult<IActionResult>(StatusCode(500, new
                 {
                     error = new
                     {
                         code = "INTERNAL_ERROR",
                         message = "An error occurred while subscribing to push notifications"
                     }
-                });
+                }));
             }
         }
 
@@ -279,7 +279,7 @@ namespace _241RunnersAPI.Controllers
         /// Unsubscribe from push notifications
         /// </summary>
         [HttpPost("unsubscribe")]
-        public async Task<IActionResult> UnsubscribeFromPushNotifications()
+        public Task<IActionResult> UnsubscribeFromPushNotifications()
         {
             try
             {
@@ -289,24 +289,24 @@ namespace _241RunnersAPI.Controllers
                 // In a real implementation, you'd remove the subscription from the database
                 _logger.LogInformation("Push notification subscription removed for user {UserId}", userId);
 
-                return Ok(new
+                return Task.FromResult<IActionResult>(Ok(new
                 {
                     userId,
                     subscribed = false,
                     unsubscribedAt = DateTime.UtcNow
-                });
+                }));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error unsubscribing from push notifications");
-                return StatusCode(500, new
+                return Task.FromResult<IActionResult>(StatusCode(500, new
                 {
                     error = new
                     {
                         code = "INTERNAL_ERROR",
                         message = "An error occurred while unsubscribing from push notifications"
                     }
-                });
+                }));
             }
         }
 

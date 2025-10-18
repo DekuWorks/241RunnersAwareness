@@ -13,6 +13,12 @@ using Microsoft.AspNetCore.Server.IISIntegration;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add comprehensive logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+builder.Logging.SetMinimumLevel(LogLevel.Information);
+
 // Add Application Insights for comprehensive monitoring
 builder.Services.AddApplicationInsightsTelemetry(options =>
 {
@@ -115,10 +121,14 @@ builder.Services.AddSignalR();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    if (connectionString == "UseAzureAppSettings")
+    if (string.IsNullOrEmpty(connectionString))
     {
-        // Get connection string from environment variable (Azure App Settings)
-        connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
+        // Fallback to environment variable if not in configuration
+        connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+    }
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        throw new InvalidOperationException("Database connection string is not configured");
     }
     options.UseSqlServer(connectionString);
 });
@@ -280,6 +290,9 @@ builder.Services.AddScoped<CachingService>();
 builder.Services.AddScoped<ITopicService, TopicService>();
 builder.Services.AddScoped<IFirebaseNotificationService, FirebaseNotificationService>();
 builder.Services.AddScoped<ISignalRService, SignalRService>();
+
+// Add admin validation service
+builder.Services.AddScoped<AdminValidationService>();
 
 // Add response compression with enhanced options
 builder.Services.AddResponseCompression(options =>
@@ -944,6 +957,21 @@ using (var scope = app.Services.CreateScope())
         logger.LogWarning("API will start without database initialization - some features may not work");
         // Don't throw - let the app start even if initialization fails
     }
+}
+
+// Add startup validation
+try
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogInformation("Starting 241 Runners API...");
+    logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentName);
+    logger.LogInformation("Database connection configured: {HasConnection}", !string.IsNullOrEmpty(builder.Configuration.GetConnectionString("DefaultConnection")));
+    logger.LogInformation("Azure Storage configured: {HasStorage}", !string.IsNullOrEmpty(builder.Configuration.GetConnectionString("AzureStorageConnectionString")));
+}
+catch (Exception ex)
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "Error during startup validation: {Message}", ex.Message);
 }
 
 app.Run();

@@ -4061,7 +4061,7 @@
       }
 
       const formData = new FormData();
-      formData.append("image", file);
+      formData.append("files", file);
 
       const userData = JSON.parse(localStorage.getItem("ra_auth"));
       if (!userData || !(userData.accessToken || userData.token)) {
@@ -4088,7 +4088,7 @@
           progressFill.style.width = `${progress}%`;
         }, 200);
 
-        // Upload to server using the correct endpoint
+        // Upload to server using the new secure endpoint
         const response = await fetch(`${PROFILE_API_BASE_URL}/api/ImageUpload/upload`, {
           method: 'POST',
           headers: {
@@ -4104,18 +4104,38 @@
           progressFill.style.width = "100%";
           progressText.textContent = "Upload successful!";
           
-          // Update user profile with image URL
-          await updateUserProfileImage(result.url || result.filePath);
-          
-          // Update profile image display
-          updateProfileImage(result.url || result.filePath);
-          
-          // Update user data in localStorage
-          const updatedUser = { ...userData.user, profileImageUrl: result.url || result.filePath };
-          const updatedAuthData = { ...userData, user: updatedUser };
-          localStorage.setItem('ra_auth', JSON.stringify(updatedAuthData));
-          
-          showMessage('success', 'Profile image updated successfully!');
+          // Get the uploaded file name from the response
+          const uploadedFile = result.files && result.files[0];
+          if (uploadedFile && uploadedFile.fileName) {
+            // Get SAS token for secure access
+            const sasResponse = await fetch(`${PROFILE_API_BASE_URL}/api/ImageUpload/sas-token/${uploadedFile.fileName}`, {
+              headers: {
+                'Authorization': `Bearer ${userData.accessToken || userData.token}`
+              }
+            });
+            
+            if (sasResponse.ok) {
+              const sasResult = await sasResponse.json();
+              const secureImageUrl = sasResult.sasUrl;
+              
+              // Update user profile with secure image URL
+              await updateUserProfileImage(secureImageUrl);
+              
+              // Update profile image display
+              updateProfileImage(secureImageUrl);
+              
+              // Update user data in localStorage
+              const updatedUser = { ...userData.user, profileImageUrl: secureImageUrl };
+              const updatedAuthData = { ...userData, user: updatedUser };
+              localStorage.setItem('ra_auth', JSON.stringify(updatedAuthData));
+              
+              showMessage('success', 'Profile image updated successfully!');
+            } else {
+              throw new Error('Failed to get secure access to uploaded image');
+            }
+          } else {
+            throw new Error('Invalid response from upload service');
+          }
           
           setTimeout(() => {
             progressContainer.style.display = "none";
@@ -4271,6 +4291,42 @@
       }
     }
 
+    // Update runner photos with secure URLs
+    async function updateRunnerPhotos(secureUrls) {
+      const userData = JSON.parse(localStorage.getItem("ra_auth"));
+      if (!userData || !(userData.accessToken || userData.token)) {
+        console.error('No authentication token available');
+        return;
+      }
+
+      try {
+        // Get current runner profile
+        const runnerData = await loadRunnerProfile();
+        if (!runnerData || !runnerData.id) {
+          console.error('No runner profile found');
+          return;
+        }
+
+        // Update runner profile with new photo URLs
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner/${runnerData.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${userData.accessToken || userData.token}`
+          },
+          body: JSON.stringify({
+            additionalImageUrls: [...(runnerData.additionalImageUrls || []), ...secureUrls]
+          })
+        });
+
+        if (!response.ok) {
+          console.error('Failed to update runner photos:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error updating runner photos:', error);
+      }
+    }
+
     // Handle runner photo upload
     async function handleRunnerPhotoUpload(event) {
       const files = Array.from(event.target.files);
@@ -4323,13 +4379,13 @@
           if (progressFill) progressFill.style.width = `${progress}%`;
         }, 200);
 
-        // Upload photos
+        // Upload photos using the new secure image upload system
         const formData = new FormData();
         files.forEach(file => {
-          formData.append('photos', file);
+          formData.append('files', file);
         });
 
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/enhanced-runner/${runnerData.id}/photos`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/ImageUpload/upload`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${userData.accessToken || userData.token}`
@@ -4344,10 +4400,36 @@
           if (progressFill) progressFill.style.width = "100%";
           if (progressText) progressText.textContent = "Upload successful!";
           
+          // Get SAS tokens for all uploaded images
+          const uploadedFiles = result.files || [];
+          const secureUrls = [];
+          
+          for (const uploadedFile of uploadedFiles) {
+            try {
+              const sasResponse = await fetch(`${PROFILE_API_BASE_URL}/api/ImageUpload/sas-token/${uploadedFile.fileName}`, {
+                headers: {
+                  'Authorization': `Bearer ${userData.accessToken || userData.token}`
+                }
+              });
+              
+              if (sasResponse.ok) {
+                const sasResult = await sasResponse.json();
+                secureUrls.push(sasResult.sasUrl);
+              }
+            } catch (error) {
+              console.error('Failed to get SAS token for:', uploadedFile.fileName, error);
+            }
+          }
+          
+          // Update runner profile with secure image URLs
+          if (secureUrls.length > 0) {
+            await updateRunnerPhotos(secureUrls);
+          }
+          
           // Reload runner profile to show new photos
           await loadRunnerProfile();
           
-          showMessage('success', `Successfully uploaded ${result.uploadedUrls?.length || files.length} photo(s)!`);
+          showMessage('success', `Successfully uploaded ${secureUrls.length} photo(s)!`);
           
           setTimeout(() => {
             if (progressContainer) progressContainer.style.display = "none";

@@ -279,7 +279,7 @@ namespace _241RunnersAPI.Services
         /// <summary>
         /// Logs IP-based security events
         /// </summary>
-        public void LogSecurityEvent(string eventType, string ipAddress, string details = null)
+        public void LogSecurityEvent(string eventType, string ipAddress, string? details = null)
         {
             try
             {

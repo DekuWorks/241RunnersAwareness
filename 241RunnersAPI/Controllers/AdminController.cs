@@ -396,7 +396,7 @@ namespace _241RunnersAPI.Controllers
         /// Get admin activity log
         /// </summary>
         [HttpGet("activity")]
-        public async Task<IActionResult> GetActivity([FromQuery] ActivityQuery query)
+        public Task<IActionResult> GetActivity([FromQuery] ActivityQuery query)
         {
             try
             {
@@ -423,25 +423,25 @@ namespace _241RunnersAPI.Controllers
 
                 var total = activities.Count;
 
-                return Ok(new
+                return Task.FromResult<IActionResult>(Ok(new
                 {
                     data = activities,
                     page = query.Page,
                     pageSize = query.PageSize,
                     total
-                });
+                }));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving admin activity");
-                return StatusCode(500, new
+                return Task.FromResult<IActionResult>(StatusCode(500, new
                 {
                     error = new
                     {
                         code = "INTERNAL_ERROR",
                         message = "An error occurred while retrieving activity"
                     }
-                });
+                }));
             }
         }
 
