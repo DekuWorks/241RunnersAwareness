@@ -287,14 +287,14 @@ nav {
   background: #000 !important;
   display: flex;
   justify-content: center;
-  gap: 0.8rem;
-  padding: 12px 20px;
+  gap: 0.5rem;
+  padding: 12px 10px;
   flex-wrap: nowrap;
   width: 100%;
   left: 0;
   right: 0;
   box-sizing: border-box;
-  overflow-x: auto;
+  overflow-x: hidden;
 }
 
 /* Dark mode navigation */
@@ -403,7 +403,7 @@ html header {
 nav a {
   color: #fff;
   text-decoration: none;
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: 6px;
   -webkit-transition: all 0.3s ease; /* Safari/Chrome */
   -moz-transition: all 0.3s ease; /* Firefox */
@@ -412,6 +412,7 @@ nav a {
   font-weight: 500;
   white-space: nowrap;
   flex-shrink: 0;
+  font-size: 0.9rem;
 }
 
 /* Traffic light color system for navigation */
