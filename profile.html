@@ -2506,7 +2506,6 @@
       document.getElementById('editAdditionalNotes').value = runner.additionalNotes || '';
       
       // Update photo display and reminder
-      updatePhotoDisplay(runner);
       updateRunnerPhotosDisplay(runner);
       updatePhotoReminderInfo(runner);
       
@@ -2843,26 +2842,21 @@
         
         // Map form fields to API schema
         const apiData = {
-          name: data.name || `${data.firstName || ''} ${data.lastName || ''}`.trim(),
+          name: `${data.firstName || ''} ${data.lastName || ''}`.trim(),
           firstName: data.firstName,
           lastName: data.lastName,
           dateOfBirth: data.dateOfBirth,
           gender: data.gender,
-          status: data.status,
+          status: data.status || 'Active',
           physicalDescription: data.physicalDescription,
           medicalConditions: data.medicalConditions,
-          medications: data.medications,
-          allergies: data.allergies,
-          emergencyInstructions: data.emergencyInstructions,
           preferredRunningLocations: data.preferredRunningLocations,
           typicalRunningTimes: data.typicalRunningTimes,
-          experienceLevel: data.experienceLevel,
-          specialNeeds: data.specialNeeds,
           additionalNotes: data.additionalNotes,
-          preferredContactMethod: data.preferredContactMethod,
           height: data.height,
           weight: data.weight,
-          eyeColor: data.eyeColor
+          eyeColor: data.eyeColor,
+          userId: currentUser.id
         };
         
         // Check if runner profile already exists
@@ -2934,6 +2928,14 @@
             const responseText = await response.text();
             errorMessage = `Server error (${response.status}): ${response.statusText}`;
           }
+          
+          // Show more specific error messages
+          if (response.status === 400) {
+            errorMessage = 'Invalid data provided. Please check all required fields.';
+          } else if (response.status === 409) {
+            errorMessage = 'Runner profile already exists. Please update your existing profile instead.';
+          }
+          
           showMessage('error', errorMessage);
         }
         
@@ -3362,8 +3364,8 @@
           progressFill.style.width = `${progress}%`;
         }, 200);
 
-        // Upload to server
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me/profile-image`, {
+        // Upload to server using the correct endpoint
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/ImageUpload/upload`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${userData.accessToken || userData.token}`
@@ -3378,11 +3380,14 @@
           progressFill.style.width = "100%";
           progressText.textContent = "Upload successful!";
           
+          // Update user profile with image URL
+          await updateUserProfileImage(result.url || result.filePath);
+          
           // Update profile image display
-          updateProfileImage(result.profileImageUrl);
+          updateProfileImage(result.url || result.filePath);
           
           // Update user data in localStorage
-          const updatedUser = { ...userData.user, profileImageUrl: result.profileImageUrl };
+          const updatedUser = { ...userData.user, profileImageUrl: result.url || result.filePath };
           const updatedAuthData = { ...userData, user: updatedUser };
           localStorage.setItem('ra_auth', JSON.stringify(updatedAuthData));
           
@@ -3392,8 +3397,15 @@
             progressContainer.style.display = "none";
           }, 2000);
         } else {
-          const error = await response.json();
-          throw new Error(error.message || 'Upload failed');
+          const errorText = await response.text();
+          let errorMessage = 'Upload failed';
+          try {
+            const error = JSON.parse(errorText);
+            errorMessage = error.message || error.error || errorMessage;
+          } catch (e) {
+            errorMessage = `Server error (${response.status}): ${response.statusText}`;
+          }
+          throw new Error(errorMessage);
         }
       } catch (error) {
         console.error("Upload error:", error);
@@ -3438,12 +3450,16 @@
         removeBtn.textContent = "Removing...";
         removeBtn.disabled = true;
 
-        // Delete image from server
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me/profile-image`, {
-          method: 'DELETE',
+        // Update user profile to remove image URL
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me`, {
+          method: 'PUT',
           headers: {
+            'Content-Type': 'application/json',
             'Authorization': `Bearer ${userData.accessToken || userData.token}`
-          }
+          },
+          body: JSON.stringify({
+            profileImageUrl: null
+          })
         });
 
         if (response.ok) {
@@ -3458,8 +3474,15 @@
           
           showMessage('success', 'Profile image removed successfully!');
         } else {
-          const error = await response.json();
-          throw new Error(error.message || 'Failed to remove image');
+          const errorText = await response.text();
+          let errorMessage = 'Failed to remove image';
+          try {
+            const error = JSON.parse(errorText);
+            errorMessage = error.message || error.error || errorMessage;
+          } catch (e) {
+            errorMessage = `Server error (${response.status}): ${response.statusText}`;
+          }
+          throw new Error(errorMessage);
         }
 
       } catch (error) {
