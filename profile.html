@@ -1434,6 +1434,336 @@
       border-radius: 8px;
       border: 2px dashed #ddd;
     }
+    
+    /* Runner Management Styles */
+    .runner-card {
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .runner-card:hover {
+      border-color: #dc2626;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+    }
+    
+    .runner-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .runner-card-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .runner-card-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .runner-card-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .runner-info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    
+    .runner-info-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .runner-info-value {
+      font-size: 0.9rem;
+      color: #374151;
+      font-weight: 500;
+    }
+    
+    .runner-status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .runner-status-active {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .runner-status-inactive {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+    
+    .runner-status-missing {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .runner-card-photos {
+      margin-top: 1rem;
+    }
+    
+    .runner-photos-preview {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .runner-photo-thumb {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 2px solid #e5e7eb;
+      cursor: pointer;
+      transition: border-color 0.3s ease;
+    }
+    
+    .runner-photo-thumb:hover {
+      border-color: #dc2626;
+    }
+    
+    .runner-photos-count {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      background: #f3f4f6;
+      border: 2px dashed #d1d5db;
+      border-radius: 6px;
+      color: #6b7280;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    .runner-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .runner-last-updated {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+    
+    .runner-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .btn-edit {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    
+    .btn-edit:hover {
+      background: #1d4ed8;
+    }
+    
+    .btn-delete {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    
+    .btn-delete:hover {
+      background: #b91c1c;
+    }
+    
+    .btn-view {
+      background: #059669;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    
+    .btn-view:hover {
+      background: #047857;
+    }
+    
+    /* Case Management Styles */
+    .case-card {
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .case-card:hover {
+      border-color: #dc2626;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+    }
+    
+    .case-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .case-card-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #111827;
+    }
+    
+    .case-status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .case-status-open {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+    
+    .case-status-investigating {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    .case-status-resolved {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .case-status-closed {
+      background: #f3f4f6;
+      color: #374151;
+    }
+    
+    .case-card-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .case-info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    
+    .case-info-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .case-info-value {
+      font-size: 0.9rem;
+      color: #374151;
+      font-weight: 500;
+    }
+    
+    .case-card-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+    }
+    
+    /* Quick Actions Panel */
+    .quick-actions {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .quick-actions-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.75rem;
+    }
+    
+    .quick-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.75rem;
+    }
+    
+    .quick-action-btn {
+      background: white;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      padding: 0.75rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #374151;
+    }
+    
+    .quick-action-btn:hover {
+      border-color: #dc2626;
+      background: #fef2f2;
+      color: #dc2626;
+    }
+    
+    .quick-action-icon {
+      font-size: 1.2rem;
+    }
   </style>
 </head>
 <body>
@@ -1883,16 +2213,29 @@
         </div>
       </div>
 
+      <!-- My Runners Management -->
+      <div class="profile-section my-cases-section">
+        <h2 class="section-title">
+          <span>🏃‍♂️</span>
+          My Runners
+          <button class="edit-btn" onclick="showCreateRunnerForm()" id="createRunnerBtn" style="display: none;">+ Add Runner</button>
+        </h2>
+        
+        <div id="myRunnersList">
+          <div class="loading">Loading your runners...</div>
+        </div>
+      </div>
+
       <!-- My Cases -->
       <div class="profile-section my-cases-section">
         <h2 class="section-title">
           <span>📋</span>
-          My Case Status
+          My Cases
           <a href="my-cases.html" class="btn-small btn-primary-small" style="margin-left: auto;">View All</a>
         </h2>
         
         <div id="myCasesList">
-          <div class="loading">Loading your case status...</div>
+          <div class="loading">Loading your cases...</div>
         </div>
       </div>
     </div>
@@ -2342,6 +2685,10 @@
         document.getElementById('role').textContent = user.role || 'user';
         document.getElementById('memberSince').textContent = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown';
         
+        // Load runner and case data for management sections
+        loadUserRunners();
+        loadUserCases();
+        
         // Update edit form
         document.getElementById('editFirstName').value = firstName;
         document.getElementById('editLastName').value = lastName;
@@ -2590,6 +2937,176 @@
       }
     }
 
+    // Load user's runners
+    async function loadUserRunners() {
+      try {
+        const token = getAuthToken();
+        if (!token) {
+          throw new Error('No authentication token');
+        }
+
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          const runners = result.runners || result.data || result;
+          displayUserRunners(runners);
+        } else {
+          displayNoRunners();
+        }
+
+      } catch (error) {
+        console.error('Error loading user runners:', error);
+        displayNoRunners();
+      }
+    }
+
+    // Display user runners
+    function displayUserRunners(runners) {
+      const container = document.getElementById('myRunnersList');
+      const createBtn = document.getElementById('createRunnerBtn');
+
+      if (runners.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🏃‍♂️</div>
+            <h3>No Runners Yet</h3>
+            <p>You haven't created any runner profiles yet. Create one to get started with case tracking.</p>
+            <button class="btn btn-primary" onclick="showCreateRunnerForm()">
+              🏃‍♂️ Create Runner Profile
+            </button>
+          </div>
+        `;
+        createBtn.style.display = 'none';
+        return;
+      }
+
+      createBtn.style.display = 'block';
+
+      container.innerHTML = `
+        <div class="quick-actions">
+          <div class="quick-actions-title">Quick Actions</div>
+          <div class="quick-actions-grid">
+            <button class="quick-action-btn" onclick="showCreateRunnerForm()">
+              <span class="quick-action-icon">➕</span>
+              Add New Runner
+            </button>
+            <button class="quick-action-btn" onclick="refreshRunners()">
+              <span class="quick-action-icon">🔄</span>
+              Refresh Data
+            </button>
+            <button class="quick-action-btn" onclick="exportRunners()">
+              <span class="quick-action-icon">📊</span>
+              Export Data
+            </button>
+          </div>
+        </div>
+        ${runners.map(runner => createRunnerCard(runner)).join('')}
+      `;
+    }
+
+    // Create runner card HTML
+    function createRunnerCard(runner) {
+      const statusClass = `runner-status-${runner.status?.toLowerCase() || 'active'}`;
+      const lastUpdated = runner.updatedAt ? new Date(runner.updatedAt).toLocaleDateString() : 'Never';
+      const photos = runner.additionalImageUrls || [];
+      
+      return `
+        <div class="runner-card" data-runner-id="${runner.id}">
+          <div class="runner-card-header">
+            <div class="runner-card-title">
+              <span>🏃‍♂️</span>
+              ${runner.name || `${runner.firstName || ''} ${runner.lastName || ''}`.trim() || 'Unnamed Runner'}
+            </div>
+            <div class="runner-card-actions">
+              <span class="runner-status-badge ${statusClass}">${runner.status || 'Active'}</span>
+            </div>
+          </div>
+          
+          <div class="runner-card-info">
+            <div class="runner-info-item">
+              <span class="runner-info-label">Age</span>
+              <span class="runner-info-value">${runner.age || 'Not specified'}</span>
+            </div>
+            <div class="runner-info-item">
+              <span class="runner-info-label">Gender</span>
+              <span class="runner-info-value">${runner.gender || 'Not specified'}</span>
+            </div>
+            <div class="runner-info-item">
+              <span class="runner-info-label">Status</span>
+              <span class="runner-info-value">${runner.isActive ? 'Active' : 'Inactive'}</span>
+            </div>
+            <div class="runner-info-item">
+              <span class="runner-info-label">Profile Complete</span>
+              <span class="runner-info-value">${runner.isProfileComplete ? 'Yes' : 'No'}</span>
+            </div>
+            <div class="runner-info-item">
+              <span class="runner-info-label">Location</span>
+              <span class="runner-info-value">${runner.preferredRunningLocations || 'Not specified'}</span>
+            </div>
+            <div class="runner-info-item">
+              <span class="runner-info-label">Running Times</span>
+              <span class="runner-info-value">${runner.typicalRunningTimes || 'Not specified'}</span>
+            </div>
+          </div>
+          
+          ${photos.length > 0 ? `
+            <div class="runner-card-photos">
+              <div class="runner-photos-preview">
+                ${photos.slice(0, 3).map(photo => `
+                  <img src="${photo}" alt="Runner photo" class="runner-photo-thumb" onclick="viewPhoto('${photo}')">
+                `).join('')}
+                ${photos.length > 3 ? `
+                  <div class="runner-photos-count" onclick="viewAllPhotos(${runner.id})">
+                    +${photos.length - 3}
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+          ` : ''}
+          
+          <div class="runner-card-footer">
+            <div class="runner-last-updated">
+              Last updated: ${lastUpdated}
+            </div>
+            <div class="runner-actions">
+              <button class="btn-view" onclick="viewRunner(${runner.id})">
+                👁️ View
+              </button>
+              <button class="btn-edit" onclick="editRunner(${runner.id})">
+                ✏️ Edit
+              </button>
+              <button class="btn-delete" onclick="deleteRunner(${runner.id})">
+                🗑️ Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Display no runners message
+    function displayNoRunners() {
+      const container = document.getElementById('myRunnersList');
+      const createBtn = document.getElementById('createRunnerBtn');
+      
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">🏃‍♂️</div>
+          <h3>No Runners Found</h3>
+          <p>Unable to load your runners. Please try again or create a new runner profile.</p>
+          <button class="btn btn-primary" onclick="showCreateRunnerForm()">
+            🏃‍♂️ Create Runner Profile
+          </button>
+        </div>
+      `;
+      createBtn.style.display = 'block';
+    }
+
     // Load user's case status
     async function loadUserCases() {
       try {
@@ -2598,30 +3115,23 @@
           throw new Error('No authentication token');
         }
 
-        const authData = checkAuth();
-        
-        // First get runner profile to get runner ID
-        const runnerData = await loadRunnerProfile();
-        if (!runnerData) {
-          // No runner profile, show message
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/cases/my-cases`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          const cases = result.cases || result.data || result;
+          displayUserCases(cases);
+        } else {
           displayNoCaseStatus();
-          return;
         }
-
-        // Get case status for this runner - TODO: Implement this endpoint
-        // const response = await fetch(`${PROFILE_API_BASE_URL}/cases/runner/${runnerData.id}/status`, {
-        //   headers: {
-        //     'Authorization': `Bearer ${token}`
-        //   }
-        // });
-
-        // TODO: Implement case status endpoint
-        console.log('Case status endpoint not yet implemented - showing placeholder');
-        displayNoCaseStatus();
 
       } catch (error) {
         console.error('Error loading user cases:', error);
-        showError('Failed to load your case status. Please try again.');
+        displayNoCaseStatus();
       }
     }
 
@@ -2696,9 +3206,8 @@
     // Display user cases
     function displayUserCases(cases) {
       const container = document.getElementById('myCasesList');
-      const recentCases = cases.slice(0, 5); // Show last 5 cases
 
-      if (recentCases.length === 0) {
+      if (cases.length === 0) {
         container.innerHTML = `
           <div class="empty-state">
             <div class="empty-state-icon">📋</div>
@@ -2711,25 +3220,87 @@
       }
 
       container.innerHTML = `
-        <ul class="case-list">
-          ${recentCases.map(caseItem => `
-            <li class="case-item">
-              <div class="case-header">
-                <div class="case-name">${caseItem.fullName || `${caseItem.firstName} ${caseItem.lastName}`}</div>
-                <div class="case-status status-${caseItem.status}">${caseItem.status}</div>
-              </div>
-              <div class="case-details">
-                <strong>Age:</strong> ${caseItem.age} | 
-                <strong>Location:</strong> ${caseItem.city}, ${caseItem.state} | 
-                <strong>Reported:</strong> ${new Date(caseItem.createdAt).toLocaleDateString()}
-              </div>
-              <div class="case-actions">
-                <a href="my-cases.html?id=${caseItem.id}" class="btn-small btn-primary-small">View Details</a>
-                <a href="report-case.html?update=${caseItem.id}" class="btn-small btn-secondary-small">Update</a>
-              </div>
-            </li>
-          `).join('')}
-        </ul>
+        <div class="quick-actions">
+          <div class="quick-actions-title">Quick Actions</div>
+          <div class="quick-actions-grid">
+            <button class="quick-action-btn" onclick="window.location.href='report-case.html'">
+              <span class="quick-action-icon">📝</span>
+              Report New Case
+            </button>
+            <button class="quick-action-btn" onclick="refreshCases()">
+              <span class="quick-action-icon">🔄</span>
+              Refresh Data
+            </button>
+            <button class="quick-action-btn" onclick="exportCases()">
+              <span class="quick-action-icon">📊</span>
+              Export Data
+            </button>
+          </div>
+        </div>
+        ${cases.map(caseItem => createCaseCard(caseItem)).join('')}
+      `;
+    }
+
+    // Create case card HTML
+    function createCaseCard(caseItem) {
+      const statusClass = `case-status-${caseItem.status?.toLowerCase() || 'open'}`;
+      const createdDate = new Date(caseItem.createdAt).toLocaleDateString();
+      const updatedDate = caseItem.updatedAt ? new Date(caseItem.updatedAt).toLocaleDateString() : 'Never';
+      
+      return `
+        <div class="case-card" data-case-id="${caseItem.id}">
+          <div class="case-card-header">
+            <div class="case-card-title">
+              ${caseItem.title || 'Untitled Case'}
+            </div>
+            <div class="case-status-badge ${statusClass}">${caseItem.status || 'Open'}</div>
+          </div>
+          
+          <div class="case-card-info">
+            <div class="case-info-item">
+              <span class="case-info-label">Case ID</span>
+              <span class="case-info-value">#${caseItem.id}</span>
+            </div>
+            <div class="case-info-item">
+              <span class="case-info-label">Priority</span>
+              <span class="case-info-value">${caseItem.priority || 'Medium'}</span>
+            </div>
+            <div class="case-info-item">
+              <span class="case-info-label">Created</span>
+              <span class="case-info-value">${createdDate}</span>
+            </div>
+            <div class="case-info-item">
+              <span class="case-info-label">Last Updated</span>
+              <span class="case-info-value">${updatedDate}</span>
+            </div>
+            <div class="case-info-item">
+              <span class="case-info-label">Location</span>
+              <span class="case-info-value">${caseItem.lastSeenLocation || 'Not specified'}</span>
+            </div>
+            <div class="case-info-item">
+              <span class="case-info-label">Public</span>
+              <span class="case-info-value">${caseItem.isPublic ? 'Yes' : 'No'}</span>
+            </div>
+          </div>
+          
+          ${caseItem.description ? `
+            <div style="margin-top: 1rem; padding: 1rem; background: #f9fafb; border-radius: 6px;">
+              <strong>Description:</strong> ${caseItem.description}
+            </div>
+          ` : ''}
+          
+          <div class="case-card-actions">
+            <button class="btn-view" onclick="viewCase(${caseItem.id})">
+              👁️ View Details
+            </button>
+            <button class="btn-edit" onclick="editCase(${caseItem.id})">
+              ✏️ Update
+            </button>
+            <button class="btn-delete" onclick="deleteCase(${caseItem.id})">
+              🗑️ Delete
+            </button>
+          </div>
+        </div>
       `;
     }
 
@@ -2739,6 +3310,159 @@
       if (form) {
         form.classList.toggle('active');
       }
+    }
+
+    // Runner management functions
+    function refreshRunners() {
+      loadUserRunners();
+    }
+
+    function exportRunners() {
+      if (!window.runnersData || window.runnersData.length === 0) {
+        alert('No runner data to export');
+        return;
+      }
+      
+      const csv = convertToCSV(window.runnersData);
+      downloadCSV(csv, 'my-runners.csv');
+    }
+
+    function viewPhoto(url) {
+      window.open(url, '_blank');
+    }
+
+    function viewAllPhotos(runnerId) {
+      const runner = window.runnersData?.find(r => r.id === runnerId);
+      if (runner && runner.additionalImageUrls && runner.additionalImageUrls.length > 0) {
+        // Open first photo in new tab
+        window.open(runner.additionalImageUrls[0], '_blank');
+      } else {
+        alert('No photos available for this runner');
+      }
+    }
+
+    function viewRunner(runnerId) {
+      // Navigate to runner details page or show modal
+      window.location.href = `runner-details.html?id=${runnerId}`;
+    }
+
+    function editRunner(runnerId) {
+      // Navigate to edit runner page or show edit form
+      window.location.href = `edit-runner.html?id=${runnerId}`;
+    }
+
+    function deleteRunner(runnerId) {
+      if (!confirm('Are you sure you want to delete this runner? This action cannot be undone.')) {
+        return;
+      }
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please log in to delete runners');
+        return;
+      }
+
+      fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner/${runnerId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          alert('Runner deleted successfully');
+          loadUserRunners(); // Refresh the list
+        } else {
+          throw new Error('Failed to delete runner');
+        }
+      })
+      .catch(error => {
+        console.error('Error deleting runner:', error);
+        alert('Failed to delete runner. Please try again.');
+      });
+    }
+
+    // Case management functions
+    function refreshCases() {
+      loadUserCases();
+    }
+
+    function exportCases() {
+      if (!window.casesData || window.casesData.length === 0) {
+        alert('No case data to export');
+        return;
+      }
+      
+      const csv = convertToCSV(window.casesData);
+      downloadCSV(csv, 'my-cases.csv');
+    }
+
+    function viewCase(caseId) {
+      // Navigate to case details page or show modal
+      window.location.href = `case-details.html?id=${caseId}`;
+    }
+
+    function editCase(caseId) {
+      // Navigate to edit case page or show edit form
+      window.location.href = `report-case.html?update=${caseId}`;
+    }
+
+    function deleteCase(caseId) {
+      if (!confirm('Are you sure you want to delete this case? This action cannot be undone.')) {
+        return;
+      }
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please log in to delete cases');
+        return;
+      }
+
+      fetch(`${PROFILE_API_BASE_URL}/api/v1.0/cases/${caseId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          alert('Case deleted successfully');
+          loadUserCases(); // Refresh the list
+        } else {
+          throw new Error('Failed to delete case');
+        }
+      })
+      .catch(error => {
+        console.error('Error deleting case:', error);
+        alert('Failed to delete case. Please try again.');
+      });
+    }
+
+    // Utility functions
+    function convertToCSV(data) {
+      if (!data || data.length === 0) return '';
+      
+      const headers = Object.keys(data[0]);
+      const csvContent = [
+        headers.join(','),
+        ...data.map(row => headers.map(header => `"${row[header] || ''}"`).join(','))
+      ].join('\n');
+      
+      return csvContent;
+    }
+
+    function downloadCSV(csvContent, filename) {
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
     }
 
     // Update personal information
