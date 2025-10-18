@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0" />
   <meta http-equiv="Last-Modified" content="Wed, 01 Jan 2025 00:00:00 GMT" />
   <title>About Us - 241 Runners Awareness</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=20250127" />
   <link rel="stylesheet" href="forms.css" />
   <style>
     .see-more-link {
@@ -59,9 +59,6 @@
       <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
     </nav>
     
-    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
-      ☀️
-    </button>
     
     <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-navigation">
       <span></span>
@@ -215,30 +212,6 @@
       }
     });
 
-    /* ===== Dark Mode Toggle ===== */
-    const themeToggle = document.getElementById('theme-toggle');
-    const body = document.body;
-    
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    if (currentTheme === 'dark') {
-      body.classList.add('dark-mode');
-      themeToggle.textContent = '🌙';
-      themeToggle.setAttribute('aria-pressed', 'true');
-    }
-    
-    themeToggle.addEventListener('click', function() {
-      body.classList.toggle('dark-mode');
-      
-      if (body.classList.contains('dark-mode')) {
-        localStorage.setItem('theme', 'dark');
-        themeToggle.textContent = '🌙';
-        themeToggle.setAttribute('aria-pressed', 'true');
-      } else {
-        localStorage.setItem('theme', 'light');
-        themeToggle.textContent = '☀️';
-        themeToggle.setAttribute('aria-pressed', 'false');
-      }
-    });
   </script>
 </body>
 </html> 

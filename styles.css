@@ -277,6 +277,28 @@ img {
   height: auto;
 }
 
+/* Theme toggle button */
+.theme-toggle {
+  display: block;
+  position: fixed;
+  right: 80px;
+  top: 20px;
+  z-index: 1001;
+  background: rgba(0, 0, 0, 0.8);
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: scale(1.05);
+}
+
 /* ===== Navbar ===== */
 /* Updated: 2025-01-27 - Ultra-compact navbar for all 8 links */
 nav {
@@ -318,9 +340,9 @@ html header {
   border: none;
   cursor: pointer;
   padding: 6px;
-  position: absolute;
-  right: 15px;
-  top: 15px;
+  position: fixed;
+  right: 20px;
+  top: 20px;
   z-index: 1001;
   min-width: 36px;
   min-height: 44px;
@@ -845,7 +867,7 @@ footer {
   content: "✓";
   color: #dc2626;
   font-weight: bold;
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 10px;
 }
@@ -895,7 +917,7 @@ footer {
   content: "→";
   color: white;
   font-weight: bold;
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 8px;
 }
@@ -948,7 +970,7 @@ body.dark-mode .features-section h2 {
 
 .feature-card::before {
   content: '';
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -1092,7 +1114,7 @@ body.dark-mode .feature-card p {
     display: block;
     padding: 15px 20px;
     margin: 10px 0;
-    font-size: 1rem;
+    font-size: 1.2rem;
     text-align: center;
     width: 80%;
     max-width: 300px;
@@ -1113,14 +1135,14 @@ body.dark-mode .feature-card p {
   .header-bar {
     padding: 15px 20px;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     width: 100%;
     box-sizing: border-box;
   }
   
   .header-bar h1 {
-    font-size: 1rem;
+    font-size: 1.2rem;
     margin: 0;
     flex: 1;
     text-align: center;
@@ -1130,9 +1152,9 @@ body.dark-mode .feature-card p {
   }
   
   .header-bar .logo {
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
+    width: 50px;
+    height: 50px;
+    margin: 0;
     flex-shrink: 0;
   }
     -webkit-box-align: center;
@@ -1270,7 +1292,7 @@ body.dark-mode .feature-card p {
   }
   
   .feature-card p {
-    font-size: 1rem;
+    font-size: 1.2rem;
     line-height: 1.6;
     margin: 0 0 1.5rem 0;
   }
@@ -1279,7 +1301,7 @@ body.dark-mode .feature-card p {
     width: 100%;
     padding: 14px 20px;
     min-height: 48px;
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
   
   .feature-icon {
@@ -1308,7 +1330,7 @@ body.dark-mode .feature-card p {
   .btn {
     min-height: 44px;
     padding: 12px 20px;
-    font-size: 1rem;
+    font-size: 1.2rem;
     border-radius: 8px;
     transition: all 0.3s ease;
   }
@@ -1409,13 +1431,13 @@ body.dark-mode .feature-card p {
   }
   
   .hero-content p {
-    font-size: 1rem;
+    font-size: 1.2rem;
     line-height: 1.5;
   }
   
   .hero-actions .btn {
     padding: 14px 20px;
-    font-size: 1rem;
+    font-size: 1.2rem;
     min-height: 48px;
   }
   
@@ -1471,12 +1493,12 @@ body.dark-mode .feature-card p {
   }
   
   .welcome-section p {
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
   
   /* Extra Small Navigation */
   nav a {
-    font-size: 1rem;
+    font-size: 1.2rem;
     padding: 16px 20px;
     width: 85%;
     max-width: 280px;
@@ -1669,14 +1691,14 @@ body.dark-mode .feature-card p {
   .header-bar {
     padding: 15px 20px;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     width: 100%;
     box-sizing: border-box;
   }
   
   .header-bar h1 {
-    font-size: 1rem;
+    font-size: 1.2rem;
     margin: 0;
     flex: 1;
     text-align: center;
@@ -1686,9 +1708,9 @@ body.dark-mode .feature-card p {
   }
   
   .header-bar .logo {
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
+    width: 50px;
+    height: 50px;
+    margin: 0;
     flex-shrink: 0;
   }
 }
@@ -1758,7 +1780,7 @@ body.dark-mode .feature-card p {
   }
   
   .feature-card h3 {
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
   
   .feature-card p {
@@ -1888,7 +1910,7 @@ body.dark-mode .logout-btn:hover {
 
 .case-card::before {
   content: '';
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -3307,7 +3329,7 @@ body.dark-mode .report-preview {
 }
 
 .search-icon {
-  position: absolute;
+  position: fixed;
   right: 15px;
   color: #6b7280;
   font-size: 1.1rem;
@@ -3641,7 +3663,7 @@ body.dark-mode .form-textarea::placeholder {
 /* Cases Header */
 .cases-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     margin-bottom: 2rem;
     flex-wrap: wrap;
@@ -3738,7 +3760,7 @@ body.dark-mode .form-textarea::placeholder {
 .empty-state p {
     color: #6b7280;
     margin-bottom: 2rem;
-    font-size: 1rem;
+    font-size: 1.2rem;
     line-height: 1.6;
     max-width: 500px;
 }
@@ -3956,7 +3978,7 @@ body.dark-mode .form-textarea::placeholder {
     }
     
     .cta-content p {
-        font-size: 1rem;
+        font-size: 1.2rem;
     }
 }
 
@@ -4756,7 +4778,7 @@ body.dark-mode .action-card p {
 /* Theme Toggle and Hamburger - Match Main Site */
 .cases-hero ~ header .theme-toggle,
 .my-cases-hero ~ header .theme-toggle {
-    position: absolute;
+    position: fixed;
     right: 80px;
     top: 20px;
     background: none;
@@ -4783,7 +4805,7 @@ body.dark-mode .action-card p {
     border: none;
     cursor: pointer;
     padding: 5px;
-    position: absolute;
+    position: fixed;
     right: 20px;
     top: 20px;
     z-index: 1001;
@@ -4875,7 +4897,7 @@ body:has(.my-cases-hero) {
 
 .cases-hero .hero-subtitle,
 .my-cases-hero .hero-subtitle {
-    font-size: 1rem;
+    font-size: 1.2rem;
     margin-bottom: 2rem;
     opacity: 0.9;
     color: white;
@@ -5082,7 +5104,7 @@ body:has(.cases-hero) header .header-bar {
 
 /* Source badges for NamUs vs Local cases */
 .source-badge {
-    position: absolute;
+    position: fixed;
     top: 20px;
     right: 20px;
     padding: 4px 8px;
@@ -5266,7 +5288,7 @@ body:has(.cases-hero) header .header-bar {
 .cases-hero ~ .cases-header,
 .my-cases-hero ~ .cases-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     margin-bottom: 2rem;
     flex-wrap: wrap;
@@ -5360,7 +5382,7 @@ body:has(.cases-hero) header .header-bar {
     border: 2px solid #dc2626;
     font-weight: 700;
     padding: 1rem 2rem;
-    font-size: 1rem;
+    font-size: 1.2rem;
     transition: all 0.3s ease;
 }
 
@@ -5378,7 +5400,7 @@ body:has(.cases-hero) header .header-bar {
     border: 2px solid #dc2626;
     font-weight: 700;
     padding: 1rem 2rem;
-    font-size: 1rem;
+    font-size: 1.2rem;
     transition: all 0.3s ease;
 }
 
@@ -5695,7 +5717,7 @@ footer .footer-bottom p {
     
     footer .footer-section h3,
     footer .footer-section h4 {
-        font-size: 1rem;
+        font-size: 1.2rem;
     }
     
     footer .footer-section ul li a {
@@ -5798,7 +5820,7 @@ footer .footer-bottom p {
     
     .cases-hero .hero-subtitle,
     .my-cases-hero .hero-subtitle {
-        font-size: 1rem;
+        font-size: 1.2rem;
     }
     
     .cases-hero .hero-stats,
@@ -5851,7 +5873,7 @@ footer .footer-bottom p {
     
     .cases-hero ~ .cta-content p,
     .my-cases-hero ~ .cta-content p {
-        font-size: 1rem;
+        font-size: 1.2rem;
     }
     
     /* Hero responsive */
@@ -6179,7 +6201,7 @@ footer .footer-bottom p {
 
 /* Source badges for NamUs vs Local cases */
 .source-badge {
-  position: absolute;
+  position: fixed;
   top: 20px;
   right: 20px;
   padding: 4px 8px;

@@ -30,7 +30,7 @@
 
   
   <!-- CACHE-BUST VERSION: 20250128f - UNIFIED TRAFFIC LIGHT THEME -->
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20250127">
   <link rel="stylesheet" href="forms.css">
   <link rel="stylesheet" href="responsive.css">
   
@@ -204,30 +204,6 @@
       }
     });
 
-    // Dark Mode Theme Toggle
-    const themeToggle = document.getElementById('theme-toggle');
-    const body = document.body;
-    
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    if (currentTheme === 'dark') {
-      body.classList.add('dark-mode');
-      themeToggle.textContent = '🌙';
-      themeToggle.setAttribute('aria-pressed', 'true');
-    }
-    
-    themeToggle.addEventListener('click', function() {
-      body.classList.toggle('dark-mode');
-      
-      if (body.classList.contains('dark-mode')) {
-        localStorage.setItem('theme', 'dark');
-        themeToggle.textContent = '🌙';
-        themeToggle.setAttribute('aria-pressed', 'true');
-      } else {
-        localStorage.setItem('theme', 'light');
-        themeToggle.textContent = '☀️';
-        themeToggle.setAttribute('aria-pressed', 'false');
-      }
-    });
 
     // Service Worker Registration
     if ('serviceWorker' in navigator) {

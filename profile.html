@@ -1781,9 +1781,6 @@
       <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
     </nav>
     
-    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
-      ☀️
-    </button>
     
     <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-navigation">
       <span></span>
@@ -2210,18 +2207,6 @@
         </div>
       </div>
 
-      <!-- My Runners Management -->
-      <div class="profile-section my-cases-section">
-        <h2 class="section-title">
-          <span>🏃‍♂️</span>
-          My Runners
-          <button class="edit-btn" onclick="showCreateRunnerForm()" id="createRunnerBtn" style="display: none;">+ Add Runner</button>
-        </h2>
-        
-        <div id="myRunnersList">
-          <div class="loading">Loading your runners...</div>
-        </div>
-      </div>
 
       <!-- My Cases -->
       <div class="profile-section my-cases-section">
@@ -2682,8 +2667,7 @@
         document.getElementById('role').textContent = user.role || 'user';
         document.getElementById('memberSince').textContent = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown';
         
-        // Load runner and case data for management sections
-        loadUserRunners();
+        // Load case data for management sections
         loadUserCases();
         
         // Update edit form
@@ -2698,12 +2682,20 @@
       }
     }
 
-    // Load runner profile
+    // Load runner profile with optimized loading
     async function loadRunnerProfile() {
       try {
         const token = getAuthToken();
         if (!token) {
-          throw new Error('No authentication token');
+          console.warn('No authentication token available');
+          displayNoRunnerProfile();
+          return null;
+        }
+
+        // Show loading state
+        const container = document.getElementById('runnerProfileInfo');
+        if (container) {
+          container.innerHTML = '<div class="loading">Loading runner profile...</div>';
         }
 
         // Try to get the user's specific runner profile first
@@ -2722,27 +2714,9 @@
           displayNoRunnerProfile();
           return null;
         } else {
-          // Fallback to general runners endpoint
-          const fallbackResponse = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-
-          if (fallbackResponse.ok) {
-            const runners = await fallbackResponse.json();
-            if (runners && runners.length > 0) {
-              const runnerData = runners[0];
-              displayRunnerProfile(runnerData);
-              return runnerData;
-            } else {
-              displayNoRunnerProfile();
-              return null;
-            }
-          } else {
-            displayNoRunnerProfile();
-            return null;
-          }
+          console.warn('Failed to load runner profile, status:', response.status);
+          displayNoRunnerProfile();
+          return null;
         }
 
       } catch (error) {
@@ -2934,175 +2908,8 @@
       }
     }
 
-    // Load user's runners
-    async function loadUserRunners() {
-      try {
-        const token = getAuthToken();
-        if (!token) {
-          throw new Error('No authentication token');
-        }
 
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
 
-        if (response.ok) {
-          const result = await response.json();
-          const runners = result.runners || result.data || result;
-          displayUserRunners(runners);
-        } else {
-          displayNoRunners();
-        }
-
-      } catch (error) {
-        console.error('Error loading user runners:', error);
-        displayNoRunners();
-      }
-    }
-
-    // Display user runners
-    function displayUserRunners(runners) {
-      const container = document.getElementById('myRunnersList');
-      const createBtn = document.getElementById('createRunnerBtn');
-
-      if (runners.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-state-icon">🏃‍♂️</div>
-            <h3>No Runners Yet</h3>
-            <p>You haven't created any runner profiles yet. Create one to get started with case tracking.</p>
-            <button class="btn btn-primary" onclick="showCreateRunnerForm()">
-              🏃‍♂️ Create Runner Profile
-            </button>
-          </div>
-        `;
-        createBtn.style.display = 'none';
-        return;
-      }
-
-      createBtn.style.display = 'block';
-
-      container.innerHTML = `
-        <div class="quick-actions">
-          <div class="quick-actions-title">Quick Actions</div>
-          <div class="quick-actions-grid">
-            <button class="quick-action-btn" onclick="showCreateRunnerForm()">
-              <span class="quick-action-icon">➕</span>
-              Add New Runner
-            </button>
-            <button class="quick-action-btn" onclick="refreshRunners()">
-              <span class="quick-action-icon">🔄</span>
-              Refresh Data
-            </button>
-            <button class="quick-action-btn" onclick="exportRunners()">
-              <span class="quick-action-icon">📊</span>
-              Export Data
-            </button>
-          </div>
-        </div>
-        ${runners.map(runner => createRunnerCard(runner)).join('')}
-      `;
-    }
-
-    // Create runner card HTML
-    function createRunnerCard(runner) {
-      const statusClass = `runner-status-${runner.status?.toLowerCase() || 'active'}`;
-      const lastUpdated = runner.updatedAt ? new Date(runner.updatedAt).toLocaleDateString() : 'Never';
-      const photos = runner.additionalImageUrls || [];
-      
-      return `
-        <div class="runner-card" data-runner-id="${runner.id}">
-          <div class="runner-card-header">
-            <div class="runner-card-title">
-              <span>🏃‍♂️</span>
-              ${runner.name || `${runner.firstName || ''} ${runner.lastName || ''}`.trim() || 'Unnamed Runner'}
-            </div>
-            <div class="runner-card-actions">
-              <span class="runner-status-badge ${statusClass}">${runner.status || 'Active'}</span>
-            </div>
-          </div>
-          
-          <div class="runner-card-info">
-            <div class="runner-info-item">
-              <span class="runner-info-label">Age</span>
-              <span class="runner-info-value">${runner.age || 'Not specified'}</span>
-            </div>
-            <div class="runner-info-item">
-              <span class="runner-info-label">Gender</span>
-              <span class="runner-info-value">${runner.gender || 'Not specified'}</span>
-            </div>
-            <div class="runner-info-item">
-              <span class="runner-info-label">Status</span>
-              <span class="runner-info-value">${runner.isActive ? 'Active' : 'Inactive'}</span>
-            </div>
-            <div class="runner-info-item">
-              <span class="runner-info-label">Profile Complete</span>
-              <span class="runner-info-value">${runner.isProfileComplete ? 'Yes' : 'No'}</span>
-            </div>
-            <div class="runner-info-item">
-              <span class="runner-info-label">Location</span>
-              <span class="runner-info-value">${runner.preferredRunningLocations || 'Not specified'}</span>
-            </div>
-            <div class="runner-info-item">
-              <span class="runner-info-label">Running Times</span>
-              <span class="runner-info-value">${runner.typicalRunningTimes || 'Not specified'}</span>
-            </div>
-          </div>
-          
-          ${photos.length > 0 ? `
-            <div class="runner-card-photos">
-              <div class="runner-photos-preview">
-                ${photos.slice(0, 3).map(photo => `
-                  <img src="${photo}" alt="Runner photo" class="runner-photo-thumb" onclick="viewPhoto('${photo}')">
-                `).join('')}
-                ${photos.length > 3 ? `
-                  <div class="runner-photos-count" onclick="viewAllPhotos(${runner.id})">
-                    +${photos.length - 3}
-                  </div>
-                ` : ''}
-              </div>
-            </div>
-          ` : ''}
-          
-          <div class="runner-card-footer">
-            <div class="runner-last-updated">
-              Last updated: ${lastUpdated}
-            </div>
-            <div class="runner-actions">
-              <button class="btn-view" onclick="viewRunner(${runner.id})">
-                👁️ View
-              </button>
-              <button class="btn-edit" onclick="editRunner(${runner.id})">
-                ✏️ Edit
-              </button>
-              <button class="btn-delete" onclick="deleteRunner(${runner.id})">
-                🗑️ Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    // Display no runners message
-    function displayNoRunners() {
-      const container = document.getElementById('myRunnersList');
-      const createBtn = document.getElementById('createRunnerBtn');
-      
-      container.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-state-icon">🏃‍♂️</div>
-          <h3>No Runners Found</h3>
-          <p>Unable to load your runners. Please try again or create a new runner profile.</p>
-          <button class="btn btn-primary" onclick="showCreateRunnerForm()">
-            🏃‍♂️ Create Runner Profile
-          </button>
-        </div>
-      `;
-      createBtn.style.display = 'block';
-    }
 
     // Load user's case status
     async function loadUserCases() {
@@ -3309,76 +3116,6 @@
       }
     }
 
-    // Runner management functions
-    function refreshRunners() {
-      loadUserRunners();
-    }
-
-    function exportRunners() {
-      if (!window.runnersData || window.runnersData.length === 0) {
-        alert('No runner data to export');
-        return;
-      }
-      
-      const csv = convertToCSV(window.runnersData);
-      downloadCSV(csv, 'my-runners.csv');
-    }
-
-    function viewPhoto(url) {
-      window.open(url, '_blank');
-    }
-
-    function viewAllPhotos(runnerId) {
-      const runner = window.runnersData?.find(r => r.id === runnerId);
-      if (runner && runner.additionalImageUrls && runner.additionalImageUrls.length > 0) {
-        // Open first photo in new tab
-        window.open(runner.additionalImageUrls[0], '_blank');
-      } else {
-        alert('No photos available for this runner');
-      }
-    }
-
-    function viewRunner(runnerId) {
-      // Navigate to runner details page or show modal
-      window.location.href = `runner-details.html?id=${runnerId}`;
-    }
-
-    function editRunner(runnerId) {
-      // Navigate to edit runner page or show edit form
-      window.location.href = `edit-runner.html?id=${runnerId}`;
-    }
-
-    function deleteRunner(runnerId) {
-      if (!confirm('Are you sure you want to delete this runner? This action cannot be undone.')) {
-        return;
-      }
-
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert('Please log in to delete runners');
-        return;
-      }
-
-      fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner/${runnerId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      })
-      .then(response => {
-        if (response.ok) {
-          alert('Runner deleted successfully');
-          loadUserRunners(); // Refresh the list
-        } else {
-          throw new Error('Failed to delete runner');
-        }
-      })
-      .catch(error => {
-        console.error('Error deleting runner:', error);
-        alert('Failed to delete runner. Please try again.');
-      });
-    }
 
     // Case management functions
     function refreshCases() {
@@ -4509,28 +4246,50 @@
       showMessage('info', 'Individual photo removal not yet implemented. Please use "Remove All Photos" for now.');
     }
 
-    // Initialize profile
+    // Initialize profile with optimized loading
+    let isInitializing = false;
     document.addEventListener('DOMContentLoaded', async function() {
-      // Check authentication first
-      if (!authUtils.requireAuth()) {
+      // Prevent multiple simultaneous initializations
+      if (isInitializing) {
+        console.warn('Profile initialization already in progress');
         return;
       }
       
-      // Load user's profile image from server
-      await loadUserProfileImage();
+      isInitializing = true;
       
-      await loadConfig();
-      loadUserProfile();
-      await loadRunnerProfile();
-      await loadUserCases();
-      await loadUserProfileData();
-      setupImageUpload();
-      setupRunnerPhotoUpload();
-      setupRealTimeValidation();
-      
-      // Skip SignalR initialization to prevent console errors
-      // Real-time notifications can be added back later when backend is stable
-      updateConnectionStatus('disconnected', 'Real-time notifications disabled');
+      try {
+        // Check authentication first
+        if (!authUtils.requireAuth()) {
+          return;
+        }
+        
+        // Load configuration first
+        await loadConfig();
+        
+        // Load user profile data (this includes user info)
+        await loadUserProfileData();
+        
+        // Load runner profile
+        await loadRunnerProfile();
+        
+        // Load user cases
+        await loadUserCases();
+        
+        // Setup UI components
+        setupImageUpload();
+        setupRunnerPhotoUpload();
+        setupRealTimeValidation();
+        
+        // Skip SignalR initialization to prevent console errors
+        // Real-time notifications can be added back later when backend is stable
+        updateConnectionStatus('disconnected', 'Real-time notifications disabled');
+        
+      } catch (error) {
+        console.error('Error during profile initialization:', error);
+        authUtils.showToast('Failed to load profile data', 'error');
+      } finally {
+        isInitializing = false;
+      }
     });
 
     // Cleanup SignalR connection on page unload
