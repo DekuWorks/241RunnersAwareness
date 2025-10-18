@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Map - 241 Runners Awareness</title>
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏃</text></svg>">
     <!-- Google Maps API - Will be loaded dynamically with API key -->
     <script>
         // Load Google Maps API with configured key
@@ -81,6 +82,52 @@
     <script src="assets/js/config.js?v=20250905"></script>
     <script src="google-maps-config.js?v=20250905"></script>
     <style>
+        /* Page Navigation Styles */
+        .page-navigation {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .home-btn {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+        
+        .home-btn:hover {
+            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+        }
+        
+        .back-btn:hover {
+            background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(107, 114, 128, 0.4);
+        }
+        
         /* Enhanced Google Maps Styles */
         #map {
             height: 75vh;
@@ -508,6 +555,14 @@
         <div class="dashboard-container">
             <div class="map-container">
                 <div class="welcome-section">
+                    <div class="page-navigation">
+                        <a href="index.html" class="nav-btn home-btn">
+                            🏠 Home
+                        </a>
+                        <button onclick="history.back()" class="nav-btn back-btn">
+                            ← Back
+                        </button>
+                    </div>
                     <h2>🗺️ Interactive Map Dashboard</h2>
                     <p>Real-time tracking of missing persons cases and community safety incidents in your area.</p>
                     <div class="realtime-indicator">
