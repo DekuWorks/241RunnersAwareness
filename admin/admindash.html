@@ -3126,6 +3126,73 @@
             overflow-x: auto;
             max-height: none; /* Remove any height restrictions */
             min-height: 200px; /* Ensure minimum height */
+            width: 100%; /* Ensure full width */
+        }
+        
+        .cases-table {
+            width: 100%;
+            min-width: 800px; /* Ensure minimum width for all columns */
+            table-layout: auto; /* Allow flexible column sizing */
+        }
+        
+        .cases-table th,
+        .cases-table td {
+            padding: 12px 8px; /* Reduce padding to fit more content */
+            white-space: nowrap; /* Prevent text wrapping */
+            min-width: 80px; /* Ensure minimum column width */
+        }
+        
+        .cases-table th:nth-child(1), /* Case ID */
+        .cases-table td:nth-child(1) {
+            width: 80px;
+            min-width: 80px;
+        }
+        
+        .cases-table th:nth-child(2), /* Runner */
+        .cases-table td:nth-child(2) {
+            width: 120px;
+            min-width: 120px;
+        }
+        
+        .cases-table th:nth-child(3), /* Status */
+        .cases-table td:nth-child(3) {
+            width: 100px;
+            min-width: 100px;
+        }
+        
+        .cases-table th:nth-child(4), /* Priority */
+        .cases-table td:nth-child(4) {
+            width: 100px;
+            min-width: 100px;
+        }
+        
+        .cases-table th:nth-child(5), /* Created */
+        .cases-table td:nth-child(5) {
+            width: 120px;
+            min-width: 120px;
+        }
+        
+        .cases-table th:nth-child(6), /* Last Updated */
+        .cases-table td:nth-child(6) {
+            width: 120px;
+            min-width: 120px;
+        }
+        
+        /* Responsive design for case table */
+        @media (max-width: 1200px) {
+            .cases-table-wrapper {
+                overflow-x: scroll; /* Force horizontal scroll on smaller screens */
+            }
+            
+            .cases-table {
+                min-width: 900px; /* Ensure table is wide enough */
+            }
+        }
+        
+        /* Ensure the case management section takes full width */
+        .management-section {
+            width: 100%;
+            max-width: none;
         }
         
         .runners-table, .cases-table {
@@ -3176,6 +3243,8 @@
             border: 1px solid #e2e8f0;
             overflow: hidden;
             min-height: 300px; /* Ensure adequate height for cases */
+            width: 100%; /* Ensure full width */
+            max-width: none; /* Remove width restrictions */
         }
         
         /* Analytics Styles */
