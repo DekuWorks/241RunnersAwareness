@@ -5796,6 +5796,8 @@
             window.API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
         }
         
+        console.log('🔧 Admin Dashboard API_BASE_URL:', window.API_BASE_URL);
+        
         // Browser compatibility checks
         const isModernBrowser = (() => {
             try {
@@ -7059,6 +7061,27 @@
                 console.log('📡 Users API URL:', `${apiUrl}/Admin/users`);
                 console.log('🔑 Using token:', token ? `Present (length: ${token.length})` : 'Missing');
                 
+                const response = await fetch(`${apiUrl}/Admin/users`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                console.log('📡 Users API Response Status:', response.status);
+                
+                if (response.ok) {
+                    const usersData = await response.json();
+                    console.log('📡 Users Data Received:', usersData);
+                    return usersData;
+                } else {
+                    console.error('📡 Users API Error:', response.status, response.statusText);
+                    const errorText = await response.text();
+                    console.error('📡 Users API Error Details:', errorText);
+                    return [];
+                }
+                
                 // Test API connectivity first
                 console.log('🧪 Testing API connectivity...');
                 try {
@@ -7159,6 +7182,7 @@
                     
                     // Show connection status
                     updateConnectionStatus(false, false);
+                    console.log('❌ Connection failed - no data received from API');
                 }
             } catch (error) {
                 console.error('❌ Error loading users:', error);
@@ -12573,6 +12597,8 @@
         function updateConnectionStatus(isConnected, isPolling = false) {
             const statusElement = document.getElementById('connectionStatus');
             const textElement = document.getElementById('connectionText');
+            
+            console.log('🔌 Updating connection status:', { isConnected, isPolling });
             
             if (statusElement && textElement) {
                 if (isConnected) {
