@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://241runnersawareness.org/forms.css">
   <link rel="stylesheet" href="responsive.css">
-  <script src="/js/auth-utils.js?v=20250905" defer></script>
+  <script src="/js/auth-utils.js?v=20251018" defer></script>
   <!-- SignalR Client Library -->
   <script src="https://unpkg.com/@microsoft/signalr@latest/dist/browser/signalr.min.js"></script>
   <style>
@@ -4275,8 +4275,20 @@
       try {
         // Check if user is authenticated
         const authData = localStorage.getItem('ra_auth');
+        console.log('Auth data from localStorage:', authData);
         if (!authData) {
           console.log('No auth data found, redirecting to login');
+          window.location.href = 'login.html';
+          return;
+        }
+        
+        // Parse and check auth data
+        try {
+          const auth = JSON.parse(authData);
+          console.log('Parsed auth data:', auth);
+          console.log('Token exists:', !!auth.token);
+        } catch (error) {
+          console.error('Error parsing auth data:', error);
           window.location.href = 'login.html';
           return;
         }
