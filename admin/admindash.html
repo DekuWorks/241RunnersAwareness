@@ -6975,28 +6975,53 @@
                 ]);
                 
                 console.log('📊 STEP 4: Parallel loading completed, processing results...');
-                    
-                    // Handle results
-                    if (usersData.status === 'fulfilled') {
-                        console.log('Users loaded:', dashboardData.users ? dashboardData.users.length : 'undefined');
-                    } else {
-                        console.error('Users load failed:', usersData.reason);
+                
+                // Validate and log all data after loading
+                console.log('📊 STEP 5: Validating loaded data...');
+                console.log('📊 Final dashboard data state:', {
+                    users: dashboardData.users ? dashboardData.users.length : 'undefined',
+                    runners: dashboardData.runners ? dashboardData.runners.length : 'undefined', 
+                    admins: dashboardData.admins ? dashboardData.admins.length : 'undefined',
+                    publicCases: dashboardData.publicCases ? dashboardData.publicCases.length : 'undefined',
+                    systemStatus: dashboardData.systemStatus || 'undefined'
+                });
+                
+                // Ensure all data arrays are properly initialized
+                if (!dashboardData.users) dashboardData.users = [];
+                if (!dashboardData.runners) dashboardData.runners = [];
+                if (!dashboardData.admins) dashboardData.admins = [];
+                if (!dashboardData.publicCases) dashboardData.publicCases = [];
+                
+                // Handle results and validate data integrity
+                if (usersData.status === 'fulfilled') {
+                    console.log('✅ Users loaded successfully:', dashboardData.users.length, 'users');
+                    if (dashboardData.users.length === 0) {
+                        console.warn('⚠️ No users found - this may indicate an API issue');
                     }
-                    
-                    if (runnersData.status === 'fulfilled') {
-                        console.log('Runners loaded:', dashboardData.runners.length);
-                    } else {
-                        console.error('Runners load failed:', runnersData.reason);
+                } else {
+                    console.error('❌ Users load failed:', usersData.reason);
+                    dashboardData.users = [];
+                }
+                
+                if (runnersData.status === 'fulfilled') {
+                    console.log('✅ Runners loaded successfully:', dashboardData.runners.length, 'runners');
+                } else {
+                    console.error('❌ Runners load failed:', runnersData.reason);
+                    dashboardData.runners = [];
+                }
+                
+                if (adminsData.status === 'fulfilled') {
+                    console.log('✅ Admins loaded successfully:', dashboardData.admins.length, 'admins');
+                    if (dashboardData.admins.length === 0) {
+                        console.warn('⚠️ No admins found - this may indicate an API issue');
                     }
-                    
-                    if (adminsData.status === 'fulfilled') {
-                        console.log('Admins loaded:', dashboardData.admins ? dashboardData.admins.length : 'undefined');
-                    } else {
-                        console.error('Admins load failed:', adminsData.reason);
-                    }
-                    
-                    if (publicCasesData.status === 'fulfilled') {
-                        console.log('Public cases loaded:', dashboardData.publicCases.length);
+                } else {
+                    console.error('❌ Admins load failed:', adminsData.reason);
+                    dashboardData.admins = [];
+                }
+                
+                if (publicCasesData.status === 'fulfilled') {
+                    console.log('✅ Public cases loaded successfully:', dashboardData.publicCases.length, 'cases');
                     } else {
                         console.error('Public cases load failed:', publicCasesData.reason);
                     }
@@ -7455,11 +7480,13 @@
             }
         }
         
-        function updateDashboardUI() {
-            console.log('Updating dashboard UI...');
+        // Data validation function
+        function validateDashboardData() {
+            console.log('🔍 Validating dashboard data integrity...');
             
             // Ensure dashboardData is initialized
             if (!dashboardData) {
+                console.warn('⚠️ dashboardData is null, initializing...');
                 dashboardData = {
                     users: [],
                     runners: [],
@@ -7468,6 +7495,90 @@
                     systemStatus: 'loading'
                 };
             }
+            
+            // Validate each data array
+            const validation = {
+                users: {
+                    exists: Array.isArray(dashboardData.users),
+                    count: dashboardData.users ? dashboardData.users.length : 0,
+                    valid: Array.isArray(dashboardData.users) && dashboardData.users.length >= 0
+                },
+                runners: {
+                    exists: Array.isArray(dashboardData.runners),
+                    count: dashboardData.runners ? dashboardData.runners.length : 0,
+                    valid: Array.isArray(dashboardData.runners) && dashboardData.runners.length >= 0
+                },
+                admins: {
+                    exists: Array.isArray(dashboardData.admins),
+                    count: dashboardData.admins ? dashboardData.admins.length : 0,
+                    valid: Array.isArray(dashboardData.admins) && dashboardData.admins.length >= 0
+                },
+                publicCases: {
+                    exists: Array.isArray(dashboardData.publicCases),
+                    count: dashboardData.publicCases ? dashboardData.publicCases.length : 0,
+                    valid: Array.isArray(dashboardData.publicCases) && dashboardData.publicCases.length >= 0
+                }
+            };
+            
+            console.log('📊 Data validation results:', validation);
+            
+            // Fix any invalid data
+            if (!validation.users.valid) {
+                console.warn('⚠️ Fixing invalid users data');
+                dashboardData.users = [];
+            }
+            if (!validation.runners.valid) {
+                console.warn('⚠️ Fixing invalid runners data');
+                dashboardData.runners = [];
+            }
+            if (!validation.admins.valid) {
+                console.warn('⚠️ Fixing invalid admins data');
+                dashboardData.admins = [];
+            }
+            if (!validation.publicCases.valid) {
+                console.warn('⚠️ Fixing invalid publicCases data');
+                dashboardData.publicCases = [];
+            }
+            
+            return validation;
+        }
+
+        // Force reload all data function
+        async function forceReloadAllData() {
+            console.log('🔄 Force reloading all dashboard data...');
+            
+            try {
+                // Clear existing data
+                dashboardData.users = [];
+                dashboardData.runners = [];
+                dashboardData.admins = [];
+                dashboardData.publicCases = [];
+                
+                // Reload all data
+                await Promise.allSettled([
+                    loadUsers(),
+                    loadRunners(), 
+                    loadAdmins(),
+                    loadPublicCases()
+                ]);
+                
+                // Validate and update UI
+                validateDashboardData();
+                updateDashboardUI();
+                
+                console.log('✅ Force reload completed');
+                showToast('All data reloaded successfully', 'success', 3000);
+            } catch (error) {
+                console.error('❌ Force reload failed:', error);
+                showToast('Failed to reload data', 'error', 3000);
+            }
+        }
+
+        function updateDashboardUI() {
+            console.log('Updating dashboard UI...');
+            
+            // Validate data before updating UI
+            validateDashboardData();
             
             // Update statistics with safe fallbacks
             const totalUsers = dashboardData.users ? dashboardData.users.length : 0;
@@ -12575,7 +12686,10 @@
         async function refreshDashboard() {
             console.log('Manual refresh triggered...');
             showToast('Refreshing dashboard...', 'info', 2000);
-            await loadDashboardData();
+            
+            // Use force reload with validation
+            await forceReloadAllData();
+            
             showToast('Dashboard refreshed!', 'success', 3000);
         }
         
