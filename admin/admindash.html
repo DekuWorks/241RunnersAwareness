@@ -3122,6 +3122,12 @@
             overflow-x: auto;
         }
         
+        .cases-table-wrapper {
+            overflow-x: auto;
+            max-height: none; /* Remove any height restrictions */
+            min-height: 200px; /* Ensure minimum height */
+        }
+        
         .runners-table, .cases-table {
             width: 100%;
             border-collapse: collapse;
@@ -3169,6 +3175,7 @@
             border-radius: 8px;
             border: 1px solid #e2e8f0;
             overflow: hidden;
+            min-height: 300px; /* Ensure adequate height for cases */
         }
         
         /* Analytics Styles */
@@ -7492,6 +7499,9 @@
             
             // Update users table
             updateUsersTable();
+            
+            // Update admins table
+            updateAdminsTable();
         }
         
         function updateUsersTable() {
@@ -7550,6 +7560,64 @@
             }).join('');
             
             tbody.innerHTML = usersHTML;
+        }
+        
+        function updateAdminsTable() {
+            const tbody = document.getElementById('adminsTableBody');
+            if (!tbody) return;
+            
+            if (dashboardData.admins.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center text-gray-500">No admins found</td></tr>';
+                return;
+            }
+            
+            const adminsHTML = dashboardData.admins.map(admin => {
+                const initials = `${admin.firstName.charAt(0)}${admin.lastName.charAt(0)}`;
+                const fullName = `${admin.firstName} ${admin.lastName}`;
+                const isActive = admin.isActive !== false;
+                const lastLogin = admin.lastLoginAt ? new Date(admin.lastLoginAt).toLocaleDateString() : 'Never';
+                const created = admin.createdAt ? new Date(admin.createdAt).toLocaleDateString() : 'N/A';
+                
+                return `
+                    <tr data-admin-id="${admin.id}">
+                        <td>
+                            <input type="checkbox" onchange="toggleAdminSelection(this)">
+                        </td>
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">${initials}</div>
+                                <div class="user-details">
+                                    <h4>${fullName}</h4>
+                                    <p>ID: ${admin.id}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${admin.email}</td>
+                        <td>
+                            <span class="role-badge role-admin">Admin</span>
+                        </td>
+                        <td>
+                            <span class="status-badge status-${isActive ? 'active' : 'inactive'}">
+                                ${isActive ? 'Active' : 'Inactive'}
+                            </span>
+                        </td>
+                        <td>${lastLogin}</td>
+                        <td>${created}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-primary" onclick="editAdmin('${admin.id}')">
+                                    <span class="btn-icon">✏️</span>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteAdmin('${admin.id}')">
+                                    <span class="btn-icon">🗑️</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = adminsHTML;
         }
         
         function editUser(userId) {
