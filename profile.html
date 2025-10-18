@@ -3554,6 +3554,14 @@
         const token = getAuthToken();
         
         // Add UserId to the data
+        if (!currentUser || !currentUser.id) {
+          console.error('currentUser not loaded yet, attempting to load...');
+          await loadUserProfileData();
+          if (!currentUser || !currentUser.id) {
+            showMessage('error', 'Please refresh the page and try again. User data not loaded.');
+            return;
+          }
+        }
         data.userId = currentUser.id;
         
         // Convert age to dateOfBirth if needed
@@ -3582,6 +3590,8 @@
           eyeColor: data.eyeColor,
           userId: currentUser.id
         };
+        
+        console.log('Sending runner profile data:', apiData);
         
         // Check if runner profile already exists
         let existingRunner = null;
@@ -3624,6 +3634,7 @@
         
         if (response.ok) {
           const result = await response.json();
+          console.log('Runner profile save successful:', result);
           
           // Update current user with runner ID if it's a new profile
           if (!currentUser.runnerId && result.id) {
@@ -4814,71 +4825,12 @@
       }
     }
 
-    /**
-     * Handle runner profile form submission
-     */
-    async function handleRunnerProfileUpdate(event) {
-      event.preventDefault();
-      
-      const formData = new FormData(event.target);
-      const data = {
-        name: formData.get('name'),
-        dateOfBirth: formData.get('dateOfBirth'),
-        gender: formData.get('gender'),
-        status: formData.get('status'),
-        physicalDescription: formData.get('physicalDescription'),
-        medicalConditions: formData.get('medicalConditions'),
-        preferredRunningLocations: formData.get('preferredRunningLocations'),
-        typicalRunningTimes: formData.get('typicalRunningTimes')
-      };
+    // Note: Runner profile form submission is handled by the event listener at line 3547
+    // This duplicate function has been removed to prevent conflicts
 
-      try {
-        // Check if this is a new runner or update
-        const isNewRunner = !currentUser || !currentUser.runnerProfile;
-        const endpoint = isNewRunner ? '/v1.0/Runner' : '/v1.0/Runner/me';
-        const method = isNewRunner ? 'POST' : 'PUT';
-
-        const response = await authUtils.apiRequest(endpoint, {
-          method: method,
-          body: JSON.stringify(data)
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          
-          // Reload runner profile
-          await loadRunnerProfile();
-          
-          // Hide form
-          toggleEditForm('runnerProfile');
-          
-          authUtils.showToast(
-            isNewRunner ? 'Runner profile created successfully!' : 'Runner profile updated successfully!', 
-            'success'
-          );
-        } else {
-          const error = await response.json();
-          authUtils.showToast(`Failed to ${isNewRunner ? 'create' : 'update'} runner profile: ${error.message}`, 'error');
-        }
-      } catch (error) {
-        console.error('Error updating runner profile:', error);
-        authUtils.showToast('Failed to update runner profile. Please try again.', 'error');
-      }
-    }
-
-    // Add event listeners for forms
-    document.addEventListener('DOMContentLoaded', function() {
-      const personalForm = document.getElementById('updatePersonalForm');
-      const runnerForm = document.getElementById('updateRunnerForm');
-      
-      if (personalForm) {
-        personalForm.addEventListener('submit', handlePersonalInfoUpdate);
-      }
-      
-      if (runnerForm) {
-        runnerForm.addEventListener('submit', handleRunnerProfileUpdate);
-      }
-    });
+    // Note: Event listeners are already set up inline in the HTML
+    // Personal form: handled by handlePersonalInfoUpdate function
+    // Runner form: handled by inline event listener at line 3547
   </script>
 </body>
 </html>
