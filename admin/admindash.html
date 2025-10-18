@@ -6107,7 +6107,8 @@
                 console.log('🏃‍♂️ Loading runners data...');
                 
                 // Load runner statistics
-                const statsResponse = await fetch('/api/v1.0/Runner/admin/statistics', {
+                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
+                const statsResponse = await fetch(`${apiBaseUrl}/Runner/admin/statistics`, {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
                     }
@@ -6119,7 +6120,7 @@
                 }
                 
                 // Load runners list
-                const response = await fetch('/api/v1.0/Runner/admin/search', {
+                const response = await fetch(`${apiBaseUrl}/Runner/admin/search`, {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
                     }
@@ -6283,7 +6284,8 @@
                 console.log('📋 Loading cases data...');
                 
                 // Load case statistics
-                const statsResponse = await fetch('/api/v1.0/cases/admin/statistics', {
+                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
+                const statsResponse = await fetch(`${apiBaseUrl}/cases/admin/statistics`, {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
                     }
@@ -6295,7 +6297,7 @@
                 }
                 
                 // Load cases list
-                const response = await fetch('/api/v1.0/cases/admin/search', {
+                const response = await fetch(`${apiBaseUrl}/cases/admin/search`, {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
                     }
@@ -6435,7 +6437,8 @@
                 console.log('📊 Loading analytics data...');
                 
                 // Load KPIs
-                const kpisResponse = await fetch('/api/v1.0/Analytics/kpis', {
+                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
+                const kpisResponse = await fetch(`${apiBaseUrl}/Analytics/kpis`, {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
                     }
@@ -6447,7 +6450,7 @@
                 }
                 
                 // Load insights
-                const insightsResponse = await fetch('/api/v1.0/Analytics/insights', {
+                const insightsResponse = await fetch(`${apiBaseUrl}/Analytics/insights`, {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
                     }
@@ -12703,8 +12706,8 @@
                 
                 realTimeConnection = new signalR.HubConnectionBuilder()
                     .withUrl(hubUrl, {
-                        transport: signalR.HttpTransportType.WebSockets,
-                        skipNegotiation: false, // Allow negotiation for proper WebSocket setup
+                        transport: signalR.HttpTransportType.LongPolling, // Use LongPolling for better compatibility
+                        skipNegotiation: false, // Allow negotiation for proper setup
                         accessTokenFactory: () => {
                             // Use consistent token keys matching mobile app and realtime.js
                             const currentToken = storage.get('ra_admin_token') || storage.get('jwtToken') || storage.get('241runners_access_token');
