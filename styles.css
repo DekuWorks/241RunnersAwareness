@@ -1638,60 +1638,129 @@ body.dark-mode .feature-card p {
   }
 }
 
-/* Mobile Navigation Fix - Ensure proper mobile responsiveness */
+/* Mobile Navigation Improvements */
 @media (max-width: 768px) {
-  /* Hide navigation by default on mobile */
+  .hamburger {
+    display: block;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1001;
+    padding: 8px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+  }
+  
+  .hamburger:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: scale(1.05);
+  }
+  
+  .theme-toggle {
+    right: 80px;
+    top: 20px;
+    position: fixed;
+    z-index: 1001;
+    padding: 8px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+  }
+  
+  .theme-toggle:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: scale(1.05);
+  }
+  
   nav {
-    display: none;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-transition: left 0.3s ease;
+    -moz-transition: left 0.3s ease;
+    -o-transition: left 0.3s ease;
+    transition: left 0.3s ease;
+    z-index: 1000;
+    padding: 2rem 0;
   }
   
-  /* Show navigation when active */
   nav.active {
+    left: 0;
+  }
+  
+  nav a {
+    font-size: 1.4rem;
+    padding: 18px 24px;
+    margin: 8px 0;
+    border-radius: 12px;
+    text-align: center;
+    min-height: 44px;
     display: flex;
-  }
-  
-  /* Ensure header doesn't overflow */
-  header {
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    width: 80%;
+    max-width: 300px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    white-space: nowrap;
     overflow: hidden;
-    width: 100%;
-    max-width: 100vw;
+    text-overflow: ellipsis;
   }
   
-  /* Prevent content from being cut off */
-  body {
-    overflow-x: hidden;
-    width: 100%;
-    max-width: 100vw;
+  nav a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
   }
   
-  /* Ensure main content is properly contained */
-  main {
-    width: 100%;
-    max-width: 100vw;
-    overflow-x: hidden;
-    padding: 0;
-    margin: 0;
+  nav a:active {
+    transform: scale(0.98);
   }
   
-  /* Fix any content that might overflow */
-  .hero-content,
-  .welcome-section,
-  .features-section {
+  /* Mobile header adjustments */
+  .header-bar {
+    padding: 15px 20px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     width: 100%;
-    max-width: 100vw;
-    padding-left: 20px;
-    padding-right: 20px;
     box-sizing: border-box;
   }
   
-  /* Ensure text doesn't get cut off */
-  .hero-content h2,
-  .hero-content p,
-  .welcome-section h2,
-  .welcome-section p {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    hyphens: auto;
+  .header-bar h1 {
+    font-size: 1.2rem;
+    margin: 0;
+    flex: 1;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .header-bar .logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    flex-shrink: 0;
   }
 }
 

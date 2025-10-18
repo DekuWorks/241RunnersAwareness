@@ -210,17 +210,11 @@ textarea:focus {
 @media (max-width: 767px) {
     body {
         font-size: 14px;
-        overflow-x: hidden;
-        width: 100%;
-        max-width: 100vw;
     }
     
     .container,
     .main-content {
         padding: 5px;
-        width: 100%;
-        max-width: 100vw;
-        overflow-x: hidden;
     }
     
     .navbar-nav,
@@ -233,53 +227,17 @@ textarea:focus {
     .form-container,
     .form-wrapper {
         padding: 10px;
-        width: 100%;
-        max-width: 100vw;
-        box-sizing: border-box;
     }
     
     .grid {
         grid-template-columns: 1fr;
         gap: 10px;
-        width: 100%;
-        max-width: 100vw;
     }
     
     .card,
     .card-container {
         padding: 10px;
         margin: 5px 0;
-        width: 100%;
-        max-width: 100vw;
-        box-sizing: border-box;
-    }
-    
-    /* Fix mobile navigation */
-    nav {
-        display: none;
-    }
-    
-    nav.active {
-        display: flex;
-    }
-    
-    /* Ensure header is properly contained */
-    header {
-        width: 100%;
-        max-width: 100vw;
-        overflow: hidden;
-    }
-    
-    /* Fix any text overflow issues */
-    h1, h2, h3, h4, h5, h6 {
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        hyphens: auto;
-    }
-    
-    p, span, div {
-        word-wrap: break-word;
-        overflow-wrap: break-word;
     }
     
     .btn,
