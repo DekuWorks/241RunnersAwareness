@@ -36,9 +36,9 @@ nav {
 .navbar-nav,
 .nav-links {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: center;
-    gap: 10px;
+    gap: 0.5rem;
 }
 
 /* Form responsive design */
