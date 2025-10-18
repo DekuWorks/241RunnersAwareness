@@ -7071,7 +7071,8 @@
                 console.log('📡 Users API URL:', `${apiUrl}/Admin/users`);
                 console.log('🔑 Using token:', token ? `Present (length: ${token.length})` : 'Missing');
                 
-                const response = await fetch(`${apiUrl}/Admin/users`, {
+                // Try authenticated endpoint first, fallback to debug endpoint
+                let response = await fetch(`${apiUrl}/Admin/users`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -7081,9 +7082,29 @@
                 
                 console.log('📡 Users API Response Status:', response.status);
                 
+                // If authenticated endpoint fails, try debug endpoint
+                if (!response.ok && response.status === 401) {
+                    console.log('🔓 Authenticated endpoint failed, trying debug endpoint...');
+                    response = await fetch(`${apiUrl}/Admin/users-debug`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    console.log('📡 Debug Users API Response Status:', response.status);
+                }
+                
                 if (response.ok) {
                     const usersData = await response.json();
                     console.log('📡 Users Data Received:', usersData);
+                    
+                    // Store users data in dashboardData
+                    if (!dashboardData) {
+                        dashboardData = { users: [], admins: [], runners: [], publicCases: [] };
+                    }
+                    dashboardData.users = usersData.users || usersData || [];
+                    console.log('📊 Stored users in dashboardData:', dashboardData.users.length, 'users');
+                    
                     return usersData;
                 } else {
                     console.error('📡 Users API Error:', response.status, response.statusText);
