@@ -1025,10 +1025,11 @@ body.dark-mode .feature-card p {
 
 /* ===== Enhanced Mobile Responsive Design ===== */
 
-/* Mobile Navigation Improvements */
+/* Mobile Navigation Improvements - Safari Compatible */
 @media (max-width: 768px) {
+  /* Hamburger menu button - Safari optimized */
   .hamburger {
-    display: block;
+    display: block !important;
     position: fixed;
     top: 20px;
     right: 20px;
@@ -1036,16 +1037,28 @@ body.dark-mode .feature-card p {
     padding: 8px;
     border-radius: 6px;
     background: rgba(0, 0, 0, 0.8);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
     transition: all 0.3s ease;
+    min-width: 44px;
+    min-height: 44px;
+    border: none;
+    cursor: pointer;
   }
   
   .hamburger:hover {
     background: rgba(0, 0, 0, 0.9);
+    -webkit-transform: scale(1.05);
+    -moz-transform: scale(1.05);
+    -ms-transform: scale(1.05);
+    -o-transform: scale(1.05);
     transform: scale(1.05);
   }
   
-  
+  /* Mobile navigation container - Safari optimized */
   nav {
     position: fixed;
     top: 0;
@@ -1053,7 +1066,11 @@ body.dark-mode .feature-card p {
     width: 100%;
     height: 100vh;
     background: rgba(0, 0, 0, 0.98);
+    -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
     -ms-flex-direction: column;
@@ -1061,10 +1078,17 @@ body.dark-mode .feature-card p {
     -webkit-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-transition: left 0.3s ease;
+    -moz-transition: left 0.3s ease;
+    -o-transition: left 0.3s ease;
     transition: left 0.3s ease;
     z-index: 1000;
     padding: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   
   /* Show navigation when hamburger is active */
@@ -1072,7 +1096,7 @@ body.dark-mode .feature-card p {
     left: 0;
   }
   
-  /* Mobile navigation links */
+  /* Mobile navigation links - Safari optimized */
   nav a {
     display: block;
     padding: 15px 20px;
@@ -1083,30 +1107,73 @@ body.dark-mode .feature-card p {
     max-width: 300px;
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.1);
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
     transition: all 0.3s ease;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    min-height: 44px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
   }
   
   nav a:hover {
     background: rgba(255, 255, 255, 0.2);
+    -webkit-transform: scale(1.05);
+    -moz-transform: scale(1.05);
+    -ms-transform: scale(1.05);
+    -o-transform: scale(1.05);
     transform: scale(1.05);
+  }
+  
+  /* Ensure proper touch targets on mobile */
+  nav a:active {
+    -webkit-transform: scale(0.95);
+    -moz-transform: scale(0.95);
+    -ms-transform: scale(0.95);
+    -o-transform: scale(0.95);
+    transform: scale(0.95);
+  }
+  
+  /* Prevent text selection on mobile navigation */
+  nav a {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
   }
   
   /* Mobile header adjustments */
   .header-bar {
     padding: 15px 20px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
     flex-direction: row;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
   }
   
   .header-bar h1 {
     font-size: 1.2rem;
     margin: 0;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
     flex: 1;
     text-align: center;
     white-space: nowrap;
@@ -1118,62 +1185,37 @@ body.dark-mode .feature-card p {
     width: 50px;
     height: 50px;
     margin: 0;
+    -webkit-flex-shrink: 0;
+    -ms-flex-negative: 0;
     flex-shrink: 0;
   }
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    -webkit-transition: left 0.3s ease;
-    -moz-transition: left 0.3s ease;
-    -o-transition: left 0.3s ease;
-    transition: left 0.3s ease;
-    z-index: 1000;
-    padding: 2rem 0;
+  
+  /* Landscape orientation fixes for mobile */
+  @media (max-width: 768px) and (orientation: landscape) {
+    nav {
+      -webkit-box-pack: start;
+      -ms-flex-pack: start;
+      justify-content: flex-start;
+      padding-top: 2rem;
+    }
+    
+    .hamburger {
+      top: 15px;
+      right: 15px;
+    }
   }
   
-  nav.active {
-    left: 0;
-  }
-  
-  nav a {
-    font-size: 1.4rem;
-    padding: 18px 24px;
-    margin: 8px 0;
-    border-radius: 12px;
-    text-align: center;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    width: 80%;
-    max-width: 300px;
-  }
-  
-  nav a:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-  }
-  
-  .header-bar {
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    gap: 8px;
-    padding: 15px 20px;
-  }
-  
-  .header-bar h1 {
-    font-size: 1.6rem;
-    text-align: center;
-    margin: 0;
-  }
-  
-  .header-bar .logo {
-    width: 60px;
-    height: 60px;
-    margin: 0 auto;
+  /* Ensure mobile navigation works on iOS Safari */
+  @supports (-webkit-touch-callout: none) {
+    nav {
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+    }
+    
+    .hamburger {
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+    }
   }
   
   main {
@@ -1358,11 +1400,24 @@ body.dark-mode .feature-card p {
     top: 15px;
     right: 15px;
     padding: 6px;
+    min-width: 40px;
+    min-height: 40px;
   }
-  
   
   .header-bar {
     padding: 10px 15px;
+  }
+  
+  /* Ensure mobile navigation works on very small screens */
+  nav {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+  }
+  
+  nav a {
+    font-size: 1.1rem;
+    padding: 12px 16px;
+    min-height: 40px;
   }
   
   .header-bar h1 {

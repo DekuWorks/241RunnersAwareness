@@ -1437,6 +1437,52 @@
     }
     
     /* Runner Management Styles */
+    .runners-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #6b7280;
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .empty-state h3 {
+      margin-bottom: 0.5rem;
+      color: #374151;
+      font-size: 1.5rem;
+    }
+
+    .empty-state p {
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f4f6;
+      border-top: 4px solid #dc2626;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
     .runner-card {
       background: white;
       border: 2px solid #e5e7eb;
@@ -1445,11 +1491,13 @@
       margin-bottom: 1rem;
       transition: all 0.3s ease;
       position: relative;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
     
     .runner-card:hover {
       border-color: #dc2626;
-      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+      box-shadow: 0 8px 24px rgba(220, 38, 38, 0.15);
+      transform: translateY(-2px);
     }
     
     .runner-card-header {
@@ -1579,6 +1627,131 @@
     .runner-actions {
       display: flex;
       gap: 0.5rem;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+    }
+
+    .modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #111827;
+      margin: 0;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #6b7280;
+      cursor: pointer;
+      padding: 0.25rem;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
+
+    .btn-small {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-primary-small {
+      background: #dc2626;
+      color: white;
+    }
+
+    .btn-primary-small:hover {
+      background: #b91c1c;
+    }
+
+    .btn-secondary-small {
+      background: #6b7280;
+      color: white;
+    }
+
+    .btn-secondary-small:hover {
+      background: #4b5563;
+    }
+
+    .btn-danger-small {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-danger-small:hover {
+      background: #dc2626;
+    }
+
+    .error-message {
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .success-message {
+      background: #d1fae5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
     }
     
     .btn-edit {
@@ -2066,65 +2239,34 @@
         </div>
       </div>
 
-      <!-- Runner Profile Section -->
+      <!-- Runner Management Section -->
       <div class="profile-section my-cases-section">
         <h2 class="section-title">
           <span>🏃</span>
-          Runner Profile
-          <button class="edit-btn" onclick="toggleEditForm('runnerProfile')">Edit Runner</button>
+          Runner Management
+          <div class="section-actions">
+            <button class="btn btn-primary" onclick="openCreateRunnerModal()">
+              <span>➕</span>
+              Add New Runner
+            </button>
+          </div>
         </h2>
 
-        <!-- Runner Photos Section -->
-        <div class="runner-photos-section" style="margin-bottom: 2rem; padding: 1.5rem; background: #f9fafb; border-radius: 8px;">
-          <h3 style="color: #374151; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-            📸 Runner Photos
-            <span id="photoUpdateReminder" style="display: none; background: #fbbf24; color: #92400e; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 500;">
-              Update Required
-            </span>
-          </h3>
-          
-          <div class="photo-upload-container">
-            <div class="current-photos" id="currentRunnerPhotos">
-              <div id="noRunnerPhotosMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">
-                No runner photos uploaded yet
-              </div>
-            </div>
-            
-            <div class="photo-upload-controls">
-              <input type="file" id="runnerPhotosInput" accept="image/*" multiple style="display: none;">
-              <button type="button" id="uploadRunnerPhotosBtn" class="upload-btn">
-                📷 Upload Runner Photos
-              </button>
-              <button type="button" id="removeRunnerPhotosBtn" class="remove-btn" style="display: none;">
-                🗑️ Remove All Photos
-              </button>
-              <div class="upload-progress" id="runnerPhotosProgress" style="display: none;">
-                <div class="progress-bar">
-                  <div class="progress-fill" id="runnerPhotosProgressFill"></div>
-                </div>
-                <span class="progress-text" id="runnerPhotosProgressText">Uploading...</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="photo-reminder-info" style="margin-top: 1rem; padding: 1rem; background: #dbeafe; border-radius: 6px; border-left: 4px solid #2563eb;">
-            <p style="margin: 0; color: #1e40af; font-size: 0.9rem;">
-              <strong>📅 Photo Update Reminder:</strong> Please update your runner photos every 6 months to keep them fresh and accurate for case tracking purposes.
-            </p>
-            <p id="nextPhotoReminderDate" style="margin: 0.5rem 0 0 0; color: #1e40af; font-size: 0.85rem;"></p>
+        <!-- Runners Grid -->
+        <div id="runnersGrid" class="runners-grid">
+          <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading runners...</p>
           </div>
         </div>
         
-        <div id="runnerProfileInfo">
-          <div class="loading">Loading runner profile...</div>
-        </div>
-        
-        <!-- Create Runner Button (shown when no runner profile exists) -->
-        <div id="createRunnerSection" style="display: none; text-align: center; padding: 2rem; background: #f9fafb; border-radius: 8px; margin-top: 1rem;">
-          <h3 style="color: #374151; margin-bottom: 1rem;">No Runner Profile Found</h3>
-          <p style="color: #6b7280; margin-bottom: 1.5rem;">Create a runner profile to track your running activities and safety status.</p>
-          <button class="btn btn-primary" onclick="showCreateRunnerForm()">
-            🏃 Create Runner Profile
+        <!-- Empty State -->
+        <div id="noRunnersState" class="empty-state" style="display: none;">
+          <div class="empty-state-icon">🏃</div>
+          <h3>No Runners Found</h3>
+          <p>You haven't created any runner profiles yet. Create your first runner profile to get started.</p>
+          <button class="btn btn-primary" onclick="openCreateRunnerModal()">
+            🏃 Create Your First Runner
           </button>
         </div>
 
@@ -2202,6 +2344,100 @@
             <div class="form-actions">
               <button type="button" class="btn btn-secondary" onclick="toggleEditForm('runnerProfile')">Cancel</button>
               <button type="submit" class="btn btn-primary">Save Runner Profile</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Create/Edit Runner Modal -->
+      <div id="runnerModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title" id="modalTitle">Add New Runner</h3>
+            <button class="modal-close" onclick="closeRunnerModal()">&times;</button>
+          </div>
+          
+          <div id="modalMessages"></div>
+          
+          <form id="runnerForm">
+            <div class="form-group">
+              <label for="runnerName">Runner Name *</label>
+              <input type="text" id="runnerName" name="name" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="runnerDOB">Date of Birth *</label>
+              <input type="date" id="runnerDOB" name="dateOfBirth" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="runnerGender">Gender *</label>
+              <select id="runnerGender" name="gender" required>
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="runnerStatus">Status *</label>
+              <select id="runnerStatus" name="status" required>
+                <option value="Missing">Missing</option>
+                <option value="Found">Found</option>
+                <option value="Resolved">Resolved</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="runnerPhysicalDescription">Physical Description</label>
+              <textarea 
+                id="runnerPhysicalDescription" 
+                name="physicalDescription" 
+                rows="3" 
+                placeholder="Height, weight, hair color, eye color, etc."
+              ></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="runnerMedicalConditions">Medical Conditions</label>
+              <textarea 
+                id="runnerMedicalConditions" 
+                name="medicalConditions" 
+                rows="2" 
+                placeholder="Any medical conditions or medications"
+              ></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="runnerAllergies">Allergies</label>
+              <textarea 
+                id="runnerAllergies" 
+                name="allergies" 
+                rows="2" 
+                placeholder="Any known allergies"
+              ></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="runnerEmergencyInstructions">Emergency Instructions</label>
+              <textarea 
+                id="runnerEmergencyInstructions" 
+                name="emergencyInstructions" 
+                rows="2" 
+                placeholder="Special instructions in case of emergency"
+              ></textarea>
+            </div>
+            
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" onclick="closeRunnerModal()">Cancel</button>
+              <button type="submit" class="btn btn-primary" id="submitBtn">
+                <span id="submitText">Save Runner</span>
+                <div id="loadingSpinner" style="display: none;">
+                  <div class="loading-spinner"></div>
+                </div>
+              </button>
             </div>
           </form>
         </div>
@@ -2679,23 +2915,24 @@
     }
 
     // Load runner profile with optimized loading
-    async function loadRunnerProfile() {
+    // Load all runners for the user
+    async function loadRunners() {
       try {
         const token = getAuthToken();
         if (!token) {
           console.warn('No authentication token available');
-          displayNoRunnerProfile();
+          displayNoRunners();
           return null;
         }
 
         // Show loading state
-        const container = document.getElementById('runnerProfileInfo');
-        if (container) {
-          container.innerHTML = '<div class="loading">Loading runner profile...</div>';
+        const grid = document.getElementById('runnersGrid');
+        if (grid) {
+          grid.innerHTML = '<div class="loading"><div class="loading-spinner"></div><p>Loading runners...</p></div>';
         }
 
         // Try to get the user's runner profiles
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -2707,29 +2944,196 @@
           
           // Check if user has any runner profiles
           if (result.runners && result.runners.length > 0) {
-            // User has runner profiles, display the first one
-            displayRunnerProfile(result.runners[0]);
-            return result.runners[0];
+            // User has runner profiles, display all of them
+            displayRunners(result.runners);
+            return result.runners;
           } else {
             // No runner profiles exist
-            displayNoRunnerProfile();
-            return null;
+            displayNoRunners();
+            return [];
           }
         } else if (response.status === 404) {
           // No runner profile exists yet
-          displayNoRunnerProfile();
-          return null;
+          displayNoRunners();
+          return [];
         } else {
-          console.warn('Failed to load runner profile, status:', response.status);
-          displayNoRunnerProfile();
-          return null;
+          console.warn('Failed to load runner profiles, status:', response.status);
+          displayNoRunners();
+          return [];
         }
 
       } catch (error) {
-        console.error('Error loading runner profile:', error);
-        displayNoRunnerProfile();
-        return null;
+        console.error('Error loading runner profiles:', error);
+        displayNoRunners();
+        return [];
       }
+    }
+
+    // Display runners in grid
+    function displayRunners(runners) {
+      const grid = document.getElementById('runnersGrid');
+      const noRunnersState = document.getElementById('noRunnersState');
+      
+      if (runners.length === 0) {
+        grid.style.display = 'none';
+        noRunnersState.style.display = 'block';
+        return;
+      }
+
+      grid.style.display = 'grid';
+      noRunnersState.style.display = 'none';
+
+      grid.innerHTML = runners.map(runner => `
+        <div class="runner-card">
+          <div class="runner-card-header">
+            <h3 class="runner-card-title">${runner.name}</h3>
+            <span class="runner-status-badge runner-status-${runner.status.toLowerCase()}">${runner.status}</span>
+          </div>
+          <div class="runner-card-info">
+            <div class="runner-info-item">
+              <span class="runner-info-label">Age</span>
+              <span class="runner-info-value">${runner.age || 'N/A'}</span>
+            </div>
+            <div class="runner-info-item">
+              <span class="runner-info-label">Gender</span>
+              <span class="runner-info-value">${runner.gender || 'N/A'}</span>
+            </div>
+            <div class="runner-info-item">
+              <span class="runner-info-label">Created</span>
+              <span class="runner-info-value">${new Date(runner.createdAt).toLocaleDateString()}</span>
+            </div>
+            <div class="runner-info-item">
+              <span class="runner-info-label">Last Updated</span>
+              <span class="runner-info-value">${runner.updatedAt ? new Date(runner.updatedAt).toLocaleDateString() : 'Never'}</span>
+            </div>
+          </div>
+          <div class="runner-card-footer">
+            <span class="runner-last-updated">ID: ${runner.id}</span>
+            <div class="runner-actions">
+              <button class="btn-small btn-primary-small" onclick="editRunner(${runner.id})">
+                Edit
+              </button>
+              <button class="btn-small btn-danger-small" onclick="deleteRunner(${runner.id})">
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Display no runners state
+    function displayNoRunners() {
+      const grid = document.getElementById('runnersGrid');
+      const noRunnersState = document.getElementById('noRunnersState');
+      
+      grid.style.display = 'none';
+      noRunnersState.style.display = 'block';
+    }
+
+    // Modal functions for runner management
+    let editingRunner = null;
+
+    // Open create runner modal
+    function openCreateRunnerModal() {
+      editingRunner = null;
+      document.getElementById('modalTitle').textContent = 'Add New Runner';
+      document.getElementById('runnerForm').reset();
+      document.getElementById('runnerStatus').value = 'Missing';
+      document.getElementById('modalMessages').innerHTML = '';
+      document.getElementById('runnerModal').classList.add('show');
+    }
+
+    // Edit runner
+    async function editRunner(runnerId) {
+      try {
+        const token = getAuthToken();
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner/${runnerId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const runner = await response.json();
+          editingRunner = runner;
+          
+          document.getElementById('modalTitle').textContent = 'Edit Runner';
+          document.getElementById('runnerName').value = runner.name || '';
+          document.getElementById('runnerDOB').value = runner.dateOfBirth ? runner.dateOfBirth.split('T')[0] : '';
+          document.getElementById('runnerGender').value = runner.gender || '';
+          document.getElementById('runnerStatus').value = runner.status || 'Missing';
+          document.getElementById('runnerPhysicalDescription').value = runner.physicalDescription || '';
+          document.getElementById('runnerMedicalConditions').value = runner.medicalConditions || '';
+          document.getElementById('runnerAllergies').value = runner.allergies || '';
+          document.getElementById('runnerEmergencyInstructions').value = runner.emergencyInstructions || '';
+          
+          document.getElementById('modalMessages').innerHTML = '';
+          document.getElementById('runnerModal').classList.add('show');
+        } else {
+          throw new Error('Failed to load runner data');
+        }
+      } catch (error) {
+        console.error('Error loading runner:', error);
+        showError('Failed to load runner data. Please try again.');
+      }
+    }
+
+    // Delete runner
+    async function deleteRunner(runnerId) {
+      if (!confirm('Are you sure you want to delete this runner? This action cannot be undone.')) {
+        return;
+      }
+
+      try {
+        const token = getAuthToken();
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner/${runnerId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          showSuccess('Runner deleted successfully');
+          loadRunners();
+        } else {
+          throw new Error('Failed to delete runner');
+        }
+      } catch (error) {
+        console.error('Error deleting runner:', error);
+        showError('Failed to delete runner. Please try again.');
+      }
+    }
+
+    // Close runner modal
+    function closeRunnerModal() {
+      document.getElementById('runnerModal').classList.remove('show');
+      editingRunner = null;
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('runnerModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeRunnerModal();
+      }
+    });
+
+    // Show error message
+    function showError(message) {
+      const messagesDiv = document.getElementById('modalMessages');
+      messagesDiv.innerHTML = `<div class="error-message">${message}</div>`;
+    }
+
+    // Show success message
+    function showSuccess(message) {
+      const messagesDiv = document.getElementById('modalMessages');
+      messagesDiv.innerHTML = `<div class="success-message">${message}</div>`;
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        messagesDiv.innerHTML = '';
+      }, 3000);
     }
 
     // Display runner profile
@@ -3347,7 +3751,7 @@
         let response;
         
         try {
-          const runnerResponse = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner/my-profile`, {
+          const runnerResponse = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner/my-profile`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -3361,7 +3765,7 @@
         
         if (existingRunner && existingRunner.id) {
           // Update existing runner profile
-          response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner/${existingRunner.id}`, {
+          response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner/${existingRunner.id}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
@@ -3371,7 +3775,7 @@
           });
         } else {
           // Create new runner profile
-          response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner`, {
+          response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -3428,6 +3832,68 @@
         showMessage('error', 'Network error. Please try again.');
       }
     });
+    }
+
+    // Handle runner form submission (for create/edit modal)
+    const runnerForm = document.getElementById('runnerForm');
+    if (runnerForm) {
+      runnerForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+        
+        try {
+          const token = getAuthToken();
+          const submitBtn = document.getElementById('submitBtn');
+          const submitText = document.getElementById('submitText');
+          const loadingSpinner = document.getElementById('loadingSpinner');
+          
+          // Show loading state
+          submitBtn.disabled = true;
+          submitText.style.display = 'none';
+          loadingSpinner.style.display = 'block';
+          
+          // UserId is automatically extracted from JWT token on the backend
+          
+          const url = editingRunner 
+            ? `${PROFILE_API_BASE_URL}/api/v1.0/runner/${editingRunner.id}`
+            : `${PROFILE_API_BASE_URL}/api/v1.0/runner`;
+          
+          const method = editingRunner ? 'PUT' : 'POST';
+          
+          const response = await fetch(url, {
+            method: method,
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(data)
+          });
+          
+          if (response.ok) {
+            showSuccess(editingRunner ? 'Runner updated successfully' : 'Runner created successfully');
+            closeRunnerModal();
+            loadRunners();
+          } else {
+            const result = await response.json();
+            throw new Error(result.message || 'Failed to save runner');
+          }
+          
+        } catch (error) {
+          console.error('Error saving runner:', error);
+          showError(error.message || 'Failed to save runner. Please try again.');
+        } finally {
+          // Hide loading state
+          const submitBtn = document.getElementById('submitBtn');
+          const submitText = document.getElementById('submitText');
+          const loadingSpinner = document.getElementById('loadingSpinner');
+          
+          submitBtn.disabled = false;
+          submitText.style.display = 'inline';
+          loadingSpinner.style.display = 'none';
+        }
+      });
     }
 
     // Validation Utilities
@@ -3644,7 +4110,7 @@
         const token = getAuthToken();
         if (!token) return;
 
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -4088,7 +4554,7 @@
         }
 
         // Update runner profile with new photo URLs
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner/${runnerData.id}`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner/${runnerData.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -4312,9 +4778,9 @@
         await loadUserProfileData();
         console.log('User profile data loaded');
         
-        // Load runner profile
-        await loadRunnerProfile();
-        console.log('Runner profile loaded');
+        // Load runners
+        await loadRunners();
+        console.log('Runners loaded');
         
         // Load user cases
         await loadUserCases();
@@ -4624,4 +5090,5 @@
     // Runner form: handled by inline event listener at line 3547
   </script>
 </body>
+</html>
 </html>

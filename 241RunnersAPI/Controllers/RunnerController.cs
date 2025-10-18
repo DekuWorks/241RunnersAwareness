@@ -40,8 +40,12 @@ namespace _241RunnersAPI.Controllers
 
                 var query = _context.Runners.AsQueryable();
 
-                // Apply role-based filtering
-                if (userRole != "admin")
+                // Always filter by user ID for security - only admins can see all runners
+                if (userRole == "admin")
+                {
+                    // Admins can see all runners - no additional filtering needed
+                }
+                else
                 {
                     // Regular users can only see their own runners
                     query = query.Where(r => r.UserId == userId);
@@ -268,12 +272,8 @@ namespace _241RunnersAPI.Controllers
                     return Unauthorized(new { success = false, message = "Invalid user token" });
                 }
 
-                // Check if user already has a runner profile
-                var existingRunner = await _context.Runners.FirstOrDefaultAsync(r => r.UserId == userId);
-                if (existingRunner != null)
-                {
-                    return Conflict(new { success = false, message = "Runner profile already exists for this user" });
-                }
+                // Allow multiple runners per user - remove the existing runner check
+                // Users can now create multiple runner profiles for family members, etc.
 
                 // Validate the request
                 if (!ModelState.IsValid)

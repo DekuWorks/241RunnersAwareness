@@ -130,7 +130,7 @@ namespace _241RunnersAPI.Models
     /// </summary>
     public class RunnerRegistrationDto
     {
-        [Required(ErrorMessage = "User ID is required")]
+        // UserId is automatically extracted from JWT token on the backend
         public int UserId { get; set; }
 
         [Required(ErrorMessage = "Runner name is required")]

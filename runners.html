@@ -1252,23 +1252,7 @@
       }
     });
 
-    // ============================================
-    // MISSING FUNCTIONS IMPLEMENTATION
-    // ============================================
-
-    /**
-     * Open create runner modal
-     */
-    function openCreateRunnerModal() {
-      editingRunner = null;
-      document.getElementById('runnerModalTitle').textContent = 'Create New Runner';
-      document.getElementById('runnerForm').reset();
-      document.getElementById('runnerModal').style.display = 'block';
-    }
-
-
-
-    // Runner management functions
+    // Additional runner management functions
     function refreshRunners() {
       loadRunners();
     }
@@ -1306,43 +1290,6 @@
       window.location.href = `runner-details.html?id=${runnerId}`;
     }
 
-    function editRunner(runnerId) {
-      // Navigate to edit runner page or show edit form
-      window.location.href = `edit-runner.html?id=${runnerId}`;
-    }
-
-    function deleteRunner(runnerId) {
-      if (!confirm('Are you sure you want to delete this runner? This action cannot be undone.')) {
-        return;
-      }
-
-      const token = getAuthToken();
-      if (!token) {
-        alert('Please log in to delete runners');
-        return;
-      }
-
-      fetch(`${API_BASE_URL}/api/runner/${runnerId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      })
-      .then(response => {
-        if (response.ok) {
-          alert('Runner deleted successfully');
-          loadRunners(); // Refresh the list
-        } else {
-          throw new Error('Failed to delete runner');
-        }
-      })
-      .catch(error => {
-        console.error('Error deleting runner:', error);
-        alert('Failed to delete runner. Please try again.');
-      });
-    }
-
     // Helper functions for CSV export
     function convertToCSV(data) {
       if (!data || data.length === 0) return '';
@@ -1371,15 +1318,14 @@
     // Initialize page
     document.addEventListener('DOMContentLoaded', async function() {
       // Check authentication first
-      if (!authUtils.requireAuth()) {
+      if (!checkAuth()) {
         return;
       }
 
       await loadConfig();
       
       // Check if user is admin and show admin controls
-      const user = authUtils.getCurrentUser();
-      if (user && user.role === 'admin') {
+      if (currentUser && currentUser.role === 'admin') {
         document.getElementById('userRole').style.display = 'inline-block';
         document.getElementById('viewToggle').style.display = 'flex';
       }
