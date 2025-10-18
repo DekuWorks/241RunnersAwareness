@@ -259,13 +259,14 @@ body.dark-mode header.scrolled {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding-top: 15px;
+  padding: 15px 20px;
   position: relative;
   width: 100%;
   margin: 0;
   background: #000 !important;
   left: 0;
   right: 0;
+  box-sizing: border-box;
 }
 
 /* Global image styles - only for logo and small images */
@@ -286,12 +287,13 @@ nav {
   background: #000 !important;
   display: flex;
   justify-content: center;
-  gap: 1.5rem;
-  padding: 12px 0;
+  gap: 1rem;
+  padding: 12px 20px;
   flex-wrap: wrap;
   width: 100%;
   left: 0;
   right: 0;
+  box-sizing: border-box;
 }
 
 /* Dark mode navigation */
@@ -357,11 +359,16 @@ html header {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 5px;
+  padding: 8px;
   position: absolute;
   right: 20px;
   top: 20px;
   z-index: 1001;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
 }
 
 .hamburger span {
