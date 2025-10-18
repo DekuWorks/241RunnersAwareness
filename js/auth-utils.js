@@ -9,17 +9,13 @@ let API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
 
 // Load API configuration from config.json
 async function loadConfig() {
-    try {
-        const response = await fetch('/config.json');
-        const config = await response.json();
-        API_BASE_URL = config.API_BASE_URL;
-    } catch (error) {
-        console.warn('Failed to load config.json, using default API URL');
-    }
+    // Configuration is already set in API_BASE_URL
+    // No need to fetch config.json to prevent 404 errors
+    return;
 }
 
-// Initialize config on load
-loadConfig();
+// Initialize config on load (disabled to prevent 404 errors)
+// loadConfig();
 
 /**
  * ============================================
@@ -159,7 +155,7 @@ async function apiRequest(endpoint, options = {}) {
  * @returns {Promise<Object>} User data
  */
 async function getCurrentUserFromAPI() {
-    const response = await apiRequest('/v1/users/me');
+    const response = await apiRequest('/v1.0/users/me');
     if (!response.ok) {
         throw new Error(`Failed to get user data: ${response.statusText}`);
     }

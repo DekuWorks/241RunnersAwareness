@@ -277,27 +277,6 @@ img {
   height: auto;
 }
 
-/* Theme toggle button */
-.theme-toggle {
-  display: block;
-  position: fixed;
-  right: 80px;
-  top: 20px;
-  z-index: 1001;
-  background: rgba(0, 0, 0, 0.8);
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 6px;
-  font-size: 1.2rem;
-  color: #fff;
-  transition: all 0.3s ease;
-}
-
-.theme-toggle:hover {
-  background: rgba(0, 0, 0, 0.9);
-  transform: scale(1.05);
-}
 
 /* ===== Navbar ===== */
 /* Updated: 2025-01-27 - Ultra-compact navbar for all 8 links */
@@ -1066,22 +1045,6 @@ body.dark-mode .feature-card p {
     transform: scale(1.05);
   }
   
-  .theme-toggle {
-    right: 80px;
-    top: 20px;
-    position: fixed;
-    z-index: 1001;
-    padding: 8px;
-    border-radius: 6px;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-  }
-  
-  .theme-toggle:hover {
-    background: rgba(0, 0, 0, 0.9);
-    transform: scale(1.05);
-  }
   
   nav {
     position: fixed;
@@ -1397,11 +1360,6 @@ body.dark-mode .feature-card p {
     padding: 6px;
   }
   
-  .theme-toggle {
-    right: 70px;
-    top: 15px;
-    padding: 6px;
-  }
   
   .header-bar {
     padding: 10px 15px;
@@ -1570,13 +1528,11 @@ body.dark-mode .feature-card p {
     transform: scale(0.98);
   }
   
-  .hamburger:hover,
-  .theme-toggle:hover {
+  .hamburger:hover {
     transform: none;
   }
   
-  .hamburger:active,
-  .theme-toggle:active {
+  .hamburger:active {
     transform: scale(0.95);
   }
 }
@@ -1609,22 +1565,6 @@ body.dark-mode .feature-card p {
     transform: scale(1.05);
   }
   
-  .theme-toggle {
-    right: 80px;
-    top: 20px;
-    position: fixed;
-    z-index: 1001;
-    padding: 8px;
-    border-radius: 6px;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-  }
-  
-  .theme-toggle:hover {
-    background: rgba(0, 0, 0, 0.9);
-    transform: scale(1.05);
-  }
   
   nav {
     position: fixed;
@@ -4775,28 +4715,7 @@ body.dark-mode .action-card p {
 
 
 
-/* Theme Toggle and Hamburger - Match Main Site */
-.cases-hero ~ header .theme-toggle,
-.my-cases-hero ~ header .theme-toggle {
-    position: fixed;
-    right: 80px;
-    top: 20px;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-    z-index: 1001;
-    color: #fff;
-}
-
-.cases-hero ~ header .theme-toggle:hover,
-.my-cases-hero ~ header .theme-toggle:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: scale(1.1);
-}
+/* Hamburger - Match Main Site */
 
 .cases-hero ~ header .hamburger,
 .my-cases-hero ~ header .hamburger {
@@ -5600,11 +5519,6 @@ footer .footer-bottom p {
         display: block;
     }
     
-    .cases-hero ~ header .theme-toggle,
-    .my-cases-hero ~ header .theme-toggle {
-        right: 70px;
-        top: 15px;
-    }
     
     
     .cases-hero ~ header .header-bar,

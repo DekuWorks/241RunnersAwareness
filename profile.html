@@ -2253,13 +2253,9 @@
     
     // Load API configuration
     async function loadConfig() {
-      try {
-        const response = await fetch('/config.json');
-        const config = await response.json();
-        PROFILE_API_BASE_URL = config.API_BASE_URL || PROFILE_API_BASE_URL;
-      } catch (error) {
-        console.warn('Failed to load config.json, using default API URL');
-      }
+      // Configuration is already set in PROFILE_API_BASE_URL
+      // No need to fetch config.json to prevent 404 errors
+      return;
     }
 
     // Handle avatar upload
@@ -2698,17 +2694,27 @@
           container.innerHTML = '<div class="loading">Loading runner profile...</div>';
         }
 
-        // Try to get the user's specific runner profile first
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner/my-profile`, {
+        // Try to get the user's runner profiles
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/Runner`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
 
         if (response.ok) {
-          const runnerData = await response.json();
-          displayRunnerProfile(runnerData);
-          return runnerData;
+          const result = await response.json();
+          console.log('Runner profiles API response:', result);
+          
+          // Check if user has any runner profiles
+          if (result.runners && result.runners.length > 0) {
+            // User has runner profiles, display the first one
+            displayRunnerProfile(result.runners[0]);
+            return result.runners[0];
+          } else {
+            // No runner profiles exist
+            displayNoRunnerProfile();
+            return null;
+          }
         } else if (response.status === 404) {
           // No runner profile exists yet
           displayNoRunnerProfile();
@@ -2728,6 +2734,7 @@
 
     // Display runner profile
     function displayRunnerProfile(runner) {
+      console.log('Displaying runner profile:', runner);
       const container = document.getElementById('runnerProfileInfo');
       
       container.innerHTML = `
@@ -2891,16 +2898,19 @@
 
     // Display no runner profile message
     function displayNoRunnerProfile() {
+      console.log('Displaying no runner profile message');
       const container = document.getElementById('runnerProfileInfo');
       const createSection = document.getElementById('createRunnerSection');
       
-      container.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-state-icon">🏃</div>
-          <h3>No Runner Profile</h3>
-          <p>You haven't created a runner profile yet. Create one to get started with case tracking.</p>
-        </div>
-      `;
+      if (container) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🏃</div>
+            <h3>No Runner Profile</h3>
+            <p>You haven't created a runner profile yet. Create one to get started with case tracking.</p>
+          </div>
+        `;
+      }
       
       // Show the create runner section
       if (createSection) {
@@ -3200,7 +3210,9 @@
     }
 
     // Update personal information
-    document.getElementById('updatePersonalForm').addEventListener('submit', async function(e) {
+    const updatePersonalForm = document.getElementById('updatePersonalForm');
+    if (updatePersonalForm) {
+      updatePersonalForm.addEventListener('submit', async function(e) {
       e.preventDefault();
       
       // Validate form before submission
@@ -3276,9 +3288,12 @@
         submitBtn.disabled = false;
       }
     });
+    }
 
     // Update runner profile
-    document.getElementById('updateRunnerForm').addEventListener('submit', async function(e) {
+    const updateRunnerForm = document.getElementById('updateRunnerForm');
+    if (updateRunnerForm) {
+      updateRunnerForm.addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const formData = new FormData(this);
@@ -3413,6 +3428,7 @@
         showMessage('error', 'Network error. Please try again.');
       }
     });
+    }
 
     // Validation Utilities
     const ValidationUtils = {
@@ -3563,10 +3579,12 @@
     const navToggle = document.getElementById('navToggle');
     const navMenu = document.getElementById('navMenu');
     
-    navToggle.addEventListener('click', function() {
-      navMenu.classList.toggle('active');
-      navToggle.classList.toggle('active');
-    });
+    if (navToggle && navMenu) {
+      navToggle.addEventListener('click', function() {
+        navMenu.classList.toggle('active');
+        navToggle.classList.toggle('active');
+      });
+    }
 
     // Enhanced Logout functionality
     const logoutBtn = document.getElementById('logoutBtn');
@@ -3693,27 +3711,31 @@
     // Load user profile data
     async function loadUserProfileData() {
       try {
-        // Check if user is authenticated
-        if (!authUtils.isAuthenticated()) {
+        const token = getAuthToken();
+        if (!token) {
           window.location.href = "login.html";
           return;
         }
 
         // Get user data from API
-        const result = await authUtils.getCurrentUserFromAPI();
-        const userData = result.user || result; // Handle both response formats
-        currentUser = userData;
-        updateProfileImage(userData.profileImageUrl);
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
         
-        // Load runner profile to get runner ID
-        await loadRunnerProfileForUser();
-        
-        // Update profile display
-        updateProfileDisplay(userData);
+        if (response.ok) {
+          const result = await response.json();
+          const userData = result.user || result;
+          currentUser = userData;
+          updateProfileImage(userData.profileImageUrl);
+          updateProfileDisplay(userData);
+        } else {
+          console.error('Failed to load user data:', response.status);
+        }
         
       } catch (error) {
         console.error("Error loading profile:", error);
-        authUtils.showToast("Failed to load profile data", "error");
       }
     }
 
@@ -4246,49 +4268,41 @@
       showMessage('info', 'Individual photo removal not yet implemented. Please use "Remove All Photos" for now.');
     }
 
-    // Initialize profile with optimized loading
-    let isInitializing = false;
+    // Simple initialization - just load the data
     document.addEventListener('DOMContentLoaded', async function() {
-      // Prevent multiple simultaneous initializations
-      if (isInitializing) {
-        console.warn('Profile initialization already in progress');
-        return;
-      }
-      
-      isInitializing = true;
+      console.log('DOMContentLoaded fired - starting profile initialization');
       
       try {
-        // Check authentication first
-        if (!authUtils.requireAuth()) {
+        // Check if user is authenticated
+        const authData = localStorage.getItem('ra_auth');
+        if (!authData) {
+          console.log('No auth data found, redirecting to login');
+          window.location.href = 'login.html';
           return;
         }
         
-        // Load configuration first
-        await loadConfig();
+        console.log('Auth data found, loading profile data...');
         
-        // Load user profile data (this includes user info)
+        // Load user profile data
         await loadUserProfileData();
+        console.log('User profile data loaded');
         
         // Load runner profile
         await loadRunnerProfile();
+        console.log('Runner profile loaded');
         
         // Load user cases
         await loadUserCases();
+        console.log('User cases loaded');
         
         // Setup UI components
         setupImageUpload();
         setupRunnerPhotoUpload();
-        setupRealTimeValidation();
         
-        // Skip SignalR initialization to prevent console errors
-        // Real-time notifications can be added back later when backend is stable
-        updateConnectionStatus('disconnected', 'Real-time notifications disabled');
+        console.log('Profile initialization complete');
         
       } catch (error) {
-        console.error('Error during profile initialization:', error);
-        authUtils.showToast('Failed to load profile data', 'error');
-      } finally {
-        isInitializing = false;
+        console.error('Error loading profile:', error);
       }
     });
 
@@ -4450,11 +4464,7 @@
       return localStorage.getItem('ra_user_id') || localStorage.getItem('userId') || 'unknown';
     }
 
-    // Initialize notification preferences on page load
-    document.addEventListener('DOMContentLoaded', function() {
-      loadNotificationPreferences();
-      checkPushNotificationStatus();
-    });
+    // Notification preferences are now initialized in the main DOMContentLoaded listener
 
     async function checkPushNotificationStatus() {
       if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
@@ -4555,7 +4565,7 @@
       };
 
       try {
-        const response = await authUtils.apiRequest('/v1/users/me', {
+        const response = await authUtils.apiRequest('/v1.0/users/me', {
           method: 'PUT',
           body: JSON.stringify(data)
         });
