@@ -286,9 +286,9 @@ img {
 nav {
   background: #000 !important;
   display: flex;
-  justify-content: center;
-  gap: 0.3rem;
-  padding: 8px 5px;
+  justify-content: space-between;
+  gap: 0.05rem;
+  padding: 4px 1px;
   flex-wrap: nowrap;
   width: 100%;
   left: 0;
@@ -403,16 +403,16 @@ html header {
 nav a {
   color: #fff;
   text-decoration: none;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 2px 4px;
+  border-radius: 2px;
   -webkit-transition: all 0.3s ease; /* Safari/Chrome */
   -moz-transition: all 0.3s ease; /* Firefox */
   -o-transition: all 0.3s ease; /* Opera */
   transition: all 0.3s ease;
-  font-weight: 500;
+  font-weight: 400;
   white-space: nowrap;
   flex-shrink: 0;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
 }
 
 /* Traffic light color system for navigation */
