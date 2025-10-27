@@ -4229,6 +4229,7 @@
           const result = await response.json();
           const userData = result.user || result;
           currentUser = userData;
+          console.log('Loaded user profile image URL:', userData.profileImageUrl);
           updateProfileImage(userData.profileImageUrl);
           updateProfileDisplay(userData);
         } else {
@@ -4308,17 +4309,20 @@
 
     // Update profile image display
     function updateProfileImage(imageUrl) {
+      console.log('updateProfileImage called with URL:', imageUrl);
       const profileImage = document.getElementById("profileImage");
       const avatarPlaceholder = document.getElementById("avatarPlaceholder");
       const removeImageBtn = document.getElementById("removeImageBtn");
 
       if (imageUrl) {
+        console.log('Setting profile image src to:', imageUrl);
         // Update avatar in header
         profileImage.src = imageUrl;
         profileImage.style.display = "block";
         avatarPlaceholder.style.display = "none";
         removeImageBtn.style.display = "block";
       } else {
+        console.log('No image URL provided, showing placeholder');
         // Show placeholder
         profileImage.style.display = "none";
         avatarPlaceholder.style.display = "flex";
