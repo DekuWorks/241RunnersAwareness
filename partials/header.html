@@ -17,7 +17,7 @@
         </a>
       </div>
 
-      <!-- Navigation Links -->
+      <!-- Navigation Links (Hidden on Mobile) -->
       <div class="nav-links">
         <a href="/" class="nav-link">Home</a>
         <a href="/aboutus.html" class="nav-link">About</a>
@@ -29,34 +29,34 @@
         <a href="https://share.google/2mvSoJK9zGVpBdYqA" target="_blank" class="nav-link nav-shop">🏃‍♂️ Shop</a>
       </div>
 
-      <!-- Auth Section -->
-      <div class="nav-auth" id="navAuth">
+      <!-- Auth Section (Hidden on Mobile) -->
+      <div class="nav-auth-desktop">
         <!-- Guest Links (shown when not authenticated) -->
-        <div class="nav-guest" id="navGuest">
+        <div class="nav-guest" id="navGuestDesktop">
           <a href="/login.html" class="btn btn-secondary">Login</a>
           <a href="/signup.html" class="btn btn-primary">Sign Up</a>
         </div>
 
         <!-- User Menu (shown when authenticated) -->
-        <div class="nav-user hidden" id="navUser">
+        <div class="nav-user hidden" id="navUserDesktop">
           <div class="nav-user-menu">
-            <button class="nav-user-button" id="navUserButton">
-              <span class="nav-user-name" id="navUserName">User</span>
+            <button class="nav-user-button" id="navUserButtonDesktop">
+              <span class="nav-user-name" id="navUserNameDesktop">User</span>
               <svg class="nav-user-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
               </svg>
             </button>
-            <div class="nav-user-dropdown hidden" id="navUserDropdown">
+            <div class="nav-user-dropdown hidden" id="navUserDropdownDesktop">
               <a href="/dashboard.html" class="nav-dropdown-link">Dashboard</a>
               <a href="/profile.html" class="nav-dropdown-link">Profile</a>
               <a href="/runner.html" class="nav-dropdown-link">Runners</a>
-              <button class="nav-dropdown-link nav-signout" id="navSignOut">Sign Out</button>
+              <button class="nav-dropdown-link nav-signout" id="navSignOutDesktop">Sign Out</button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Mobile Menu Button -->
+      <!-- Mobile Menu Button (Always Visible) -->
       <button class="nav-mobile-button hamburger" id="navMobileButton" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="navMobile">
         <span></span>
         <span></span>
@@ -211,6 +211,18 @@
   align-items: center;
 }
 
+/* Desktop Auth Section */
+.nav-auth-desktop {
+  display: none;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .nav-auth-desktop {
+    display: flex;
+  }
+}
+
 .nav-guest {
   display: flex;
   align-items: center;
@@ -300,9 +312,11 @@
   background-color: rgb(239 68 68 / 0.1);
 }
 
-/* Mobile Menu - Cross-browser compatible */
+/* Mobile Menu Button - Always Visible */
 .nav-mobile-button {
-  display: none;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
@@ -321,14 +335,7 @@
   transition: background-color var(--transition-fast);
   min-width: 44px;
   min-height: 44px;
-}
-
-@media (max-width: 767px) {
-  .nav-mobile-button {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-  }
+  z-index: 1001;
 }
 
 .nav-mobile-button:hover {
@@ -537,14 +544,17 @@
 <script>
 // Header functionality
 document.addEventListener('DOMContentLoaded', function() {
-  const navUserButton = document.getElementById('navUserButton');
-  const navUserDropdown = document.getElementById('navUserDropdown');
+  // Desktop elements
+  const navUserButton = document.getElementById('navUserButtonDesktop');
+  const navUserDropdown = document.getElementById('navUserDropdownDesktop');
+  const navSignOut = document.getElementById('navSignOutDesktop');
+  
+  // Mobile elements
   const navMobileButton = document.getElementById('navMobileButton');
   const navMobile = document.getElementById('navMobile');
-  const navSignOut = document.getElementById('navSignOut');
   const navMobileSignOut = document.getElementById('navMobileSignOut');
 
-  // Toggle user dropdown
+  // Toggle user dropdown (desktop)
   if (navUserButton && navUserDropdown) {
     navUserButton.addEventListener('click', function() {
       navUserDropdown.classList.toggle('show');
@@ -628,23 +638,33 @@ document.addEventListener('DOMContentLoaded', function() {
   // Update auth state based on localStorage
   function updateAuthState() {
     const auth = JSON.parse(localStorage.getItem('ra_auth') || 'null');
-    const navGuest = document.getElementById('navGuest');
-    const navUser = document.getElementById('navUser');
-    const navUserName = document.getElementById('navUserName');
+    
+    // Desktop elements
+    const navGuestDesktop = document.getElementById('navGuestDesktop');
+    const navUserDesktop = document.getElementById('navUserDesktop');
+    const navUserNameDesktop = document.getElementById('navUserNameDesktop');
+    
+    // Mobile elements
     const navMobileGuest = document.getElementById('navMobileGuest');
     const navMobileUser = document.getElementById('navMobileUser');
 
     if (auth && auth.user) {
       // User is authenticated
-      if (navGuest) navGuest.classList.add('hidden');
-      if (navUser) navUser.classList.remove('hidden');
-      if (navUserName) navUserName.textContent = auth.user.email || 'User';
+      // Desktop
+      if (navGuestDesktop) navGuestDesktop.classList.add('hidden');
+      if (navUserDesktop) navUserDesktop.classList.remove('hidden');
+      if (navUserNameDesktop) navUserNameDesktop.textContent = auth.user.email || 'User';
+      
+      // Mobile
       if (navMobileGuest) navMobileGuest.classList.add('hidden');
       if (navMobileUser) navMobileUser.classList.remove('hidden');
     } else {
       // User is not authenticated
-      if (navGuest) navGuest.classList.remove('hidden');
-      if (navUser) navUser.classList.add('hidden');
+      // Desktop
+      if (navGuestDesktop) navGuestDesktop.classList.remove('hidden');
+      if (navUserDesktop) navUserDesktop.classList.add('hidden');
+      
+      // Mobile
       if (navMobileGuest) navMobileGuest.classList.remove('hidden');
       if (navMobileUser) navMobileUser.classList.add('hidden');
     }
