@@ -682,8 +682,104 @@
       background: #4b5563;
     }
 
+    /* Desktop Navigation - Hidden on Mobile */
+    .desktop-nav {
+      display: flex;
+    }
+    
+    /* Mobile Navigation - Hidden by Default */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.98);
+      backdrop-filter: blur(20px);
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: left 0.3s ease;
+      z-index: 1000;
+      padding: 0;
+      overflow-y: auto;
+    }
+    
+    .mobile-nav.active {
+      left: 0;
+    }
+    
+    .mobile-nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 15px 20px;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      text-align: center;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 8px 0;
+      min-width: 200px;
+    }
+    
+    .mobile-nav a:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
+    }
+    
+    /* Hamburger Animation */
+    .hamburger {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 44px;
+      height: 44px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      z-index: 1001;
+    }
+    
+    .hamburger span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: currentColor;
+      margin: 4px 0;
+      transition: 0.3s;
+    }
+    
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(-45deg) translate(-5px, 6px);
+    }
+    
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+    
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(45deg) translate(-5px, -6px);
+    }
+
     /* Enhanced Responsive Design */
     @media (max-width: 768px) {
+      /* Hide desktop nav on mobile */
+      .desktop-nav {
+        display: none;
+      }
+      
+      /* Show mobile nav when active */
+      .mobile-nav {
+        display: flex;
+      }
+      
       /* Mobile Header Bar */
       .header-bar {
         padding: 0.75rem 1rem !important;
@@ -2182,7 +2278,7 @@
       </a>
     </div>
     
-    <nav role="navigation" aria-label="Main navigation">
+    <nav role="navigation" aria-label="Main navigation" class="desktop-nav">
       <a href="/">Home</a>
       <a href="/aboutus.html">About Us</a>
       <a href="/cases.html">Cases</a>
@@ -2194,11 +2290,23 @@
     </nav>
     
     
-    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-navigation">
+    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-navigation">
       <span></span>
       <span></span>
       <span></span>
     </button>
+    
+    <!-- Mobile Navigation Menu -->
+    <nav class="mobile-nav" id="mobile-navigation" role="navigation" aria-label="Mobile navigation">
+      <a href="/">Home</a>
+      <a href="/aboutus.html">About Us</a>
+      <a href="/cases.html">Cases</a>
+      <a href="/map.html">🗺️ Map</a>
+      <a href="/signup.html" id="mobileSignupLink">Sign Up</a>
+      <a href="/login.html" id="mobileLoginLink">Login</a>
+      <a href="https://www.zeffy.com/en-US/donation-form/donate-to-241-runners-awareness-initiative" target="_blank" rel="noopener" aria-label="Donate to 241 Runners Awareness (opens in new window)">Donate</a>
+      <a href="https://linktr.ee/241Runners" target="_blank" rel="noopener" aria-label="Follow 241 Runners on social media (opens in new window)">Follow Us</a>
+    </nav>
   </header>
 
   <!-- Main Content -->
@@ -2716,6 +2824,64 @@
   </div>
 
   <script>
+    // Mobile Navigation Toggle
+    document.addEventListener('DOMContentLoaded', function() {
+      const hamburger = document.querySelector('.hamburger');
+      const mobileNav = document.querySelector('.mobile-nav');
+      
+      if (hamburger && mobileNav) {
+        hamburger.addEventListener('click', function() {
+          const isOpen = mobileNav.classList.contains('active');
+          
+          if (isOpen) {
+            // Close menu
+            mobileNav.classList.remove('active');
+            hamburger.classList.remove('active');
+            hamburger.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+          } else {
+            // Open menu
+            mobileNav.classList.add('active');
+            hamburger.classList.add('active');
+            hamburger.setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
+          }
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+          if (!hamburger.contains(event.target) && !mobileNav.contains(event.target)) {
+            mobileNav.classList.remove('active');
+            hamburger.classList.remove('active');
+            hamburger.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+          }
+        });
+
+        // Close menu on escape key
+        document.addEventListener('keydown', function(event) {
+          if (event.key === 'Escape' && mobileNav.classList.contains('active')) {
+            mobileNav.classList.remove('active');
+            hamburger.classList.remove('active');
+            hamburger.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+            hamburger.focus();
+          }
+        });
+
+        // Close menu when clicking on mobile links
+        const mobileLinks = mobileNav.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+          link.addEventListener('click', function() {
+            mobileNav.classList.remove('active');
+            hamburger.classList.remove('active');
+            hamburger.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+          });
+        });
+      }
+    });
+
     // API Configuration - use existing from auth.js
     let PROFILE_API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net';
     
