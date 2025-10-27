@@ -4266,22 +4266,50 @@
       const lastNameDisplay = document.getElementById('lastName');
       const emailDisplay = document.getElementById('email');
       const phoneDisplay = document.getElementById('phone');
+      const roleDisplay = document.getElementById('role');
+      const memberSinceDisplay = document.getElementById('memberSince');
       
       if (firstNameDisplay) firstNameDisplay.textContent = user.firstName || 'Not provided';
       if (lastNameDisplay) lastNameDisplay.textContent = user.lastName || 'Not provided';
       if (emailDisplay) emailDisplay.textContent = user.email || 'Not provided';
       if (phoneDisplay) phoneDisplay.textContent = user.phoneNumber || 'Not provided';
       
+      // Update role display with proper formatting
+      if (roleDisplay) {
+        const roleValue = user.role || 'user';
+        // Format role to be more readable (e.g., "user" -> "User", "aba_therapist" -> "ABA Therapist")
+        const formattedRole = roleValue.split('_').map(word => 
+          word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        ).join(' ');
+        roleDisplay.textContent = formattedRole;
+      }
+      
+      // Update member since with proper date formatting
+      if (memberSinceDisplay) {
+        if (user.createdAt) {
+          const createdDate = new Date(user.createdAt);
+          memberSinceDisplay.textContent = createdDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+        } else {
+          memberSinceDisplay.textContent = 'Not available';
+        }
+      }
+      
       // Update profile form fields
       const firstNameInput = document.getElementById('editFirstName');
       const lastNameInput = document.getElementById('editLastName');
       const emailInput = document.getElementById('editEmail');
       const phoneInput = document.getElementById('editPhone');
+      const roleInput = document.getElementById('editRole');
       
       if (firstNameInput) firstNameInput.value = user.firstName || '';
       if (lastNameInput) lastNameInput.value = user.lastName || '';
       if (emailInput) emailInput.value = user.email || '';
       if (phoneInput) phoneInput.value = user.phoneNumber || '';
+      if (roleInput) roleInput.value = user.role || 'user';
     }
 
     // Update profile image display
