@@ -1990,12 +1990,6 @@
     <div class="profile-section" style="margin-bottom: 2rem;">
       <h2 class="section-title">Profile Image</h2>
       <div class="image-upload-container">
-        <div class="current-image-section">
-          <div class="current-image-preview" id="currentImagePreview">
-            <img id="currentProfileImage" src="" alt="Current Profile Image" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div id="noImageMessage" style="display: flex; align-items: center; justify-content: center; height: 100px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-style: italic;">No profile image uploaded</div>
-          </div>
-        </div>
         <div class="upload-section">
           <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
           <button type="button" id="uploadImageBtn" class="upload-btn">
@@ -4316,8 +4310,6 @@
     function updateProfileImage(imageUrl) {
       const profileImage = document.getElementById("profileImage");
       const avatarPlaceholder = document.getElementById("avatarPlaceholder");
-      const currentProfileImage = document.getElementById("currentProfileImage");
-      const noImageMessage = document.getElementById("noImageMessage");
       const removeImageBtn = document.getElementById("removeImageBtn");
 
       if (imageUrl) {
@@ -4325,20 +4317,11 @@
         profileImage.src = imageUrl;
         profileImage.style.display = "block";
         avatarPlaceholder.style.display = "none";
-        
-        // Update preview section
-        currentProfileImage.src = imageUrl;
-        currentProfileImage.style.display = "block";
-        noImageMessage.style.display = "none";
         removeImageBtn.style.display = "block";
       } else {
         // Show placeholder
         profileImage.style.display = "none";
         avatarPlaceholder.style.display = "flex";
-        
-        // Show no image message
-        currentProfileImage.style.display = "none";
-        noImageMessage.style.display = "flex";
         removeImageBtn.style.display = "none";
       }
     }
