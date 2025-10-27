@@ -4494,10 +4494,12 @@
 
         if (!response.ok) {
           const errorText = await response.text();
+          console.error('Profile update error response:', errorText);
+          console.error('Update data sent:', updateData);
           let errorMessage = 'Failed to update profile image';
           try {
             const error = JSON.parse(errorText);
-            errorMessage = error.message || error.error || errorMessage;
+            errorMessage = error.message || error.error || JSON.stringify(error);
           } catch (e) {
             errorMessage = `Server error (${response.status}): ${response.statusText}`;
           }
