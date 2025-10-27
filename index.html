@@ -4,6 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>241 Runners Awareness</title>
+  
+  <!-- Redirect non-www to www for HTTPS compatibility -->
+  <script>
+    if (window.location.hostname === '241runnersawareness.org' && !window.location.hostname.startsWith('www.')) {
+      window.location.href = 'https://www.241runnersawareness.org' + window.location.pathname + window.location.search + window.location.hash;
+    }
+  </script>
   <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏃</text></svg>">
   
   <!-- PWA Configuration -->
