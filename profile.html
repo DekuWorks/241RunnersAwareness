@@ -4481,8 +4481,45 @@
     async function updateUserProfileImage(imageUrl) {
       try {
         const userData = JSON.parse(localStorage.getItem("ra_auth"));
-        // TODO: Implement image update endpoint
-        console.log('Image update not yet implemented');
+        const token = userData.accessToken || userData.token;
+        
+        if (!token) {
+          throw new Error('No authentication token found');
+        }
+
+        // Update user profile with the image URL
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            profileImageUrl: imageUrl
+          })
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          let errorMessage = 'Failed to update profile image';
+          try {
+            const error = JSON.parse(errorText);
+            errorMessage = error.message || error.error || errorMessage;
+          } catch (e) {
+            errorMessage = `Server error (${response.status}): ${response.statusText}`;
+          }
+          throw new Error(errorMessage);
+        }
+
+        const result = await response.json();
+        console.log('Profile image URL saved to database:', imageUrl);
+        
+        // Update current user object with new image URL
+        if (currentUser) {
+          currentUser.profileImageUrl = imageUrl;
+        }
+        
+        return result;
       } catch (error) {
         console.error("Error updating profile image:", error);
         throw error;
