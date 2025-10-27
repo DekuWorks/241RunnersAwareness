@@ -340,7 +340,26 @@
             .form-group input,
             .form-group select {
                 padding: 12px;
-                font-size: 0.95rem;
+                font-size: 16px; /* Prevent zoom on iOS */
+                min-height: 44px; /* Touch-friendly */
+            }
+
+            /* Touch-friendly buttons */
+            .form-group button {
+                min-height: 44px;
+                font-size: 16px;
+                touch-action: manipulation; /* Prevent double-tap zoom */
+            }
+
+            /* Better spacing for mobile */
+            .auth-links {
+                margin-top: 20px;
+            }
+
+            .auth-links a {
+                font-size: 0.9rem;
+                padding: 0.5rem 0;
+                display: block;
             }
         }
         
