@@ -4461,9 +4461,6 @@
             console.error('SAS token request failed:', errorText);
             throw new Error('Failed to get secure access to uploaded image');
           }
-        } else {
-          throw new Error('Invalid response from upload service');
-        }
           
           setTimeout(() => {
             progressContainer.style.display = "none";
