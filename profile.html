@@ -4471,15 +4471,25 @@
         }
 
         // Update user profile with the image URL
+        // Include current user data to avoid validation errors
+        const updateData = {
+          profileImageUrl: imageUrl
+        };
+        
+        // Add required fields from currentUser if available
+        if (currentUser) {
+          if (currentUser.firstName) updateData.firstName = currentUser.firstName;
+          if (currentUser.lastName) updateData.lastName = currentUser.lastName;
+          if (currentUser.email) updateData.email = currentUser.email;
+        }
+        
         const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({
-            profileImageUrl: imageUrl
-          })
+          body: JSON.stringify(updateData)
         });
 
         if (!response.ok) {
