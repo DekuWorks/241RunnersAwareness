@@ -2384,9 +2384,11 @@
             <div class="form-group">
               <label for="runnerStatus">Status *</label>
               <select id="runnerStatus" name="status" required>
+                <option value="Active">Active</option>
                 <option value="Missing">Missing</option>
                 <option value="Found">Found</option>
                 <option value="Resolved">Resolved</option>
+                <option value="Inactive">Inactive</option>
               </select>
             </div>
             
@@ -3039,7 +3041,7 @@
       editingRunner = null;
       document.getElementById('modalTitle').textContent = 'Add New Runner';
       document.getElementById('runnerForm').reset();
-      document.getElementById('runnerStatus').value = 'Missing';
+      document.getElementById('runnerStatus').value = 'Active'; // Default to Active instead of Missing
       document.getElementById('modalMessages').innerHTML = '';
       document.getElementById('runnerModal').classList.add('show');
     }
@@ -3062,11 +3064,16 @@
           document.getElementById('runnerName').value = runner.name || '';
           document.getElementById('runnerDOB').value = runner.dateOfBirth ? runner.dateOfBirth.split('T')[0] : '';
           document.getElementById('runnerGender').value = runner.gender || '';
-          document.getElementById('runnerStatus').value = runner.status || 'Missing';
+          document.getElementById('runnerStatus').value = runner.status || 'Active'; // Default to Active if no status
           document.getElementById('runnerPhysicalDescription').value = runner.physicalDescription || '';
           document.getElementById('runnerMedicalConditions').value = runner.medicalConditions || '';
           document.getElementById('runnerAllergies').value = runner.allergies || '';
           document.getElementById('runnerEmergencyInstructions').value = runner.emergencyInstructions || '';
+          
+          // Preserve all runner data when editing
+          if (editingRunner) {
+            console.log('Editing runner with full data:', editingRunner);
+          }
           
           document.getElementById('modalMessages').innerHTML = '';
           document.getElementById('runnerModal').classList.add('show');
@@ -3840,11 +3847,44 @@
       runnerForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
+        // Validate current user exists
+        const authData = localStorage.getItem('ra_auth');
+        if (!authData) {
+          showError('User not authenticated. Please log in again.');
+          return;
+        }
+        
+        const auth = JSON.parse(authData);
+        const currentUser = auth.user;
+        
+        if (!currentUser || !currentUser.id) {
+          showError('User not authenticated. Please log in again.');
+          return;
+        }
+        
         const formData = new FormData(this);
         const data = Object.fromEntries(formData.entries());
         
+        // Validate required fields
+        if (!data.name || !data.dateOfBirth || !data.gender || !data.status) {
+          showError('Please fill in all required fields.');
+          return;
+        }
+        
+        // Add UserId for new runners
+        if (!editingRunner) {
+          data.userId = currentUser.id;
+        } else if (editingRunner.id) {
+          // Preserve runner ID when editing
+          data.id = editingRunner.id;
+        }
+        
         try {
           const token = getAuthToken();
+          if (!token) {
+            throw new Error('No authentication token found');
+          }
+          
           const submitBtn = document.getElementById('submitBtn');
           const submitText = document.getElementById('submitText');
           const loadingSpinner = document.getElementById('loadingSpinner');
@@ -3854,13 +3894,13 @@
           submitText.style.display = 'none';
           loadingSpinner.style.display = 'block';
           
-          // UserId is automatically extracted from JWT token on the backend
-          
           const url = editingRunner 
             ? `${PROFILE_API_BASE_URL}/api/v1.0/runner/${editingRunner.id}`
             : `${PROFILE_API_BASE_URL}/api/v1.0/runner`;
           
           const method = editingRunner ? 'PUT' : 'POST';
+          
+          console.log('Saving runner data:', data);
           
           const response = await fetch(url, {
             method: method,
@@ -3872,12 +3912,13 @@
           });
           
           if (response.ok) {
+            const result = await response.json();
             showSuccess(editingRunner ? 'Runner updated successfully' : 'Runner created successfully');
             closeRunnerModal();
             loadRunners();
           } else {
-            const result = await response.json();
-            throw new Error(result.message || 'Failed to save runner');
+            const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+            throw new Error(errorData.message || 'Failed to save runner');
           }
           
         } catch (error) {
@@ -3889,9 +3930,9 @@
           const submitText = document.getElementById('submitText');
           const loadingSpinner = document.getElementById('loadingSpinner');
           
-          submitBtn.disabled = false;
-          submitText.style.display = 'inline';
-          loadingSpinner.style.display = 'none';
+          if (submitBtn) submitBtn.disabled = false;
+          if (submitText) submitText.style.display = 'inline';
+          if (loadingSpinner) loadingSpinner.style.display = 'none';
         }
       });
     }

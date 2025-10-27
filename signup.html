@@ -651,8 +651,8 @@
                         message: 'Password must contain at least one number'
                     },
                     { 
-                        custom: (value) => /[@$!%*?&]/.test(value),
-                        message: 'Password must contain at least one special character (@$!%*?&)'
+                        custom: (value) => /[@$!%*?&#]/.test(value),
+                        message: 'Password must contain at least one special character (@$!%*?&#)'
                     }
                 ]);
             });
