@@ -11,8 +11,8 @@
     <div class="nav-container">
       <!-- Logo and Brand -->
       <div class="nav-brand">
-        <a href="/" class="nav-logo">
-          <img src="assets/images/241-logo.jpg" alt="241 Runners Awareness" class="nav-logo-img">
+        <a href="/" class="nav-logo" title="Go to Home Page">
+          <img src="assets/images/241-logo-new.jpg" alt="241 Runners Awareness - Every Life Tracked. Every Family Reunited." class="nav-logo-img">
           <span class="nav-logo-text">241 Runners Awareness</span>
         </a>
       </div>
@@ -131,10 +131,16 @@
 }
 
 .nav-logo-img {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: var(--radius-md);
   margin-right: var(--spacing-sm);
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.nav-logo-img:hover {
+  transform: scale(1.05);
 }
 
 .nav-logo-text {
@@ -144,6 +150,14 @@
 @media (min-width: 640px) {
   .nav-logo-text {
     display: block;
+  }
+}
+
+/* Mobile logo sizing */
+@media (max-width: 640px) {
+  .nav-logo-img {
+    width: 40px;
+    height: 40px;
   }
 }
 
