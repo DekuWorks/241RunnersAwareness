@@ -3146,6 +3146,7 @@
 
     // Update connection status indicator
     function updateConnectionStatus(status, message) {
+      // Update the connection status text element in the settings section
       const statusElement = document.getElementById('connectionStatusText');
       const statusBadge = document.getElementById('connectionStatusBadge');
       const statusDot = statusBadge?.querySelector('.status-dot');
@@ -3162,6 +3163,21 @@
           statusDot.classList.add('connecting');
         } else if (status === 'disconnected' || status === 'error' || status === 'failed') {
           statusDot.classList.add('disconnected');
+        }
+      }
+      
+      // Also update the connection status indicator at the top of the page
+      const connectionStatus = document.getElementById('connectionStatus');
+      if (connectionStatus) {
+        // Remove all status classes
+        connectionStatus.classList.remove('connecting', 'connected', 'disconnected');
+        // Add the appropriate status class
+        connectionStatus.classList.add(status === 'connected' ? 'connected' : status === 'connecting' || status === 'reconnecting' ? 'connecting' : 'disconnected');
+        
+        // Update the text content
+        const statusText = connectionStatus.querySelector('span');
+        if (statusText) {
+          statusText.textContent = message;
         }
       }
     }
@@ -5442,6 +5458,10 @@
         // Setup UI components
         setupImageUpload();
         setupRunnerPhotoUpload();
+        
+        // Initialize real-time notifications
+        await initializeRealTimeNotifications();
+        console.log('Real-time notifications initialized');
         
         console.log('Profile initialization complete');
         
