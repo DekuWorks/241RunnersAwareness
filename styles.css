@@ -312,22 +312,24 @@ html header {
   z-index: 1000 !important;
 }
 
-/* Hamburger menu button */
+/* Hamburger menu button - hidden by default on desktop */
 .hamburger {
   display: none;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 6px;
+  padding: 12px;
   position: fixed;
-  right: 20px;
-  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 15px;
   z-index: 1001;
-  min-width: 36px;
-  min-height: 44px;
-  border-radius: 6px;
-  background: rgba(0, 0, 0, 0.8);
+  min-width: 50px;
+  min-height: 50px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.9);
   backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .hamburger span {
@@ -1027,26 +1029,32 @@ body.dark-mode .feature-card p {
 
 /* Mobile Navigation Improvements - Safari Compatible */
 @media (max-width: 768px) {
-  /* Hamburger menu button - Safari optimized */
+  /* Hamburger menu button - Centered and larger for mobile */
   .hamburger {
     display: block !important;
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1001;
-    padding: 8px;
-    border-radius: 6px;
-    background: rgba(0, 0, 0, 0.8);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    -webkit-transition: all 0.3s ease;
-    -moz-transition: all 0.3s ease;
-    -o-transition: all 0.3s ease;
-    transition: all 0.3s ease;
-    min-width: 44px;
-    min-height: 44px;
-    border: none;
-    cursor: pointer;
+    position: fixed !important;
+    left: 50% !important;
+    -webkit-transform: translateX(-50%) !important;
+    -moz-transform: translateX(-50%) !important;
+    -ms-transform: translateX(-50%) !important;
+    -o-transform: translateX(-50%) !important;
+    transform: translateX(-50%) !important;
+    top: 15px !important;
+    z-index: 1001 !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+    background: rgba(0, 0, 0, 0.95) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-transition: all 0.3s ease !important;
+    -moz-transition: all 0.3s ease !important;
+    -o-transition: all 0.3s ease !important;
+    transition: all 0.3s ease !important;
+    min-width: 56px !important;
+    min-height: 56px !important;
+    border: none !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
   }
   
   .hamburger:hover {
@@ -1096,28 +1104,32 @@ body.dark-mode .feature-card p {
     left: 0;
   }
   
-  /* Mobile navigation links - Safari optimized */
-  nav a {
-    display: block;
-    padding: 15px 20px;
-    margin: 10px 0;
-    font-size: 1.2rem;
-    text-align: center;
-    width: 80%;
-    max-width: 300px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    -webkit-transition: all 0.3s ease;
-    -moz-transition: all 0.3s ease;
-    -o-transition: all 0.3s ease;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-height: 44px;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+  /* Mobile navigation links - Safari optimized - Only visible when menu is active */
+  nav:not(.active) a {
+    display: none !important;
+  }
+  
+  nav.active a {
+    display: block !important;
+    padding: 15px 20px !important;
+    margin: 10px 0 !important;
+    font-size: 1.2rem !important;
+    text-align: center !important;
+    width: 80% !important;
+    max-width: 300px !important;
+    border-radius: 8px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    -webkit-transition: all 0.3s ease !important;
+    -moz-transition: all 0.3s ease !important;
+    -o-transition: all 0.3s ease !important;
+    transition: all 0.3s ease !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    min-height: 44px !important;
+    -webkit-box-sizing: border-box !important;
+    -moz-box-sizing: border-box !important;
+    box-sizing: border-box !important;
   }
   
   nav a:hover {
