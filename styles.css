@@ -1043,30 +1043,35 @@ body.dark-mode .feature-card p {
     -ms-transform: translateX(-50%) !important;
     -o-transform: translateX(-50%) !important;
     transform: translateX(-50%) !important;
-    top: 70px !important;
+    top: 80px !important;
     z-index: 1001 !important;
-    padding: 12px !important;
-    border-radius: 8px !important;
-    background: rgba(255, 255, 255, 0.95) !important;
+    padding: 14px !important;
+    border-radius: 10px !important;
+    background: #ffffff !important;
+    border: 3px solid #000 !important;
     -webkit-backdrop-filter: blur(10px) !important;
     backdrop-filter: blur(10px) !important;
     -webkit-transition: all 0.3s ease !important;
     -moz-transition: all 0.3s ease !important;
     -o-transition: all 0.3s ease !important;
     transition: all 0.3s ease !important;
-    min-width: 56px !important;
-    min-height: 56px !important;
-    border: none !important;
+    width: 64px !important;
+    height: 64px !important;
     cursor: pointer !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
   }
   
   .hamburger span {
     background: #000 !important;
+    width: 24px !important;
+    height: 3px !important;
+    margin: 5px 0 !important;
   }
   
-  .hamburger:hover {
-    background: rgba(0, 0, 0, 0.95) !important;
+  .hamburger:hover,
+  .hamburger:active {
+    background: rgba(255, 255, 255, 1) !important;
+    opacity: 1 !important;
     -webkit-transform: translateX(-50%) !important;
     -moz-transform: translateX(-50%) !important;
     -ms-transform: translateX(-50%) !important;
@@ -1109,6 +1114,9 @@ body.dark-mode .feature-card p {
   nav.active {
     display: flex !important;
     left: 0 !important;
+    top: 100px !important;
+    height: calc(100vh - 100px) !important;
+    max-height: calc(100vh - 100px) !important;
   }
   
   /* Mobile navigation links - Safari optimized - Only visible when menu is active */
@@ -1118,14 +1126,15 @@ body.dark-mode .feature-card p {
   
   nav.active a {
     display: block !important;
-    padding: 15px 20px !important;
-    margin: 10px 0 !important;
-    font-size: 1.2rem !important;
+    padding: 18px 24px !important;
+    margin: 8px 12px !important;
+    font-size: 1.3rem !important;
+    font-weight: 600 !important;
     text-align: center !important;
-    width: 80% !important;
-    max-width: 300px !important;
-    border-radius: 8px !important;
-    background: rgba(255, 255, 255, 0.1) !important;
+    width: calc(100% - 24px) !important;
+    max-width: 500px !important;
+    border-radius: 12px !important;
+    background: rgba(255, 255, 255, 0.15) !important;
     -webkit-transition: all 0.3s ease !important;
     -moz-transition: all 0.3s ease !important;
     -o-transition: all 0.3s ease !important;
@@ -1133,10 +1142,22 @@ body.dark-mode .feature-card p {
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    min-height: 44px !important;
+    min-height: 56px !important;
     -webkit-box-sizing: border-box !important;
     -moz-box-sizing: border-box !important;
     box-sizing: border-box !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  }
+  
+  nav.active a:hover,
+  nav.active a:active {
+    background: rgba(255, 255, 255, 0.3) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    -webkit-transform: translateY(-2px) !important;
+    -moz-transform: translateY(-2px) !important;
+    -ms-transform: translateY(-2px) !important;
+    -o-transform: translateY(-2px) !important;
+    transform: translateY(-2px) !important;
   }
   
   nav a:hover {
