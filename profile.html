@@ -4512,10 +4512,17 @@
 
         const result = await response.json();
         console.log('Profile image URL saved to database:', imageUrl);
+        console.log('API response result:', result);
         
         // Update current user object with new image URL
         if (currentUser) {
           currentUser.profileImageUrl = imageUrl;
+        }
+        
+        // Also update the user object in the response if it exists
+        if (result.user) {
+          currentUser = result.user;
+          console.log('Updated currentUser from API response:', currentUser);
         }
         
         return result;
