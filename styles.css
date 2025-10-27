@@ -257,6 +257,16 @@ header.scrolled {
   box-sizing: border-box;
 }
 
+.header-bar h1 {
+  flex: 1;
+  text-align: center;
+}
+
+.header-bar .hamburger {
+  position: absolute;
+  right: 20px;
+}
+
 /* Global image styles - only for logo and small images */
 .logo {
   width: 60px;
