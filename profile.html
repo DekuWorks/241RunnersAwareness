@@ -2828,22 +2828,50 @@
       }
     }
 
-    // Handle emergency alert
+    // Handle emergency alert - UPDATE USER STATUS TO SAFE
     async function handleEmergencyAlert(notificationId) {
       try {
-        // Update user status to safe - TODO: Implement this endpoint
-        // const response = await fetch(`${PROFILE_API_BASE_URL}/users/status`, {
-        //   method: 'PUT',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //     'Authorization': `Bearer ${getAuthToken()}`
-        //   },
-        //   body: JSON.stringify({ status: 'safe' })
-        // });
+        const token = getAuthToken();
+        if (!token) {
+          throw new Error('No authentication token');
+        }
 
-        // TODO: Implement status update endpoint
-        showNotification('profile-update', 'Status Updated', 
-          'Your safety status has been updated to "Safe".', true);
+        // Update user status to safe via profile update
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ 
+            status: 'safe',
+            // Include required fields if currentUser exists
+            ...(currentUser && {
+              firstName: currentUser.firstName,
+              lastName: currentUser.lastName,
+              email: currentUser.email
+            })
+          })
+        });
+
+        if (response.ok) {
+          // Update local user data
+          const userData = JSON.parse(localStorage.getItem("ra_auth"));
+          if (userData && userData.user) {
+            userData.user.status = 'safe';
+            localStorage.setItem('ra_auth', JSON.stringify(userData));
+            
+            // Update currentUser in memory
+            if (currentUser) {
+              currentUser.status = 'safe';
+            }
+          }
+          
+          showNotification('profile-update', 'Status Updated', 
+            'Your safety status has been updated to "Safe".', true);
+        } else {
+          throw new Error('Failed to update status');
+        }
       } catch (error) {
         console.error('Failed to update safety status:', error);
         showNotification('system', 'Update Failed', 
@@ -4321,6 +4349,14 @@
         profileImage.style.display = "block";
         avatarPlaceholder.style.display = "none";
         removeImageBtn.style.display = "block";
+        
+        // CRITICAL: Persist image URL to localStorage for reload
+        const authData = JSON.parse(localStorage.getItem("ra_auth"));
+        if (authData && authData.user) {
+          authData.user.profileImageUrl = imageUrl;
+          localStorage.setItem("ra_auth", JSON.stringify(authData));
+          console.log('Image URL persisted to localStorage:', imageUrl);
+        }
       } else {
         console.log('No image URL provided, showing placeholder');
         // Show placeholder
@@ -4642,8 +4678,33 @@
           return;
         }
         
-        // TODO: Implement case status update endpoint
-        showMessage('info', 'Case status update not yet implemented');
+        // Update runner status via existing runner update endpoint
+        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner/${runnerData.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            status: newStatus,
+            // Preserve existing runner data
+            ...(runnerData && {
+              name: runnerData.name,
+              dateOfBirth: runnerData.dateOfBirth,
+              gender: runnerData.gender,
+              physicalDescription: runnerData.physicalDescription,
+              medicalConditions: runnerData.medicalConditions
+            })
+          })
+        });
+
+        if (response.ok) {
+          // Reload runner data to reflect status change
+          await loadRunnerProfile();
+          showMessage('success', `Status updated to "${newStatus}" successfully!`);
+        } else {
+          throw new Error('Failed to update case status');
+        }
         
       } catch (error) {
         console.error('Error updating case status:', error);
@@ -4872,14 +4933,66 @@
       }
     }
 
-    // Remove individual runner photo
+    // Remove individual runner photo - IMPLEMENTED
     async function removeRunnerPhoto(photoIndex) {
       if (!confirm("Are you sure you want to remove this photo?")) {
         return;
       }
 
-      // TODO: Implement individual photo removal
-      showMessage('info', 'Individual photo removal not yet implemented. Please use "Remove All Photos" for now.');
+      try {
+        const userData = JSON.parse(localStorage.getItem("ra_auth"));
+        if (!userData || !(userData.accessToken || userData.token)) {
+          showMessage('error', 'Please log in again');
+          return;
+        }
+
+        // Get current runner profile
+        const runnerData = await loadRunnerProfile();
+        if (!runnerData || !runnerData.id) {
+          showMessage('error', 'No runner profile found');
+          return;
+        }
+
+        // Remove photo from array by index
+        const updatedPhotos = [...(runnerData.additionalImageUrls || [])];
+        if (photoIndex >= 0 && photoIndex < updatedPhotos.length) {
+          updatedPhotos.splice(photoIndex, 1);
+
+          // Update runner profile with updated photo array
+          const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner/${runnerData.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${userData.accessToken || userData.token}`
+            },
+            body: JSON.stringify({
+              additionalImageUrls: updatedPhotos,
+              // Preserve existing runner data
+              ...(runnerData && {
+                name: runnerData.name,
+                dateOfBirth: runnerData.dateOfBirth,
+                gender: runnerData.gender,
+                status: runnerData.status,
+                physicalDescription: runnerData.physicalDescription,
+                medicalConditions: runnerData.medicalConditions
+              })
+            })
+          });
+
+          if (response.ok) {
+            // Reload runner profile to reflect changes
+            await loadRunnerProfile();
+            showMessage('success', 'Photo removed successfully!');
+          } else {
+            throw new Error('Failed to remove photo');
+          }
+        } else {
+          throw new Error('Invalid photo index');
+        }
+      } catch (error) {
+        console.error('Error removing runner photo:', error);
+        showMessage('error', `Failed to remove photo: ${error.message}`);
+      }
     }
 
     // Simple initialization - just load the data
