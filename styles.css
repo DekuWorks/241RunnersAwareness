@@ -1033,58 +1033,60 @@ body.dark-mode .feature-card p {
 
 /* Mobile Navigation Improvements - Safari Compatible */
 @media (max-width: 768px) {
-  /* Hamburger menu button - Centered and larger for mobile */
+  /* Hamburger menu button - Positioned in header on the right side */
   .hamburger {
     display: block !important;
-    position: fixed !important;
-    left: 50% !important;
-    -webkit-transform: translateX(-50%) !important;
-    -moz-transform: translateX(-50%) !important;
-    -ms-transform: translateX(-50%) !important;
-    -o-transform: translateX(-50%) !important;
-    transform: translateX(-50%) !important;
-    top: 80px !important;
+    position: absolute !important;
+    right: 20px !important;
+    top: 50% !important;
+    -webkit-transform: translateY(-50%) !important;
+    -moz-transform: translateY(-50%) !important;
+    -ms-transform: translateY(-50%) !important;
+    -o-transform: translateY(-50%) !important;
+    transform: translateY(-50%) !important;
     z-index: 1001 !important;
-    padding: 14px !important;
-    border-radius: 10px !important;
-    background: #ffffff !important;
-    border: 3px solid #000 !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
     -webkit-backdrop-filter: blur(10px) !important;
     backdrop-filter: blur(10px) !important;
     -webkit-transition: all 0.3s ease !important;
     -moz-transition: all 0.3s ease !important;
     -o-transition: all 0.3s ease !important;
     transition: all 0.3s ease !important;
-    width: 64px !important;
-    height: 64px !important;
+    width: 48px !important;
+    height: 48px !important;
     cursor: pointer !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
   }
   
   .hamburger span {
-    background: #000 !important;
-    width: 24px !important;
-    height: 3px !important;
-    margin: 5px 0 !important;
+    background: #ffffff !important;
+    width: 20px !important;
+    height: 2px !important;
+    margin: 4px 0 !important;
   }
   
   .hamburger:hover,
   .hamburger:active {
-    background: rgba(255, 255, 255, 1) !important;
+    background: rgba(255, 255, 255, 0.25) !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
     opacity: 1 !important;
-    -webkit-transform: translateX(-50%) !important;
-    -moz-transform: translateX(-50%) !important;
-    -ms-transform: translateX(-50%) !important;
-    -o-transform: translateX(-50%) !important;
-    transform: translateX(-50%) !important;
+    -webkit-transform: translateY(-50%) !important;
+    -moz-transform: translateY(-50%) !important;
+    -ms-transform: translateY(-50%) !important;
+    -o-transform: translateY(-50%) !important;
+    transform: translateY(-50%) !important;
   }
   
-  /* Mobile navigation container - Safari optimized */
+  /* Mobile navigation container - Slides in from the right */
   nav {
     position: fixed !important;
     top: 0 !important;
-    left: -100% !important;
-    width: 100% !important;
+    right: -100% !important;
+    width: 280px !important;
+    max-width: 85% !important;
     height: 100vh !important;
     background: rgba(0, 0, 0, 0.98) !important;
     -webkit-backdrop-filter: blur(20px) !important;
@@ -1094,29 +1096,27 @@ body.dark-mode .feature-card p {
     -webkit-box-direction: normal !important;
     -ms-flex-direction: column !important;
     flex-direction: column !important;
-    -webkit-box-pack: center !important;
-    -ms-flex-pack: center !important;
-    justify-content: center !important;
-    -webkit-box-align: center !important;
-    -ms-flex-align: center !important;
-    align-items: center !important;
-    -webkit-transition: left 0.3s ease !important;
-    -moz-transition: left 0.3s ease !important;
-    -o-transition: left 0.3s ease !important;
-    transition: left 0.3s ease !important;
+    -webkit-box-pack: start !important;
+    -ms-flex-pack: start !important;
+    justify-content: flex-start !important;
+    -webkit-box-align: stretch !important;
+    -ms-flex-align: stretch !important;
+    align-items: stretch !important;
+    -webkit-transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    -moz-transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    -o-transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
     z-index: 998 !important;
-    padding: 0 !important;
+    padding: 80px 0 20px 0 !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.4) !important;
   }
   
   /* Show navigation when hamburger is active */
   nav.active {
     display: flex !important;
-    left: 0 !important;
-    top: 100px !important;
-    height: calc(100vh - 100px) !important;
-    max-height: calc(100vh - 100px) !important;
+    right: 0 !important;
   }
   
   /* Mobile navigation links - Safari optimized - Only visible when menu is active */
@@ -1126,38 +1126,35 @@ body.dark-mode .feature-card p {
   
   nav.active a {
     display: block !important;
-    padding: 18px 24px !important;
-    margin: 8px 12px !important;
-    font-size: 1.3rem !important;
-    font-weight: 600 !important;
-    text-align: center !important;
+    padding: 16px 20px !important;
+    margin: 4px 12px !important;
+    font-size: 1.1rem !important;
+    font-weight: 500 !important;
+    text-align: left !important;
     width: calc(100% - 24px) !important;
-    max-width: 500px !important;
-    border-radius: 12px !important;
-    background: rgba(255, 255, 255, 0.15) !important;
-    -webkit-transition: all 0.3s ease !important;
-    -moz-transition: all 0.3s ease !important;
-    -o-transition: all 0.3s ease !important;
-    transition: all 0.3s ease !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+    color: #ffffff !important;
+    -webkit-transition: all 0.2s ease !important;
+    -moz-transition: all 0.2s ease !important;
+    -o-transition: all 0.2s ease !important;
+    transition: all 0.2s ease !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    min-height: 56px !important;
+    min-height: 48px !important;
     -webkit-box-sizing: border-box !important;
     -moz-box-sizing: border-box !important;
     box-sizing: border-box !important;
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    border-left: 3px solid transparent !important;
   }
   
   nav.active a:hover,
-  nav.active a:active {
-    background: rgba(255, 255, 255, 0.3) !important;
-    border-color: rgba(255, 255, 255, 0.5) !important;
-    -webkit-transform: translateY(-2px) !important;
-    -moz-transform: translateY(-2px) !important;
-    -ms-transform: translateY(-2px) !important;
-    -o-transform: translateY(-2px) !important;
-    transform: translateY(-2px) !important;
+  nav.active a:active,
+  nav.active a:focus {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-left-color: #ff0000 !important;
+    padding-left: 24px !important;
   }
   
   nav a:hover {
