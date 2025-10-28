@@ -246,7 +246,7 @@ header.scrolled {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 15px;
   padding: 15px 20px;
   position: relative;
   width: 100%;
@@ -258,8 +258,10 @@ header.scrolled {
 }
 
 .header-bar h1 {
-  flex: 1;
-  text-align: center;
+  margin: 0;
+  text-align: left;
+  font-size: 1.8rem;
+  font-weight: 600;
 }
 
 .header-bar .hamburger {
@@ -274,6 +276,25 @@ header.scrolled {
   width: 60px;
   height: 60px;
   border: 2px solid #fff;
+  margin: 0;
+}
+
+/* Logo link styling */
+.header-bar a {
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.header-bar a:hover {
+  transform: scale(1.05);
+}
+
+.header-bar a:focus {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 /* Header title */
@@ -1049,7 +1070,7 @@ body.dark-mode .feature-card p {
   .hamburger {
     display: block !important;
     position: absolute !important;
-    right: 10px !important;
+    right: 15px !important;
     top: 50% !important;
     -webkit-transform: translateY(-50%) !important;
     -moz-transform: translateY(-50%) !important;
@@ -1216,15 +1237,13 @@ body.dark-mode .feature-card p {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+    gap: 15px;
   }
   
   .header-bar h1 {
     font-size: 1.2rem;
     margin: 0;
-    -webkit-box-flex: 1;
-    -ms-flex: 1;
-    flex: 1;
-    text-align: center;
+    text-align: left;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1249,8 +1268,9 @@ body.dark-mode .feature-card p {
     }
     
     .hamburger {
-      top: 15px;
+      top: 50%;
       right: 15px;
+      transform: translateY(-50%);
     }
   }
   
@@ -1446,8 +1466,9 @@ body.dark-mode .feature-card p {
 /* Extra Small Mobile Devices (480px and below) */
 @media (max-width: 480px) {
   .hamburger {
-    top: 15px;
+    top: 50%;
     right: 15px;
+    transform: translateY(-50%);
     padding: 6px;
     min-width: 40px;
     min-height: 40px;
@@ -1653,13 +1674,14 @@ body.dark-mode .feature-card p {
 @media (max-width: 768px) {
   .hamburger {
     display: block;
-    position: fixed;
-    top: 20px;
-    right: 20px;
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
     z-index: 1001;
     padding: 8px;
     border-radius: 6px;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
   }
@@ -1739,13 +1761,13 @@ body.dark-mode .feature-card p {
     align-items: center;
     width: 100%;
     box-sizing: border-box;
+    gap: 15px;
   }
   
   .header-bar h1 {
     font-size: 1.2rem;
     margin: 0;
-    flex: 1;
-    text-align: center;
+    text-align: left;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
