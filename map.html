@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Map - 241 Runners Awareness</title>
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏃</text></svg>">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='https://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏃</text></svg>">
     <!-- Google Maps API - Will be loaded dynamically with API key -->
     <script>
         // Load Google Maps API with configured key
@@ -914,7 +914,7 @@
             // Create custom marker icon
             const icon = {
                 url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
-                    <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="20" height="20" viewBox="0 0 20 20" xmlns="https://www.w3.org/2000/svg">
                         <circle cx="10" cy="10" r="8" fill="${color}" stroke="#fff" stroke-width="2"/>
                         <text x="10" y="14" text-anchor="middle" fill="white" font-size="8" font-weight="bold">
                             ${status.charAt(0).toUpperCase()}
