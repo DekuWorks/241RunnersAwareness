@@ -128,6 +128,30 @@ After SSL is provisioned for both domains:
 - Check that A records point to GitHub Pages IPs (185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153)
 - Ensure apex domain is added in GitHub Pages settings as an additional domain
 
+### Issue: Extra A record causing SSL conflicts
+**Critical:** If you have MORE than 4 A records for the apex domain, or any A records pointing to IPs other than the 4 GitHub Pages IPs, this will cause SSL certificate issues.
+
+**Symptoms:**
+- "Connection is private" error persists even after DNS changes
+- Domain resolves to wrong IP address
+- SSL certificate cannot be verified
+
+**Fix:**
+1. **DELETE any A records** that don't match these 4 IPs:
+   - `185.199.108.153`
+   - `185.199.109.153`
+   - `185.199.110.153`
+   - `185.199.111.153`
+2. **Keep ONLY these 4 A records** for the apex domain
+3. Wait for DNS propagation (5 min - 1 hour)
+4. Re-verify domain in GitHub Pages settings
+5. Wait for SSL certificate to be re-provisioned (up to 24 hours)
+
+**Example of problematic configuration:**
+- ❌ Having 5 A records (4 correct + 1 extra)
+- ❌ Having A record pointing to `20.40.202.22` or any other IP
+- ✅ Having exactly 4 A records with the GitHub Pages IPs
+
 ## Additional Notes
 
 ### .htaccess File
