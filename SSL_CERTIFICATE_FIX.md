@@ -6,6 +6,8 @@ Users are reporting they cannot access the static site and are seeing a "Your co
 ## Root Cause
 This error occurs when GitHub Pages hasn't properly provisioned an SSL certificate for your custom domain(s), or the certificate has expired/needs renewal. Both `www.241runnersawareness.org` and `241runnersawareness.org` (apex domain) need to be configured separately.
 
+**Common Issue:** The apex domain may be using GitHub's default wildcard certificate (`*.github.io`) instead of a dedicated certificate. Chrome and Edge will reject this, while Safari may accept it. This requires forcing GitHub to provision a dedicated certificate.
+
 ## Solution Steps
 
 ### Step 1: Configure Both Domains in GitHub Pages
@@ -34,6 +36,15 @@ If the domains are not verified or SSL is not working:
 4. Wait up to 24 hours for GitHub to automatically provision SSL certificates for both domains
 
 **For apex domain specifically:** If `241runnersawareness.org` doesn't verify, ensure A records are configured in DNS (see Step 3).
+
+**CRITICAL - If certificate shows `*.github.io` instead of your domain:**
+- This means GitHub hasn't provisioned a dedicated certificate yet
+- Remove the apex domain from GitHub Pages settings
+- Wait 10 minutes
+- Verify DNS has exactly 4 A records (no extra records)
+- Re-add the apex domain
+- Wait 15 minutes to 24 hours for certificate provisioning
+- Verify with: `openssl s_client -connect 241runnersawareness.org:443 -servername 241runnersawareness.org` (should show `CN=241runnersawareness.org`, NOT `CN=*.github.io`)
 
 ### Step 3: Configure DNS Records
 
@@ -127,6 +138,33 @@ After SSL is provisioned for both domains:
 - Verify all 4 A records are configured at your DNS provider
 - Check that A records point to GitHub Pages IPs (185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153)
 - Ensure apex domain is added in GitHub Pages settings as an additional domain
+
+### Issue: Certificate shows `*.github.io` instead of your domain (Chrome/Edge error, Safari works)
+**Critical:** This is the exact issue causing "connection isn't private" in Chrome and Edge while Safari works.
+
+**Symptoms:**
+- Works in Safari but shows "connection isn't private" in Chrome/Edge
+- Certificate shows `CN=*.github.io` instead of `CN=241runnersawareness.org`
+- "Enforce HTTPS" is checked but still shows error
+
+**Root Cause:**
+GitHub Pages hasn't provisioned a dedicated SSL certificate for your custom domain. It's using the default GitHub wildcard certificate, which Chrome and Edge reject.
+
+**Fix:**
+1. **Verify DNS is correct** - Run `dig 241runnersawareness.org +short` - should show ONLY 4 GitHub Pages IPs
+2. **Remove apex domain** from GitHub Pages settings
+3. **Wait 10 minutes**
+4. **Re-add apex domain** (`241runnersawareness.org`) in GitHub Pages settings
+5. **Wait for verification** (green checkmark)
+6. **Wait 15 minutes to 24 hours** for GitHub to provision dedicated certificate
+7. **Verify certificate** - Should show `CN=241runnersawareness.org`, not `CN=*.github.io`
+
+**How to verify certificate is correct:**
+```bash
+echo | openssl s_client -connect 241runnersawareness.org:443 -servername 241runnersawareness.org 2>&1 | openssl x509 -noout -subject
+```
+
+Should show: `subject=CN = 241runnersawareness.org` (NOT `subject=CN = *.github.io`)
 
 ### Issue: Extra A record causing SSL conflicts
 **Critical:** If you have MORE than 4 A records for the apex domain, or any A records pointing to IPs other than the 4 GitHub Pages IPs, this will cause SSL certificate issues.
