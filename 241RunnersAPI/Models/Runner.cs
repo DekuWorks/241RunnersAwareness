@@ -123,6 +123,13 @@ namespace _241RunnersAPI.Models
         public bool IsVerified { get; set; } = false;
         public DateTime? VerifiedAt { get; set; }
         public string? VerifiedBy { get; set; }
+
+        // Community map opt-in: when true and coordinates set, runner appears on public map with minimal info only
+        public bool ShowOnMap { get; set; } = false;
+        /// <summary>Fuzzed/approximate latitude for map display (e.g. city-level). Rounded to 3 decimals.</summary>
+        public decimal? MapLatitude { get; set; }
+        /// <summary>Fuzzed/approximate longitude for map display.</summary>
+        public decimal? MapLongitude { get; set; }
     }
 
     /// <summary>
@@ -272,6 +279,15 @@ namespace _241RunnersAPI.Models
 
         [MaxLength(20, ErrorMessage = "Eye color cannot exceed 20 characters")]
         public string? EyeColor { get; set; }
+
+        /// <summary>Opt-in to show on public community map (approximate location only).</summary>
+        public bool? ShowOnMap { get; set; }
+
+        /// <summary>Approximate latitude for map (e.g. city-level). Stored rounded to 3 decimals.</summary>
+        public decimal? MapLatitude { get; set; }
+
+        /// <summary>Approximate longitude for map.</summary>
+        public decimal? MapLongitude { get; set; }
     }
 
     /// <summary>
@@ -319,6 +335,10 @@ namespace _241RunnersAPI.Models
         public DateTime? NextPhotoReminder { get; set; }
         public bool PhotoUpdateReminderSent { get; set; }
         public int PhotoUpdateReminderCount { get; set; }
+
+        public bool ShowOnMap { get; set; }
+        public decimal? MapLatitude { get; set; }
+        public decimal? MapLongitude { get; set; }
         
         // User information
         public string? UserEmail { get; set; }

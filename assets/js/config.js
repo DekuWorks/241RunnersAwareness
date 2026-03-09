@@ -6,13 +6,14 @@
  * Centralized configuration for the static site
  */
 
+// Single source of truth: all APIs point to 241RunnersAPI (this repo).
 window.APP_CONFIG = {
     API_BASE_URL: "https://241runners-api-v2.azurewebsites.net/api",
     APP_NAME: "241 Runners Awareness",
     APP_VERSION: "1.0.0",
     ENVIRONMENT: "production",
     DEBUG: false,
-    HEALTH_CHECK_ENDPOINT: "/auth/health",
+    HEALTH_CHECK_ENDPOINT: "/v1.0/auth/health",
     API_TIMEOUT: 10000,
     RETRY_ATTEMPTS: 3
 };

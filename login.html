@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="/styles.css?v=20250905">
     <link rel="stylesheet" href="/forms.css">
     <link rel="stylesheet" href="/responsive.css?v=20250118">
+    <script src="assets/js/config.js"></script>
 </head>
 <body>
     <div class="auth-container">
@@ -75,8 +76,8 @@
     </div>
 
     <script>
-        // API Configuration
-        const API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net';
+        // API base from config (241RunnersAPI)
+        const API_BASE_URL = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
         
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('loginForm');
@@ -164,9 +165,9 @@
                 
                 try {
                     console.log('Attempting login with:', { email: formData.email, password: '***' });
-                    console.log('API URL:', `${API_BASE_URL}/api/v1.0/auth/login`);
+                    console.log('API URL:', `${API_BASE_URL}/v1.0/auth/login`);
                     
-                    const response = await fetch(`${API_BASE_URL}/api/v1.0/auth/login`, {
+                    const response = await fetch(`${API_BASE_URL}/v1.0/auth/login`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

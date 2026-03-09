@@ -352,4 +352,70 @@ namespace _241RunnersAPI.Models
         public string? ReportedByUserName { get; set; }
         public string? ReportedByUserEmail { get; set; }
     }
+
+    /// <summary>
+    /// Public-facing DTO for cases exposed on unauthenticated endpoints.
+    /// This intentionally contains only non-sensitive, privacy-safe fields.
+    /// </summary>
+    public class PublicCaseDto
+    {
+        public string Id { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Safe display name (e.g., First name + last initial or Runner #123).
+        /// Never a full legal name when privacy is a concern.
+        /// </summary>
+        public string PublicDisplayName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Optional age range string (e.g., "25-35"). Prefer this over exact age when possible.
+        /// </summary>
+        public string? AgeRange { get; set; }
+
+        /// <summary>
+        /// Optional exact age when allowed by policy.
+        /// </summary>
+        public int? Age { get; set; }
+
+        /// <summary>
+        /// Case status (Missing, Found, Safe, Urgent, Resolved, etc.).
+        /// </summary>
+        public string Status { get; set; } = string.Empty;
+
+        /// <summary>
+        /// City-level location only. No street address.
+        /// </summary>
+        public string? LastSeenCity { get; set; }
+
+        /// <summary>
+        /// State / region (e.g., "TX").
+        /// </summary>
+        public string? LastSeenState { get; set; }
+
+        /// <summary>
+        /// When the individual was last seen (or when the case was last updated if unavailable).
+        /// </summary>
+        public DateTime? LastSeenAt { get; set; }
+
+        /// <summary>
+        /// Public photo URL, if any.
+        /// </summary>
+        public string? PhotoUrl { get; set; }
+
+        /// <summary>
+        /// Short public description, trimmed to a safe length on the backend.
+        /// </summary>
+        public string? DescriptionShort { get; set; }
+
+        /// <summary>
+        /// Fuzzed / rounded coordinates for map display (e.g., 3 decimal places).
+        /// </summary>
+        public decimal? Latitude { get; set; }
+        public decimal? Longitude { get; set; }
+
+        /// <summary>
+        /// When the case was last updated.
+        /// </summary>
+        public DateTime? UpdatedAt { get; set; }
+    }
 }

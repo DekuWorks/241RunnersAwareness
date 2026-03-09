@@ -100,61 +100,43 @@ class CasesPage {
         try {
             console.log('🔄 Loading cases from API...');
             this.showLoading();
-            
-            // Use the configured API base URL
-            const apiUrl = window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
-            console.log('📡 API URL:', apiUrl);
-            
-            // Load NamUs public cases for Houston area
-            let namusCases = [];
-            try {
-                const params = new URLSearchParams({
-                    region: 'houston',
-                    page: 1,
-                    pageSize: 100 // Get more cases to combine
-                });
 
-                console.log('🌐 Fetching public cases with params:', params.toString());
-                
-                // Use new API client if available
-                if (window.casesApi) {
-                    const responseData = await window.casesApi.getPublicCases('houston', '', '', 1, 100);
-                    namusCases = responseData.cases || [];
-                    console.log('✅ Public cases loaded via API client:', namusCases.length);
-                } else {
-                    // Fallback to direct fetch
-                    const namusResponse = await fetch(`${apiUrl}/cases/publiccases?${params}`);
-                    console.log('📊 Public cases response status:', namusResponse.status);
-                    
-                    if (namusResponse.ok) {
-                        const responseData = await namusResponse.json() || {};
-                        namusCases = responseData.cases || [];
-                        console.log('✅ Public cases loaded:', namusCases.length);
-                    } else {
-                        console.error('❌ Public cases API failed:', namusResponse.status, namusResponse.statusText);
-                        if (namusResponse.status === 404) {
-                            console.error('🔧 The /publiccases endpoint is not available yet. Backend deployment may still be in progress.');
-                        }
-                        
-                        // Show error UI for API failures
-                        if (window.errorUI) {
-                            window.errorUI.showErrorUI(
-                                'Unable to load cases from the server. Please try again later.',
-                                {
-                                    title: 'Cases Loading Error',
-                                    retryFunction: () => this.loadCases(),
-                                    showRetry: true
-                                }
-                            );
-                        }
-                    }
+            let rawItems = [];
+            const api = window.publicCasesApi;
+
+            if (api) {
+                try {
+                    const result = await api.getPublicCasesWithFallback({
+                        page: 1,
+                        pageSize: 200,
+                        sort: 'updated'
+                    });
+                    rawItems = result.items || [];
+                    console.log('✅ Public cases loaded:', rawItems.length);
+                } catch (err) {
+                    console.warn('Public API failed, trying direct fetch:', err.message);
                 }
-            } catch (error) {
-                console.error('❌ Network error fetching NamUs cases:', error.message);
             }
 
-            // If no cases loaded, show empty state
-            if (namusCases.length === 0) {
+            if (rawItems.length === 0) {
+                const apiUrl = window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const params = new URLSearchParams({ page: 1, pageSize: 100 });
+                const url = `${apiUrl}/v1.0/cases/publiccases?${params}`;
+                try {
+                    const res = await fetch(url, { credentials: 'omit' });
+                    if (res.ok) {
+                        const data = await res.json();
+                        rawItems = data.cases || data.items || (Array.isArray(data) ? data : []);
+                        console.log('✅ Fallback fetch cases:', rawItems.length);
+                    } else {
+                        console.warn('Cases API response:', res.status, res.statusText);
+                    }
+                } catch (e) {
+                    console.warn('Cases fetch failed:', e.message);
+                }
+            }
+
+            if (rawItems.length === 0) {
                 this.cases = [];
                 this.filteredCases = [];
                 this.hideLoading();
@@ -163,18 +145,71 @@ class CasesPage {
                 return;
             }
 
-            // Use NamUs cases directly
-            this.cases = this.normalizeNamusCases(namusCases);
+            const isPublicDto = rawItems[0] && (
+                'runnerName' in rawItems[0] ||
+                'publicDisplayName' in rawItems[0] ||
+                'lastSeenCity' in rawItems[0] ||
+                ('status' in rawItems[0] && !('Runner' in rawItems[0]))
+            );
+            this.cases = isPublicDto
+                ? this.normalizePublicCases(rawItems)
+                : this.normalizeNamusCases(rawItems);
             this.filteredCases = [...this.cases];
-            
+
             this.hideLoading();
             this.renderCases();
             this.updateStats();
-            
         } catch (error) {
             console.error('Error loading cases:', error);
+            this.hideLoading();
             this.showError();
+            if (window.errorUI) {
+                window.errorUI.showErrorUI('Unable to load cases. Please try again later.', {
+                    title: 'Cases Loading Error',
+                    retryFunction: () => this.loadCases(),
+                    showRetry: true
+                });
+            }
         }
+    }
+
+    // Normalize 241RunnersAPI public cases (and PublicCaseDto) to internal case shape
+    normalizePublicCases(items) {
+        if (!items || items.length === 0) return [];
+        return items.map(c => {
+            const displayName = c.runnerName || c.publicDisplayName || c.fullName || c.FullName || ('Case #' + c.id);
+            const parts = (displayName || '').trim().split(/\s+/);
+            const firstName = parts[0] || '';
+            const lastName = parts.slice(1).join(' ') || '';
+            const status = (c.status || c.Status || 'Active').toString();
+            const loc = c.location || (c.lastSeenCity && c.lastSeenState ? c.lastSeenCity + ', ' + c.lastSeenState : '');
+            const city = c.lastSeenCity || c.City || (loc ? loc.split(',')[0]?.trim() : '');
+            const state = c.lastSeenState || c.State || (loc && loc.includes(',') ? loc.split(',')[1]?.trim() : '') || '';
+            const dateReported = c.createdAt || c.lastSeen || c.lastSeenAt || c.updatedAt || c.DateMissing || c.UpdatedAt || new Date().toISOString();
+            return {
+                id: c.id,
+                source: 'api',
+                runnerId: c.runnerId || c.id || 'N/A',
+                firstName,
+                lastName,
+                fullName: displayName,
+                age: c.runnerAge ?? c.age ?? c.ageRange ?? null,
+                gender: c.runnerGender || c.gender || 'Unknown',
+                city,
+                state,
+                status: status.charAt(0).toUpperCase() + status.slice(1).toLowerCase(),
+                isUrgent: (status || '').toLowerCase() === 'urgent',
+                dateReported: typeof dateReported === 'string' ? dateReported : new Date(dateReported).toISOString(),
+                description: c.descriptionShort || c.description || '',
+                identifyingMarks: '',
+                medicalConditions: '',
+                photoUrl: c.runnerPhoto || c.photoUrl || c.PhotoUrl,
+                agency: '',
+                contactPerson: '',
+                contactPhone: '',
+                contactEmail: ''
+            };
+        }).sort((a, b) => new Date(b.dateReported) - new Date(a.dateReported));
     }
     
     applyFilters() {
@@ -680,10 +715,17 @@ class CasesPage {
         }, 3000);
     }
     
+    escapeHtml(text) {
+        if (text == null) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     getSampleData() {
         return []; // Return empty array - no mock data for live site
     }
-    
+
     renderCases() {
         if (this.filteredCases.length === 0) {
             this.showEmpty();
@@ -713,40 +755,42 @@ class CasesPage {
     }
     
     renderCaseCard(caseItem) {
+        const nameDisplay = [caseItem.firstName, caseItem.lastName].filter(Boolean).join(' ') || caseItem.fullName || 'Unknown';
+        const locationDisplay = [caseItem.city, caseItem.state].filter(Boolean).join(', ') || '—';
+        const ageDisplay = caseItem.age != null && caseItem.age !== '' ? caseItem.age : '—';
+        const detailUrl = 'case-detail.html?id=' + encodeURIComponent(caseItem.id);
         return `
             <div class="case-card ${caseItem.isUrgent ? 'urgent' : ''}">
                 <div class="case-header">
-                    <div class="case-id">${caseItem.runnerId}</div>
-                    <div class="case-status ${caseItem.status.toLowerCase().replace(' ', '-')}">${caseItem.status}</div>
-                    ${caseItem.source === 'namus' ? 
-                        '<span class="source-badge namus-badge">NamUs</span>' : 
+                    <div class="case-id">${this.escapeHtml(String(caseItem.runnerId))}</div>
+                    <div class="case-status ${(caseItem.status || '').toLowerCase().replace(/\s+/g, '-')}">${this.escapeHtml(caseItem.status)}</div>
+                    ${caseItem.source === 'namus' ?
+                        '<span class="source-badge namus-badge">NamUs</span>' :
                         '<span class="source-badge local-badge">Local</span>'
                     }
                 </div>
-                
+                ${caseItem.photoUrl ? `<div class="case-photo"><img src="${this.escapeHtml(caseItem.photoUrl)}" alt="" style="width:100%;height:180px;object-fit:cover;"></div>` : ''}
                 <div class="case-content">
-                    <h3 class="case-name">${caseItem.firstName} ${caseItem.lastName}</h3>
-                    <p class="case-description">${caseItem.description || 'No description available'}</p>
-                    
+                    <h3 class="case-name">${this.escapeHtml(nameDisplay)}</h3>
+                    <p class="case-description">${this.escapeHtml((caseItem.description || 'No description available').slice(0, 200))}${(caseItem.description || '').length > 200 ? '…' : ''}</p>
                     <div class="case-details">
                         <div class="detail-item">
                             <span class="detail-label">Age:</span>
-                            <span class="detail-value">${caseItem.age}</span>
+                            <span class="detail-value">${this.escapeHtml(String(ageDisplay))}</span>
                         </div>
                         <div class="detail-item">
                             <span class="detail-label">Gender:</span>
-                            <span class="detail-value">${caseItem.gender}</span>
+                            <span class="detail-value">${this.escapeHtml(caseItem.gender)}</span>
                         </div>
                         <div class="detail-item">
                             <span class="detail-label">Location:</span>
-                            <span class="detail-value">${caseItem.city}, ${caseItem.state}</span>
+                            <span class="detail-value">${this.escapeHtml(locationDisplay)}</span>
                         </div>
                         <div class="detail-item">
                             <span class="detail-label">Reported:</span>
                             <span class="detail-value">${new Date(caseItem.dateReported).toLocaleDateString()}</span>
                         </div>
                     </div>
-                    
                     <div class="case-physical">
                         <div class="physical-item">
                             <span class="physical-label">Height:</span>
@@ -782,8 +826,8 @@ class CasesPage {
                 </div>
                 
                 <div class="case-actions">
-                    <a href="https://241runnersawareness.org/runner.html?id=${caseItem.id}" class="btn-primary">View Details</a>
-                    <a href="https://241runnersawareness.org/map.html?case=${caseItem.id}" class="btn-secondary">View on Map</a>
+                    <a href="${detailUrl}" class="btn-primary">View details</a>
+                    <a href="map.html?case=${encodeURIComponent(caseItem.id)}" class="btn-secondary">View on Map</a>
                 </div>
             </div>
         `;

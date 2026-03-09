@@ -4,18 +4,11 @@
  * Unified authentication system for token storage, retrieval, and session management
  */
 
-// API Configuration
-let API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
-
-// Load API configuration from config.json
-async function loadConfig() {
-    // Configuration is already set in API_BASE_URL
-    // No need to fetch config.json to prevent 404 errors
-    return;
+// API Configuration — single source: 241RunnersAPI (see config.json / assets/js/config.js)
+function getApiBaseUrl() {
+    return (typeof window !== 'undefined' && window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
 }
-
-// Initialize config on load (disabled to prevent 404 errors)
-// loadConfig();
+let API_BASE_URL = getApiBaseUrl();
 
 /**
  * ============================================
@@ -127,7 +120,7 @@ async function apiRequest(endpoint, options = {}) {
         throw new Error('No authentication token found');
     }
 
-    const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint}`;
+    const url = endpoint.startsWith('http') ? endpoint : `${getApiBaseUrl()}${endpoint}`;
     
     const defaultOptions = {
         headers: {

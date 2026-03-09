@@ -969,23 +969,20 @@
     </div>
   </footer>
 
+  <script src="assets/js/config.js"></script>
   <script src="https://241runnersawareness.org/js/auth.js?v=20250905"></script>
   <script>
-    // API Configuration
-    let API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
-    
-    // Load API configuration
+    // API base from config (241RunnersAPI)
+    let API_BASE_URL = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
     async function loadConfig() {
       try {
         const response = await fetch('/config.json');
         const config = await response.json();
-        API_BASE_URL = config.API_BASE_URL;
+        if (config.API_BASE_URL) API_BASE_URL = config.API_BASE_URL;
       } catch (error) {
-        console.warn('Failed to load config.json, using default API URL');
+        console.warn('Failed to load config.json, using default');
       }
     }
-
-    // Initialize config
     loadConfig();
 
     // Check authentication status (optional)

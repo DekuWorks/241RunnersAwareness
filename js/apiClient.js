@@ -1,11 +1,14 @@
 /**
  * Centralized API Client for 241 Runners Awareness
- * Handles JWT authentication and provides consistent API interface
+ * All APIs point to 241RunnersAPI (config.json).
  */
-
-// Configure axios defaults
-axios.defaults.baseURL = "https://241runners-api-v2.azurewebsites.net/api";
-axios.defaults.withCredentials = false; // No cookies - use JWT only
+(function() {
+    var base = (typeof window !== 'undefined' && window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
+    if (typeof axios !== 'undefined') {
+        axios.defaults.baseURL = base;
+        axios.defaults.withCredentials = false;
+    }
+})();
 
 // Request interceptor to add JWT token
 axios.interceptors.request.use((config) => {
@@ -23,14 +26,23 @@ axios.interceptors.response.use(
         if (error.response?.status === 401) {
             const url = error.config?.url || '';
             const isAuthEndpoint = url.includes('/auth/login') || url.includes('/auth/me');
-            
-            if (isAuthEndpoint) {
-                console.warn('Authentication failed on auth endpoint, redirecting to login...');
+
+            // Decide whether this is an admin context or a regular user context
+            const path = window.location?.pathname || '';
+            const isAdminContext = path.startsWith('/admin') || url.toLowerCase().includes('/admin');
+            const loginPath = isAdminContext ? '/admin/login.html' : '/login.html';
+
+            const clearAuth = () => {
                 localStorage.removeItem("jwtToken");
                 localStorage.removeItem("ra_admin_token");
                 localStorage.removeItem("ra_admin_role");
                 localStorage.removeItem("ra_admin_user");
-                window.location.href = '/admin/login.html';
+            };
+
+            if (isAuthEndpoint) {
+                console.warn('Authentication failed on auth endpoint, redirecting to appropriate login page...');
+                clearAuth();
+                window.location.href = loginPath;
             } else {
                 console.warn('401 error on data endpoint:', url);
                 console.warn('Token may be expired or invalid. Checking token validity...');
@@ -44,33 +56,24 @@ axios.interceptors.response.use(
                             const payload = JSON.parse(atob(parts[1]));
                             const now = Math.floor(Date.now() / 1000);
                             if (payload.exp && payload.exp < now) {
-                                console.warn('Token has expired, redirecting to login...');
-                                localStorage.removeItem("jwtToken");
-                                localStorage.removeItem("ra_admin_token");
-                                localStorage.removeItem("ra_admin_role");
-                                localStorage.removeItem("ra_admin_user");
-                                window.location.href = '/admin/login.html';
+                                console.warn('Token has expired, redirecting to appropriate login page...');
+                                clearAuth();
+                                window.location.href = loginPath;
                                 return Promise.reject(error);
                             }
                         }
                     } catch (e) {
-                        console.warn('Invalid token format, redirecting to login...');
-                        localStorage.removeItem("jwtToken");
-                        localStorage.removeItem("ra_admin_token");
-                        localStorage.removeItem("ra_admin_role");
-                        localStorage.removeItem("ra_admin_user");
-                        window.location.href = '/admin/login.html';
+                        console.warn('Invalid token format, redirecting to appropriate login page...');
+                        clearAuth();
+                        window.location.href = loginPath;
                         return Promise.reject(error);
                     }
                 }
                 
                 // If token seems valid but still getting 401, redirect anyway
-                console.warn('Valid token but still getting 401, redirecting to login...');
-                localStorage.removeItem("jwtToken");
-                localStorage.removeItem("ra_admin_token");
-                localStorage.removeItem("ra_admin_role");
-                localStorage.removeItem("ra_admin_user");
-                window.location.href = '/admin/login.html';
+                console.warn('Valid token but still getting 401, redirecting to appropriate login page...');
+                clearAuth();
+                window.location.href = loginPath;
             }
         }
         return Promise.reject(error);
@@ -80,7 +83,7 @@ axios.interceptors.response.use(
 // API Client class
 class ApiClient {
     constructor() {
-        this.baseURL = "https://241runners-api-v2.azurewebsites.net/api";
+        this.baseURL = (typeof window !== 'undefined' && window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
     }
 
     // Generic request method

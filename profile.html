@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://241runnersawareness.org/forms.css">
   <link rel="stylesheet" href="responsive.css">
+  <script src="assets/js/config.js"></script>
   <script src="/js/auth-utils.js?v=20251018" defer></script>
   <!-- SignalR Client Library -->
   <script src="https://unpkg.com/@microsoft/signalr@latest/dist/browser/signalr.min.js"></script>
@@ -2882,18 +2883,10 @@
       }
     });
 
-    // API Configuration - use existing from auth.js
-    let PROFILE_API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net';
+    // API base from config (241RunnersAPI) — single source: config.json
+    let PROFILE_API_BASE_URL = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
     
-    // SignalR Connection
     let userHubConnection = null;
-    
-    // Load API configuration
-    async function loadConfig() {
-      // Configuration is already set in PROFILE_API_BASE_URL
-      // No need to fetch config.json to prevent 404 errors
-      return;
-    }
 
     // Handle avatar upload
     async function handleAvatarUpload(event) {
@@ -2931,7 +2924,7 @@
           formData.append('files', file);
           
           const token = getAuthToken();
-          const response = await fetch(`${PROFILE_API_BASE_URL}/api/ImageUpload/upload`, {
+          const response = await fetch(`${PROFILE_API_BASE_URL}/ImageUpload/upload`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`
@@ -2966,7 +2959,7 @@
     async function updateUserProfileImage(imageUrl) {
       try {
         const token = getAuthToken();
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/users/me`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -2991,7 +2984,7 @@
     async function removeProfileImage() {
       try {
         const token = getAuthToken();
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/users/me`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -3026,8 +3019,8 @@
     // Initialize SignalR connection for real-time notifications
     async function initializeRealTimeNotifications() {
       try {
-        const apiBaseUrl = PROFILE_API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net';
-        const baseUrl = apiBaseUrl.replace('/api', '');
+        const apiBaseUrl = PROFILE_API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+        const baseUrl = apiBaseUrl.replace(/\/api\/?$/, '');
         const hubUrl = baseUrl + '/hubs/alerts';
         
         const token = getAuthToken();
@@ -3258,7 +3251,7 @@
         }
 
         // Update user status to safe via profile update
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/users/me`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -3377,7 +3370,7 @@
         }
 
         // Try to get the user's runner profiles
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/runner`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -3493,7 +3486,7 @@
     async function editRunner(runnerId) {
       try {
         const token = getAuthToken();
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner/${runnerId}`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/runner/${runnerId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -3537,7 +3530,7 @@
 
       try {
         const token = getAuthToken();
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner/${runnerId}`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/runner/${runnerId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`
@@ -3783,7 +3776,7 @@
           throw new Error('No authentication token');
         }
 
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/cases/my-cases`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/cases/my-cases`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -4017,7 +4010,7 @@
         return;
       }
 
-      fetch(`${PROFILE_API_BASE_URL}/api/v1.0/cases/${caseId}`, {
+      fetch(`${PROFILE_API_BASE_URL}/v1.0/cases/${caseId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -4106,7 +4099,7 @@
         const token = getAuthToken();
         const authData = checkAuth();
         
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/users/me`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -4201,7 +4194,7 @@
         let response;
         
         try {
-          const runnerResponse = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner/my-profile`, {
+          const runnerResponse = await fetch(`${PROFILE_API_BASE_URL}/v1.0/runner/my-profile`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -4215,7 +4208,7 @@
         
         if (existingRunner && existingRunner.id) {
           // Update existing runner profile
-          response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner/${existingRunner.id}`, {
+          response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/runner/${existingRunner.id}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
@@ -4225,7 +4218,7 @@
           });
         } else {
           // Create new runner profile
-          response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner`, {
+          response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/runner`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -4338,8 +4331,8 @@
           loadingSpinner.style.display = 'block';
           
           const url = editingRunner 
-            ? `${PROFILE_API_BASE_URL}/api/v1.0/runner/${editingRunner.id}`
-            : `${PROFILE_API_BASE_URL}/api/v1.0/runner`;
+            ? `${PROFILE_API_BASE_URL}/v1.0/runner/${editingRunner.id}`
+            : `${PROFILE_API_BASE_URL}/v1.0/runner`;
           
           const method = editingRunner ? 'PUT' : 'POST';
           
@@ -4594,7 +4587,7 @@
         const token = getAuthToken();
         if (!token) return;
 
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/runner`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -4635,7 +4628,7 @@
         const token = getAuthToken();
         if (!token) return;
 
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/users/me`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -4668,7 +4661,7 @@
         }
 
         // Get user data from API
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/users/me`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -4848,7 +4841,7 @@
         }, 200);
 
         // Upload to server using the new secure endpoint
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/ImageUpload/upload`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/ImageUpload/upload`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${userData.accessToken || userData.token}`
@@ -4878,7 +4871,7 @@
           }
           
           // Get SAS token for secure access
-          const sasResponse = await fetch(`${PROFILE_API_BASE_URL}/api/ImageUpload/sas-token/${uploadedFile.fileName}`, {
+          const sasResponse = await fetch(`${PROFILE_API_BASE_URL}/ImageUpload/sas-token/${uploadedFile.fileName}`, {
             headers: {
               'Authorization': `Bearer ${userData.accessToken || userData.token}`
             }
@@ -4967,7 +4960,7 @@
           if (currentUser.email) updateData.email = currentUser.email;
         }
         
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/users/me`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -5033,7 +5026,7 @@
         removeBtn.disabled = true;
 
         // Update user profile to remove image URL
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/users/me`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/users/me`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -5100,7 +5093,7 @@
         }
         
         // Update runner status via existing runner update endpoint
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner/${runnerData.id}`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/runner/${runnerData.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -5171,7 +5164,7 @@
         }
 
         // Update runner profile with new photo URLs
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner/${runnerData.id}`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/runner/${runnerData.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -5248,7 +5241,7 @@
           formData.append('files', file);
         });
 
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/ImageUpload/upload`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/ImageUpload/upload`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${userData.accessToken || userData.token}`
@@ -5269,7 +5262,7 @@
           
           for (const uploadedFile of uploadedFiles) {
             try {
-              const sasResponse = await fetch(`${PROFILE_API_BASE_URL}/api/ImageUpload/sas-token/${uploadedFile.fileName}`, {
+              const sasResponse = await fetch(`${PROFILE_API_BASE_URL}/ImageUpload/sas-token/${uploadedFile.fileName}`, {
                 headers: {
                   'Authorization': `Bearer ${userData.accessToken || userData.token}`
                 }
@@ -5333,7 +5326,7 @@
       }
 
       try {
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/enhanced-runner/${runnerData.id}/photos`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/enhanced-runner/${runnerData.id}/photos`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${userData.accessToken || userData.token}`
@@ -5380,7 +5373,7 @@
           updatedPhotos.splice(photoIndex, 1);
 
           // Update runner profile with updated photo array
-          const response = await fetch(`${PROFILE_API_BASE_URL}/api/v1.0/runner/${runnerData.id}`, {
+          const response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/runner/${runnerData.id}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
@@ -5490,7 +5483,7 @@
 
       try {
         const token = getAuthToken();
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/notifications/preferences`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/notifications/preferences`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -5516,7 +5509,7 @@
     async function loadNotificationPreferences() {
       try {
         const token = getAuthToken();
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/notifications/preferences`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/notifications/preferences`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -5598,7 +5591,7 @@
     async function sendSubscriptionToServer(subscription) {
       try {
         const token = getAuthToken();
-        const response = await fetch(`${PROFILE_API_BASE_URL}/api/notifications/subscribe`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/notifications/subscribe`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

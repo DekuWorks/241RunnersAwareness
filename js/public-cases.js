@@ -1,21 +1,39 @@
 /**
  * Public Cases Page JavaScript
- * Handles loading and displaying NamUs missing persons cases for the Houston area
+ * Uses /api/public/cases (PublicCaseDto). Works signed-in or signed-out.
+ * Fallback: legacy publiccases until backend deploys new API.
  */
 
 class PublicCasesManager {
     constructor() {
-        this.apiBaseUrl = 'https://241runners-api-v2.azurewebsites.net/api';
         this.currentCases = [];
         this.filteredCases = [];
+        this.totalCount = 0;
         this.currentPage = 1;
         this.pageSize = 20;
         this.currentFilter = 'all';
         this.currentSearch = '';
         this.currentCity = '';
         this.currentCounty = '';
-        
         this.init();
+    }
+
+    /** Normalize case item for PublicCaseDto or legacy API shape */
+    normalizeCase(item) {
+        const status = (item.status || item.Status || '').toString().toLowerCase();
+        return {
+            id: item.id,
+            displayName: item.publicDisplayName || item.fullName || item.FullName || item.NamusCaseNumber || `Case #${item.id}`,
+            status,
+            lastSeenCity: item.lastSeenCity || item.City || '',
+            lastSeenState: item.lastSeenState || item.State || item.County || '',
+            lastSeenAt: item.lastSeenAt || item.DateMissing || item.dateMissing || null,
+            updatedAt: item.updatedAt || item.UpdatedAt || null,
+            photoUrl: item.photoUrl || item.PhotoUrl || null,
+            descriptionShort: item.descriptionShort || item.description || '',
+            ageRange: item.ageRange || (item.age != null ? String(item.age) : null) || item.AgeAtMissing,
+            namusCaseNumber: item.NamusCaseNumber || item.namusCaseNumber || null
+        };
     }
 
     /**
@@ -43,27 +61,25 @@ class PublicCasesManager {
             this.performSearch();
         });
 
-        // Search input (with debouncing)
+        // Search input (with debouncing) — reload from API when using new public/cases
         let searchTimeout;
-        document.getElementById('nameSearch').addEventListener('input', (e) => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                this.currentSearch = e.target.value.trim();
-                this.applyFilters();
-            }, 300);
-        });
+        const nameSearch = document.getElementById('nameSearch');
+        if (nameSearch) {
+            nameSearch.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    this.currentSearch = e.target.value.trim();
+                    this.currentPage = 1;
+                    this.loadCases();
+                }, 400);
+            });
+        }
 
-        // City filter
-        document.getElementById('cityFilter').addEventListener('change', (e) => {
-            this.currentCity = e.target.value;
-            this.applyFilters();
-        });
-
-        // County filter
-        document.getElementById('countyFilter').addEventListener('change', (e) => {
-            this.currentCounty = e.target.value;
-            this.applyFilters();
-        });
+        // City / County filters (client-side when list already loaded)
+        const cityFilter = document.getElementById('cityFilter');
+        const countyFilter = document.getElementById('countyFilter');
+        if (cityFilter) cityFilter.addEventListener('change', (e) => { this.currentCity = e.target.value; this.applyFilters(); });
+        if (countyFilter) countyFilter.addEventListener('change', (e) => { this.currentCounty = e.target.value; this.applyFilters(); });
 
         // Pagination
         document.getElementById('prevBtn').addEventListener('click', () => {
@@ -79,109 +95,101 @@ class PublicCasesManager {
      * Set active filter tab
      */
     setActiveFilter(filter) {
-        // Update active tab
-        document.querySelectorAll('.filter-tab').forEach(tab => {
-            tab.classList.remove('active');
-        });
-        document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
-
+        const tab = document.querySelector(`.filter-tab[data-filter="${filter}"]`);
+        if (tab) {
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+        }
         this.currentFilter = filter;
         this.currentPage = 1;
-        this.applyFilters();
+        this.loadCases();
     }
 
     /**
-     * Perform search with current criteria
+     * Perform search with current criteria (reload from API)
      */
     performSearch() {
         this.currentPage = 1;
-        this.applyFilters();
+        this.loadCases();
     }
 
     /**
-     * Apply all current filters
+     * Apply client-side filters (search, city, county) to current list
      */
     applyFilters() {
-        this.filteredCases = this.currentCases.filter(caseItem => {
-            // Status filter
+        const statusKey = (s) => (s || '').toString().toLowerCase();
+        this.filteredCases = this.currentCases.filter(item => {
+            const c = this.normalizeCase(item);
             if (this.currentFilter !== 'all') {
-                if (this.currentFilter === 'missing' && caseItem.Status !== 'missing') return false;
-                if (this.currentFilter === 'resolved' && 
-                    !['found', 'safe', 'deceased'].includes(caseItem.Status)) return false;
-                if (this.currentFilter === 'pending' && caseItem.Status !== 'resolved_pending_verify') return false;
+                if (this.currentFilter === 'missing' && statusKey(c.status) !== 'missing') return false;
+                if (this.currentFilter === 'found' && statusKey(c.status) !== 'found') return false;
+                if (this.currentFilter === 'safe' && statusKey(c.status) !== 'safe') return false;
+                if (this.currentFilter === 'urgent' && statusKey(c.status) !== 'urgent') return false;
+                if (this.currentFilter === 'resolved' && !['found', 'safe', 'deceased', 'resolved'].includes(statusKey(c.status))) return false;
+                if (this.currentFilter === 'pending' && statusKey(c.status) !== 'resolved_pending_verify') return false;
             }
-
-            // Name search
-            if (this.currentSearch && !caseItem.FullName.toLowerCase().includes(this.currentSearch.toLowerCase())) {
-                return false;
-            }
-
-            // City filter
-            if (this.currentCity && caseItem.City !== this.currentCity) {
-                return false;
-            }
-
-            // County filter
-            if (this.currentCounty && caseItem.County !== this.currentCounty) {
-                return false;
-            }
-
+            if (this.currentSearch && !c.displayName.toLowerCase().includes(this.currentSearch.toLowerCase())) return false;
+            if (this.currentCity && c.lastSeenCity !== this.currentCity) return false;
+            if (this.currentCounty && c.lastSeenState !== this.currentCounty) return false;
             return true;
         });
-
         this.renderCases();
         this.updatePagination();
     }
 
     /**
-     * Load case statistics
+     * Load case statistics (optional stats endpoint or derive from list)
      */
     async loadStatistics() {
         try {
-            const response = await fetch(`${this.apiBaseUrl}/publiccases/stats/houston`);
+            const api = window.publicCasesApi;
+            if (!api) return;
+            const base = api.API_BASE || '';
+            const response = await fetch(`${base}/publiccases/stats/houston`, { credentials: 'omit' });
             if (response.ok) {
                 const stats = await response.json();
                 this.updateStatistics(stats);
             }
-        } catch (error) {
-            console.error('Error loading statistics:', error);
+        } catch (e) {
+            console.warn('Stats endpoint not available, using counts from list.');
         }
     }
 
     /**
-     * Update statistics display
+     * Update statistics display (from stats API or from current list)
      */
     updateStatistics(stats) {
-        document.getElementById('totalCases').textContent = stats.totalCases || 0;
-        document.getElementById('missingCases').textContent = stats.missingCases || 0;
-        document.getElementById('resolvedCases').textContent = stats.resolvedCases || 0;
-        
-        const pendingCases = stats.breakdown?.find(s => s.Status === 'resolved_pending_verify')?.Count || 0;
-        document.getElementById('pendingCases').textContent = pendingCases;
+        const total = stats?.totalCases ?? this.totalCount ?? this.currentCases.length;
+        const missing = stats?.missingCases ?? this.currentCases.filter(c => this.normalizeCase(c).status === 'missing').length;
+        const resolved = stats?.resolvedCases ?? this.currentCases.filter(c => ['found', 'safe', 'deceased', 'resolved'].includes(this.normalizeCase(c).status)).length;
+        const pending = stats?.breakdown?.find(s => (s.Status || s.status || '').toString().toLowerCase() === 'resolved_pending_verify')?.Count ?? this.currentCases.filter(c => this.normalizeCase(c).status === 'resolved_pending_verify').length ?? 0;
+        const el = (id) => document.getElementById(id);
+        if (el('totalCases')) el('totalCases').textContent = total;
+        if (el('missingCases')) el('missingCases').textContent = missing;
+        if (el('resolvedCases')) el('resolvedCases').textContent = resolved;
+        if (el('pendingCases')) el('pendingCases').textContent = pending;
     }
 
     /**
-     * Load cases from API
+     * Load cases from API: GET /api/public/cases (with fallback to legacy publiccases)
      */
     async loadCases() {
         this.showLoading();
-
         try {
-            const params = new URLSearchParams({
-                region: 'houston',
+            const api = window.publicCasesApi;
+            if (!api) throw new Error('publicCasesApi not loaded');
+            const statusParam = this.currentFilter !== 'all' ? this.currentFilter : undefined;
+            const result = await api.getPublicCasesWithFallback({
+                status: statusParam,
+                q: this.currentSearch || undefined,
                 page: this.currentPage,
-                pageSize: this.pageSize
+                pageSize: this.pageSize,
+                sort: 'updated'
             });
-
-            const response = await fetch(`${this.apiBaseUrl}/publiccases?${params}`);
-            
-            if (response.ok) {
-                const cases = await response.json();
-                this.currentCases = cases;
-                this.applyFilters();
-            } else {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
+            this.currentCases = result.items || [];
+            this.totalCount = result.totalCount ?? this.currentCases.length;
+            this.updateStatistics(null);
+            this.applyFilters();
         } catch (error) {
             console.error('Error loading cases:', error);
             this.showError('Failed to load cases. Please try again later.');
@@ -211,80 +219,55 @@ class PublicCasesManager {
     }
 
     /**
-     * Create case card HTML
+     * Create case card HTML (PublicCaseDto-safe fields only)
      */
     createCaseCard(caseItem) {
-        const statusClass = this.getStatusClass(caseItem.Status);
-        const statusText = this.getStatusText(caseItem.Status);
-        const dateMissing = caseItem.DateMissing ? new Date(caseItem.DateMissing).toLocaleDateString() : 'Unknown';
-        const ageText = caseItem.AgeAtMissing ? `${caseItem.AgeAtMissing} years` : 'Unknown';
-        const location = [caseItem.City, caseItem.County, caseItem.State].filter(Boolean).join(', ');
+        const c = this.normalizeCase(caseItem);
+        const statusClass = this.getStatusClass(c.status);
+        const statusText = this.getStatusText(c.status);
+        const lastSeenDate = c.lastSeenAt ? new Date(c.lastSeenAt).toLocaleDateString() : (c.updatedAt ? new Date(c.updatedAt).toLocaleDateString() : '—');
+        const ageText = c.ageRange != null && c.ageRange !== '' ? (typeof c.ageRange === 'number' ? c.ageRange + ' years' : String(c.ageRange)) : '—';
+        const location = [c.lastSeenCity, c.lastSeenState].filter(Boolean).join(', ') || '—';
+        const detailUrl = `case-detail.html?id=${encodeURIComponent(c.id)}`;
 
         return `
             <div class="case-card">
                 <div class="case-header">
-                    <div class="case-name">${this.escapeHtml(caseItem.FullName)}</div>
-                    <div class="case-id">${this.escapeHtml(caseItem.NamusCaseNumber)}</div>
+                    <div class="case-name">${this.escapeHtml(c.displayName)}</div>
+                    ${c.namusCaseNumber ? `<div class="case-id">${this.escapeHtml(c.namusCaseNumber)}</div>` : ''}
                     <div class="status-badge ${statusClass}">${statusText}</div>
                 </div>
 
                 <div class="case-photo">
-                    ${caseItem.PhotoUrl ? 
-                        `<img src="${this.escapeHtml(caseItem.PhotoUrl)}" alt="Photo of ${this.escapeHtml(caseItem.FullName)}">` : 
-                        '📷'
+                    ${c.photoUrl ?
+                        `<img src="${this.escapeHtml(c.photoUrl)}" alt="">` :
+                        '<span aria-hidden="true">📷</span>'
                     }
                 </div>
 
                 <div class="case-details">
                     <div class="detail-row">
-                        <span class="detail-label">Date Missing:</span>
-                        <span class="detail-value">${dateMissing}</span>
+                        <span class="detail-label">Last seen:</span>
+                        <span class="detail-value">${lastSeenDate}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Age at Missing:</span>
-                        <span class="detail-value">${ageText}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Sex:</span>
-                        <span class="detail-value">${this.escapeHtml(caseItem.Sex || 'Unknown')}</span>
+                        <span class="detail-label">Age / range:</span>
+                        <span class="detail-value">${this.escapeHtml(ageText)}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Location:</span>
                         <span class="detail-value">${this.escapeHtml(location)}</span>
                     </div>
+                    ${c.updatedAt ? `
                     <div class="detail-row">
-                        <span class="detail-label">Agency:</span>
-                        <span class="detail-value">${this.escapeHtml(caseItem.Agency || 'Unknown')}</span>
+                        <span class="detail-label">Updated:</span>
+                        <span class="detail-value">${new Date(c.updatedAt).toLocaleDateString()}</span>
                     </div>
-                    ${caseItem.StatusNote ? `
-                        <div class="detail-row">
-                            <span class="detail-label">Status Note:</span>
-                            <span class="detail-value">${this.escapeHtml(caseItem.StatusNote)}</span>
-                        </div>
                     ` : ''}
-                    <div class="detail-row">
-                        <span class="detail-label">Source:</span>
-                        <span class="detail-value">
-                            <a href="https://namus.nij.ojp.gov/" target="_blank" class="source-link">NamUs</a>
-                        </span>
-                    </div>
                 </div>
 
                 <div class="case-actions">
-                    ${caseItem.Status === 'resolved_pending_verify' ? `
-                        <div class="tooltip">
-                            <button class="btn btn-secondary" style="cursor: help;">
-                                ⚠️ Pending Verification
-                            </button>
-                            <span class="tooltiptext">
-                                This case is likely resolved but awaiting verification from state/local sources. 
-                                Please check TxDPS bulletins or contact local law enforcement for updates.
-                            </span>
-                        </div>
-                    ` : ''}
-                    <button class="btn btn-primary" onclick="window.open('https://namus.nij.ojp.gov/', '_blank')">
-                        View on NamUs
-                    </button>
+                    <a href="${this.escapeHtml(detailUrl)}" class="btn btn-primary">View details</a>
                 </div>
             </div>
         `;
@@ -294,17 +277,13 @@ class PublicCasesManager {
      * Get CSS class for status badge
      */
     getStatusClass(status) {
-        switch (status) {
-            case 'missing':
-                return 'status-missing';
-            case 'found':
-            case 'safe':
-            case 'deceased':
-                return 'status-resolved';
-            case 'resolved_pending_verify':
-                return 'status-pending';
-            default:
-                return 'status-missing';
+        const s = (status || '').toString().toLowerCase();
+        switch (s) {
+            case 'missing': return 'status-missing';
+            case 'found': case 'safe': case 'deceased': case 'resolved': return 'status-resolved';
+            case 'urgent': return 'status-urgent';
+            case 'resolved_pending_verify': return 'status-pending';
+            default: return 'status-missing';
         }
     }
 
@@ -312,19 +291,15 @@ class PublicCasesManager {
      * Get display text for status
      */
     getStatusText(status) {
-        switch (status) {
-            case 'missing':
-                return 'Missing';
-            case 'found':
-                return 'Found';
-            case 'safe':
-                return 'Safe';
-            case 'deceased':
-                return 'Deceased';
-            case 'resolved_pending_verify':
-                return 'Pending';
-            default:
-                return 'Unknown';
+        const s = (status || '').toString().toLowerCase();
+        switch (s) {
+            case 'missing': return 'Missing';
+            case 'found': return 'Found';
+            case 'safe': return 'Safe';
+            case 'urgent': return 'Urgent';
+            case 'deceased': case 'resolved': return s === 'deceased' ? 'Deceased' : 'Resolved';
+            case 'resolved_pending_verify': return 'Pending';
+            default: return status ? String(status) : 'Unknown';
         }
     }
 

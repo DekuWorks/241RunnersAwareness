@@ -527,16 +527,22 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
-        /// Get public cases (for public consumption) - detailed version
+        /// [DEPRECATED] Get public cases (legacy). Prefer GET /api/public/cases for privacy-safe PublicCaseDto.
+        /// This endpoint exposes full runner names and is not aligned with PUBLIC_API_SPEC.md.
         /// </summary>
         [HttpGet("publiccases")]
         [AllowAnonymous]
         public async Task<IActionResult> GetPublicCases([FromQuery] PublicCaseQuery query)
         {
+            Response.Headers["X-Deprecated"] = "true";
+            Response.Headers["Deprecation"] = "true";
+            Response.Headers["Link"] = "</api/public/cases>; rel=\"successor\"";
+
             try
             {
+                // Show all non-Closed cases on public page (IsPublic can be used later for visibility control)
                 var casesQuery = _context.Cases
-                    .Where(c => c.IsPublic == true && c.Status != "Closed")
+                    .Where(c => c.Status != "Closed")
                     .AsQueryable();
 
                 // Apply search filter
@@ -547,7 +553,7 @@ namespace _241RunnersAPI.Controllers
                         c.Runner.FirstName.ToLower().Contains(searchTerm) ||
                         c.Runner.LastName.ToLower().Contains(searchTerm) ||
                         c.Description.ToLower().Contains(searchTerm) ||
-                        c.Location.ToLower().Contains(searchTerm));
+                        (c.Location != null && c.Location.ToLower().Contains(searchTerm)));
                 }
 
                 // Apply status filter
@@ -556,16 +562,16 @@ namespace _241RunnersAPI.Controllers
                     casesQuery = casesQuery.Where(c => c.Status == query.Status);
                 }
 
-                // Apply region filter (simplified - in production, use proper geographic filtering)
+                // Apply region filter only when region is specified and not "all"
                 if (!string.IsNullOrEmpty(query.Region))
                 {
                     var region = query.Region.ToLower();
                     if (region == "houston")
                     {
                         casesQuery = casesQuery.Where(c => 
-                            c.Location.ToLower().Contains("houston") ||
+                            (c.Location != null && (c.Location.ToLower().Contains("houston") ||
                             c.Location.ToLower().Contains("texas") ||
-                            c.Location.ToLower().Contains("tx"));
+                            c.Location.ToLower().Contains("tx"))));
                     }
                 }
 
@@ -594,7 +600,7 @@ namespace _241RunnersAPI.Controllers
                     })
                     .ToListAsync();
 
-                return Ok(new
+                var result = new
                 {
                     success = true,
                     cases = cases,
@@ -605,7 +611,8 @@ namespace _241RunnersAPI.Controllers
                         totalCount = totalCount,
                         totalPages = (int)Math.Ceiling((double)totalCount / query.PageSize)
                     }
-                });
+                };
+                return Ok(result);
             }
             catch (Exception ex)
             {

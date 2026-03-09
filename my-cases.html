@@ -463,12 +463,13 @@
         </div>
     </footer>
 
+    <script src="assets/js/config.js"></script>
     <!-- Load the new centralized API client -->
     <script type="module" src="/js/api.js?v=20250113"></script>
     
     <script>
         // API Configuration
-        let API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
+        let API_BASE_URL = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
         
         // Load API configuration
         async function loadConfig() {
@@ -516,7 +517,7 @@
                 const userData = checkAuth();
                 
                 // Get all runners (this would need to be filtered by user in the API)
-                const response = await fetch(`${API_BASE_URL}/runners`, {
+                const response = await fetch(`${API_BASE_URL}/v1.0/runner`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Details - 241 Runners Awareness</title>
+    <link rel="icon" type="image/x-icon" href="assets/images/241-logo-new.jpg">
+    <link rel="stylesheet" href="styles.css?v=20250905">
+    <link rel="stylesheet" href="forms.css">
+    <style>
+        .case-detail-container { max-width: 720px; margin: 0 auto; padding: 24px; }
+        .case-detail-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; }
+        .case-detail-photo { width: 100%; max-height: 360px; object-fit: cover; background: #f3f4f6; }
+        .case-detail-body { padding: 24px; }
+        .case-detail-name { font-size: 1.75rem; font-weight: 700; color: #1f2937; margin-bottom: 8px; }
+        .case-detail-status { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 16px; }
+        .case-detail-meta { color: #6b7280; font-size: 0.95rem; margin-bottom: 16px; }
+        .case-detail-desc { color: #374151; line-height: 1.6; margin-bottom: 24px; white-space: pre-wrap; }
+        .case-detail-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+        .case-detail-actions .btn { padding: 12px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; border: none; cursor: pointer; font-size: 0.95rem; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-secondary { background: #f3f4f6; color: #374151; }
+        .btn-secondary:hover { background: #e5e7eb; }
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: #6b7280; text-decoration: none; margin-bottom: 20px; font-weight: 500; }
+        .back-link:hover { color: #1f2937; }
+        .loading-detail, .error-detail, .not-found { text-align: center; padding: 48px 24px; color: #6b7280; }
+        .status-missing { background: #fee2e2; color: #dc2626; }
+        .status-found, .status-resolved { background: #d1fae5; color: #059669; }
+        .status-urgent { background: #ffedd5; color: #c2410c; }
+        .status-pending { background: #fef3c7; color: #d97706; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <a href="/" title="Go to Home Page">
+                    <img src="assets/images/241-logo-new.jpg" alt="241 Runners Awareness Logo" class="logo-img">
+                    <span class="logo-text">241 Runners Awareness</span>
+                </a>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="aboutus.html" class="nav-link">About</a>
+                <a href="cases.html" class="nav-link">Cases</a>
+                <a href="map.html" class="nav-link">Missing Map</a>
+                <a href="report-case.html" class="nav-link">Report Case</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="case-detail-container">
+            <a href="cases.html" class="back-link">← Back to Cases</a>
+
+            <div id="loadingState" class="loading-detail">
+                <p>Loading case details...</p>
+            </div>
+            <div id="errorState" class="error-detail" style="display: none;">
+                <p id="errorMessage"></p>
+                <a href="cases.html" class="btn btn-secondary" style="margin-top: 12px;">Back to Cases</a>
+            </div>
+            <div id="notFoundState" class="not-found" style="display: none;">
+                <p>Case not found.</p>
+                <a href="cases.html" class="btn btn-primary" style="margin-top: 12px;">Back to Cases</a>
+            </div>
+            <div id="caseDetailCard" class="case-detail-card" style="display: none;"></div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Use</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/config.js"></script>
+    <script src="js/publicCasesApi.js"></script>
+    <script>
+        (function () {
+            function getStatusClass(s) {
+                s = (s || '').toString().toLowerCase();
+                if (s === 'missing') return 'status-missing';
+                if (s === 'found' || s === 'safe' || s === 'resolved' || s === 'deceased') return 'status-resolved';
+                if (s === 'urgent') return 'status-urgent';
+                if (s === 'resolved_pending_verify') return 'status-pending';
+                return 'status-missing';
+            }
+            function getStatusText(s) {
+                s = (s || '').toString().toLowerCase();
+                var map = { missing: 'Missing', found: 'Found', safe: 'Safe', urgent: 'Urgent', deceased: 'Deceased', resolved: 'Resolved', resolved_pending_verify: 'Pending' };
+                return map[s] || s || 'Unknown';
+            }
+            function escapeHtml(str) {
+                if (str == null) return '';
+                var div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            var params = new URLSearchParams(window.location.search);
+            var id = params.get('id');
+            var loadingEl = document.getElementById('loadingState');
+            var errorEl = document.getElementById('errorState');
+            var notFoundEl = document.getElementById('notFoundState');
+            var cardEl = document.getElementById('caseDetailCard');
+
+            function showLoading() {
+                loadingEl.style.display = 'block';
+                errorEl.style.display = notFoundEl.style.display = cardEl.style.display = 'none';
+            }
+            function showError(msg) {
+                loadingEl.style.display = 'none';
+                notFoundEl.style.display = 'none';
+                cardEl.style.display = 'none';
+                errorEl.style.display = 'block';
+                document.getElementById('errorMessage').textContent = msg || 'Something went wrong.';
+            }
+            function showNotFound() {
+                loadingEl.style.display = 'none';
+                errorEl.style.display = 'none';
+                cardEl.style.display = 'none';
+                notFoundEl.style.display = 'block';
+            }
+            function showCard(html) {
+                loadingEl.style.display = errorEl.style.display = notFoundEl.style.display = 'none';
+                cardEl.style.display = 'block';
+                cardEl.innerHTML = html;
+            }
+
+            function shareCase() {
+                var url = window.location.href;
+                if (navigator.share) {
+                    navigator.share({ title: document.title, url: url }).catch(function () { copyLink(url); });
+                } else {
+                    copyLink(url);
+                }
+            }
+            function copyLink(url) {
+                navigator.clipboard.writeText(url).then(function () {
+                    alert('Link copied to clipboard.');
+                }).catch(function () {
+                    prompt('Copy this link:', url);
+                });
+            }
+
+            if (!id) {
+                showNotFound();
+                return;
+            }
+
+            var api = window.publicCasesApi;
+            if (!api) {
+                showError('Configuration not loaded.');
+                return;
+            }
+
+            api.getPublicCase(id)
+                .then(function (data) {
+                    if (!data) {
+                        showNotFound();
+                        return;
+                    }
+                    var c = {
+                        displayName: data.publicDisplayName || data.fullName || data.FullName || 'Case #' + data.id,
+                        status: data.status || data.Status,
+                        lastSeenCity: data.lastSeenCity || data.City || '',
+                        lastSeenState: data.lastSeenState || data.State || '',
+                        lastSeenAt: data.lastSeenAt || data.DateMissing,
+                        updatedAt: data.updatedAt || data.UpdatedAt,
+                        photoUrl: data.photoUrl || data.PhotoUrl,
+                        descriptionShort: data.descriptionShort || data.description || ''
+                    };
+                    var locationText = [c.lastSeenCity, c.lastSeenState].filter(Boolean).join(', ') || '—';
+                    var updatedText = c.updatedAt ? new Date(c.updatedAt).toLocaleDateString() : '—';
+                    var lastSeenText = c.lastSeenAt ? new Date(c.lastSeenAt).toLocaleDateString() : '—';
+                    var statusClass = getStatusClass(c.status);
+                    var statusText = getStatusText(c.status);
+
+                    var photoHtml = c.photoUrl
+                        ? '<img class="case-detail-photo" src="' + escapeHtml(c.photoUrl) + '" alt="">'
+                        : '<div class="case-detail-photo" style="display:flex;align-items:center;justify-content:center;min-height:200px;color:#9ca3af;">📷</div>';
+
+                    var descHtml = c.descriptionShort
+                        ? '<div class="case-detail-desc">' + escapeHtml(c.descriptionShort) + '</div>'
+                        : '';
+
+                    var html = photoHtml +
+                        '<div class="case-detail-body">' +
+                        '<h1 class="case-detail-name">' + escapeHtml(c.displayName) + '</h1>' +
+                        '<span class="case-detail-status ' + statusClass + '">' + escapeHtml(statusText) + '</span>' +
+                        '<div class="case-detail-meta">' +
+                        'Last seen: ' + escapeHtml(lastSeenText) + ' · ' + escapeHtml(locationText) + '<br>Updated: ' + escapeHtml(updatedText) +
+                        '</div>' +
+                        descHtml +
+                        '<div class="case-detail-actions">' +
+                        '<a href="report-case.html" class="btn btn-primary">Report a sighting</a>' +
+                        '<button type="button" class="btn btn-secondary" id="shareCaseBtn">Share this case</button>' +
+                        '</div></div>';
+
+                    showCard(html);
+                    document.getElementById('shareCaseBtn').addEventListener('click', shareCase);
+                })
+                .catch(function (err) {
+                    console.error(err);
+                    if (err.message && err.message.indexOf('404') !== -1) {
+                        showNotFound();
+                    } else {
+                        showError('Failed to load case. Please try again later.');
+                    }
+                });
+        })();
+    </script>
+</body>
+</html>

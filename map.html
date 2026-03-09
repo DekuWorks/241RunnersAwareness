@@ -131,6 +131,7 @@
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="responsive.css" />
     <script src="assets/js/config.js?v=20250905"></script>
+    <script src="js/publicMapApi.js?v=20250905"></script>
     <script src="google-maps-config.js?v=20250905"></script>
     <style>
         /* Page Navigation Styles */
@@ -416,6 +417,15 @@
             font-size: 1.1rem;
         }
 
+        .map-banner {
+            margin: 12px 0;
+            padding: 12px 16px;
+            background: #fef3c7;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #92400e;
+        }
+
         /* Enhanced Info Panel */
         .map-info {
             margin-top: 30px;
@@ -684,12 +694,14 @@
                 </div>
                 
                 <div id="noData" class="no-data" style="display: none;">
-                    No data available for the selected filters
+                    No missing cases with map location available.
                 </div>
+
+                <div id="mapBanner" class="map-banner" style="display: none;"></div>
 
                 <!-- Map Information -->
                 <div class="map-info">
-                    <h3>📊 Houston Area Statistics</h3>
+                    <h3>📊 Public Missing Cases (Map)</h3>
                     <div class="stats-grid">
                         <div class="stat-card">
                             <div class="stat-number" id="totalCases">0</div>
@@ -733,6 +745,10 @@
                         <div class="legend-item">
                             <div class="legend-color" style="background: #ef4444;"></div>
                             <span>Urgent</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #059669;"></div>
+                            <span>Community runner</span>
                         </div>
                     </div>
                 </div>
@@ -899,14 +915,18 @@
             }
         }
 
-        // Create custom Google Maps marker with status-based styling
+        // Create custom Google Maps marker with status-based styling (community runners = green)
         function createCustomMarker(lat, lng, status, runner) {
+            if (runner.type === 'community') {
+                status = 'community';
+            }
             const colors = {
                 missing: '#f59e0b',
                 found: '#dc2626', 
                 safe: '#10b981',
                 urgent: '#ef4444',
-                deceased: '#6b7280'
+                deceased: '#6b7280',
+                community: '#059669'
             };
             
             const color = colors[status] || '#6b7280';
@@ -1005,9 +1025,26 @@
             return marker;
         }
         
-        // Create popup content for Google Maps info windows
+        // Create popup content for Google Maps info windows (minimal info for community runners)
         function createPopupContent(runner) {
-            // Format the last seen date if available
+            const isCommunity = runner.type === 'community';
+            const locationText = runner.lastSeenCityState || (runner.city && runner.state ? runner.city + ', ' + runner.state : 'Unknown');
+
+            if (isCommunity) {
+                return `
+                <div style="padding: 15px; max-width: 280px; font-family: Arial, sans-serif;">
+                    <h3 style="margin: 0 0 10px 0; color: #059669; font-size: 1.1rem; border-bottom: 2px solid #d1fae5; padding-bottom: 6px;">
+                        ${runner.displayName || runner.fullName || 'Community Runner'}
+                    </h3>
+                    <p style="margin: 0 0 8px 0; font-size: 12px; color: #6b7280; text-transform: uppercase;">Community runner</p>
+                    <div style="font-size: 13px; color: #374151;">
+                        <strong>Area:</strong> ${locationText}
+                    </div>
+                    <p style="margin: 10px 0 0 0; font-size: 11px; color: #9ca3af;">Only display name and approximate area are shown for privacy.</p>
+                </div>
+                `;
+            }
+
             let lastSeenText = "Unknown";
             if (runner.lastSeenDate) {
                 try {
@@ -1017,7 +1054,6 @@
                 }
             }
             
-            // Format priority if available
             let priorityText = "";
             if (runner.priority && runner.priority !== "Unknown") {
                 const priorityColor = runner.priority.toLowerCase() === "high" ? "#dc2626" : 
@@ -1039,7 +1075,7 @@
             return `
                 <div style="padding: 15px; max-width: 300px; font-family: Arial, sans-serif;">
                     <h3 style="margin: 0 0 15px 0; color: #dc2626; font-size: 1.3rem; border-bottom: 2px solid #f3f4f6; padding-bottom: 8px;">
-                        ${runner.fullName || 'Unknown Case'}
+                        ${runner.displayName || runner.fullName || 'Unknown Case'}
                     </h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0;">
                         <div style="display: flex; flex-direction: column;">
@@ -1073,7 +1109,7 @@
                                 Location
                             </div>
                             <div style="font-size: 14px; color: #333; font-weight: 500;">
-                                ${runner.city || 'Unknown'}, ${runner.state || 'Unknown'}
+                                ${locationText}
                             </div>
                         </div>
                         <div style="display: flex; flex-direction: column; grid-column: 1 / -1;">
@@ -1084,23 +1120,20 @@
                                 ${lastSeenText}
                             </div>
                         </div>
-                        <div style="display: flex; flex-direction: column; grid-column: 1 / -1;">
-                            <div style="font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">
-                                Address
-                            </div>
-                            <div style="font-size: 14px; color: #333; font-weight: 500;">
-                                ${runner.address || 'Unknown'}
-                            </div>
+                        ${runner.id ? `
+                        <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid #e5e7eb;">
+                            <a href="case-detail.html?id=${encodeURIComponent(runner.id)}" style="display: inline-block; padding: 8px 14px; background: #3b82f6; color: white; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none;">View case details</a>
                         </div>
+                        ` : ''}
                         ${priorityText}
                     </div>
-                    ${runner.description ? `
+                    ${(runner.descriptionShort || runner.description) ? `
                         <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #e5e7eb;">
                             <div style="font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px;">
                                 Description
                             </div>
                             <div style="font-size: 13px; color: #555; line-height: 1.4;">
-                                ${runner.description.length > 100 ? runner.description.substring(0, 100) + '...' : runner.description}
+                                ${(runner.descriptionShort || runner.description || '').length > 100 ? (runner.descriptionShort || runner.description).substring(0, 100) + '...' : (runner.descriptionShort || runner.description)}
                             </div>
                         </div>
                     ` : ''}
@@ -1155,92 +1188,78 @@
             console.log(`Displayed ${markers.length} markers on the map`);
         }
 
-        // Simplified data loading without external API dependencies
+        // Load public missing cases + community runners from GET /api/public/map/missing and GET /api/public/map/runners
         async function loadRunnersData() {
-            console.log("Loading runners data...");
+            console.log("Loading map data (missing cases + community runners)...");
             const loadingEl = document.getElementById("loading");
             const errorEl = document.getElementById("error");
             const noDataEl = document.getElementById("noData");
+            const bannerEl = document.getElementById("mapBanner");
             
             if (loadingEl) loadingEl.style.display = "block";
             if (errorEl) errorEl.style.display = "none";
             if (noDataEl) noDataEl.style.display = "none";
+            if (bannerEl) bannerEl.style.display = "none";
 
             try {
-                // Use sample data for demonstration purposes
-                // In a real implementation, this would come from your local database
-                const sampleData = [
-                    {
-                        id: 1,
-                        fullName: "Sample Case 1",
-                        currentStatus: "missing",
-                        latitude: 29.7604 + (Math.random() - 0.5) * 0.1,
-                        longitude: -95.3698 + (Math.random() - 0.5) * 0.1,
-                        city: "Houston",
-                        state: "TX",
-                        dateAdded: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
-                        address: "Houston, TX",
-                        age: "25-35",
-                        gender: "Unknown",
-                        description: "Sample missing person case for demonstration",
-                        lastSeenDate: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
-                        priority: "Medium"
-                    },
-                    {
-                        id: 2,
-                        fullName: "Sample Case 2",
-                        currentStatus: "found",
-                        latitude: 29.7604 + (Math.random() - 0.5) * 0.1,
-                        longitude: -95.3698 + (Math.random() - 0.5) * 0.1,
-                        city: "Houston",
-                        state: "TX",
-                        dateAdded: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
-                        address: "Houston, TX",
-                        age: "18-25",
-                        gender: "Unknown",
-                        description: "Sample found person case for demonstration",
-                        lastSeenDate: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
-                        priority: "Low"
-                    },
-                    {
-                        id: 3,
-                        fullName: "Sample Case 3",
-                        currentStatus: "urgent",
-                        latitude: 29.7604 + (Math.random() - 0.5) * 0.1,
-                        longitude: -95.3698 + (Math.random() - 0.5) * 0.1,
-                        city: "Houston",
-                        state: "TX",
-                        dateAdded: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
-                        address: "Houston, TX",
-                        age: "35-50",
-                        gender: "Unknown",
-                        description: "Sample urgent case for demonstration",
-                        lastSeenDate: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
-                        priority: "High"
-                    }
-                ];
+                const api = window.publicMapApi;
+                if (!api) {
+                    throw new Error("Public map API not loaded.");
+                }
+                // Load both in parallel
+                const [missingRaw, communityRaw] = await Promise.all([
+                    api.getMissingMapCases().catch(function () { return []; }),
+                    api.getCommunityRunners ? api.getCommunityRunners().catch(function () { return []; }) : Promise.resolve([])
+                ]);
+                const missingNorm = (missingRaw || []).map(function (item) { return api.normalizeMapItem(item, 'missing'); });
+                const communityNorm = (communityRaw || []).map(function (item) { return api.normalizeMapItem(item, 'community'); });
+                const withCoords = function (list) {
+                    return list.filter(function (r) { return r.latitude != null && r.longitude != null; });
+                };
+                const toRunnerShape = function (r) {
+                    return {
+                        id: r.id,
+                        fullName: r.displayName,
+                        displayName: r.displayName,
+                        currentStatus: (r.status || (r.type === 'community' ? 'active' : 'missing')).toLowerCase(),
+                        latitude: r.latitude,
+                        longitude: r.longitude,
+                        city: r.lastSeenCity,
+                        state: r.lastSeenState,
+                        lastSeenCityState: r.lastSeenCityState,
+                        lastSeenDate: r.updatedAt,
+                        photoUrl: r.photoUrl,
+                        descriptionShort: null,
+                        dateAdded: r.updatedAt,
+                        type: r.type || 'missing'
+                    };
+                };
+                currentData = [].concat(
+                    withCoords(missingNorm).map(toRunnerShape),
+                    withCoords(communityNorm).map(toRunnerShape)
+                );
                 
-                currentData = sampleData;
-                
-                // Display the data on the map
                 displayRunners(currentData);
                 updateStatistics(currentData);
                 
-                // Hide loading state
                 if (loadingEl) loadingEl.style.display = "none";
-                
-                console.log(`✅ Loaded ${currentData.length} sample cases for demonstration`);
-                
+                if (currentData.length === 0) {
+                    if (noDataEl) noDataEl.style.display = "block";
+                }
+                if (currentData.length > 0 && bannerEl) {
+                    bannerEl.textContent = "Map location is approximate. Orange = missing cases; green = community runners (opted in). Only cases/runners with a reported location are shown.";
+                    bannerEl.style.display = "block";
+                }
+                const missingCount = currentData.filter(function (r) { return r.type === 'missing'; }).length;
+                const communityCount = currentData.filter(function (r) { return r.type === 'community'; }).length;
+                console.log("Loaded " + currentData.length + " map points (" + missingCount + " missing, " + communityCount + " community runners).");
             } catch (error) {
-                console.error("Error loading runners data:", error);
-                
-                // Hide loading state
+                console.error("Error loading map data:", error);
                 if (loadingEl) loadingEl.style.display = "none";
-                
-                // Show error state
+                if (noDataEl) noDataEl.style.display = "none";
                 if (errorEl) {
                     errorEl.style.display = "block";
-                    errorEl.textContent = `Error loading map data: ${error.message}`;
+                    errorEl.textContent = "Error loading map data. Please try again later.";
                 }
             }
         }

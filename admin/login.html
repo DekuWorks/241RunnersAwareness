@@ -345,10 +345,9 @@
             return false;
         }
         
-        // Initialize on page load
+        // Initialize on page load (API_BASE_URL from admin-auth.js + config.json = 241RunnersAPI)
         document.addEventListener('DOMContentLoaded', function() {
-            // Set API_BASE_URL immediately to avoid timing issues
-            window.API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
+            if (!window.API_BASE_URL) window.API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
             console.log('Login page loaded, API_BASE_URL:', window.API_BASE_URL);
             
             // Check if already authenticated
@@ -378,8 +377,8 @@
                 };
                 
                 try {
-                    const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
-                    const fullUrl = `${apiUrl}/v1/auth/login`;
+                    const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1.0';
+                    const fullUrl = `${apiUrl}/auth/login`;
                     console.log('Attempting login with API URL:', apiUrl);
                     console.log('Full login URL:', fullUrl);
                     console.log('Sending login request...');

@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://241runnersawareness.org/forms.css">
   <link rel="stylesheet" href="responsive.css">
+  <script src="assets/js/config.js"></script>
   <script src="/js/auth-utils.js?v=20250905" defer></script>
   <style>
     .runners-container {
@@ -800,7 +801,7 @@
 
   <script>
     // API Configuration
-    let API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
+    let API_BASE_URL = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
     
     // State management
     let currentUser = null;
@@ -878,7 +879,7 @@
           params.append('userId', currentUser.id);
         }
 
-        const response = await fetch(`${API_BASE_URL}/api/runner?${params}`, {
+        const response = await fetch(`${API_BASE_URL}/v1.0/runner?${params}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -1052,7 +1053,7 @@
     async function editRunner(runnerId) {
       try {
         const token = getAuthToken();
-        const response = await fetch(`${API_BASE_URL}/api/runner/${runnerId}`, {
+        const response = await fetch(`${API_BASE_URL}/v1.0/runner/${runnerId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -1104,7 +1105,7 @@
 
       try {
         const token = getAuthToken();
-        const response = await fetch(`${API_BASE_URL}/api/runner/${runnerId}`, {
+        const response = await fetch(`${API_BASE_URL}/v1.0/runner/${runnerId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`
@@ -1172,8 +1173,8 @@
         loadingSpinner.style.display = 'block';
         
         const url = editingRunner 
-          ? `${API_BASE_URL}/api/runner/${editingRunner.id}`
-          : `${API_BASE_URL}/api/runner`;
+          ? `${API_BASE_URL}/v1.0/runner/${editingRunner.id}`
+          : `${API_BASE_URL}/v1.0/runner`;
         
         const method = editingRunner ? 'PUT' : 'POST';
         

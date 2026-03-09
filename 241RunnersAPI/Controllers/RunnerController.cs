@@ -95,6 +95,9 @@ namespace _241RunnersAPI.Controllers
                         IsVerified = r.IsVerified,
                         VerifiedAt = r.VerifiedAt,
                         VerifiedBy = r.VerifiedBy,
+                        ShowOnMap = r.ShowOnMap,
+                        MapLatitude = r.MapLatitude,
+                        MapLongitude = r.MapLongitude,
                         UserEmail = null, // Will be populated separately if needed
                         UserPhoneNumber = null, // Will be populated separately if needed
                         UserEmergencyContactName = null, // Will be populated separately if needed
@@ -189,6 +192,9 @@ namespace _241RunnersAPI.Controllers
                     IsVerified = runner.IsVerified,
                     VerifiedAt = runner.VerifiedAt,
                     VerifiedBy = runner.VerifiedBy,
+                    ShowOnMap = runner.ShowOnMap,
+                    MapLatitude = runner.MapLatitude,
+                    MapLongitude = runner.MapLongitude,
                     UserEmail = null, // Will be populated separately if needed
                     UserPhoneNumber = null, // Will be populated separately if needed
                     UserEmergencyContactName = null, // Will be populated separately if needed
@@ -383,7 +389,10 @@ namespace _241RunnersAPI.Controllers
                     CreatedAt = runner.CreatedAt,
                     PreferredContactMethod = runner.PreferredContactMethod,
                     IsProfileComplete = runner.IsProfileComplete,
-                    IsVerified = runner.IsVerified
+                    IsVerified = runner.IsVerified,
+                    ShowOnMap = runner.ShowOnMap,
+                    MapLatitude = runner.MapLatitude,
+                    MapLongitude = runner.MapLongitude
                 };
 
                 return Ok(new { success = true, message = "Runner profile created successfully", runner = runnerResponse });
@@ -452,6 +461,20 @@ namespace _241RunnersAPI.Controllers
                 runner.Height = request.Height;
                 runner.Weight = request.Weight;
                 runner.EyeColor = request.EyeColor;
+                if (request.ShowOnMap.HasValue)
+                {
+                    runner.ShowOnMap = request.ShowOnMap.Value;
+                    if (request.MapLatitude.HasValue && request.MapLongitude.HasValue)
+                    {
+                        runner.MapLatitude = Math.Round(request.MapLatitude.Value, 3);
+                        runner.MapLongitude = Math.Round(request.MapLongitude.Value, 3);
+                    }
+                    else if (!request.ShowOnMap.Value)
+                    {
+                        runner.MapLatitude = null;
+                        runner.MapLongitude = null;
+                    }
+                }
                 runner.UpdatedAt = DateTime.UtcNow;
                 runner.IsProfileComplete = !string.IsNullOrEmpty(request.Name) && 
                                           !string.IsNullOrEmpty(request.Gender) && 
@@ -484,7 +507,10 @@ namespace _241RunnersAPI.Controllers
                     UpdatedAt = runner.UpdatedAt,
                     PreferredContactMethod = runner.PreferredContactMethod,
                     IsProfileComplete = runner.IsProfileComplete,
-                    IsVerified = runner.IsVerified
+                    IsVerified = runner.IsVerified,
+                    ShowOnMap = runner.ShowOnMap,
+                    MapLatitude = runner.MapLatitude,
+                    MapLongitude = runner.MapLongitude
                 };
 
                 return Ok(new { success = true, message = "Runner profile updated successfully", runner = runnerResponse });

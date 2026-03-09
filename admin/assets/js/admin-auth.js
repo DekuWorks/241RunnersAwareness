@@ -11,24 +11,24 @@ const tokenKey = "ra_admin_token";
 const roleKey = "ra_admin_role";
 const userKey = "ra_admin_user";
 
-// API Configuration - Fixed URL without trailing slash
+// API Configuration — all APIs use 241RunnersAPI (config.json). Admin uses base + /v1.0.
 let API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
+window.API_BASE_URL = API_BASE_URL + '/v1.0';
 
-// Load API configuration from config.json
 async function loadConfig() {
     try {
-        const response = await fetch('/config.json', {
-            cache: 'no-store'
-        });
+        const response = await fetch('/config.json', { cache: 'no-store' });
         const config = await response.json();
-        API_BASE_URL = config.API_BASE_URL;
-        console.log('API Base URL loaded:', API_BASE_URL);
+        if (config.API_BASE_URL) {
+            API_BASE_URL = config.API_BASE_URL;
+            window.API_BASE_URL = API_BASE_URL + '/v1.0';
+            console.log('API Base URL loaded (241RunnersAPI):', API_BASE_URL);
+        }
     } catch (error) {
-        console.warn('Failed to load config.json, using default API URL:', error);
+        console.warn('Failed to load config.json, using default:', error);
     }
 }
 
-// Initialize config on load
 loadConfig();
 
 /**

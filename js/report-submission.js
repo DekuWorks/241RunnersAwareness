@@ -218,8 +218,7 @@ class ReportSubmission {
      * @returns {Promise<Object>} - API response
      */
     async submitReport(data) {
-        const API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
-        
+        const API_BASE_URL = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
         try {
             const response = await fetch(`${API_BASE_URL}/v1.0/Runner`, {
                 method: 'POST',
@@ -251,8 +250,7 @@ class ReportSubmission {
      * @returns {Promise<Object>} - API response
      */
     async updateReport(runnerId, data) {
-        const API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
-        
+        const API_BASE_URL = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
         try {
             const response = await fetch(`${API_BASE_URL}/v1.0/Runner/${runnerId}`, {
                 method: 'PUT',
@@ -314,9 +312,8 @@ class ReportSubmission {
         const formData = new FormData();
         formData.append('image', file);
 
-        const API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
-        
-        const response = await fetch(`${API_BASE_URL}/v1/image-upload`, {
+        const API_BASE_URL = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
+        const response = await fetch(`${API_BASE_URL}/ImageUpload/upload`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${this.getAuthToken()}`

@@ -139,6 +139,9 @@ namespace _241RunnersAPI.Data
                 // Default values
                 entity.Property(e => e.IsProfileComplete).HasDefaultValue(false);
                 entity.Property(e => e.IsVerified).HasDefaultValue(false);
+                entity.Property(e => e.ShowOnMap).HasDefaultValue(false);
+                entity.Property(e => e.MapLatitude).HasPrecision(18, 6);
+                entity.Property(e => e.MapLongitude).HasPrecision(18, 6);
             });
 
             // Case configuration
