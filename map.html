@@ -75,7 +75,7 @@
                             <div style="font-size: 4rem; margin-bottom: 20px;">🗺️</div>
                             <h3 style="color: #1f2937; margin-bottom: 15px; font-size: 1.5rem;">Interactive Map Dashboard</h3>
                             <p style="color: #6b7280; margin-bottom: 20px; line-height: 1.6;">
-                                This map displays real-time tracking of missing persons cases and community safety incidents in the Houston area.
+                                This map displays missing persons cases with a reported location in the Houston area.
                             </p>
                             <div style="background: white; border-radius: 10px; padding: 20px; margin: 20px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                                 <h4 style="color: #dc2626; margin-bottom: 10px;">📍 Houston Metropolitan Area</h4>
@@ -621,7 +621,7 @@
                         </button>
                     </div>
                     <h2>🗺️ Interactive Map Dashboard</h2>
-                    <p>Real-time tracking of missing persons cases and community safety incidents in your area.</p>
+                    <p>Missing persons cases with a reported location in your area.</p>
                     <div class="realtime-indicator">
                         🔴 Live Updates
                     </div>
@@ -745,10 +745,6 @@
                         <div class="legend-item">
                             <div class="legend-color" style="background: #ef4444;"></div>
                             <span>Urgent</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color" style="background: #059669;"></div>
-                            <span>Community runner</span>
                         </div>
                     </div>
                 </div>
@@ -915,18 +911,14 @@
             }
         }
 
-        // Create custom Google Maps marker with status-based styling (community runners = green)
+        // Create custom Google Maps marker with status-based styling
         function createCustomMarker(lat, lng, status, runner) {
-            if (runner.type === 'community') {
-                status = 'community';
-            }
             const colors = {
                 missing: '#f59e0b',
                 found: '#dc2626', 
                 safe: '#10b981',
                 urgent: '#ef4444',
-                deceased: '#6b7280',
-                community: '#059669'
+                deceased: '#6b7280'
             };
             
             const color = colors[status] || '#6b7280';
@@ -1025,26 +1017,9 @@
             return marker;
         }
         
-        // Create popup content for Google Maps info windows (minimal info for community runners)
+        // Create popup content for Google Maps info windows
         function createPopupContent(runner) {
-            const isCommunity = runner.type === 'community';
             const locationText = runner.lastSeenCityState || (runner.city && runner.state ? runner.city + ', ' + runner.state : 'Unknown');
-
-            if (isCommunity) {
-                return `
-                <div style="padding: 15px; max-width: 280px; font-family: Arial, sans-serif;">
-                    <h3 style="margin: 0 0 10px 0; color: #059669; font-size: 1.1rem; border-bottom: 2px solid #d1fae5; padding-bottom: 6px;">
-                        ${runner.displayName || runner.fullName || 'Community Runner'}
-                    </h3>
-                    <p style="margin: 0 0 8px 0; font-size: 12px; color: #6b7280; text-transform: uppercase;">Community runner</p>
-                    <div style="font-size: 13px; color: #374151;">
-                        <strong>Area:</strong> ${locationText}
-                    </div>
-                    <p style="margin: 10px 0 0 0; font-size: 11px; color: #9ca3af;">Only display name and approximate area are shown for privacy.</p>
-                </div>
-                `;
-            }
-
             let lastSeenText = "Unknown";
             if (runner.lastSeenDate) {
                 try {
@@ -1188,9 +1163,9 @@
             console.log(`Displayed ${markers.length} markers on the map`);
         }
 
-        // Load public missing cases + community runners from GET /api/public/map/missing and GET /api/public/map/runners
+        // Load public missing cases from GET /api/public/map/missing
         async function loadRunnersData() {
-            console.log("Loading map data (missing cases + community runners)...");
+            console.log("Loading public missing cases for map...");
             const loadingEl = document.getElementById("loading");
             const errorEl = document.getElementById("error");
             const noDataEl = document.getElementById("noData");
@@ -1206,22 +1181,15 @@
                 if (!api) {
                     throw new Error("Public map API not loaded.");
                 }
-                // Load both in parallel
-                const [missingRaw, communityRaw] = await Promise.all([
-                    api.getMissingMapCases().catch(function () { return []; }),
-                    api.getCommunityRunners ? api.getCommunityRunners().catch(function () { return []; }) : Promise.resolve([])
-                ]);
-                const missingNorm = (missingRaw || []).map(function (item) { return api.normalizeMapItem(item, 'missing'); });
-                const communityNorm = (communityRaw || []).map(function (item) { return api.normalizeMapItem(item, 'community'); });
-                const withCoords = function (list) {
-                    return list.filter(function (r) { return r.latitude != null && r.longitude != null; });
-                };
-                const toRunnerShape = function (r) {
+                const raw = await api.getMissingMapCases().catch(function () { return []; });
+                const normalized = (raw || []).map(function (item) { return api.normalizeMapItem(item); });
+                const withCoords = normalized.filter(function (r) { return r.latitude != null && r.longitude != null; });
+                currentData = withCoords.map(function (r) {
                     return {
                         id: r.id,
                         fullName: r.displayName,
                         displayName: r.displayName,
-                        currentStatus: (r.status || (r.type === 'community' ? 'active' : 'missing')).toLowerCase(),
+                        currentStatus: (r.status || "missing").toLowerCase(),
                         latitude: r.latitude,
                         longitude: r.longitude,
                         city: r.lastSeenCity,
@@ -1230,14 +1198,9 @@
                         lastSeenDate: r.updatedAt,
                         photoUrl: r.photoUrl,
                         descriptionShort: null,
-                        dateAdded: r.updatedAt,
-                        type: r.type || 'missing'
+                        dateAdded: r.updatedAt
                     };
-                };
-                currentData = [].concat(
-                    withCoords(missingNorm).map(toRunnerShape),
-                    withCoords(communityNorm).map(toRunnerShape)
-                );
+                });
                 
                 displayRunners(currentData);
                 updateStatistics(currentData);
@@ -1247,12 +1210,10 @@
                     if (noDataEl) noDataEl.style.display = "block";
                 }
                 if (currentData.length > 0 && bannerEl) {
-                    bannerEl.textContent = "Map location is approximate. Orange = missing cases; green = community runners (opted in). Only cases/runners with a reported location are shown.";
+                    bannerEl.textContent = "Map locations are approximate. Cases without a reported location are shown in the general Houston area.";
                     bannerEl.style.display = "block";
                 }
-                const missingCount = currentData.filter(function (r) { return r.type === 'missing'; }).length;
-                const communityCount = currentData.filter(function (r) { return r.type === 'community'; }).length;
-                console.log("Loaded " + currentData.length + " map points (" + missingCount + " missing, " + communityCount + " community runners).");
+                console.log("Loaded " + currentData.length + " public missing cases on map.");
             } catch (error) {
                 console.error("Error loading map data:", error);
                 if (loadingEl) loadingEl.style.display = "none";

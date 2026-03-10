@@ -206,20 +206,19 @@ namespace _241RunnersAPI.Controllers
 
         /// <summary>
         /// GET /api/public/map/missing
-        /// Returns only Missing cases that have coordinates, for the public map.
+        /// Returns all Missing cases for the public map. Uses stored coordinates when present; otherwise default Houston-area location so cases still appear.
         /// </summary>
         [HttpGet("~/api/public/map/missing")]
         public async Task<IActionResult> GetMissingCasesForMap()
         {
             try
             {
+                const decimal defaultLat = 29.760m;
+                const decimal defaultLng = -95.369m;
+
                 var raw = await _context.Cases
                     .Include(c => c.Runner)
-                    .Where(c =>
-                        c.IsPublic &&
-                        c.Status == "Missing" &&
-                        c.LastSeenLatitude.HasValue &&
-                        c.LastSeenLongitude.HasValue)
+                    .Where(c => c.Status == "Missing")
                     .OrderByDescending(c => c.UpdatedAt ?? c.CreatedAt)
                     .Select(c => new
                     {
@@ -228,31 +227,35 @@ namespace _241RunnersAPI.Controllers
                         lastName = c.Runner.LastName,
                         name = c.Runner.Name,
                         status = c.Status,
-                        latitude = Math.Round(c.LastSeenLatitude!.Value, 3),
-                        longitude = Math.Round(c.LastSeenLongitude!.Value, 3),
+                        lastSeenLat = c.LastSeenLatitude,
+                        lastSeenLng = c.LastSeenLongitude,
                         photoUrl = c.Runner.ProfileImageUrl,
                         locationRaw = c.Location ?? c.LastSeenLocation,
                         updatedAt = c.UpdatedAt ?? c.CreatedAt
                     })
                     .ToListAsync();
 
-                var items = raw.Select(c =>
+                var items = raw.Select((c, index) =>
                 {
                     var (city, state) = PublicCaseHelpers.ParseCityState(c.locationRaw);
                     var displayName = c.firstName != null && c.lastName != null && c.lastName != string.Empty
                         ? c.firstName + " " + c.lastName.Substring(0, 1) + "."
                         : c.name;
+                    bool hasCoords = c.lastSeenLat.HasValue && c.lastSeenLng.HasValue;
+                    decimal lat = hasCoords ? Math.Round(c.lastSeenLat!.Value, 3) : defaultLat + (index % 5) * 0.01m;
+                    decimal lng = hasCoords ? Math.Round(c.lastSeenLng!.Value, 3) : defaultLng + (index % 5) * 0.01m;
                     return new
                     {
                         id = c.id,
                         publicDisplayName = displayName,
                         status = c.status,
-                        latitude = c.latitude,
-                        longitude = c.longitude,
+                        latitude = lat,
+                        longitude = lng,
                         photoUrl = c.photoUrl,
                         lastSeenCity = city,
                         lastSeenState = state,
-                        updatedAt = c.updatedAt
+                        updatedAt = c.updatedAt,
+                        coordinatesApproximate = !hasCoords
                     };
                 }).ToList();
 
@@ -265,62 +268,6 @@ namespace _241RunnersAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// GET /api/public/map/runners
-        /// Returns community runners who opted in (ShowOnMap) with coordinates. Privacy-safe: display name only, no contact info.
-        /// </summary>
-        [HttpGet("~/api/public/map/runners")]
-        public async Task<IActionResult> GetCommunityRunnersForMap()
-        {
-            try
-            {
-                var raw = await _context.Runners
-                    .Where(r => r.ShowOnMap && r.MapLatitude.HasValue && r.MapLongitude.HasValue && r.IsActive)
-                    .OrderByDescending(r => r.UpdatedAt ?? r.CreatedAt)
-                    .Select(r => new
-                    {
-                        id = r.Id,
-                        firstName = r.FirstName,
-                        lastName = r.LastName,
-                        name = r.Name,
-                        status = r.Status,
-                        latitude = Math.Round(r.MapLatitude!.Value, 3),
-                        longitude = Math.Round(r.MapLongitude!.Value, 3),
-                        photoUrl = r.ProfileImageUrl,
-                        locationRaw = r.LastKnownLocation,
-                        updatedAt = r.UpdatedAt ?? r.CreatedAt
-                    })
-                    .ToListAsync();
-
-                var items = raw.Select(r =>
-                {
-                    var (city, state) = PublicCaseHelpers.ParseCityState(r.locationRaw);
-                    var displayName = r.firstName != null && r.lastName != null && r.lastName != string.Empty
-                        ? r.firstName + " " + r.lastName.Substring(0, 1) + "."
-                        : r.name;
-                    return new
-                    {
-                        id = r.id,
-                        publicDisplayName = displayName,
-                        status = r.status,
-                        latitude = r.latitude,
-                        longitude = r.longitude,
-                        photoUrl = r.photoUrl,
-                        lastSeenCity = city,
-                        lastSeenState = state,
-                        updatedAt = r.updatedAt,
-                        type = "community"
-                    };
-                }).ToList();
-
-                return Ok(items);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting community runners for map");
-                return InternalServerErrorResponse("Failed to get community runners for map");
-            }
-        }
     }
 }
 
