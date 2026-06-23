@@ -10,12 +10,12 @@ on:
     branches: [ "main" ]
     paths:
       - '241RunnersAPI/**'
+  workflow_dispatch:
 
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
       contents: read
 
     steps:
@@ -47,66 +47,41 @@ jobs:
           cd 241RunnersAPI
           dotnet publish -c Release -o publish --no-build
 
-      - name: Azure Login
-        if: github.ref == 'refs/heads/main' && secrets.AZURE_CLIENT_ID != ''
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Configure Production Settings
-        if: github.ref == 'refs/heads/main' && secrets.AZURE_WEBAPP_NAME != ''
-        run: |
-          echo "Configuring production settings..."
-          az webapp config appsettings set \
-            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-            --name ${{ secrets.AZURE_WEBAPP_NAME }} \
-            --settings \
-              ASPNETCORE_ENVIRONMENT="Production" \
-              ASPNETCORE_URLS="http://0.0.0.0:8080" \
-              Swagger__Enabled="true" \
-              JWT_KEY="241RunnersAwareness2024-Production-SuperSecure-JWT-Key-For-Authentication-With-Enhanced-Security" \
-              JWT_ISSUER="241RunnersAwareness" \
-              JWT_AUDIENCE="241RunnersAwareness"
-          
-          echo "Configuring connection string..."
-          az webapp config connection-string set \
-            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-            --name ${{ secrets.AZURE_WEBAPP_NAME }} \
-            --connection-string-type SQLServer \
-            --settings DefaultConnection="Server=tcp:241runners-sql-2025.database.windows.net,1433;Initial Catalog=241RunnersAwarenessDB;Persist Security Info=False;User ID=sqladmin;Password=241RunnersAwareness2024!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-
-      - name: Deploy to Production
-        if: github.ref == 'refs/heads/main' && secrets.AZURE_WEBAPP_NAME != ''
+      - name: Deploy to Azure Web App
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: 241RunnersAPI/publish
 
       - name: Smoke Test Production
-        if: github.ref == 'refs/heads/main' && secrets.AZURE_WEBAPP_NAME != ''
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
-          echo "Testing production deployment..."
-          sleep 30
-          
-          # Test basic health endpoints
-          echo "Testing root endpoint..."
-          curl -f https://241runners-api-v2.azurewebsites.net/ || exit 1
-          
-          echo "Testing /healthz endpoint..."
-          curl -f https://241runners-api-v2.azurewebsites.net/healthz || exit 1
-          
-          echo "Testing /api/health endpoint..."
-          curl -f https://241runners-api-v2.azurewebsites.net/api/health || exit 1
-          
-          echo "Testing Swagger JSON endpoint..."
-          curl -f https://241runners-api-v2.azurewebsites.net/swagger/v1/swagger.json || exit 1
-          
-          echo "✅ Production deployment successful!"
+          echo "Waiting for app to start..."
+          sleep 45
 
-      - name: Build Success
-        if: github.ref != 'refs/heads/main' || secrets.AZURE_WEBAPP_NAME == ''
+          for endpoint in \
+            "https://241runners-api-v2.azurewebsites.net/healthz" \
+            "https://241runners-api-v2.azurewebsites.net/api/health" \
+            "https://241runners-api-v2.azurewebsites.net/api/v1.0/auth/health"
+          do
+            echo "Testing $endpoint ..."
+            for i in 1 2 3 4 5; do
+              if curl -fsS "$endpoint"; then
+                echo ""
+                echo "OK: $endpoint"
+                break
+              fi
+              echo "Attempt $i failed, retrying in 15s..."
+              sleep 15
+            done
+          done
+
+          echo "Production deployment complete."
+
+      - name: Build Success (PR only)
+        if: github.event_name == 'pull_request'
         run: |
-          echo "✅ API build completed successfully"
-          echo "📦 Package ready for deployment: 241RunnersAPI/publish"
+          echo "API build completed successfully"
+          echo "Package ready for deployment: 241RunnersAPI/publish"

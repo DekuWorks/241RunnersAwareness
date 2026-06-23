@@ -135,6 +135,11 @@ workbox-*.js
 # Azure deployment
 .azure/
 
+# Personal documents at repo root (keep out of git)
+/*.pdf
+/*.docx
+/invite.ics
+
 # Debug logs and deployment artifacts
 LogFiles/
 **/LogFiles/
