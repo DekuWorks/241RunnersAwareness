@@ -1,0 +1,50 @@
+name: Restore Azure API
+
+on:
+  workflow_dispatch:
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_E0F220919A244229801FF89FC7A0F655 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_9717F467CF8B4F70A57AD0255925603A }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_10A35595B48041338EE4E2945A4DD811 }}
+
+      - name: Start App Service and apply settings
+        env:
+          APP_NAME: ${{ secrets.AZURE_WEBAPP_NAME }}
+          AZURE_CS: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+          JWT_KEY: ${{ secrets.JWT_KEY }}
+        run: |
+          RG=$(az webapp list --query "[?name=='$APP_NAME'].resourceGroup | [0]" -o tsv)
+          echo "App: $APP_NAME  RG: $RG"
+          az webapp start --name "$APP_NAME" --resource-group "$RG"
+          az webapp config appsettings set \
+            --name "$APP_NAME" \
+            --resource-group "$RG" \
+            --settings \
+              "ConnectionStrings__DefaultConnection=$AZURE_CS" \
+              "JWT_KEY=$JWT_KEY" \
+              "JWT_ISSUER=241RunnersAwareness" \
+              "JWT_AUDIENCE=241RunnersAwareness" \
+              "ASPNETCORE_ENVIRONMENT=Production"
+          az webapp config set --name "$APP_NAME" --resource-group "$RG" --always-on true
+          az webapp show --name "$APP_NAME" --resource-group "$RG" --query "{state:state,defaultHostName:defaultHostName}" -o json
+
+      - name: Deploy API
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'api-deploy.yml',
+              ref: 'main'
+            });
