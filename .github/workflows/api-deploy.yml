@@ -52,6 +52,7 @@ jobs:
         continue-on-error: true
         env:
           PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          APP_NAME: ${{ secrets.AZURE_WEBAPP_NAME }}
           AZURE_CS: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
           JWT_KEY: ${{ secrets.JWT_KEY }}
         run: |
@@ -64,41 +65,18 @@ jobs:
           import re
           import sys
           import urllib.request
-          import xml.etree.ElementTree as ET
 
           profile_file = os.path.join(os.environ["RUNNER_TEMP"], "publishProfile.xml")
           with open(profile_file, "rb") as f:
-              data = f.read().lstrip(b"\xef\xbb\xbf").strip()
-          text = data.decode("utf-8", errors="replace")
+              text = f.read().lstrip(b"\xef\xbb\xbf").strip().decode("utf-8", errors="replace")
 
-          publish = None
-          try:
-              root = ET.fromstring(data)
-              for node in root.findall(".//publishProfile"):
-                  method = (node.get("publishMethod") or "").lower()
-                  if method in ("msdeploy", "zipdeploy", "web deploy"):
-                      publish = node
-                      break
-              if publish is None:
-                  publish = root.find(".//publishProfile")
-          except ET.ParseError:
-              publish = None
+          username = (re.search(r'userName="([^"]+)"', text) or [None, ""])[1]
+          password = (re.search(r'userPWD="([^"]+)"', text) or [None, ""])[1]
+          app_name = os.environ.get("APP_NAME", "").strip()
+          host = f"{app_name}.scm.azurewebsites.net" if app_name else ""
 
-          if publish is not None:
-              publish_url = publish.get("publishUrl", "")
-              username = publish.get("userName")
-              password = publish.get("userPWD")
-          else:
-              print("XML parse failed; falling back to regex extraction")
-              publish_url = (re.search(r'publishUrl="([^"]+)"', text) or [None, ""])[1]
-              username = (re.search(r'userName="([^"]+)"', text) or [None, ""])[1]
-              password = (re.search(r'userPWD="([^"]+)"', text) or [None, ""])[1]
-
-          host = (publish_url or "").split(":")[0]
-          if not host.endswith(".scm.azurewebsites.net"):
-              host = host.replace(".azurewebsites.net", ".scm.azurewebsites.net")
           if not all([host, username, password]):
-              print("Could not extract Kudu credentials from publish profile", file=sys.stderr)
+              print("Could not resolve Kudu host or credentials", file=sys.stderr)
               sys.exit(1)
 
           settings = {
@@ -126,6 +104,10 @@ jobs:
           kudu_request("/api/settings", method="POST", body=settings)
           print("Restarting app")
           kudu_request("/api/restart", method="POST", body={})
+          try:
+              kudu_request("/api/start", method="POST", body={})
+          except Exception:
+              pass
           print("App Service configured")
           PY
 
@@ -133,6 +115,7 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         env:
           PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          APP_NAME: ${{ secrets.AZURE_WEBAPP_NAME }}
         run: |
           cd 241RunnersAPI/publish
           zip -rq ../deploy.zip .
@@ -144,40 +127,18 @@ jobs:
           import re
           import sys
           import urllib.request
-          import xml.etree.ElementTree as ET
 
           profile_file = os.path.join(os.environ["RUNNER_TEMP"], "publishProfile.xml")
           with open(profile_file, "rb") as f:
-              data = f.read().lstrip(b"\xef\xbb\xbf").strip()
-          text = data.decode("utf-8", errors="replace")
+              text = f.read().lstrip(b"\xef\xbb\xbf").strip().decode("utf-8", errors="replace")
 
-          publish = None
-          try:
-              root = ET.fromstring(data)
-              for node in root.findall(".//publishProfile"):
-                  method = (node.get("publishMethod") or "").lower()
-                  if method in ("msdeploy", "zipdeploy", "web deploy"):
-                      publish = node
-                      break
-              if publish is None:
-                  publish = root.find(".//publishProfile")
-          except ET.ParseError:
-              publish = None
+          username = (re.search(r'userName="([^"]+)"', text) or [None, ""])[1]
+          password = (re.search(r'userPWD="([^"]+)"', text) or [None, ""])[1]
+          app_name = os.environ.get("APP_NAME", "").strip()
+          host = f"{app_name}.scm.azurewebsites.net" if app_name else ""
 
-          if publish is not None:
-              publish_url = publish.get("publishUrl", "")
-              username = publish.get("userName")
-              password = publish.get("userPWD")
-          else:
-              publish_url = (re.search(r'publishUrl="([^"]+)"', text) or [None, ""])[1]
-              username = (re.search(r'userName="([^"]+)"', text) or [None, ""])[1]
-              password = (re.search(r'userPWD="([^"]+)"', text) or [None, ""])[1]
-
-          host = (publish_url or "").split(":")[0]
-          if not host.endswith(".scm.azurewebsites.net"):
-              host = host.replace(".azurewebsites.net", ".scm.azurewebsites.net")
           if not all([host, username, password]):
-              print("Could not extract Kudu credentials from publish profile", file=sys.stderr)
+              print("Could not resolve Kudu host or credentials", file=sys.stderr)
               sys.exit(1)
 
           zip_path = os.path.abspath("../deploy.zip")
