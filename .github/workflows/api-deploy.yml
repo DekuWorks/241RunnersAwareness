@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write
 
     steps:
       - name: Checkout code
@@ -48,18 +49,43 @@ jobs:
           cd 241RunnersAPI
           dotnet publish -c Release -o publish --no-build
 
+      - name: Azure Login
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_E0F220919A244229801FF89FC7A0F655 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_9717F467CF8B4F70A57AD0255925603A }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_10A35595B48041338EE4E2945A4DD811 }}
+
       - name: Configure App Service (Supabase + JWT)
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        uses: azure/appservice-settings@v1
-        with:
-          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          app-settings: |
-            ConnectionStrings__DefaultConnection=${{ secrets.SUPABASE_CONNECTION_STRING }}
-            JWT_KEY=${{ secrets.JWT_KEY }}
-            JWT_ISSUER=241RunnersAwareness
-            JWT_AUDIENCE=241RunnersAwareness
-            ASPNETCORE_ENVIRONMENT=Production
+        env:
+          APP_NAME: ${{ secrets.AZURE_WEBAPP_NAME }}
+          SUPABASE_CS: ${{ secrets.SUPABASE_CONNECTION_STRING }}
+          JWT_KEY: ${{ secrets.JWT_KEY }}
+        run: |
+          RG=$(az webapp list --query "[?name=='$APP_NAME'].resourceGroup | [0]" -o tsv)
+          if [ -z "$RG" ] || [ "$RG" = "null" ]; then
+            echo "Could not resolve resource group for $APP_NAME"
+            exit 1
+          fi
+          echo "Configuring $APP_NAME in $RG"
+          az webapp config appsettings set \
+            --name "$APP_NAME" \
+            --resource-group "$RG" \
+            --settings \
+              "ConnectionStrings__DefaultConnection=$SUPABASE_CS" \
+              "JWT_KEY=$JWT_KEY" \
+              "JWT_ISSUER=241RunnersAwareness" \
+              "JWT_AUDIENCE=241RunnersAwareness" \
+              "ASPNETCORE_ENVIRONMENT=Production"
+          az webapp config set \
+            --name "$APP_NAME" \
+            --resource-group "$RG" \
+            --always-on true
+          az webapp start \
+            --name "$APP_NAME" \
+            --resource-group "$RG"
 
       - name: Deploy to Azure Web App
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
