@@ -6,7 +6,7 @@ on:
     paths:
       - '241RunnersAPI/**'
       - '.github/workflows/api-deploy.yml'
-      - 'scripts/restore-azure-api.sh'
+      - 'scripts/setup-supabase.sh'
   pull_request:
     branches: [ "main" ]
     paths:
@@ -47,6 +47,19 @@ jobs:
         run: |
           cd 241RunnersAPI
           dotnet publish -c Release -o publish --no-build
+
+      - name: Configure App Service (Supabase + JWT)
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: azure/appservice-settings@v1
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          app-settings: |
+            ConnectionStrings__DefaultConnection=${{ secrets.SUPABASE_CONNECTION_STRING }}
+            JWT_KEY=${{ secrets.JWT_KEY }}
+            JWT_ISSUER=241RunnersAwareness
+            JWT_AUDIENCE=241RunnersAwareness
+            ASPNETCORE_ENVIRONMENT=Production
 
       - name: Deploy to Azure Web App
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'

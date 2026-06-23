@@ -18,3 +18,14 @@ When you deploy 241RunnersAPI elsewhere, update `config.json` (or the deployed `
 - Map: `api/map`
 
 Frontend builds URLs as `API_BASE_URL + '/v1.0/...'` or `API_BASE_URL + '/ImageUpload/...'`.
+
+## Database (Supabase PostgreSQL)
+
+The API uses **Supabase Postgres** (not Azure SQL). Connection string via environment:
+
+- `ConnectionStrings__DefaultConnection` — Supabase URI from Project Settings → Database
+- Optional local file: `241RunnersAPI/appsettings.Supabase.json` (gitignored values; copy from `appsettings.Supabase.json` template)
+
+On startup the API runs `EnsureCreated` and `DbInitializer` to create tables and seed admin users on a **fresh** database.
+
+Setup script: `./scripts/setup-supabase.sh`

@@ -118,8 +118,8 @@ test-*.js
 # Documentation build
 docs/_build/
 
-# Local development
-*.local
+# Local Supabase credentials (never commit)
+241RunnersAPI/appsettings.Supabase.local.json
 
 # Capacitor
 ios/
