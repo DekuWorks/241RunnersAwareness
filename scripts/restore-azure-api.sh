@@ -36,10 +36,19 @@ else
 fi
 
 if [[ -n "${CS:-}" ]]; then
-  echo "Applying connection string and JWT settings..."
+  SQL_HOST=$(echo "$CS" | sed -nE 's/.*[Ss]erver=(tcp:)?([^,;]+).*/\2/p' | head -1)
+  if [[ -z "$SQL_HOST" ]] || ! host "$SQL_HOST" >/dev/null 2>&1; then
+    echo "Connection string server does not resolve: ${SQL_HOST:-<missing>}"
+    exit 1
+  fi
+  echo "Applying connection string (server: $SQL_HOST) and JWT settings..."
   if [[ -z "${JWT_KEY:-}" ]]; then
     echo "Warning: JWT_KEY not set; skipping JWT app setting."
   fi
+  az webapp config appsettings delete \
+    --name "$APP_NAME" \
+    --resource-group "$RG" \
+    --setting-names DefaultConnection 2>/dev/null || true
   az webapp config appsettings set \
     --name "$APP_NAME" \
     --resource-group "$RG" \

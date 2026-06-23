@@ -63,6 +63,21 @@ jobs:
         run: |
           RG=$(az webapp list --query "[?name=='$APP_NAME'].resourceGroup | [0]" -o tsv)
           echo "App: $APP_NAME  RG: $RG"
+          if [[ -z "$AZURE_CS" ]]; then
+            echo "AZURE_SQL_CONNECTION_STRING secret is empty"
+            exit 1
+          fi
+          SQL_HOST=$(echo "$AZURE_CS" | sed -nE 's/.*[Ss]erver=(tcp:)?([^,;]+).*/\2/p' | head -1)
+          if [[ -z "$SQL_HOST" ]] || ! host "$SQL_HOST" >/dev/null 2>&1; then
+            echo "Connection string server does not resolve: ${SQL_HOST:-<missing>}"
+            exit 1
+          fi
+          echo "SQL host resolves: $SQL_HOST"
+          # Remove legacy duplicate app setting; ConnectionStrings__DefaultConnection is the source of truth
+          az webapp config appsettings delete \
+            --name "$APP_NAME" \
+            --resource-group "$RG" \
+            --setting-names DefaultConnection 2>/dev/null || true
           az webapp config appsettings set \
             --name "$APP_NAME" \
             --resource-group "$RG" \
@@ -96,12 +111,12 @@ jobs:
 
           for endpoint in \
             "https://241runners-api-v2.azurewebsites.net/healthz" \
-            "https://241runners-api-v2.azurewebsites.net/api/health" \
-            "https://241runners-api-v2.azurewebsites.net/api/v1.0/auth/health"
+            "https://241runners-api-v2.azurewebsites.net/readyz" \
+            "https://241runners-api-v2.azurewebsites.net/api/health"
           do
             echo "Testing $endpoint ..."
             for i in 1 2 3 4 5; do
-              if curl -fsS "$endpoint"; then
+              if curl -fsS --max-time 20 "$endpoint"; then
                 echo ""
                 echo "OK: $endpoint"
                 break
@@ -110,6 +125,18 @@ jobs:
               sleep 15
             done
           done
+
+          echo "Testing login DB path (expect 401)..."
+          LOGIN_CODE=$(curl -s -o /tmp/login-smoke.json -w "%{http_code}" --max-time 30 \
+            -X POST -H "Content-Type: application/json" \
+            -d '{"email":"invalid@example.com","password":"wrong"}' \
+            "https://241runners-api-v2.azurewebsites.net/api/v1/auth/login")
+          echo "Login HTTP $LOGIN_CODE"
+          cat /tmp/login-smoke.json
+          if [[ "$LOGIN_CODE" != "401" ]]; then
+            echo "Login smoke test failed (expected 401 INVALID_CREDENTIALS)"
+            exit 1
+          fi
 
           echo "Production deployment complete."
 
