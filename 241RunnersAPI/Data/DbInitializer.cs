@@ -15,6 +15,12 @@ namespace _241RunnersAPI.Data
         {
             try
             {
+                if (string.Equals(Environment.GetEnvironmentVariable("SKIP_DB_SEED"), "true", StringComparison.OrdinalIgnoreCase))
+                {
+                    logger.LogInformation("SKIP_DB_SEED=true — skipping database seed");
+                    return;
+                }
+
                 // Ensure database is created
                 await context.Database.EnsureCreatedAsync();
                 logger.LogInformation("Database ensured created");
