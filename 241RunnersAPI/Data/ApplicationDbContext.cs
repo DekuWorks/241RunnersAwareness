@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using _241RunnersAPI.Models;
 
 namespace _241RunnersAPI.Data
@@ -10,10 +9,6 @@ namespace _241RunnersAPI.Data
     public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-        {
-        }
-
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration) : base(options)
         {
         }
 
@@ -30,9 +25,6 @@ namespace _241RunnersAPI.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            var utcNow = "timezone('utc', now())";
-            string Filter(string column) => $"\"{column}\" IS NOT NULL";
-
             // User configuration
             modelBuilder.Entity<User>(entity =>
             {
@@ -40,8 +32,8 @@ namespace _241RunnersAPI.Data
                 
                 // Unique constraints
                 entity.HasIndex(e => e.Email).IsUnique();
-                entity.HasIndex(e => e.EmailVerificationToken).IsUnique().HasFilter(Filter("EmailVerificationToken"));
-                entity.HasIndex(e => e.PasswordResetToken).IsUnique().HasFilter(Filter("PasswordResetToken"));
+                entity.HasIndex(e => e.EmailVerificationToken).IsUnique().HasFilter("[EmailVerificationToken] IS NOT NULL");
+                entity.HasIndex(e => e.PasswordResetToken).IsUnique().HasFilter("[PasswordResetToken] IS NOT NULL");
                 
                 // Required fields
                 entity.Property(e => e.Email)
@@ -49,6 +41,7 @@ namespace _241RunnersAPI.Data
                     .HasMaxLength(255);
                 
                 entity.Property(e => e.PasswordHash)
+                    .IsRequired()
                     .HasMaxLength(255);
                 
                 entity.Property(e => e.FirstName)
@@ -69,7 +62,7 @@ namespace _241RunnersAPI.Data
                 
                 entity.Property(e => e.CreatedAt)
                     .IsRequired()
-                    .HasDefaultValueSql(utcNow);
+                    .HasDefaultValueSql("GETUTCDATE()");
                 
                 entity.Property(e => e.IsEmailVerified)
                     .HasDefaultValue(false);
@@ -124,7 +117,7 @@ namespace _241RunnersAPI.Data
                 entity.Property(e => e.Gender).IsRequired().HasMaxLength(20);
                 entity.Property(e => e.Status).IsRequired().HasMaxLength(50).HasDefaultValue("Missing");
                 entity.Property(e => e.IsActive).IsRequired().HasDefaultValue(true);
-                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql(utcNow);
+                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
                 
                 // String length constraints
                 entity.Property(e => e.PhysicalDescription).HasMaxLength(500);
@@ -177,7 +170,7 @@ namespace _241RunnersAPI.Data
                 entity.Property(e => e.Status).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.Priority).IsRequired().HasMaxLength(20);
                 entity.Property(e => e.IsPublic).IsRequired().HasDefaultValue(false);
-                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql(utcNow);
+                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
                 
                 // String length constraints
                 entity.Property(e => e.LastSeenTime).HasMaxLength(100);
@@ -228,8 +221,8 @@ namespace _241RunnersAPI.Data
                 entity.Property(e => e.Platform).IsRequired().HasMaxLength(10);
                 entity.Property(e => e.FcmToken).IsRequired().HasMaxLength(500);
                 entity.Property(e => e.IsActive).IsRequired().HasDefaultValue(true);
-                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql(utcNow);
-                entity.Property(e => e.LastSeenAt).IsRequired().HasDefaultValueSql(utcNow);
+                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
+                entity.Property(e => e.LastSeenAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
                 
                 // String length constraints
                 entity.Property(e => e.AppVersion).HasMaxLength(20);
@@ -257,7 +250,7 @@ namespace _241RunnersAPI.Data
                 entity.Property(e => e.UserId).IsRequired();
                 entity.Property(e => e.Topic).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.IsSubscribed).IsRequired().HasDefaultValue(true);
-                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql(utcNow);
+                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
                 
                 // String length constraints
                 entity.Property(e => e.SubscriptionReason).HasMaxLength(200);
@@ -283,7 +276,7 @@ namespace _241RunnersAPI.Data
                 entity.Property(e => e.Body).IsRequired().HasMaxLength(1000);
                 entity.Property(e => e.Type).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.IsSent).IsRequired().HasDefaultValue(false);
-                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql(utcNow);
+                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
                 entity.Property(e => e.Priority).IsRequired().HasMaxLength(100).HasDefaultValue("normal");
                 
                 // String length constraints
@@ -320,7 +313,7 @@ namespace _241RunnersAPI.Data
                 entity.Property(e => e.DataTypes).IsRequired().HasMaxLength(500);
                 entity.Property(e => e.Status).IsRequired().HasMaxLength(50).HasDefaultValue("Pending");
                 entity.Property(e => e.RequestedAt).IsRequired();
-                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql(utcNow);
+                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
                 
                 // String length constraints
                 entity.Property(e => e.Reason).HasMaxLength(1000);
@@ -348,7 +341,7 @@ namespace _241RunnersAPI.Data
                 entity.Property(e => e.UserEmail).IsRequired().HasMaxLength(254);
                 entity.Property(e => e.Status).IsRequired().HasMaxLength(50).HasDefaultValue("Pending");
                 entity.Property(e => e.RequestedAt).IsRequired();
-                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql(utcNow);
+                entity.Property(e => e.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
                 
                 // String length constraints
                 entity.Property(e => e.Reason).HasMaxLength(1000);
@@ -359,6 +352,45 @@ namespace _241RunnersAPI.Data
                 entity.HasIndex(e => e.Status);
                 entity.HasIndex(e => e.RequestedAt);
             });
+
+            // Seed data
+            SeedData(modelBuilder);
+        }
+
+        /// <summary>
+        /// Seed initial data for the database
+        /// </summary>
+        private void SeedData(ModelBuilder modelBuilder)
+        {
+            // Seed admin users
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 1,
+                    Email = "admin@241runnersawareness.org",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!@#"),
+                    FirstName = "System",
+                    LastName = "Administrator",
+                    Role = "admin",
+                    IsActive = true,
+                    IsEmailVerified = true,
+                    CreatedAt = DateTime.UtcNow,
+                    EmailVerifiedAt = DateTime.UtcNow
+                },
+                new User
+                {
+                    Id = 2,
+                    Email = "support@241runnersawareness.org",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Support123!@#"),
+                    FirstName = "Support",
+                    LastName = "Team",
+                    Role = "admin",
+                    IsActive = true,
+                    IsEmailVerified = true,
+                    CreatedAt = DateTime.UtcNow,
+                    EmailVerifiedAt = DateTime.UtcNow
+                }
+            );
         }
     }
 }

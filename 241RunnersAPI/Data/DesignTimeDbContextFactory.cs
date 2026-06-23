@@ -18,12 +18,12 @@ namespace _241RunnersAPI.Data
 
             var connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
-                ?? "Host=localhost;Database=241runners;Username=postgres;Password=postgres";
+                ?? "Server=(localdb)\\mssqllocaldb;Database=241RunnersAwarenessDB;Trusted_Connection=True;TrustServerCertificate=True";
 
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
             DbContextConfiguration.ConfigureProvider(optionsBuilder, connectionString);
 
-            return new ApplicationDbContext(optionsBuilder.Options, configuration);
+            return new ApplicationDbContext(optionsBuilder.Options);
         }
     }
 }

@@ -21,10 +21,6 @@ namespace _241RunnersAPI.Data
                     return;
                 }
 
-                // Ensure database is created
-                await context.Database.EnsureCreatedAsync();
-                logger.LogInformation("Database ensured created");
-
                 // Check if we already have users
                 var userCount = await context.Users.CountAsync();
                 logger.LogInformation("Current user count in database: {UserCount}", userCount);

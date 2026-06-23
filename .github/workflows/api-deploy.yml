@@ -6,7 +6,6 @@ on:
     paths:
       - '241RunnersAPI/**'
       - '.github/workflows/api-deploy.yml'
-      - 'scripts/setup-supabase.sh'
   pull_request:
     branches: [ "main" ]
     paths:
@@ -48,24 +47,33 @@ jobs:
           cd 241RunnersAPI
           dotnet publish -c Release -o publish --no-build
 
-      - name: Configure App Service (Supabase + JWT)
+      - name: Configure App Service (Azure SQL + JWT)
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         env:
           PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          SUPABASE_CS: ${{ secrets.SUPABASE_CONNECTION_STRING }}
+          AZURE_CS: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
           JWT_KEY: ${{ secrets.JWT_KEY }}
         run: |
+          PROFILE_FILE="$RUNNER_TEMP/publishProfile.xml"
+          printf '%s' "$PUBLISH_PROFILE" > "$PROFILE_FILE"
           python3 <<'PY'
           import base64
           import json
           import os
           import sys
-          import urllib.error
           import urllib.request
           import xml.etree.ElementTree as ET
 
-          profile_xml = os.environ["PUBLISH_PROFILE"]
-          root = ET.fromstring(profile_xml)
+          profile_file = os.path.join(os.environ["RUNNER_TEMP"], "publishProfile.xml")
+          with open(profile_file, "rb") as f:
+              data = f.read().lstrip(b"\xef\xbb\xbf").strip()
+
+          try:
+              root = ET.fromstring(data)
+          except ET.ParseError as ex:
+              print(f"Invalid publish profile XML: {ex}", file=sys.stderr)
+              sys.exit(1)
+
           publish = None
           for node in root.findall(".//publishProfile"):
               method = (node.get("publishMethod") or "").lower()
@@ -89,7 +97,7 @@ jobs:
               sys.exit(1)
 
           settings = {
-              "ConnectionStrings__DefaultConnection": os.environ["SUPABASE_CS"],
+              "ConnectionStrings__DefaultConnection": os.environ["AZURE_CS"],
               "JWT_KEY": os.environ["JWT_KEY"],
               "JWT_ISSUER": "241RunnersAwareness",
               "JWT_AUDIENCE": "241RunnersAwareness",
@@ -104,8 +112,8 @@ jobs:
 
           def kudu_request(path, method="GET", body=None):
               url = f"https://{host}{path}"
-              data = json.dumps(body).encode() if body is not None else None
-              req = urllib.request.Request(url, data=data, headers=headers, method=method)
+              payload = json.dumps(body).encode() if body is not None else None
+              req = urllib.request.Request(url, data=payload, headers=headers, method=method)
               with urllib.request.urlopen(req, timeout=120) as resp:
                   return resp.read().decode()
 

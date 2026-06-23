@@ -6,9 +6,9 @@ namespace _241RunnersAPI.Data
     {
         public static void ConfigureProvider(DbContextOptionsBuilder options, string connectionString)
         {
-            options.UseNpgsql(connectionString, npgsql =>
+            options.UseSqlServer(connectionString, sql =>
             {
-                npgsql.EnableRetryOnFailure(3);
+                sql.EnableRetryOnFailure(3);
             });
         }
     }

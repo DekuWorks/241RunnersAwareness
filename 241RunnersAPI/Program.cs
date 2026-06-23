@@ -13,8 +13,6 @@ using Microsoft.AspNetCore.Server.IISIntegration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddJsonFile("appsettings.Supabase.local.json", optional: true, reloadOnChange: true);
-
 // Add comprehensive logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -651,15 +649,15 @@ app.MapGet("/debug/runners", async (ApplicationDbContext db) => {
     }
 });
 
-// Debug: ensure PostgreSQL schema exists (Supabase)
+// Debug: apply pending EF migrations (Azure SQL)
 app.MapPost("/debug/initialize-database", async (ApplicationDbContext db) =>
 {
     try
     {
-        await db.Database.EnsureCreatedAsync();
+        await db.Database.MigrateAsync();
         return Results.Ok(new
         {
-            message = "Database schema ensured (PostgreSQL/Supabase)",
+            message = "Database migrations applied (Azure SQL)",
             timestamp = DateTime.UtcNow
         });
     }
@@ -753,15 +751,16 @@ using (var scope = app.Services.CreateScope())
         {
             logger.LogInformation("Database connection successful");
             
-            // Create schema on Supabase (fresh Postgres — no EF migrations)
+            // Apply migrations against Azure SQL
             try
             {
-                await db.Database.EnsureCreatedAsync();
-                logger.LogInformation("Database schema ensured (PostgreSQL/Supabase)");
+                await db.Database.MigrateAsync();
+                logger.LogInformation("Database migrations applied successfully");
             }
-            catch (Exception schemaEx)
+            catch (Exception migrationEx)
             {
-                logger.LogError(schemaEx, "Database schema creation failed: {Message}", schemaEx.Message);
+                logger.LogError(migrationEx, "Database migration failed: {Message}", migrationEx.Message);
+                logger.LogWarning("Continuing without migrations - database may be in inconsistent state");
             }
             
             // Initialize database with seed data

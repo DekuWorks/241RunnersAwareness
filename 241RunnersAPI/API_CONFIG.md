@@ -19,33 +19,12 @@ When you deploy 241RunnersAPI elsewhere, update `config.json` (or the deployed `
 
 Frontend builds URLs as `API_BASE_URL + '/v1.0/...'` or `API_BASE_URL + '/ImageUpload/...'`.
 
-## Database (Supabase PostgreSQL)
+## Database (Azure SQL)
 
-The API uses **Supabase Postgres** (not Azure SQL). Connection string via environment:
+The API uses **Azure SQL Server** via Entity Framework Core. Connection string via environment:
 
-- `ConnectionStrings__DefaultConnection` — Supabase URI from Project Settings → Database
-- Optional local file: `241RunnersAPI/appsettings.Supabase.json` (gitignored values; copy from `appsettings.Supabase.json` template)
+- `ConnectionStrings__DefaultConnection` — set on Azure App Service (GitHub secret `AZURE_SQL_CONNECTION_STRING`)
 
-On startup the API runs `EnsureCreated` and `DbInitializer` (creates schema; seeds missing admin accounts only).
+On startup the API runs `Database.Migrate()` and `DbInitializer` (seeds missing admin accounts only).
 
-### Migrate data from Azure SQL
-
-One-time copy of all production data (users, runners, cases, devices, notifications, etc.):
-
-```bash
-export AZURE_SQL_CONNECTION_STRING='...'   # or GitHub secret
-export SUPABASE_CONNECTION_STRING='...'    # or appsettings.Supabase.local.json
-./scripts/migrate-azure-to-supabase.sh
-```
-
-Or via GitHub Actions (uses repo secrets):
-
-```bash
-gh workflow run migrate-azure-to-supabase.yml -R DekuWorks/241RunnersAwareness
-# dry run first:
-gh workflow run migrate-azure-to-supabase.yml -R DekuWorks/241RunnersAwareness -f dry_run=true
-```
-
-Tool source: `241RunnersAPI/tools/MigrateToSupabase/`
-
-Setup script: `./scripts/setup-supabase.sh`
+Deploy: push to `main` (triggers `api-deploy.yml`) or `gh workflow run api-deploy.yml -R DekuWorks/241RunnersAwareness`
