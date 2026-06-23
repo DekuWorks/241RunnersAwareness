@@ -4692,6 +4692,40 @@
       }
     }
 
+    function resolveProfileNameFields(user) {
+      const rawName = user.fullName || user.name || '';
+      const email = user.email || '';
+      const isEmailName = email && rawName.trim().toLowerCase() === email.trim().toLowerCase();
+      let firstName = (user.firstName || '').trim();
+      let lastName = (user.lastName || '').trim();
+      const fullName = isEmailName ? '' : rawName.trim();
+
+      if (!firstName && !lastName && fullName) {
+        const parts = fullName.split(/\s+/).filter(Boolean);
+        firstName = parts[0] || '';
+        lastName = parts.slice(1).join(' ');
+      }
+
+      const combined = `${firstName} ${lastName}`.trim();
+      return {
+        firstName: firstName || undefined,
+        lastName: lastName || undefined,
+        fullName: combined || fullName || undefined,
+        email,
+      };
+    }
+
+    function getProfileDisplayName(user) {
+      const fields = resolveProfileNameFields(user);
+      return fields.fullName || 'Your Profile';
+    }
+
+    function getProfileAvatarInitial(user) {
+      const fields = resolveProfileNameFields(user);
+      const source = fields.firstName || fields.fullName;
+      return source ? source.charAt(0).toUpperCase() : 'U';
+    }
+
     // Update profile display with user data
     function updateProfileDisplay(user) {
       console.log('Updating profile display with user data:', user);
@@ -4700,12 +4734,18 @@
       const profileName = document.querySelector('.profile-name');
       const profileEmail = document.querySelector('.profile-email');
       const profileRole = document.querySelector('.profile-role');
+      const avatarPlaceholder = document.getElementById('avatarPlaceholder');
       
-      const displayName = user.fullName || `${user.firstName || 'User'} ${user.lastName || ''}`.trim() || 'User';
+      const nameFields = resolveProfileNameFields(user);
+      const displayName = getProfileDisplayName(user);
       
       if (profileName) profileName.textContent = displayName;
-      if (profileEmail) profileEmail.textContent = user.email;
+      if (profileEmail) profileEmail.textContent = user.email || '';
       if (profileRole) profileRole.textContent = user.role || 'User';
+      if (avatarPlaceholder) {
+        avatarPlaceholder.textContent = getProfileAvatarInitial(user);
+        avatarPlaceholder.style.fontSize = '3rem';
+      }
       
       // Update profile display elements (the ones showing "Loading...")
       const firstNameDisplay = document.getElementById('firstName');
@@ -4715,8 +4755,8 @@
       const roleDisplay = document.getElementById('role');
       const memberSinceDisplay = document.getElementById('memberSince');
       
-      if (firstNameDisplay) firstNameDisplay.textContent = user.firstName || 'Not provided';
-      if (lastNameDisplay) lastNameDisplay.textContent = user.lastName || 'Not provided';
+      if (firstNameDisplay) firstNameDisplay.textContent = nameFields.firstName || 'Not provided';
+      if (lastNameDisplay) lastNameDisplay.textContent = nameFields.lastName || 'Not provided';
       if (emailDisplay) emailDisplay.textContent = user.email || 'Not provided';
       if (phoneDisplay) phoneDisplay.textContent = user.phoneNumber || 'Not provided';
       
@@ -4751,8 +4791,8 @@
       const phoneInput = document.getElementById('editPhone');
       const roleInput = document.getElementById('editRole');
       
-      if (firstNameInput) firstNameInput.value = user.firstName || '';
-      if (lastNameInput) lastNameInput.value = user.lastName || '';
+      if (firstNameInput) firstNameInput.value = nameFields.firstName || '';
+      if (lastNameInput) lastNameInput.value = nameFields.lastName || '';
       if (emailInput) emailInput.value = user.email || '';
       if (phoneInput) phoneInput.value = user.phoneNumber || '';
       if (roleInput) roleInput.value = user.role || 'user';
