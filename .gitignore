@@ -118,10 +118,6 @@ test-*.js
 # Documentation build
 docs/_build/
 
-# Local Supabase credentials (never commit)
-241RunnersAPI/appsettings.Supabase.local.json
-241RunnersAPI/appsettings.Migration.local.json
-
 # Capacitor
 ios/
 android/

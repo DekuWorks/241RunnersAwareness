@@ -28,3 +28,11 @@ The API uses **Azure SQL Server** via Entity Framework Core. Connection string v
 On startup the API runs `Database.Migrate()` and `DbInitializer` (seeds missing admin accounts only).
 
 Deploy: push to `main` (triggers `api-deploy.yml`) or `gh workflow run api-deploy.yml -R DekuWorks/241RunnersAwareness`
+
+If the App Service is stopped, start it and apply settings:
+
+```bash
+export AZURE_SQL_CONNECTION_STRING='...'
+export JWT_KEY='...'
+./scripts/restore-azure-api.sh
+```
