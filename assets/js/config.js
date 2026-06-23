@@ -15,7 +15,10 @@ window.APP_CONFIG = {
     DEBUG: false,
     HEALTH_CHECK_ENDPOINT: "/v1.0/auth/health",
     API_TIMEOUT: 10000,
-    RETRY_ATTEMPTS: 3
+    RETRY_ATTEMPTS: 3,
+    // Mapbox public token (pk.*) — same value as mobile EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN
+    MAPBOX_ACCESS_TOKEN: "YOUR_MAPBOX_ACCESS_TOKEN",
+    MAPBOX_STYLE_URL: "mapbox://styles/mapbox/streets-v12"
 };
 
 // Load configuration from config.json if available
