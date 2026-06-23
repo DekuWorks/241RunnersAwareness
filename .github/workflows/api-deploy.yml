@@ -6,6 +6,7 @@ on:
     paths:
       - '241RunnersAPI/**'
       - '.github/workflows/api-deploy.yml'
+      - 'scripts/restore-azure-api.sh'
   pull_request:
     branches: [ "main" ]
     paths:
@@ -16,7 +17,6 @@ jobs:
   build-deploy:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
       contents: read
 
     steps:
@@ -48,28 +48,12 @@ jobs:
           cd 241RunnersAPI
           dotnet publish -c Release -o publish --no-build
 
-      - name: Azure Login
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_E0F220919A244229801FF89FC7A0F655 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_9717F467CF8B4F70A57AD0255925603A }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_10A35595B48041338EE4E2945A4DD811 }}
-
-      - name: Start Azure Web App
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        env:
-          AZURE_WEBAPP_NAME: ${{ secrets.AZURE_WEBAPP_NAME }}
-        run: |
-          RESOURCE_GROUP=$(az webapp list --query "[?name=='$AZURE_WEBAPP_NAME'].resourceGroup | [0]" -o tsv)
-          echo "Resource group: $RESOURCE_GROUP"
-          az webapp start --name "$AZURE_WEBAPP_NAME" --resource-group "$RESOURCE_GROUP"
-
       - name: Deploy to Azure Web App
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: 241RunnersAPI/publish
 
       - name: Smoke Test Production
