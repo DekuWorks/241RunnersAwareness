@@ -131,11 +131,74 @@ jobs:
 
       - name: Deploy to Azure Web App
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: 241RunnersAPI/publish
+        env:
+          PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        run: |
+          cd 241RunnersAPI/publish
+          zip -rq ../deploy.zip .
+          PROFILE_FILE="$RUNNER_TEMP/publishProfile.xml"
+          printf '%s' "$PUBLISH_PROFILE" > "$PROFILE_FILE"
+          python3 <<'PY'
+          import base64
+          import os
+          import re
+          import sys
+          import urllib.request
+          import xml.etree.ElementTree as ET
+
+          profile_file = os.path.join(os.environ["RUNNER_TEMP"], "publishProfile.xml")
+          with open(profile_file, "rb") as f:
+              data = f.read().lstrip(b"\xef\xbb\xbf").strip()
+          text = data.decode("utf-8", errors="replace")
+
+          publish = None
+          try:
+              root = ET.fromstring(data)
+              for node in root.findall(".//publishProfile"):
+                  method = (node.get("publishMethod") or "").lower()
+                  if method in ("msdeploy", "zipdeploy", "web deploy"):
+                      publish = node
+                      break
+              if publish is None:
+                  publish = root.find(".//publishProfile")
+          except ET.ParseError:
+              publish = None
+
+          if publish is not None:
+              publish_url = publish.get("publishUrl", "")
+              username = publish.get("userName")
+              password = publish.get("userPWD")
+          else:
+              publish_url = (re.search(r'publishUrl="([^"]+)"', text) or [None, ""])[1]
+              username = (re.search(r'userName="([^"]+)"', text) or [None, ""])[1]
+              password = (re.search(r'userPWD="([^"]+)"', text) or [None, ""])[1]
+
+          host = (publish_url or "").split(":")[0]
+          if not host.endswith(".scm.azurewebsites.net"):
+              host = host.replace(".azurewebsites.net", ".scm.azurewebsites.net")
+          if not all([host, username, password]):
+              print("Could not extract Kudu credentials from publish profile", file=sys.stderr)
+              sys.exit(1)
+
+          zip_path = os.path.abspath("../deploy.zip")
+          with open(zip_path, "rb") as f:
+              payload = f.read()
+
+          auth = base64.b64encode(f"{username}:{password}".encode()).decode()
+          req = urllib.request.Request(
+              f"https://{host}/api/zipdeploy?isAsync=true",
+              data=payload,
+              headers={
+                  "Authorization": f"Basic {auth}",
+                  "Content-Type": "application/zip",
+              },
+              method="POST",
+          )
+          print(f"Deploying package to https://{host}/api/zipdeploy")
+          with urllib.request.urlopen(req, timeout=600) as resp:
+              print(resp.read().decode() or "Deploy accepted")
+          print("Deployment complete")
+          PY
 
       - name: Smoke Test Production
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
