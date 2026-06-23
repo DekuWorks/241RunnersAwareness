@@ -5157,6 +5157,9 @@
         // Load user profile data
         await loadUserProfileData();
         console.log('User profile data loaded');
+
+        await loadRunnerProfile();
+        console.log('Runner profile loaded');
         
         // Load runners
         await loadRunners();

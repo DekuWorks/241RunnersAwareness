@@ -148,11 +148,12 @@ async function apiRequest(endpoint, options = {}) {
  * @returns {Promise<Object>} User data
  */
 async function getCurrentUserFromAPI() {
-    const response = await apiRequest('/v1.0/users/me');
+    const response = await apiRequest('/v1/auth/me');
     if (!response.ok) {
         throw new Error(`Failed to get user data: ${response.statusText}`);
     }
-    return await response.json();
+    const data = await response.json();
+    return data.user || data;
 }
 
 /**
