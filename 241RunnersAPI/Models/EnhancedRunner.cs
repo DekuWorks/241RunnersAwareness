@@ -134,7 +134,6 @@ namespace _241RunnersAPI.Models
     /// </summary>
     public class EnhancedRunnerRegistrationDto
     {
-        [Required(ErrorMessage = "User ID is required")]
         public int UserId { get; set; }
 
         [Required(ErrorMessage = "First name is required")]

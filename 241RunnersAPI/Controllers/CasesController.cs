@@ -465,6 +465,230 @@ namespace _241RunnersAPI.Controllers
         }
 
         /// <summary>
+        /// Report a sighting for a case (authenticated users)
+        /// </summary>
+        [HttpPost("{id}/sightings")]
+        public async Task<IActionResult> ReportSighting(string id, [FromBody] ReportSightingRequest request)
+        {
+            try
+            {
+                if (!int.TryParse(id.Replace("case_", ""), out var caseId))
+                {
+                    return NotFoundResponse("Case not found");
+                }
+
+                var validationErrors = new List<string>();
+                if (string.IsNullOrWhiteSpace(request.Description))
+                {
+                    validationErrors.Add("Description is required");
+                }
+                else if (request.Description.Trim().Length < 10)
+                {
+                    validationErrors.Add("Description must be at least 10 characters");
+                }
+                else if (request.Description.Length > 2000)
+                {
+                    validationErrors.Add("Description cannot exceed 2000 characters");
+                }
+
+                if (request.Latitude is < -90 or > 90)
+                {
+                    validationErrors.Add("Latitude must be between -90 and 90");
+                }
+
+                if (request.Longitude is < -180 or > 180)
+                {
+                    validationErrors.Add("Longitude must be between -180 and 180");
+                }
+
+                var allowedConfidence = new[] { "low", "medium", "high" };
+                if (!string.IsNullOrEmpty(request.Confidence) &&
+                    !allowedConfidence.Contains(request.Confidence.ToLowerInvariant()))
+                {
+                    validationErrors.Add("Confidence must be low, medium, or high");
+                }
+
+                if (validationErrors.Any())
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        error = new
+                        {
+                            code = "VALIDATION_FAILED",
+                            message = "Sighting validation failed",
+                            details = validationErrors
+                        }
+                    });
+                }
+
+                var caseEntity = await _context.Cases.FindAsync(caseId);
+                if (caseEntity == null)
+                {
+                    return NotFoundResponse("Case not found");
+                }
+
+                var reporterId = GetCurrentUserIdAsInt();
+                if (reporterId == null)
+                {
+                    return UnauthorizedResponse("Invalid user");
+                }
+
+                var sightingEntry = new
+                {
+                    reportedAt = request.ReportedAt ?? DateTime.UtcNow,
+                    description = request.Description.Trim(),
+                    latitude = request.Latitude,
+                    longitude = request.Longitude,
+                    address = request.Address,
+                    confidence = request.Confidence?.ToLowerInvariant() ?? "medium",
+                    images = request.Images ?? new List<string>(),
+                    reportedByUserId = reporterId.Value
+                };
+
+                var sightings = new List<object>();
+                if (!string.IsNullOrWhiteSpace(caseEntity.AdditionalInformation))
+                {
+                    try
+                    {
+                        sightings = System.Text.Json.JsonSerializer.Deserialize<List<object>>(caseEntity.AdditionalInformation) ?? new List<object>();
+                    }
+                    catch
+                    {
+                        sightings = new List<object>
+                        {
+                            new { legacyNote = caseEntity.AdditionalInformation }
+                        };
+                    }
+                }
+
+                sightings.Add(sightingEntry);
+
+                var serializedSightings = System.Text.Json.JsonSerializer.Serialize(sightings);
+                if (serializedSightings.Length > 1000)
+                {
+                    sightings = sightings.TakeLast(5).ToList();
+                    serializedSightings = System.Text.Json.JsonSerializer.Serialize(sightings);
+                }
+
+                caseEntity.AdditionalInformation = serializedSightings;
+                caseEntity.LastSeenLocation = request.Address ?? caseEntity.LastSeenLocation;
+                caseEntity.LastSeenLatitude = (decimal?)request.Latitude;
+                caseEntity.LastSeenLongitude = (decimal?)request.Longitude;
+                caseEntity.LastSeenAt = request.ReportedAt ?? DateTime.UtcNow;
+                caseEntity.TipCount += 1;
+                caseEntity.UpdatedAt = DateTime.UtcNow;
+
+                if (caseEntity.Status is "Active" or "Missing")
+                {
+                    caseEntity.Status = "Investigating";
+                }
+
+                if (request.Images?.Count > 0)
+                {
+                    var existingImages = new List<string>();
+                    if (!string.IsNullOrEmpty(caseEntity.CaseImageUrls))
+                    {
+                        try
+                        {
+                            existingImages = System.Text.Json.JsonSerializer.Deserialize<List<string>>(caseEntity.CaseImageUrls) ?? new List<string>();
+                        }
+                        catch { /* ignore */ }
+                    }
+
+                    existingImages.AddRange(request.Images);
+                    caseEntity.CaseImageUrls = System.Text.Json.JsonSerializer.Serialize(existingImages.Distinct().Take(20));
+                }
+
+                var notification = new Notification
+                {
+                    UserId = caseEntity.ReportedByUserId,
+                    Title = "New sighting reported",
+                    Body = $"A new sighting was reported for case: {caseEntity.Title}",
+                    Type = "case_updated",
+                    RelatedCaseId = caseEntity.Id,
+                    RelatedUserId = reporterId.Value,
+                    Priority = request.Confidence?.ToLowerInvariant() == "high" ? "urgent" : "high",
+                    CreatedAt = DateTime.UtcNow,
+                    IsSent = true,
+                    SentAt = DateTime.UtcNow
+                };
+
+                _context.Notifications.Add(notification);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Sighting reported for case {CaseId} by user {UserId}", caseId, reporterId);
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Sighting reported successfully",
+                    caseId = $"case_{caseEntity.Id}",
+                    tipCount = caseEntity.TipCount
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error reporting sighting for case {CaseId}", id);
+                return StatusCode(500, new
+                {
+                    success = false,
+                    error = new
+                    {
+                        code = "INTERNAL_ERROR",
+                        message = "An error occurred while reporting the sighting"
+                    }
+                });
+            }
+        }
+
+        /// <summary>
+        /// Get sightings reported for a case
+        /// </summary>
+        [HttpGet("{id}/sightings")]
+        [Authorize]
+        public async Task<IActionResult> GetCaseSightings(string id)
+        {
+            try
+            {
+                if (!int.TryParse(id.Replace("case_", ""), out var caseId))
+                {
+                    return NotFoundResponse("Case not found");
+                }
+
+                var caseEntity = await _context.Cases.FindAsync(caseId);
+                if (caseEntity == null)
+                {
+                    return NotFoundResponse("Case not found");
+                }
+
+                if (string.IsNullOrWhiteSpace(caseEntity.AdditionalInformation))
+                {
+                    return Ok(new { success = true, sightings = Array.Empty<object>() });
+                }
+
+                try
+                {
+                    var sightings = System.Text.Json.JsonSerializer.Deserialize<List<object>>(caseEntity.AdditionalInformation);
+                    return Ok(new { success = true, sightings = sightings ?? new List<object>() });
+                }
+                catch
+                {
+                    return Ok(new
+                    {
+                        success = true,
+                        sightings = new[] { new { legacyNote = caseEntity.AdditionalInformation } }
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving sightings for case {CaseId}", id);
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
         /// Get public cases (for public consumption)
         /// </summary>
         [HttpGet("public")]
@@ -1009,5 +1233,16 @@ namespace _241RunnersAPI.Controllers
         public string? Search { get; set; }
         public string? Status { get; set; }
         public string? Region { get; set; }
+    }
+
+    public class ReportSightingRequest
+    {
+        public string Description { get; set; } = string.Empty;
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public string? Address { get; set; }
+        public List<string>? Images { get; set; }
+        public string? Confidence { get; set; }
+        public DateTime? ReportedAt { get; set; }
     }
 }

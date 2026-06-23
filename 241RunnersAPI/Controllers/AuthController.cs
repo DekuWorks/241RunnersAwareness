@@ -137,7 +137,7 @@ namespace _241RunnersAPI.Controllers
                 }
 
                 // Check if user already exists
-                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == sanitizedEmail.ToLower());
                 if (existingUser != null)
                 {
                     return BadRequest(new
@@ -271,7 +271,8 @@ namespace _241RunnersAPI.Controllers
                     });
                 }
 
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+                var normalizedEmail = request.Email.ToLower().Trim();
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == normalizedEmail);
                 if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
                 {
                     return Unauthorized(new
