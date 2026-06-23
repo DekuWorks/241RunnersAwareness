@@ -8,8 +8,9 @@ REPO="${GITHUB_REPO:-DekuWorks/241RunnersAwareness}"
 
 echo "=== 241 Runners API restore ==="
 
-if ! az account show >/dev/null 2>&1; then
-  echo "Azure CLI not logged in. Opening device login..."
+if ! az account show >/dev/null 2>&1 || ! az webapp list --query "[0].name" -o tsv >/dev/null 2>&1; then
+  echo "Azure CLI not logged in (or token expired). Opening device login..."
+  az logout 2>/dev/null || true
   az login --use-device-code --tenant "e41153b5-1d65-4b0a-aa82-cf7a2d000346"
 fi
 
