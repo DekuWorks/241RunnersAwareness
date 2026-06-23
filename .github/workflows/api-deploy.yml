@@ -6,6 +6,7 @@ on:
     paths:
       - '241RunnersAPI/**'
       - '.github/workflows/api-deploy.yml'
+      - 'scripts/kudu_deploy.py'
   pull_request:
     branches: [ "main" ]
     paths:
@@ -49,117 +50,28 @@ jobs:
 
       - name: Configure App Service (Azure SQL + JWT)
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        continue-on-error: true
         env:
           PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           APP_NAME: ${{ secrets.AZURE_WEBAPP_NAME }}
           AZURE_CS: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
           JWT_KEY: ${{ secrets.JWT_KEY }}
+          PROFILE_FILE: ${{ runner.temp }}/publishProfile.xml
         run: |
-          PROFILE_FILE="$RUNNER_TEMP/publishProfile.xml"
           printf '%s' "$PUBLISH_PROFILE" > "$PROFILE_FILE"
-          python3 <<'PY'
-          import base64
-          import json
-          import os
-          import re
-          import sys
-          import urllib.request
-
-          profile_file = os.path.join(os.environ["RUNNER_TEMP"], "publishProfile.xml")
-          with open(profile_file, "rb") as f:
-              text = f.read().lstrip(b"\xef\xbb\xbf").strip().decode("utf-8", errors="replace")
-
-          username = (re.search(r'userName="([^"]+)"', text) or [None, ""])[1]
-          password = (re.search(r'userPWD="([^"]+)"', text) or [None, ""])[1]
-          app_name = os.environ.get("APP_NAME", "").strip()
-          host = f"{app_name}.scm.azurewebsites.net" if app_name else ""
-
-          if not all([host, username, password]):
-              print("Could not resolve Kudu host or credentials", file=sys.stderr)
-              sys.exit(1)
-
-          settings = {
-              "ConnectionStrings__DefaultConnection": os.environ["AZURE_CS"],
-              "JWT_KEY": os.environ["JWT_KEY"],
-              "JWT_ISSUER": "241RunnersAwareness",
-              "JWT_AUDIENCE": "241RunnersAwareness",
-              "ASPNETCORE_ENVIRONMENT": "Production",
-          }
-
-          auth = base64.b64encode(f"{username}:{password}".encode()).decode()
-          headers = {
-              "Authorization": f"Basic {auth}",
-              "Content-Type": "application/json",
-          }
-
-          def kudu_request(path, method="GET", body=None):
-              url = f"https://{host}{path}"
-              payload = json.dumps(body).encode() if body is not None else None
-              req = urllib.request.Request(url, data=payload, headers=headers, method=method)
-              with urllib.request.urlopen(req, timeout=120) as resp:
-                  return resp.read().decode()
-
-          print(f"Applying app settings via Kudu ({host})")
-          kudu_request("/api/settings", method="POST", body=settings)
-          print("Restarting app")
-          kudu_request("/api/restart", method="POST", body={})
-          try:
-              kudu_request("/api/start", method="POST", body={})
-          except Exception:
-              pass
-          print("App Service configured")
-          PY
+          python3 scripts/kudu_deploy.py configure
 
       - name: Deploy to Azure Web App
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         env:
           PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           APP_NAME: ${{ secrets.AZURE_WEBAPP_NAME }}
+          PROFILE_FILE: ${{ runner.temp }}/publishProfile.xml
+          ZIP_PATH: ${{ github.workspace }}/241RunnersAPI/deploy.zip
         run: |
           cd 241RunnersAPI/publish
           zip -rq ../deploy.zip .
-          PROFILE_FILE="$RUNNER_TEMP/publishProfile.xml"
           printf '%s' "$PUBLISH_PROFILE" > "$PROFILE_FILE"
-          python3 <<'PY'
-          import base64
-          import os
-          import re
-          import sys
-          import urllib.request
-
-          profile_file = os.path.join(os.environ["RUNNER_TEMP"], "publishProfile.xml")
-          with open(profile_file, "rb") as f:
-              text = f.read().lstrip(b"\xef\xbb\xbf").strip().decode("utf-8", errors="replace")
-
-          username = (re.search(r'userName="([^"]+)"', text) or [None, ""])[1]
-          password = (re.search(r'userPWD="([^"]+)"', text) or [None, ""])[1]
-          app_name = os.environ.get("APP_NAME", "").strip()
-          host = f"{app_name}.scm.azurewebsites.net" if app_name else ""
-
-          if not all([host, username, password]):
-              print("Could not resolve Kudu host or credentials", file=sys.stderr)
-              sys.exit(1)
-
-          zip_path = os.path.abspath("../deploy.zip")
-          with open(zip_path, "rb") as f:
-              payload = f.read()
-
-          auth = base64.b64encode(f"{username}:{password}".encode()).decode()
-          req = urllib.request.Request(
-              f"https://{host}/api/zipdeploy?isAsync=true",
-              data=payload,
-              headers={
-                  "Authorization": f"Basic {auth}",
-                  "Content-Type": "application/zip",
-              },
-              method="POST",
-          )
-          print(f"Deploying package to https://{host}/api/zipdeploy")
-          with urllib.request.urlopen(req, timeout=600) as resp:
-              print(resp.read().decode() or "Deploy accepted")
-          print("Deployment complete")
-          PY
+          python3 "$GITHUB_WORKSPACE/scripts/kudu_deploy.py" deploy
 
       - name: Smoke Test Production
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
