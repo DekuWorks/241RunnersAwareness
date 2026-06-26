@@ -16,15 +16,18 @@ namespace _241RunnersAPI.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ILogger<EnhancedRunnerController> _logger;
         private readonly INotificationService _notificationService;
+        private readonly IBlobImageStorageService? _blobImageStorage;
 
         public EnhancedRunnerController(
             ApplicationDbContext context, 
             ILogger<EnhancedRunnerController> logger,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            IBlobImageStorageService? blobImageStorage = null)
         {
             _context = context;
             _logger = logger;
             _notificationService = notificationService;
+            _blobImageStorage = blobImageStorage;
         }
 
         /// <summary>
@@ -290,124 +293,176 @@ namespace _241RunnersAPI.Controllers
         /// </summary>
         [HttpPost("{id}/photos")]
         [Authorize]
+        [RequestSizeLimit(50 * 1024 * 1024)]
+        [RequestFormLimits(MultipartBodyLengthLimit = 50 * 1024 * 1024)]
         public async Task<IActionResult> UploadRunnerPhotos(int id, [FromForm] List<IFormFile> photos, [FromForm] string photoType = "Additional")
         {
             try
             {
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
+                var authResult = await AuthorizeRunnerPhotoChangeAsync(id);
+                if (authResult.ErrorResult != null)
                 {
-                    return Unauthorized(new { success = false, message = "Invalid user token" });
+                    return authResult.ErrorResult;
                 }
 
-                var runner = await _context.Runners.FirstOrDefaultAsync(r => r.Id == id);
-                if (runner == null)
-                {
-                    return NotFound(new { success = false, message = "Runner not found" });
-                }
-
-                // Check if user can upload photos for this runner (own profile or admin)
-                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
-                if (runner.UserId != userId && userRole != "admin")
-                {
-                    return Forbid("You can only upload photos for your own runner profile");
-                }
+                var runner = authResult.Runner!;
+                var userId = authResult.UserId;
 
                 if (photos == null || photos.Count == 0)
                 {
                     return BadRequest(new { success = false, message = "No photos provided" });
                 }
 
+                if (_blobImageStorage == null)
+                {
+                    _logger.LogError("Blob image storage is not configured for runner photo upload");
+                    return StatusCode(500, new { success = false, message = "Image storage is not configured" });
+                }
+
                 var uploadedUrls = new List<string>();
 
                 foreach (var photo in photos)
                 {
-                    // Validate file
                     if (photo.Length == 0)
                         continue;
 
-                    if (photo.Length > 10 * 1024 * 1024) // 10MB limit
+                    if (photo.Length > 10 * 1024 * 1024)
                     {
                         return BadRequest(new { success = false, message = $"Photo {photo.FileName} is too large. Maximum size is 10MB." });
                     }
 
-                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
-                    var extension = Path.GetExtension(photo.FileName).ToLowerInvariant();
-                    if (!allowedExtensions.Contains(extension))
+                    var photoUrl = await _blobImageStorage.UploadImageAsync(photo);
+                    if (string.IsNullOrWhiteSpace(photoUrl))
                     {
-                        return BadRequest(new { success = false, message = $"Photo {photo.FileName} has an unsupported format. Allowed formats: JPG, JPEG, PNG, GIF, WEBP." });
+                        continue;
                     }
 
-                    // Generate unique filename
-                    var fileName = $"runner_{id}_{Guid.NewGuid()}{extension}";
-                    var filePath = Path.Combine("wwwroot", "uploads", "runners", fileName);
-
-                    // Ensure directory exists
-                    var directory = Path.GetDirectoryName(filePath);
-                    if (!Directory.Exists(directory))
-                    {
-                        Directory.CreateDirectory(directory!);
-                    }
-
-                    // Save file
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await photo.CopyToAsync(stream);
-                    }
-
-                    var photoUrl = $"/uploads/runners/{fileName}";
                     uploadedUrls.Add(photoUrl);
-
                     _logger.LogInformation("Photo uploaded for runner {RunnerId}: {PhotoUrl}", id, photoUrl);
                 }
 
-                // Update runner with new photo URLs
-                if (photoType == "Profile" && uploadedUrls.Count > 0)
+                if (uploadedUrls.Count == 0)
                 {
-                    runner.ProfileImageUrl = uploadedUrls[0];
+                    return BadRequest(new { success = false, message = "No valid photos were uploaded" });
                 }
 
-                // Add to additional images
-                var existingImages = new List<string>();
-                if (!string.IsNullOrEmpty(runner.AdditionalImageUrls))
-                {
-                    try
-                    {
-                        existingImages = System.Text.Json.JsonSerializer.Deserialize<List<string>>(runner.AdditionalImageUrls) ?? new List<string>();
-                    }
-                    catch
-                    {
-                        existingImages = new List<string>();
-                    }
-                }
-
-                existingImages.AddRange(uploadedUrls);
-                runner.AdditionalImageUrls = System.Text.Json.JsonSerializer.Serialize(existingImages);
-
-                // Update photo management fields
-                runner.LastPhotoUpdate = DateTime.UtcNow;
-                runner.NextPhotoReminder = DateTime.UtcNow.AddMonths(6); // 6 months from now
-                runner.PhotoUpdateReminderSent = false;
-                runner.PhotoUpdateReminderCount = 0;
-                runner.UpdatedAt = DateTime.UtcNow;
-
-                await _context.SaveChangesAsync();
-
-                // Send notification about photo update
-                await _notificationService.SendPhotoUpdateNotificationAsync(userId, runner.Id, uploadedUrls.Count);
-
-                return Ok(new { 
-                    success = true, 
-                    message = $"{uploadedUrls.Count} photo(s) uploaded successfully",
-                    uploadedUrls = uploadedUrls,
-                    nextPhotoReminder = runner.NextPhotoReminder
-                });
+                return await SaveRunnerPhotoUrlsAsync(runner, userId, uploadedUrls, photoType);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error uploading photos for runner {RunnerId}", id);
                 return StatusCode(500, new { success = false, message = "Internal server error" });
             }
+        }
+
+        /// <summary>
+        /// Register runner photo URLs already uploaded via /api/ImageUpload/upload (mobile avatar flow).
+        /// </summary>
+        [HttpPost("{id}/photo-urls")]
+        [Authorize]
+        public async Task<IActionResult> RegisterRunnerPhotoUrls(int id, [FromBody] RegisterRunnerPhotoUrlsDto request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var authResult = await AuthorizeRunnerPhotoChangeAsync(id);
+                if (authResult.ErrorResult != null)
+                {
+                    return authResult.ErrorResult;
+                }
+
+                var runner = authResult.Runner!;
+                var userId = authResult.UserId;
+                var uploadedUrls = request.PhotoUrls
+                    .Where(url => !string.IsNullOrWhiteSpace(url))
+                    .Select(url => url.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                if (uploadedUrls.Count == 0)
+                {
+                    return BadRequest(new { success = false, message = "No photo URLs provided" });
+                }
+
+                return await SaveRunnerPhotoUrlsAsync(runner!, userId, uploadedUrls, request.PhotoType);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error registering photo URLs for runner {RunnerId}", id);
+                return StatusCode(500, new { success = false, message = "Internal server error" });
+            }
+        }
+
+        private async Task<(Runner? Runner, int UserId, IActionResult? ErrorResult)> AuthorizeRunnerPhotoChangeAsync(int id)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
+            {
+                return (null, 0, Unauthorized(new { success = false, message = "Invalid user token" }));
+            }
+
+            var runner = await _context.Runners.FirstOrDefaultAsync(r => r.Id == id);
+            if (runner == null)
+            {
+                return (null, userId, NotFound(new { success = false, message = "Runner not found" }));
+            }
+
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (runner.UserId != userId && userRole != "admin")
+            {
+                return (null, userId, Forbid("You can only upload photos for your own runner profile"));
+            }
+
+            return (runner, userId, null);
+        }
+
+        private async Task<IActionResult> SaveRunnerPhotoUrlsAsync(Runner runner, int userId, List<string> uploadedUrls, string photoType)
+        {
+            if (photoType == "Profile" && uploadedUrls.Count > 0)
+            {
+                runner.ProfileImageUrl = uploadedUrls[0];
+            }
+
+            var existingImages = new List<string>();
+            if (!string.IsNullOrEmpty(runner.AdditionalImageUrls))
+            {
+                try
+                {
+                    existingImages = System.Text.Json.JsonSerializer.Deserialize<List<string>>(runner.AdditionalImageUrls) ?? new List<string>();
+                }
+                catch
+                {
+                    existingImages = new List<string>();
+                }
+            }
+
+            existingImages.AddRange(uploadedUrls);
+            runner.AdditionalImageUrls = System.Text.Json.JsonSerializer.Serialize(existingImages);
+
+            runner.LastPhotoUpdate = DateTime.UtcNow;
+            runner.NextPhotoReminder = DateTime.UtcNow.AddMonths(6);
+            runner.PhotoUpdateReminderSent = false;
+            runner.PhotoUpdateReminderCount = 0;
+            runner.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            await _notificationService.SendPhotoUpdateNotificationAsync(userId, runner.Id, uploadedUrls.Count);
+
+            return Ok(new
+            {
+                success = true,
+                message = $"{uploadedUrls.Count} photo(s) uploaded successfully",
+                uploadedUrls,
+                nextPhotoReminder = runner.NextPhotoReminder
+            });
         }
 
         /// <summary>

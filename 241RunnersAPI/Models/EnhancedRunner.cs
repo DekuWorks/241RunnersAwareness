@@ -340,4 +340,17 @@ namespace _241RunnersAPI.Models
         [MaxLength(200, ErrorMessage = "Description cannot exceed 200 characters")]
         public string? Description { get; set; }
     }
+
+    /// <summary>
+    /// Register already-uploaded blob image URLs on a runner profile (mobile ImageUpload flow).
+    /// </summary>
+    public class RegisterRunnerPhotoUrlsDto
+    {
+        [Required(ErrorMessage = "At least one photo URL is required")]
+        [MinLength(1, ErrorMessage = "At least one photo URL is required")]
+        public List<string> PhotoUrls { get; set; } = new();
+
+        [RegularExpression("^(Profile|Additional)$", ErrorMessage = "Photo type must be Profile or Additional")]
+        public string PhotoType { get; set; } = "Additional";
+    }
 }

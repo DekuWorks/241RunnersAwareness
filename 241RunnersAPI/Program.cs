@@ -10,6 +10,7 @@ using _241RunnersAPI.Hubs;
 using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.Server.IISIntegration;
+using Azure.Storage.Blobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -294,6 +295,15 @@ builder.Services.AddScoped<ISignalRService, SignalRService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPushNotificationService, PushNotificationService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+
+var azureStorageConnectionString =
+    builder.Configuration.GetConnectionString("AzureStorageConnectionString") ??
+    builder.Configuration["AzureStorageConnectionString"];
+if (!string.IsNullOrWhiteSpace(azureStorageConnectionString))
+{
+    builder.Services.AddSingleton(_ => new BlobServiceClient(azureStorageConnectionString));
+    builder.Services.AddScoped<IBlobImageStorageService, BlobImageStorageService>();
+}
 
 // Add admin validation service
 builder.Services.AddScoped<AdminValidationService>();
