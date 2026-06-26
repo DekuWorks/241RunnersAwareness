@@ -291,6 +291,9 @@ builder.Services.AddScoped<CachingService>();
 builder.Services.AddScoped<ITopicService, TopicService>();
 builder.Services.AddScoped<IFirebaseNotificationService, FirebaseNotificationService>();
 builder.Services.AddScoped<ISignalRService, SignalRService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IPushNotificationService, PushNotificationService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 // Add admin validation service
 builder.Services.AddScoped<AdminValidationService>();
