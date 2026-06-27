@@ -997,11 +997,10 @@
                         
                         // Show redirect notification and redirect
                         setTimeout(() => {
-                            showToast("info", "Redirecting...", "Taking you to your profile page.", 3000);
+                            showToast("info", "Redirecting...", "Taking you to the login page.", 3000);
                             
-                            // Redirect to profile page after showing success message
                             setTimeout(() => {
-                                window.location.href = "profile.html";
+                                window.location.href = "login.html?signup=success";
                             }, 2000);
                         }, 5000);
                         

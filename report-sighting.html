@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report a Sighting - 241 Runners Awareness</title>
+    <link rel="icon" type="image/x-icon" href="assets/images/241-logo-new.jpg">
+    <link rel="stylesheet" href="styles.css?v=20250905">
+    <link rel="stylesheet" href="forms.css">
+    <style>
+        .sighting-container { max-width: 640px; margin: 0 auto; padding: 24px; }
+        .sighting-card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; }
+        .sighting-card h1 { font-size: 1.5rem; color: #1f2937; margin: 0 0 8px 0; }
+        .sighting-subtitle { color: #6b7280; margin-bottom: 24px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 600; color: #374151; margin-bottom: 8px; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; box-sizing: border-box;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none; border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+        .form-group textarea { min-height: 120px; resize: vertical; }
+        .location-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; font-size: 0.9rem; color: #374151; }
+        .confidence-options { display: flex; gap: 8px; flex-wrap: wrap; }
+        .confidence-btn {
+            flex: 1; min-width: 80px; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px;
+            background: white; cursor: pointer; font-weight: 600; color: #374151; text-align: center;
+        }
+        .confidence-btn.active { background: #dc2626; border-color: #dc2626; color: white; }
+        .btn-submit {
+            width: 100%; padding: 14px; background: #dc2626; color: white; border: none;
+            border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 8px;
+        }
+        .btn-submit:hover { background: #b91c1c; }
+        .btn-submit:disabled { background: #9ca3af; cursor: not-allowed; }
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: #6b7280; text-decoration: none; margin-bottom: 20px; font-weight: 500; }
+        .back-link:hover { color: #1f2937; }
+        .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; }
+        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .image-preview { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+        .image-preview img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #e5e7eb; }
+        .help-text { font-size: 0.85rem; color: #6b7280; margin-top: 4px; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <a href="/" title="Go to Home Page">
+                    <img src="assets/images/241-logo-new.jpg" alt="241 Runners Awareness Logo" class="logo-img">
+                    <span class="logo-text">241 Runners Awareness</span>
+                </a>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="cases.html" class="nav-link">Cases</a>
+                <a href="map.html" class="nav-link">Missing Map</a>
+                <a href="login.html" class="nav-link">Login</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="sighting-container">
+            <a href="#" id="backLink" class="back-link">← Back to case</a>
+            <div class="sighting-card">
+                <h1>Report a Sighting</h1>
+                <p class="sighting-subtitle" id="caseLabel">Submit details about a possible sighting.</p>
+                <div id="alertBox" style="display:none;"></div>
+
+                <form id="sightingForm">
+                    <div class="form-group">
+                        <label for="description">Description *</label>
+                        <textarea id="description" name="description" required minlength="10" maxlength="2000"
+                            placeholder="Describe what you observed, when you saw it, and any other relevant details..."></textarea>
+                        <p class="help-text">Minimum 10 characters</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="images">Photos (optional)</label>
+                        <input type="file" id="images" accept="image/jpeg,image/png,image/webp,image/gif" multiple>
+                        <div class="image-preview" id="imagePreview"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Location *</label>
+                        <div class="location-box" id="locationDisplay">Getting your location...</div>
+                        <button type="button" id="refreshLocation" style="margin-top:8px;padding:8px 12px;border:1px solid #e5e7eb;border-radius:6px;background:white;cursor:pointer;">🔄 Refresh location</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Confidence Level</label>
+                        <div class="confidence-options">
+                            <button type="button" class="confidence-btn" data-confidence="low">Low</button>
+                            <button type="button" class="confidence-btn active" data-confidence="medium">Medium</button>
+                            <button type="button" class="confidence-btn" data-confidence="high">High</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="submitBtn">Submit Sighting</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/config.js"></script>
+    <script>
+        (function () {
+            const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
+            const params = new URLSearchParams(window.location.search);
+            const caseId = params.get('id');
+
+            let latitude = null;
+            let longitude = null;
+            let address = '';
+            let confidence = 'medium';
+            let uploadedImageUrls = [];
+
+            function getAuthToken() {
+                const authData = localStorage.getItem('ra_auth');
+                if (!authData) return null;
+                try {
+                    const auth = JSON.parse(authData);
+                    return auth.accessToken || auth.token;
+                } catch { return null; }
+            }
+
+            function showAlert(message, type) {
+                const box = document.getElementById('alertBox');
+                box.style.display = 'block';
+                box.className = 'alert alert-' + type;
+                box.textContent = message;
+            }
+
+            function normalizeCaseId(id) {
+                if (!id) return null;
+                return id.startsWith('case_') ? id : 'case_' + id;
+            }
+
+            if (!caseId) {
+                showAlert('No case specified. Please select a case first.', 'error');
+                document.getElementById('sightingForm').style.display = 'none';
+                document.getElementById('backLink').href = 'cases.html';
+                return;
+            }
+
+            const normalizedId = normalizeCaseId(caseId);
+            document.getElementById('backLink').href = 'case-detail.html?id=' + encodeURIComponent(caseId);
+            document.getElementById('caseLabel').textContent = 'Reporting sighting for case #' + caseId.replace(/^case_/, '');
+
+            const token = getAuthToken();
+            if (!token) {
+                const next = encodeURIComponent(window.location.pathname + window.location.search);
+                window.location.href = 'login.html?next=' + next;
+                return;
+            }
+
+            document.querySelectorAll('.confidence-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    document.querySelectorAll('.confidence-btn').forEach(function (b) { b.classList.remove('active'); });
+                    btn.classList.add('active');
+                    confidence = btn.getAttribute('data-confidence');
+                });
+            });
+
+            function updateLocationDisplay() {
+                const el = document.getElementById('locationDisplay');
+                if (latitude !== null && longitude !== null) {
+                    el.textContent = 'Coordinates: ' + latitude.toFixed(6) + ', ' + longitude.toFixed(6) +
+                        (address ? ' · ' + address : '');
+                } else {
+                    el.textContent = 'Location unavailable. Please enable location access.';
+                }
+            }
+
+            function getLocation() {
+                document.getElementById('locationDisplay').textContent = 'Getting your location...';
+                if (!navigator.geolocation) {
+                    showAlert('Geolocation is not supported by your browser.', 'error');
+                    return;
+                }
+                navigator.geolocation.getCurrentPosition(
+                    function (pos) {
+                        latitude = pos.coords.latitude;
+                        longitude = pos.coords.longitude;
+                        address = '';
+                        updateLocationDisplay();
+                    },
+                    function () {
+                        showAlert('Could not get your location. Please enable location access.', 'error');
+                        updateLocationDisplay();
+                    },
+                    { enableHighAccuracy: true, timeout: 15000 }
+                );
+            }
+
+            document.getElementById('refreshLocation').addEventListener('click', getLocation);
+            getLocation();
+
+            document.getElementById('images').addEventListener('change', async function (e) {
+                const files = Array.from(e.target.files || []);
+                const preview = document.getElementById('imagePreview');
+                preview.innerHTML = '';
+                uploadedImageUrls = [];
+
+                for (const file of files.slice(0, 5)) {
+                    if (file.size > 5 * 1024 * 1024) {
+                        showAlert(file.name + ' exceeds 5MB limit.', 'error');
+                        continue;
+                    }
+                    const formData = new FormData();
+                    formData.append('files', file);
+                    try {
+                        const res = await fetch(API_BASE + '/ImageUpload/upload', {
+                            method: 'POST',
+                            headers: { 'Authorization': 'Bearer ' + token },
+                            body: formData
+                        });
+                        if (!res.ok) throw new Error('Upload failed');
+                        const result = await res.json();
+                        const url = result.files && result.files[0] && result.files[0].url;
+                        if (url) {
+                            uploadedImageUrls.push(url);
+                            const img = document.createElement('img');
+                            img.src = url;
+                            img.alt = 'Uploaded photo';
+                            preview.appendChild(img);
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        showAlert('Failed to upload ' + file.name, 'error');
+                    }
+                }
+            });
+
+            document.getElementById('sightingForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const description = document.getElementById('description').value.trim();
+                const submitBtn = document.getElementById('submitBtn');
+
+                if (description.length < 10) {
+                    showAlert('Description must be at least 10 characters.', 'error');
+                    return;
+                }
+                if (latitude === null || longitude === null) {
+                    showAlert('Location is required. Please enable location access and refresh.', 'error');
+                    return;
+                }
+
+                if (!confirm('Are you sure you want to submit this sighting report?')) {
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+
+                try {
+                    const res = await fetch(API_BASE + '/v1/cases/' + normalizedId + '/sightings', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + token
+                        },
+                        body: JSON.stringify({
+                            description: description,
+                            latitude: latitude,
+                            longitude: longitude,
+                            address: address || undefined,
+                            images: uploadedImageUrls.length ? uploadedImageUrls : undefined,
+                            confidence: confidence,
+                            reportedAt: new Date().toISOString()
+                        })
+                    });
+
+                    if (!res.ok) {
+                        let msg = 'Failed to submit sighting.';
+                        try {
+                            const err = await res.json();
+                            msg = err.message || err.error?.message || msg;
+                        } catch (_) {}
+                        throw new Error(msg);
+                    }
+
+                    showAlert('Thank you! Your sighting has been submitted for review.', 'success');
+                    setTimeout(function () {
+                        window.location.href = 'case-detail.html?id=' + encodeURIComponent(caseId);
+                    }, 2000);
+                } catch (err) {
+                    showAlert(err.message || 'Submission failed. Please try again.', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Sighting';
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

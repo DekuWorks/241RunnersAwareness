@@ -18,8 +18,8 @@
         .case-detail-desc { color: #374151; line-height: 1.6; margin-bottom: 24px; white-space: pre-wrap; }
         .case-detail-actions { display: flex; flex-wrap: wrap; gap: 12px; }
         .case-detail-actions .btn { padding: 12px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; border: none; cursor: pointer; font-size: 0.95rem; }
-        .btn-primary { background: #3b82f6; color: white; }
-        .btn-primary:hover { background: #2563eb; }
+        .btn-primary { background: #dc2626; color: white; }
+        .btn-primary:hover { background: #b91c1c; }
         .btn-secondary { background: #f3f4f6; color: #374151; }
         .btn-secondary:hover { background: #e5e7eb; }
         .back-link { display: inline-flex; align-items: center; gap: 8px; color: #6b7280; text-decoration: none; margin-bottom: 20px; font-weight: 500; }
@@ -200,7 +200,7 @@
                         '</div>' +
                         descHtml +
                         '<div class="case-detail-actions">' +
-                        '<a href="report-case.html" class="btn btn-primary">Report a sighting</a>' +
+                        '<a href="report-sighting.html?id=' + encodeURIComponent(id) + '" class="btn btn-primary">Report a sighting</a>' +
                         '<button type="button" class="btn btn-secondary" id="shareCaseBtn">Share this case</button>' +
                         '</div></div>';
 

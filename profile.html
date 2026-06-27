@@ -3349,6 +3349,34 @@
       return null;
     }
 
+    async function performServerLogout() {
+      const token = getAuthToken();
+      if (token) {
+        try {
+          await fetch(`${PROFILE_API_BASE_URL}/v1/auth/logout`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+        } catch (error) {
+          console.warn('Server logout failed:', error);
+        }
+      }
+    }
+
+    function clearAuthData() {
+      const authKeys = [
+        'ra_auth', 'ra_admin_token', 'ra_admin_role', 'ra_admin_user',
+        'ra_user_token', 'ra_user_role', 'ra_user_data',
+        'admin_token', 'admin_role', 'admin_user', 'user', 'userToken'
+      ];
+      authKeys.forEach(key => localStorage.removeItem(key));
+      if (typeof sessionStorage !== 'undefined') {
+        authKeys.forEach(key => {
+          try { sessionStorage.removeItem(key); } catch (e) { /* ignore */ }
+        });
+      }
+    }
+
     // Load user profile information
     function loadUserProfile() {
       const authData = checkAuth();
@@ -4571,31 +4599,13 @@
     // Enhanced Logout functionality
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
-      logoutBtn.addEventListener('click', function(e) {
+      logoutBtn.addEventListener('click', async function(e) {
         e.preventDefault();
-        
-        // Clear all authentication data
-        const authKeys = [
-          'ra_auth', 'ra_admin_token', 'ra_admin_role', 'ra_admin_user',
-          'ra_user_token', 'ra_user_role', 'ra_user_data',
-          'admin_token', 'admin_role', 'admin_user', 'user', 'userToken'
-        ];
-        
-        authKeys.forEach(key => {
-          localStorage.removeItem(key);
-        });
-        
-        // Clear sessionStorage as well
-        if (typeof sessionStorage !== 'undefined') {
-          authKeys.forEach(key => {
-            try {
-              sessionStorage.removeItem(key);
-            } catch (e) {
-              console.warn('Could not clear sessionStorage key:', key);
-            }
-          });
-        }
-        
+        if (!confirm('Are you sure you want to logout?')) return;
+
+        await performServerLogout();
+        clearAuthData();
+
         // Disconnect SignalR if connected
         if (typeof window.connection !== 'undefined' && window.connection.state === signalR.HubConnectionState.Connected) {
           try {
@@ -4604,16 +4614,12 @@
             console.warn('Error disconnecting SignalR:', error);
           }
         }
-        
-        // Show logout confirmation
+
         if (typeof showNotification !== 'undefined') {
           showNotification('Logged out successfully', 'success');
         }
-        
-        // Redirect to home page
-        setTimeout(() => {
-          window.location.href = 'index.html';
-        }, 500);
+
+        window.location.href = 'login.html';
       });
     }
 
@@ -4645,18 +4651,16 @@
     }
 
     // Logout function
-    function logout() {
+    async function logout() {
       if (confirm('Are you sure you want to logout?')) {
-        // Clear authentication data
-        localStorage.removeItem('ra_auth');
+        await performServerLogout();
+        clearAuthData();
         sessionStorage.clear();
-        
-        // Stop SignalR connection if active
+
         if (userHubConnection) {
           userHubConnection.stop();
         }
-        
-        // Redirect to login page
+
         window.location.href = 'login.html';
       }
     }

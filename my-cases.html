@@ -506,7 +506,7 @@
         let allCases = [];
         let filteredCases = [];
 
-        // Load user's cases
+        // Load user's cases via my-cases API (aligned with mobile)
         async function loadUserCases() {
             try {
                 const token = getAuthToken();
@@ -514,10 +514,9 @@
                     throw new Error('No authentication token');
                 }
 
-                const userData = checkAuth();
-                
-                // Get all runners (this would need to be filtered by user in the API)
-                const response = await fetch(`${API_BASE_URL}/v1.0/runner`, {
+                checkAuth();
+
+                const response = await fetch(`${API_BASE_URL}/v1/cases/my-cases?page=1&pageSize=100`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -527,13 +526,8 @@
                     throw new Error('Failed to load cases');
                 }
 
-                const cases = await response.json();
-                
-                // Filter cases by current user (this is a client-side filter for now)
-                allCases = cases.filter(caseItem => 
-                    caseItem.reportedByUserId === userData.user.id || 
-                    caseItem.contactInfo?.includes(userData.user.email)
-                );
+                const data = await response.json();
+                allCases = data.cases || [];
 
                 filteredCases = [...allCases];
                 displayCases();
@@ -569,49 +563,41 @@
 
         // Create case card HTML
         function createCaseCard(caseItem) {
-            const statusClass = `status-${caseItem.status}`;
-            const createdDate = new Date(caseItem.createdAt).toLocaleDateString();
+            const status = (caseItem.status || 'open').toLowerCase();
+            const statusClass = `status-${status === 'open' ? 'missing' : status}`;
+            const createdDate = caseItem.createdAt ? new Date(caseItem.createdAt).toLocaleDateString() : '—';
             const updatedDate = caseItem.updatedAt ? new Date(caseItem.updatedAt).toLocaleDateString() : 'Never';
+            const title = caseItem.title || 'Untitled Case';
+            const location = caseItem.lastSeenLocation || 'Not specified';
+            const caseId = caseItem.id;
 
             return `
                 <div class="case-card">
                     <div class="case-header">
                         <div class="case-info">
-                            <h3>${caseItem.fullName || `${caseItem.firstName} ${caseItem.lastName}`}</h3>
+                            <h3>${title}</h3>
                             <div class="case-meta">
-                                <strong>Case ID:</strong> ${caseItem.runnerId || `RUN-${caseItem.id}`} | 
+                                <strong>Case ID:</strong> ${caseId} | 
                                 <strong>Reported:</strong> ${createdDate} | 
                                 <strong>Last Updated:</strong> ${updatedDate}
                             </div>
                         </div>
-                        <div class="case-status ${statusClass}">${caseItem.status}</div>
+                        <div class="case-status ${statusClass}">${caseItem.status || 'open'}</div>
                     </div>
                     
                     <div class="case-body">
                         <div class="case-details">
                             <div class="detail-item">
-                                <span class="detail-label">Age</span>
-                                <span class="detail-value">${caseItem.age} years old</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Gender</span>
-                                <span class="detail-value">${caseItem.gender || 'Not specified'}</span>
-                            </div>
-                            <div class="detail-item">
                                 <span class="detail-label">Location</span>
-                                <span class="detail-value">${caseItem.city}, ${caseItem.state}</span>
+                                <span class="detail-value">${location}</span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">Height</span>
-                                <span class="detail-value">${caseItem.height || 'Not specified'}</span>
+                                <span class="detail-label">Priority</span>
+                                <span class="detail-value">${caseItem.priority || 'Not specified'}</span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">Weight</span>
-                                <span class="detail-value">${caseItem.weight || 'Not specified'}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Hair Color</span>
-                                <span class="detail-value">${caseItem.hairColor || 'Not specified'}</span>
+                                <span class="detail-label">Public</span>
+                                <span class="detail-value">${caseItem.isPublic ? 'Yes' : 'No'}</span>
                             </div>
                         </div>
 
@@ -619,13 +605,6 @@
                             <div class="case-description">
                                 <h4>Description</h4>
                                 <p>${caseItem.description}</p>
-                            </div>
-                        ` : ''}
-
-                        ${caseItem.circumstances ? `
-                            <div class="case-description">
-                                <h4>Circumstances</h4>
-                                <p>${caseItem.circumstances}</p>
                             </div>
                         ` : ''}
 
@@ -650,13 +629,10 @@
                         </div>
 
                         <div class="case-actions">
-                            <a href="report-case.html?update=${caseItem.id}" class="btn btn-primary">
-                                🔄 Update Case
+                            <a href="case-detail.html?id=${caseId}" class="btn btn-primary">
+                                👁️ View Case
                             </a>
-                            <a href="cases.html?id=${caseItem.id}" class="btn btn-secondary">
-                                👁️ View Public
-                            </a>
-                            <button class="btn btn-outline" onclick="shareCase(${caseItem.id})">
+                            <button class="btn btn-outline" onclick="shareCase('${caseId}')">
                                 📤 Share
                             </button>
                         </div>
@@ -672,13 +648,17 @@
             const sortBy = document.getElementById('sortBy').value;
 
             filteredCases = allCases.filter(caseItem => {
-                const matchesSearch = !searchTerm || 
-                    caseItem.fullName?.toLowerCase().includes(searchTerm) ||
-                    `${caseItem.firstName} ${caseItem.lastName}`.toLowerCase().includes(searchTerm) ||
-                    caseItem.city?.toLowerCase().includes(searchTerm) ||
-                    caseItem.state?.toLowerCase().includes(searchTerm);
+                const title = (caseItem.title || '').toLowerCase();
+                const description = (caseItem.description || '').toLowerCase();
+                const location = (caseItem.lastSeenLocation || '').toLowerCase();
+                const matchesSearch = !searchTerm ||
+                    title.includes(searchTerm) ||
+                    description.includes(searchTerm) ||
+                    location.includes(searchTerm);
 
-                const matchesStatus = !statusFilter || caseItem.status === statusFilter;
+                const itemStatus = (caseItem.status || '').toLowerCase();
+                const matchesStatus = !statusFilter || itemStatus === statusFilter ||
+                    (statusFilter === 'missing' && itemStatus === 'open');
 
                 return matchesSearch && matchesStatus;
             });
@@ -687,13 +667,11 @@
             filteredCases.sort((a, b) => {
                 switch (sortBy) {
                     case 'newest':
-                        return new Date(b.createdAt) - new Date(a.createdAt);
+                        return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
                     case 'oldest':
-                        return new Date(a.createdAt) - new Date(b.createdAt);
+                        return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
                     case 'name':
-                        const nameA = a.fullName || `${a.firstName} ${a.lastName}`;
-                        const nameB = b.fullName || `${b.firstName} ${b.lastName}`;
-                        return nameA.localeCompare(nameB);
+                        return (a.title || '').localeCompare(b.title || '');
                     case 'status':
                         return a.status.localeCompare(b.status);
                     default:
@@ -706,10 +684,10 @@
 
         // Share case function
         function shareCase(caseId) {
-            const caseItem = allCases.find(c => c.id === caseId);
+            const caseItem = allCases.find(c => String(c.id) === String(caseId));
             if (caseItem) {
-                const shareText = `Missing Person Case: ${caseItem.fullName || `${caseItem.firstName} ${caseItem.lastName}`} - Age ${caseItem.age}, Last seen in ${caseItem.city}, ${caseItem.state}. Please help spread awareness.`;
-                const shareUrl = `${window.location.origin}/cases.html?id=${caseId}`;
+                const shareText = `Missing Person Case: ${caseItem.title || 'Case #' + caseId} - ${caseItem.lastSeenLocation || 'Location unknown'}. Please help spread awareness.`;
+                const shareUrl = `${window.location.origin}/case-detail.html?id=${caseId}`;
                 
                 if (navigator.share) {
                     navigator.share({

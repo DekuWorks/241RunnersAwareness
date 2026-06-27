@@ -89,6 +89,10 @@
             // Get next parameter from URL
             const urlParams = new URLSearchParams(window.location.search);
             const next = urlParams.get('next') || '/dashboard.html';
+
+            if (urlParams.get('signup') === 'success') {
+                showAlert('Account created successfully! Please sign in with your new credentials.', 'success');
+            }
             
             // Update signup link with next parameter
             const signupLink = document.getElementById('signupLink');
