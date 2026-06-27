@@ -7,7 +7,6 @@
   "HEALTH_CHECK_ENDPOINT": "/v1.0/auth/health",
   "API_TIMEOUT": 10000,
   "RETRY_ATTEMPTS": 3,
-  "_MAPBOX_SETUP": "Get a public pk.* token at https://account.mapbox.com/access-tokens/ and set MAPBOX_ACCESS_TOKEN below (same value as mobile EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN). Do not commit real tokens to git.",
-  "MAPBOX_ACCESS_TOKEN": "YOUR_MAPBOX_ACCESS_TOKEN",
-  "MAPBOX_STYLE_URL": "mapbox://styles/mapbox/streets-v12"
+  "_GOOGLE_MAPS_SETUP": "Create an API key at https://console.cloud.google.com/ → enable Maps JavaScript API (website) and use the same key as mobile EXPO_PUBLIC_GOOGLE_MAPS_API_KEY (with Maps SDK for iOS/Android). Do not commit real keys to git.",
+  "GOOGLE_MAPS_API_KEY": "YOUR_GOOGLE_MAPS_API_KEY"
 }

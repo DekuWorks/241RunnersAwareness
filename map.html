@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Map - 241 Runners Awareness</title>
     <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='https://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏃</text></svg>">
-    <link href="https://api.mapbox.com/mapbox-gl-js/v3.9.4/mapbox-gl.css" rel="stylesheet" />
-    <script src="https://api.mapbox.com/mapbox-gl-js/v3.9.4/mapbox-gl.js"></script>
+    <!-- Google Maps API loaded dynamically by google-maps-map.js -->
+    <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="responsive.css" />
     <script src="assets/js/config.js?v=20250905"></script>
     <script src="js/publicMapApi.js?v=20250905"></script>
-    <script src="mapbox-config.js?v=20250905"></script>
+    <script src="google-maps-config.js?v=20250905"></script>
     <style>
         /* Page Navigation Styles */
         .page-navigation {
@@ -62,7 +62,7 @@
             box-shadow: 0 6px 16px rgba(107, 114, 128, 0.4);
         }
         
-        /* Mapbox GL styles */
+        /* Google Maps styles */
         #map {
             height: 75vh;
             width: 100%;
@@ -73,14 +73,8 @@
             position: relative;
         }
 
-        .mapboxgl-map {
-            border-radius: 15px;
-        }
-
-        .mapboxgl-popup-content {
+        .gm-style-iw {
             border-radius: 10px;
-            padding: 0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
         
         .map-container {
@@ -634,7 +628,7 @@
         <p>&copy; 2025 241 Runners Awareness. All rights reserved.</p>
     </footer>
 
-    <!-- Mapbox map logic -->
-    <script src="js/mapbox-map.js?v=20250905"></script>
+    <!-- Google Maps map logic -->
+    <script src="js/google-maps-map.js?v=20250905"></script>
 </body>
 </html>
