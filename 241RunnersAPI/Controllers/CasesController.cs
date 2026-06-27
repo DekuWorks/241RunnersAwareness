@@ -313,8 +313,13 @@ namespace _241RunnersAPI.Controllers
                     RunnerId = individualId,
                     ReportedByUserId = userId,
                     Title = request.Title,
-                    Description = request.Description,
-                    Status = request.Status ?? "Missing",
+                    Description = request.Description ?? string.Empty,
+                    LastSeenDate = DateTime.UtcNow,
+                    LastSeenLocation = request.LastSeenLocation!,
+                    LastSeenLatitude = request.Latitude.HasValue ? (decimal?)request.Latitude.Value : null,
+                    LastSeenLongitude = request.Longitude.HasValue ? (decimal?)request.Longitude.Value : null,
+                    AdditionalInformation = request.AdditionalInfo,
+                    Status = NormalizeCaseStatus(request.Status),
                     Priority = "Medium",
                     IsPublic = true,
                     IsApproved = IsStaff(),
@@ -1167,6 +1172,25 @@ namespace _241RunnersAPI.Controllers
         {
             var validStatuses = new[] { "open", "investigating", "resolved", "closed" };
             return validStatuses.Contains(status.ToLower());
+        }
+
+        /// <summary>
+        /// Maps API/mobile status values to persisted Case.Status (Active, Missing, etc.)
+        /// </summary>
+        private static string NormalizeCaseStatus(string? status)
+        {
+            if (string.IsNullOrWhiteSpace(status)) return "Missing";
+            return status.Trim().ToLower() switch
+            {
+                "open" or "missing" => "Missing",
+                "active" => "Active",
+                "safe" => "Safe",
+                "found" => "Found",
+                "investigating" => "Investigating",
+                "resolved" or "closed" => "Closed",
+                "cancelled" => "Cancelled",
+                _ => "Missing"
+            };
         }
 
         /// <summary>

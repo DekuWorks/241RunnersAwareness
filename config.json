@@ -7,6 +7,7 @@
   "HEALTH_CHECK_ENDPOINT": "/v1.0/auth/health",
   "API_TIMEOUT": 10000,
   "RETRY_ATTEMPTS": 3,
+  "_MAPBOX_SETUP": "Get a public pk.* token at https://account.mapbox.com/access-tokens/ and set MAPBOX_ACCESS_TOKEN below (same value as mobile EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN). Do not commit real tokens to git.",
   "MAPBOX_ACCESS_TOKEN": "YOUR_MAPBOX_ACCESS_TOKEN",
   "MAPBOX_STYLE_URL": "mapbox://styles/mapbox/streets-v12"
 }

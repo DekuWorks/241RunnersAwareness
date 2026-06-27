@@ -16,7 +16,8 @@ window.APP_CONFIG = {
     HEALTH_CHECK_ENDPOINT: "/v1.0/auth/health",
     API_TIMEOUT: 10000,
     RETRY_ATTEMPTS: 3,
-    // Mapbox public token (pk.*) — same value as mobile EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN
+    // Mapbox public token (pk.*) — create at https://account.mapbox.com/access-tokens/
+    // Same value as mobile EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN; overridden by config.json when present
     MAPBOX_ACCESS_TOKEN: "YOUR_MAPBOX_ACCESS_TOKEN",
     MAPBOX_STYLE_URL: "mapbox://styles/mapbox/streets-v12"
 };
