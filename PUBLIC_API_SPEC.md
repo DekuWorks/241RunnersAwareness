@@ -95,6 +95,7 @@ Coordinates should be **fuzzed** (e.g. rounded to 3 decimals) with a note in UI:
 
 - **Cases page**: `GET /api/public/cases` with optional `status`, `q`, `page`, `pageSize`, `sort`.
 - **Case detail page**: `GET /api/public/cases/{id}`.
-- **Missing map page**: `GET /api/public/map/missing` — only Missing cases with coordinates; no auth.
+- **Missing map page** (`map.html`): `GET /api/public/map/missing` — only Missing cases with coordinates; no auth.
+- **Mobile app map** (`241RA-mobile` `/map`): same endpoint as the website map — `GET /api/public/map/missing`; works logged in or out. Marker colors and normalization match `js/publicMapApi.js` and `mapbox-config.js` `STATUS_COLORS`.
 
 If the backend still exposes the legacy `publiccases` or `publiccases/stats/houston` endpoints, the frontend can fall back until the new public API is deployed (see `publicCasesApi.js`).
