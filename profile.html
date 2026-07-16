@@ -3838,7 +3838,7 @@
           throw new Error('No authentication token');
         }
 
-        const response = await fetch(`${PROFILE_API_BASE_URL}/v1.0/cases/my-cases`, {
+        const response = await fetch(`${PROFILE_API_BASE_URL}/v1/cases/my-cases`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -4072,7 +4072,7 @@
         return;
       }
 
-      fetch(`${PROFILE_API_BASE_URL}/v1.0/cases/${caseId}`, {
+      fetch(`${PROFILE_API_BASE_URL}/v1/cases/${caseId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

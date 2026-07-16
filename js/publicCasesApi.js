@@ -1,7 +1,7 @@
 /**
  * Public Cases API — no auth required.
  * Primary: 241RunnersAPI /api/public/cases (PublicCaseDto)
- * Fallback: legacy /api/v1.0/cases/publiccases while older endpoints exist.
+ * Fallback: legacy /api/v1/cases/publiccases while older endpoints exist.
  */
 
 (function () {
@@ -43,7 +43,7 @@
             console.warn('Public cases API failed, falling back to legacy publiccases endpoint:', err);
         }
 
-        // Fallback: legacy /v1.0/cases/publiccases
+        // Fallback: legacy /v1/cases/publiccases
         return getLegacyPublicCases(opts);
     }
 
@@ -67,7 +67,7 @@
         }
 
         // Fallback: legacy case endpoint used by older APIs
-        const legacyUrl = `${API_BASE}/v1.0/cases/${encodeURIComponent(id)}`;
+        const legacyUrl = `${API_BASE}/v1/cases/${encodeURIComponent(id)}`;
         const legacyRes = await fetch(legacyUrl, { credentials: 'omit' });
         if (legacyRes.status === 404) return null;
         if (!legacyRes.ok) throw new Error(`HTTP ${legacyRes.status}: ${legacyRes.statusText}`);
@@ -92,7 +92,7 @@
         const params = new URLSearchParams();
         if (opts.page != null) params.set('page', opts.page);
         if (opts.pageSize != null) params.set('pageSize', opts.pageSize);
-        const url = `${API_BASE}/v1.0/cases/publiccases?${params.toString()}`;
+        const url = `${API_BASE}/v1/cases/publiccases?${params.toString()}`;
         return fetch(url, { credentials: 'omit' })
             .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
             .then(data => {

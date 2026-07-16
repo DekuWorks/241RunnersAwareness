@@ -13,7 +13,7 @@ window.APP_CONFIG = {
     APP_VERSION: "1.0.0",
     ENVIRONMENT: "production",
     DEBUG: false,
-    HEALTH_CHECK_ENDPOINT: "/v1.0/auth/health",
+    HEALTH_CHECK_ENDPOINT: "/v1/auth/health",
     API_TIMEOUT: 10000,
     RETRY_ATTEMPTS: 3,
     // Google Maps API key — create at https://console.cloud.google.com/
@@ -36,6 +36,20 @@ async function loadConfig() {
         console.log('Configuration loaded:', window.APP_CONFIG);
     } catch (error) {
         console.warn('Failed to load config.json, using default configuration');
+    }
+
+    // Local override (gitignored) — keeps real Maps keys out of tracked config.json
+    try {
+        const localResponse = await fetch('/config.local.json');
+        if (localResponse.ok) {
+            const localConfig = await localResponse.json();
+            window.APP_CONFIG = {
+                ...window.APP_CONFIG,
+                ...localConfig
+            };
+        }
+    } catch (error) {
+        // config.local.json is optional
     }
 }
 

@@ -142,3 +142,6 @@ LogFiles/
 **/LogFiles/
 deployments/
 **/deployments/
+# Local secrets (do not commit)
+config.local.json
+*.local.js

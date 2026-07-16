@@ -169,9 +169,9 @@
                 
                 try {
                     console.log('Attempting login with:', { email: formData.email, password: '***' });
-                    console.log('API URL:', `${API_BASE_URL}/v1.0/auth/login`);
+                    console.log('API URL:', `${API_BASE_URL}/v1/auth/login`);
                     
-                    const response = await fetch(`${API_BASE_URL}/v1.0/auth/login`, {
+                    const response = await fetch(`${API_BASE_URL}/v1/auth/login`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

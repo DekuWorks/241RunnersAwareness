@@ -22,6 +22,11 @@ async function loadConfig() {
         console.error('❌ Error loading configuration:', error);
         window.__CONFIG.API_BASE_URL = window.__CONFIG.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net';
     }
+
+    // config.json uses ".../api" for APP_CONFIG pages; api() paths already include "/api/..."
+    if (typeof window.__CONFIG.API_BASE_URL === 'string') {
+        window.__CONFIG.API_BASE_URL = window.__CONFIG.API_BASE_URL.replace(/\/api\/?$/, '');
+    }
 }
 
 // Initialize config on load
@@ -147,7 +152,7 @@ const adminApi = {
 const authApi = {
     // Login
     async login(email, password) {
-        return api('/api/auth/login', {
+        return api('/api/v1/auth/login', {
             method: 'POST',
             body: JSON.stringify({ email, password })
         });
@@ -155,7 +160,7 @@ const authApi = {
 
     // Register
     async register(userData) {
-        return api('/api/auth/register', {
+        return api('/api/v1/auth/register', {
             method: 'POST',
             body: JSON.stringify(userData)
         });
@@ -163,7 +168,16 @@ const authApi = {
 
     // Logout
     async logout() {
-        return api('/api/auth/logout', { method: 'POST' });
+        return api('/api/v1/auth/logout', { method: 'POST' });
+    },
+
+    // Current user (replaces legacy /api/auth/verify)
+    async verify() {
+        return api('/api/v1/auth/me');
+    },
+
+    async me() {
+        return api('/api/v1/auth/me');
     }
 };
 
@@ -261,6 +275,12 @@ const individualsApi = {
     // Delete individual
     async deleteIndividual(individualId) {
         return api(`/api/individuals/${individualId}`, { method: 'DELETE' });
+    },
+
+    // Current user's cases (aligned with mobile /api/v1/cases/my-cases)
+    async getMyCases(page = 1, pageSize = 25) {
+        const data = await api(`/api/v1/cases/my-cases?page=${page}&pageSize=${pageSize}`);
+        return data.cases || data.items || data || [];
     }
 };
 

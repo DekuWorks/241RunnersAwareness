@@ -4,9 +4,9 @@
   "APP_VERSION": "1.0.0",
   "ENVIRONMENT": "production",
   "DEBUG": false,
-  "HEALTH_CHECK_ENDPOINT": "/v1.0/auth/health",
+  "HEALTH_CHECK_ENDPOINT": "/v1/auth/health",
   "API_TIMEOUT": 10000,
   "RETRY_ATTEMPTS": 3,
-  "_GOOGLE_MAPS_SETUP": "Create an API key at https://console.cloud.google.com/ → enable Maps JavaScript API (website) and use the same key as mobile EXPO_PUBLIC_GOOGLE_MAPS_API_KEY (with Maps SDK for iOS/Android). Do not commit real keys to git.",
+  "_GOOGLE_MAPS_SETUP": "Create an API key at https://console.cloud.google.com/ \u2192 enable Maps JavaScript API (website) and use the same key as mobile EXPO_PUBLIC_GOOGLE_MAPS_API_KEY (with Maps SDK for iOS/Android). Do not commit real keys to git.",
   "GOOGLE_MAPS_API_KEY": "YOUR_GOOGLE_MAPS_API_KEY"
 }

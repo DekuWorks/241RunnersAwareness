@@ -703,7 +703,7 @@
                     return;
                 }
                 
-                const rolesUrl = `${API_BASE_URL}/v1.0/auth/roles`;
+                const rolesUrl = `${API_BASE_URL}/v1/auth/roles`;
                 console.log('Loading roles from:', rolesUrl);
                 const response = await fetch(rolesUrl);
                 console.log('Roles response status:', response.status);
@@ -957,7 +957,7 @@
                     
                     console.log("Sending registration data:", formData);
                     
-                    const response = await fetch(`${API_BASE_URL}/v1.0/auth/register`, {
+                    const response = await fetch(`${API_BASE_URL}/v1/auth/register`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"

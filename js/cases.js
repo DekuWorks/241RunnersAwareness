@@ -121,7 +121,7 @@ class CasesPage {
             if (rawItems.length === 0) {
                 const apiUrl = window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
                 const params = new URLSearchParams({ page: 1, pageSize: 100 });
-                const url = `${apiUrl}/v1.0/cases/publiccases?${params}`;
+                const url = `${apiUrl}/public/cases?${params}`;
                 try {
                     const res = await fetch(url, { credentials: 'omit' });
                     if (res.ok) {

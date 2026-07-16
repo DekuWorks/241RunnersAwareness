@@ -155,7 +155,7 @@ class ApiClient {
     }
 
     async getAdmins() {
-        return this.get('/api/v1.0/Admin/admins');
+        return this.get('/api/v1/Admin/admins');
     }
 
     async deleteUser(userId) {

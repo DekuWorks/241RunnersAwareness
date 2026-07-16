@@ -40,7 +40,8 @@ class MyCasesPage {
                 this.currentUser = userData.user;
             } else {
                 // Fallback to direct fetch
-                const response = await fetch('https://241runners-api-v2.azurewebsites.net/api/auth/verify', {
+                const apiBase = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
+                const response = await fetch(`${apiBase}/v1/auth/me`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -52,7 +53,7 @@ class MyCasesPage {
                 }
                 
                 const userData = await response.json();
-                this.currentUser = userData.user;
+                this.currentUser = userData.user || userData;
             }
             return true;
             
@@ -112,7 +113,8 @@ class MyCasesPage {
             } else {
                 // Fallback to direct fetch
                 const token = localStorage.getItem('token');
-                const response = await fetch('https://241runners-api-v2.azurewebsites.net/api/runners/my-cases', {
+                const apiBase = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
+                const response = await fetch(`${apiBase}/v1/cases/my-cases`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -123,7 +125,7 @@ class MyCasesPage {
                 }
                 
                 const data = await response.json();
-                this.cases = data;
+                this.cases = data.cases || data.items || data || [];
             }
             
             this.filteredCases = [...this.cases];
