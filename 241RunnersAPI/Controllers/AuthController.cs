@@ -893,7 +893,15 @@ namespace _241RunnersAPI.Controllers
 
         private string GenerateJwtToken(User user)
         {
-            var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? _configuration["Jwt:Key"] ?? "your-super-secret-key-that-is-at-least-32-characters-long-for-241-runners";
+            var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
+            if (string.IsNullOrWhiteSpace(jwtKey))
+            {
+                jwtKey = _configuration["Jwt:Key"];
+            }
+            if (string.IsNullOrWhiteSpace(jwtKey))
+            {
+                jwtKey = "your-super-secret-key-that-is-at-least-32-characters-long-for-241-runners";
+            }
             var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? _configuration["Jwt:Issuer"] ?? "241RunnersAwareness";
             var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? _configuration["Jwt:Audience"] ?? "241RunnersAwareness";
 

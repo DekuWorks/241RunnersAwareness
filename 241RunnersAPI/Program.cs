@@ -139,9 +139,15 @@ builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? 
-                    builder.Configuration["Jwt:Key"] ?? 
-                    "your-super-secret-key-that-is-at-least-32-characters-long-for-241-runners";
+        var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
+        if (string.IsNullOrWhiteSpace(jwtKey))
+        {
+            jwtKey = builder.Configuration["Jwt:Key"];
+        }
+        if (string.IsNullOrWhiteSpace(jwtKey))
+        {
+            jwtKey = "your-super-secret-key-that-is-at-least-32-characters-long-for-241-runners";
+        }
         
         var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? 
                        builder.Configuration["Jwt:Issuer"] ?? 
@@ -299,11 +305,24 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 var azureStorageConnectionString =
     builder.Configuration.GetConnectionString("AzureStorageConnectionString") ??
     builder.Configuration["AzureStorageConnectionString"];
-if (!string.IsNullOrWhiteSpace(azureStorageConnectionString))
+
+if (StorageProviderKind.IsSupabase)
+{
+    builder.Services.AddHttpClient<SupabaseImageStorageService>();
+    builder.Services.AddScoped<IImageStorageService, SupabaseImageStorageService>();
+}
+else if (!string.IsNullOrWhiteSpace(azureStorageConnectionString))
 {
     builder.Services.AddSingleton(_ => new BlobServiceClient(azureStorageConnectionString));
-    builder.Services.AddScoped<IBlobImageStorageService, BlobImageStorageService>();
+    builder.Services.AddScoped<IImageStorageService, AzureBlobImageStorageService>();
 }
+else
+{
+    builder.Services.AddHttpClient<SupabaseImageStorageService>();
+    builder.Services.AddScoped<IImageStorageService, SupabaseImageStorageService>();
+}
+
+builder.Services.AddScoped<IBlobImageStorageService, BlobImageStorageService>();
 
 // Add admin validation service
 builder.Services.AddScoped<AdminValidationService>();

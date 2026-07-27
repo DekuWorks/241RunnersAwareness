@@ -10,7 +10,7 @@ namespace _241RunnersAPI.Data
         public const string Postgres = "Postgres";
 
         public static string Current =>
-            Environment.GetEnvironmentVariable("DATABASE_PROVIDER")?.Trim() ?? SqlServer;
+            Environment.GetEnvironmentVariable("DATABASE_PROVIDER")?.Trim() ?? Postgres;
 
         public static bool IsPostgres =>
             string.Equals(Current, Postgres, StringComparison.OrdinalIgnoreCase);

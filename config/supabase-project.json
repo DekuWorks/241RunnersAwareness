@@ -1,11 +1,11 @@
 {
   "name": "241RunnersAwareness",
-  "projectRef": "tmglqsdxplpdfexavihn",
+  "projectRef": "hylwpwauxlnrqvbkmcln",
   "organizationId": "kwdcskoczivufwukpvto",
   "region": "us-east-1",
-  "apiUrl": "https://tmglqsdxplpdfexavihn.supabase.co",
-  "databaseHost": "db.tmglqsdxplpdfexavihn.supabase.co",
+  "apiUrl": "https://hylwpwauxlnrqvbkmcln.supabase.co",
+  "databaseHost": "aws-0-us-east-1.pooler.supabase.com",
   "purpose": "staging",
-  "dashboardUrl": "https://supabase.com/dashboard/project/tmglqsdxplpdfexavihn",
+  "dashboardUrl": "https://supabase.com/dashboard/project/hylwpwauxlnrqvbkmcln",
   "notes": "Secrets (DB password, service role key) live in GitHub Actions secrets and local .env only."
 }

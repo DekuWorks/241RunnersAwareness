@@ -18,6 +18,18 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "Supabase": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5051",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Supabase",
+        "DATABASE_PROVIDER": "Postgres",
+        "STORAGE_PROVIDER": "Supabase",
+        "PUBLIC_API_BASE_URL": "http://localhost:5051"
+      }
     }
   }
 }

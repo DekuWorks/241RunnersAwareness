@@ -12,5 +12,8 @@ migrate-dry:
 migrate:
 	MIGRATION_DRY_RUN=false bash scripts/run-data-migration.sh
 
+api-supabase:
+	bash scripts/run-api-supabase.sh
+
 docs:
 	@echo "Migration docs: docs/migration/README.md"
