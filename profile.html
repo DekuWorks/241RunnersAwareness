@@ -2266,6 +2266,48 @@
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       }
     }
+
+    .profile-map-section {
+      max-width: 1000px;
+      margin: 0 auto 2rem;
+      padding: 0 2rem;
+    }
+
+    .profile-map-description {
+      color: #4b5563;
+      margin: 0 0 1rem;
+      line-height: 1.5;
+    }
+
+    .profile-map-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .profile-map-wrapper {
+      display: none;
+    }
+
+    .profile-map-wrapper.is-open {
+      display: block;
+    }
+
+    #profileMap {
+      height: 420px;
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-map-loading,
+    .profile-map-empty {
+      text-align: center;
+      padding: 1rem;
+      color: #6b7280;
+    }
   </style>
 </head>
 <body>
@@ -2779,6 +2821,33 @@
         </div>
       </div>
     </div>
+
+    <!-- Profile Map -->
+    <section class="profile-section profile-map-section" aria-labelledby="profileMapHeading">
+      <h2 class="section-title" id="profileMapHeading">
+        <span>🗺️</span>
+        Map
+      </h2>
+      <p class="profile-map-description" id="profileMapDescription">
+        View the community missing-persons map, or your registered runner once you add one with map coordinates.
+      </p>
+      <div class="profile-map-actions">
+        <button type="button" class="btn btn-primary" id="toggleProfileMapBtn" aria-expanded="false">
+          View Map
+        </button>
+        <button type="button" class="btn btn-secondary" id="refreshProfileMapBtn">
+          Refresh
+        </button>
+        <a href="/map.html" class="btn btn-secondary">Open full map</a>
+      </div>
+      <div id="profileMapWrapper" class="profile-map-wrapper">
+        <div id="profileMapLoading" class="profile-map-loading" style="display: none;">Loading map…</div>
+        <div id="profileMap"></div>
+        <div id="profileMapEmpty" class="profile-map-empty" style="display: none;">
+          No map points to display right now.
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- Footer -->
@@ -5523,5 +5592,8 @@
     // Personal form: handled by handlePersonalInfoUpdate function
     // Runner form: handled by inline event listener at line 3547
   </script>
+  <script src="js/publicMapApi.js?v=20260727"></script>
+  <script src="google-maps-config.js?v=20260727"></script>
+  <script src="js/profile-map.js?v=20260727"></script>
 </body>
 </html>
