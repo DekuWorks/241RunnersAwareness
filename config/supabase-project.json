@@ -1,0 +1,11 @@
+{
+  "name": "241RunnersAwareness",
+  "projectRef": "tmglqsdxplpdfexavihn",
+  "organizationId": "kwdcskoczivufwukpvto",
+  "region": "us-east-1",
+  "apiUrl": "https://tmglqsdxplpdfexavihn.supabase.co",
+  "databaseHost": "db.tmglqsdxplpdfexavihn.supabase.co",
+  "purpose": "staging",
+  "dashboardUrl": "https://supabase.com/dashboard/project/tmglqsdxplpdfexavihn",
+  "notes": "Secrets (DB password, service role key) live in GitHub Actions secrets and local .env only."
+}

@@ -6,10 +6,22 @@ namespace _241RunnersAPI.Data
     {
         public static void ConfigureProvider(DbContextOptionsBuilder options, string connectionString)
         {
-            options.UseSqlServer(connectionString, sql =>
+            if (DatabaseProviderKind.IsPostgres)
             {
-                sql.EnableRetryOnFailure(3);
-            });
+                options.UseNpgsql(connectionString, npgsql =>
+                {
+                    npgsql.EnableRetryOnFailure(3);
+                    npgsql.MigrationsHistoryTable("__EFMigrationsHistory", "public");
+                });
+            }
+            else
+            {
+                options.UseSqlServer(connectionString, sql =>
+                {
+                    sql.EnableRetryOnFailure(3);
+                    sql.MigrationsHistoryTable("__EFMigrationsHistory", "dbo");
+                });
+            }
         }
     }
 }

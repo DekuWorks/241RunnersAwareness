@@ -764,11 +764,19 @@ using (var scope = app.Services.CreateScope())
         {
             logger.LogInformation("Database connection successful");
             
-            // Apply migrations against Azure SQL
+            // Apply migrations against Azure SQL only; Postgres schema is managed via Supabase migrations
             try
             {
-                await db.Database.MigrateAsync();
-                logger.LogInformation("Database migrations applied successfully");
+                if (DatabaseProviderKind.IsSqlServer)
+                {
+                    await db.Database.MigrateAsync();
+                    logger.LogInformation("Database migrations applied successfully");
+                }
+                else
+                {
+                    logger.LogInformation(
+                        "Postgres provider: skipping EF SqlServer migrations (apply supabase/migrations instead)");
+                }
             }
             catch (Exception migrationEx)
             {

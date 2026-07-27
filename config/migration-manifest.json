@@ -1,0 +1,67 @@
+{
+  "version": "1.0.0",
+  "description": "Azure SQL → Supabase PostgreSQL table migration order (FK-safe). Staging only.",
+  "tables": [
+    {
+      "name": "Users",
+      "primaryKey": "Id",
+      "order": 1,
+      "identityInsert": true,
+      "notes": "Preserve integer IDs for JWT NameIdentifier claim"
+    },
+    {
+      "name": "Runners",
+      "primaryKey": "Id",
+      "order": 2,
+      "identityInsert": true,
+      "dependsOn": ["Users"]
+    },
+    {
+      "name": "Cases",
+      "primaryKey": "Id",
+      "order": 3,
+      "identityInsert": true,
+      "dependsOn": ["Runners", "Users"]
+    },
+    {
+      "name": "Devices",
+      "primaryKey": "Id",
+      "order": 4,
+      "identityInsert": true,
+      "dependsOn": ["Users"]
+    },
+    {
+      "name": "TopicSubscriptions",
+      "primaryKey": "Id",
+      "order": 5,
+      "identityInsert": true,
+      "dependsOn": ["Users"]
+    },
+    {
+      "name": "Notifications",
+      "primaryKey": "Id",
+      "order": 6,
+      "identityInsert": true,
+      "dependsOn": ["Users"]
+    },
+    {
+      "name": "DataDeletionRequests",
+      "primaryKey": "Id",
+      "order": 7,
+      "identityInsert": true,
+      "dependsOn": ["Users"]
+    },
+    {
+      "name": "AccountDeletionRequests",
+      "primaryKey": "Id",
+      "order": 8,
+      "identityInsert": true,
+      "dependsOn": ["Users"]
+    }
+  ],
+  "blobMigration": {
+    "sourceContainer": "images",
+    "targetBucket": "images",
+    "notes": "Run tools/storage-migration after DB copy when Azure subscription is active"
+  }
+}

@@ -145,3 +145,6 @@ deployments/
 # Local secrets (do not commit)
 config.local.json
 *.local.js
+
+# Migration audit outputs (may contain environment metadata)
+artifacts/

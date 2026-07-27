@@ -1,0 +1,70 @@
+{
+  "version": "1.0",
+  "description": "Auth migration manifest for 241Runners.DataMigration tool (future). Server-side only.",
+  "sourceTable": "dbo.Users",
+  "targetTable": "public.users",
+  "identityMapTable": "migration.identity_migration_map",
+  "preservePrimaryKey": true,
+  "primaryKeyColumn": "Id",
+  "strategies": {
+    "emailPassword": {
+      "condition": "AuthProvider IS NULL OR AuthProvider = 'email'",
+      "passwordHashColumn": "PasswordHash",
+      "hashAlgorithm": "bcrypt",
+      "hashPrefix": "$2a$",
+      "supabaseImportField": "password_hash",
+      "fallback": "password_reset_required"
+    },
+    "google": {
+      "condition": "AuthProvider = 'google'",
+      "supabaseProvider": "google",
+      "linkBy": ["email_normalized", "ProviderUserId"],
+      "requiresPreRegistration": true
+    },
+    "apple": {
+      "condition": "AuthProvider = 'apple'",
+      "supabaseProvider": "apple",
+      "blockedUntil": "VerifyAppleToken implemented",
+      "status": "manual_review"
+    },
+    "microsoft": {
+      "condition": "AuthProvider = 'microsoft'",
+      "supabaseProvider": "azure",
+      "linkBy": ["email_normalized"]
+    }
+  },
+  "roleMapping": {
+    "sourceColumn": "Role",
+    "additionalRolesColumn": "AdditionalRoles",
+    "authoritativeStore": "public.users",
+    "doNotTrustClientMetadata": true,
+    "validRoles": [
+      "user",
+      "parent",
+      "caregiver",
+      "therapist",
+      "adoptiveparent",
+      "admin"
+    ]
+  },
+  "verificationMapping": {
+    "emailVerifiedSource": "IsEmailVerified",
+    "emailVerifiedTarget": "email_confirm",
+    "onlyConfirmWhenSourceTrue": true,
+    "phoneVerifiedSource": "IsPhoneVerified",
+    "phoneVerifiedNote": "No SMS provider; preserve app column only"
+  },
+  "accountState": {
+    "activeSource": "IsActive",
+    "lockedUntilSource": "LockedUntil",
+    "failedLoginAttemptsSource": "FailedLoginAttempts"
+  },
+  "commands": [
+    "audit",
+    "validate-source",
+    "migrate-auth --dry-run",
+    "migrate-auth",
+    "validate-target",
+    "export-report"
+  ]
+}

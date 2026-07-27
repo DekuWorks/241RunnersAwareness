@@ -273,7 +273,31 @@ namespace _241RunnersAPI.Controllers
 
                 var normalizedEmail = request.Email.ToLower().Trim();
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == normalizedEmail);
-                if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+                if (user == null)
+                {
+                    return Unauthorized(new
+                    {
+                        error = new
+                        {
+                            code = "INVALID_CREDENTIALS",
+                            message = "Invalid email or password"
+                        }
+                    });
+                }
+
+                if (string.IsNullOrEmpty(user.PasswordHash))
+                {
+                    return Unauthorized(new
+                    {
+                        error = new
+                        {
+                            code = "OAUTH_ACCOUNT",
+                            message = "This account uses social sign-in. Please log in with your connected provider."
+                        }
+                    });
+                }
+
+                if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
                 {
                     return Unauthorized(new
                     {
@@ -615,6 +639,18 @@ namespace _241RunnersAPI.Controllers
                 }
 
                 // Verify current password
+                if (string.IsNullOrEmpty(user.PasswordHash))
+                {
+                    return BadRequest(new
+                    {
+                        error = new
+                        {
+                            code = "OAUTH_ACCOUNT",
+                            message = "Password change is not available for social sign-in accounts."
+                        }
+                    });
+                }
+
                 if (!BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.PasswordHash))
                 {
                     return BadRequestResponse("Current password is incorrect");
@@ -667,8 +703,8 @@ namespace _241RunnersAPI.Controllers
 
                 await _context.SaveChangesAsync();
 
-                // In production, send email with reset link
-                _logger.LogInformation($"Password reset token for {user.Email}: {resetToken}");
+                // In production, send email with reset link (never log the token)
+                _logger.LogInformation("Password reset requested for {Email}", user.Email);
 
                 return Ok(new
                 {
@@ -864,7 +900,7 @@ namespace _241RunnersAPI.Controllers
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
@@ -872,11 +908,17 @@ namespace _241RunnersAPI.Controllers
                 new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}")
             };
 
+            foreach (var additionalRole in user.AllRoles.Where(r =>
+                         !string.Equals(r, user.Role, StringComparison.OrdinalIgnoreCase)))
+            {
+                claims.Add(new Claim(ClaimTypes.Role, additionalRole));
+            }
+
             var token = new JwtSecurityToken(
                 issuer: jwtIssuer,
                 audience: jwtAudience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(1),
+                expires: DateTime.UtcNow.AddHours(24),
                 signingCredentials: credentials
             );
 
