@@ -1,0 +1,28 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "KR52VK4ZKR.org.runners241.app",
+        "paths": [
+          "/map",
+          "/map.html",
+          "/map/*",
+          "/cases",
+          "/cases.html",
+          "/case-detail.html*",
+          "/my-cases.html",
+          "/login",
+          "/login.html",
+          "/signup",
+          "/signup.html",
+          "/report-case",
+          "/report-case.html",
+          "/report-sighting.html*",
+          "/profile",
+          "/profile.html"
+        ]
+      }
+    ]
+  }
+}
