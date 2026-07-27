@@ -9,7 +9,7 @@
 
 // ===== CONFIGURATION =====
 const REALTIME_CONFIG = {
-    signalRUrl: 'https://241runners-api-v2.azurewebsites.net/adminHub',
+    signalRUrl: 'https://two41runners-api.onrender.com/adminHub',
     pollingInterval: 30000, // 30 seconds fallback
     maxRetries: 5,
     retryDelay: 2000,

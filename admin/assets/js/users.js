@@ -8,7 +8,7 @@
  */
 
 // API Configuration
-let API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
+let API_BASE_URL = 'https://two41runners-api.onrender.com/api';
 
 // Load API configuration
 async function loadConfig() {

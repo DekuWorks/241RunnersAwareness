@@ -2,7 +2,7 @@
 
 All frontend API calls use **241RunnersAPI** (this project). The base URL is controlled in one place:
 
-- **`/config.json`** in the site root: set `API_BASE_URL` (e.g. `https://241runners-api-v2.azurewebsites.net/api`).
+- **`/config.json`** in the site root: set `API_BASE_URL` (e.g. `https://two41runners-api.onrender.com/api`).
 - **`/assets/js/config.js`** loads `config.json` and sets `window.APP_CONFIG.API_BASE_URL`.
 
 When you deploy 241RunnersAPI elsewhere, update `config.json` (or the deployed `config.json`) so `API_BASE_URL` points to your API base (including `/api`). No other file changes are required.

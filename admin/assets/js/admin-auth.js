@@ -12,7 +12,7 @@ const roleKey = "ra_admin_role";
 const userKey = "ra_admin_user";
 
 // API Configuration — all APIs use 241RunnersAPI (config.json). Admin uses base + /v1.
-let API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api';
+let API_BASE_URL = 'https://two41runners-api.onrender.com/api';
 window.API_BASE_URL = API_BASE_URL + '/v1';
 
 async function loadConfig() {

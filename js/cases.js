@@ -119,7 +119,7 @@ class CasesPage {
             }
 
             if (rawItems.length === 0) {
-                const apiUrl = window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiUrl = window.APP_CONFIG?.API_BASE_URL || 'https://two41runners-api.onrender.com/api';
                 const params = new URLSearchParams({ page: 1, pageSize: 100 });
                 const url = `${apiUrl}/public/cases?${params}`;
                 try {

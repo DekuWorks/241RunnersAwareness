@@ -15,7 +15,7 @@ class RealtimeClient {
     async initialize() {
         try {
             // Get API base URL from config
-            const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net';
+            const apiBaseUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com';
             const baseUrl = apiBaseUrl.replace('/api', '');
             
             // Determine which hub to use based on user role and current page

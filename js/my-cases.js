@@ -40,7 +40,7 @@ class MyCasesPage {
                 this.currentUser = userData.user;
             } else {
                 // Fallback to direct fetch
-                const apiBase = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiBase = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://two41runners-api.onrender.com/api';
                 const response = await fetch(`${apiBase}/v1/auth/me`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -113,7 +113,7 @@ class MyCasesPage {
             } else {
                 // Fallback to direct fetch
                 const token = localStorage.getItem('token');
-                const apiBase = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
+                const apiBase = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://two41runners-api.onrender.com/api';
                 const response = await fetch(`${apiBase}/v1/cases/my-cases`, {
                     headers: {
                         'Authorization': `Bearer ${token}`

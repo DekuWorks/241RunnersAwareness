@@ -6,7 +6,7 @@
 
 // API Configuration — single source: 241RunnersAPI (see config.json / assets/js/config.js)
 function getApiBaseUrl() {
-    return (typeof window !== 'undefined' && window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
+    return (typeof window !== 'undefined' && window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://two41runners-api.onrender.com/api';
 }
 let API_BASE_URL = getApiBaseUrl();
 

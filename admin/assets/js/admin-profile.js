@@ -331,7 +331,7 @@ class AdminProfileManager {
     }
 
     getApiBaseUrl() {
-        return window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+        return window.APP_CONFIG?.API_BASE_URL || 'https://two41runners-api.onrender.com/api';
     }
 
     showNotification(message, type = 'info') {

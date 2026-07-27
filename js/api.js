@@ -16,11 +16,11 @@ async function loadConfig() {
             console.log('🔧 Configuration loaded:', window.__CONFIG);
         } else {
             console.warn('⚠️ Could not load config.json, using defaults');
-            window.__CONFIG.API_BASE_URL = window.__CONFIG.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net';
+            window.__CONFIG.API_BASE_URL = window.__CONFIG.API_BASE_URL || 'https://two41runners-api.onrender.com';
         }
     } catch (error) {
         console.error('❌ Error loading configuration:', error);
-        window.__CONFIG.API_BASE_URL = window.__CONFIG.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net';
+        window.__CONFIG.API_BASE_URL = window.__CONFIG.API_BASE_URL || 'https://two41runners-api.onrender.com';
     }
 
     // config.json uses ".../api" for APP_CONFIG pages; api() paths already include "/api/..."

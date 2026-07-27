@@ -3,7 +3,7 @@
  * All APIs point to 241RunnersAPI (config.json).
  */
 (function() {
-    var base = (typeof window !== 'undefined' && window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
+    var base = (typeof window !== 'undefined' && window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://two41runners-api.onrender.com/api';
     if (typeof axios !== 'undefined') {
         axios.defaults.baseURL = base;
         axios.defaults.withCredentials = false;
@@ -83,7 +83,7 @@ axios.interceptors.response.use(
 // API Client class
 class ApiClient {
     constructor() {
-        this.baseURL = (typeof window !== 'undefined' && window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
+        this.baseURL = (typeof window !== 'undefined' && window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://two41runners-api.onrender.com/api';
     }
 
     // Generic request method

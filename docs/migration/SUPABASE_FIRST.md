@@ -1,18 +1,20 @@
 # Supabase-First Operating Mode
 
 **Effective:** 2026-07-27  
-**Azure migration:** Paused — all Azure docs, tooling, and resources are preserved for later cutover.
+**Azure migration:** Paused — Azure docs and tooling preserved for rollback only.
 
 ## Current stack
 
-| Layer | Primary | Notes |
-|-------|---------|-------|
+| Layer | Provider | Notes |
+|-------|----------|-------|
 | Database | **Supabase PostgreSQL** | Project `hylwpwauxlnrqvbkmcln` |
-| File storage | **Supabase Storage** (`images` bucket) | Via `SupabaseImageStorageService` |
-| API | **ASP.NET Core 8** (local or future host) | `DATABASE_PROVIDER=Postgres`, `STORAGE_PROVIDER=Supabase` |
-| Auth | **API JWT** (unchanged) | Supabase Auth deferred |
-| Static site | GitHub Pages | Still points to Azure API until new API host is deployed |
-| Mobile | Expo / `241RA-mobile` | Point `EXPO_PUBLIC_API_URL` at running API |
+| File storage | **Supabase Storage** (`images` bucket) | `SupabaseImageStorageService` |
+| API compute | **Render** (Docker) | `https://two41runners-api.onrender.com` |
+| Auth | **API JWT** (unchanged) | Supabase Auth deferred to Phase 2 |
+| Static site | GitHub Pages | Loads `config.json` → Render API |
+| Mobile | Expo / `241RA-mobile` | `EXPO_PUBLIC_API_URL` → Render API |
+
+**Removed hosting options:** Fly.io, Railway (not used).
 
 ## Local development
 
@@ -42,16 +44,25 @@ npx expo run:ios
 
 Use the **Supavisor pooler** host (`aws-0-us-east-1.pooler.supabase.com`) to avoid IPv6 connection issues on macOS.
 
+## Migrations
+
+```bash
+supabase link --project-ref hylwpwauxlnrqvbkmcln
+bash scripts/supabase-push-migrations.sh
+```
+
+Schema lives in `supabase/migrations/`.
+
 ## What stays on Azure (paused)
 
 - Azure SQL production data (rollback source)
 - Azure Blob `images` container
 - App Service `241runners-api-v2` (disabled — subscription issue)
-- All migration runbooks in `docs/migration/`
+- Migration runbooks in `docs/migration/`
 
-## Production site gap
+## Production
 
-`config.json` still references `241runners-api-v2.azurewebsites.net`. The live site will not authenticate until the API is deployed to a new host (Fly.io, Render, etc.) with Supabase env vars. Local API + simulator work today.
+Live site authenticates via Render API → Supabase PostgreSQL. See [`docs/deployment/PRODUCTION_API.md`](../deployment/PRODUCTION_API.md).
 
 ## Seeded accounts (fresh Supabase DB)
 

@@ -155,7 +155,7 @@ class OptimizedCasesPage {
      * @returns {Promise<Array>} - Cases data
      */
     async loadCasesFromAPI() {
-        const apiUrl = 'https://241runners-api-v2.azurewebsites.net/api/v1/cases';
+        const apiUrl = 'https://two41runners-api.onrender.com/api/v1/cases';
         
         // Use optimized API request if available
         if (window.apiOptimizer) {

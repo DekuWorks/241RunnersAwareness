@@ -389,7 +389,7 @@ class ErrorHandler {
         setInterval(async () => {
             if (navigator.onLine) {
                 try {
-                    const response = await fetch('https://241runners-api-v2.azurewebsites.net/api/health', { 
+                    const response = await fetch('https://two41runners-api.onrender.com/api/health', { 
                         method: 'HEAD',
                         cache: 'no-cache'
                     });

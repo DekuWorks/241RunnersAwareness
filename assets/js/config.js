@@ -8,7 +8,7 @@
 
 // Single source of truth: all APIs point to 241RunnersAPI (this repo).
 window.APP_CONFIG = {
-    API_BASE_URL: "https://241runners-api-v2.azurewebsites.net/api",
+    API_BASE_URL: "https://two41runners-api.onrender.com/api",
     APP_NAME: "241 Runners Awareness",
     APP_VERSION: "1.0.0",
     ENVIRONMENT: "production",

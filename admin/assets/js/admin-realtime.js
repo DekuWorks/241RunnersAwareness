@@ -18,7 +18,7 @@ class AdminRealtime {
         this.adminActivityCallbacks = [];
         
         // API Configuration
-        this.apiBaseUrl = window.APP_CONFIG?.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api';
+        this.apiBaseUrl = window.APP_CONFIG?.API_BASE_URL || 'https://two41runners-api.onrender.com/api';
         this.signalRUrl = this.apiBaseUrl.replace('/api', '') + '/hubs/notifications';
         
         console.log('🔌 AdminRealtime initialized with SignalR URL:', this.signalRUrl);

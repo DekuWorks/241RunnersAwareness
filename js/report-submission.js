@@ -218,7 +218,7 @@ class ReportSubmission {
      * @returns {Promise<Object>} - API response
      */
     async submitReport(data) {
-        const API_BASE_URL = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
+        const API_BASE_URL = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://two41runners-api.onrender.com/api';
         try {
             const response = await fetch(`${API_BASE_URL}/v1/runner`, {
                 method: 'POST',
@@ -250,7 +250,7 @@ class ReportSubmission {
      * @returns {Promise<Object>} - API response
      */
     async updateReport(runnerId, data) {
-        const API_BASE_URL = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
+        const API_BASE_URL = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://two41runners-api.onrender.com/api';
         try {
             const response = await fetch(`${API_BASE_URL}/v1/runner/${runnerId}`, {
                 method: 'PUT',
@@ -312,7 +312,7 @@ class ReportSubmission {
         const formData = new FormData();
         formData.append('image', file);
 
-        const API_BASE_URL = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://241runners-api-v2.azurewebsites.net/api';
+        const API_BASE_URL = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://two41runners-api.onrender.com/api';
         const response = await fetch(`${API_BASE_URL}/ImageUpload/upload`, {
             method: 'POST',
             headers: {

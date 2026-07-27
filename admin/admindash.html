@@ -6118,7 +6118,7 @@
         // API Configuration - Fixed URL without trailing slash
         // Note: API_BASE_URL may be set by admin-auth.js, so we check for it first
         if (typeof API_BASE_URL === 'undefined') {
-            window.API_BASE_URL = 'https://241runners-api-v2.azurewebsites.net/api/v1';
+            window.API_BASE_URL = 'https://two41runners-api.onrender.com/api/v1';
         }
         
         console.log('🔧 Admin Dashboard API_BASE_URL:', window.API_BASE_URL);
@@ -6432,7 +6432,7 @@
                 console.log('🏃‍♂️ Loading runners data...');
                 
                 // Load runner statistics
-                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                const apiBaseUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                 const statsResponse = await fetch(`${apiBaseUrl}/Runner/admin/statistics`, {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
@@ -6599,7 +6599,7 @@
         async function deleteRunner(runnerId) {
             if (confirm('Are you sure you want to delete this runner?')) {
                 try {
-                    const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                    const apiBaseUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                     console.log('🗑️ Deleting runner:', runnerId);
                     
                     const response = await fetch(`${apiBaseUrl}/Runner/${runnerId}`, {
@@ -6638,7 +6638,7 @@
                 console.log('📋 Loading cases data...');
                 
                 // Load case statistics
-                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                const apiBaseUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                 const statsResponse = await fetch(`${apiBaseUrl}/cases/admin/statistics`, {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
@@ -6793,7 +6793,7 @@
         async function deleteCase(caseId) {
             if (confirm('Are you sure you want to delete this case?')) {
                 try {
-                    const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                    const apiBaseUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                     console.log('🗑️ Deleting case:', caseId);
                     
                     const response = await fetch(`${apiBaseUrl}/cases/${caseId}`, {
@@ -6832,7 +6832,7 @@
                 console.log('📊 Loading analytics data...');
                 
                 // Load KPIs
-                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                const apiBaseUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                 const kpisResponse = await fetch(`${apiBaseUrl}/Analytics/kpis`, {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
@@ -7012,7 +7012,7 @@
                 console.log('📊 Updating monitoring data...');
                 
                 // Load monitoring statistics (using admin stats endpoint)
-                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                const apiBaseUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                 const response = await fetch(`${apiBaseUrl}/Admin/stats`, {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
@@ -7086,7 +7086,7 @@
         // Update system health
         async function updateSystemHealth() {
             try {
-                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                const apiBaseUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                 const response = await fetch(`${apiBaseUrl.replace('/v1', '')}/health`, {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
@@ -7105,7 +7105,7 @@
         // Update active sessions
         async function updateActiveSessions() {
             try {
-                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                const apiBaseUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                 const response = await fetch(`${apiBaseUrl}/Admin/active-sessions`, {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
@@ -7232,7 +7232,7 @@
         // Send test alert
         async function sendTestAlert() {
             try {
-                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                const apiBaseUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                 const response = await fetch(`${apiBaseUrl}/Admin/errors`, {
                     method: 'POST',
                     headers: {
@@ -7306,7 +7306,7 @@
         // Export monitoring data
         async function exportMonitoringData() {
             try {
-                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                const apiBaseUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                 const response = await fetch(`${apiBaseUrl}/Admin/stats`, {
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`
@@ -7508,7 +7508,7 @@
                 }
                 
                 // Load real user data from API
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                const apiUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                 console.log('📡 Users API URL:', `${apiUrl}/Admin/users`);
                 console.log('🔑 Using token:', token ? `Present (length: ${token.length})` : 'Missing');
                 
@@ -7672,7 +7672,7 @@
             try {
                 // Load runners from API when endpoint is available
                 // For now, get runner count from cases data
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                const apiUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                 const token = storage.get('ra_admin_token') || storage.get('jwtToken');
                 
                 if (!token) {
@@ -7733,7 +7733,7 @@
         async function loadAdmins() {
             try {
                 // Load admins from the dedicated API endpoint
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                const apiUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                 const token = storage.get('ra_admin_token') || storage.get('jwtToken');
                 
                 if (!token) {
@@ -7791,7 +7791,7 @@
         async function loadPublicCases() {
             try {
                 // Load case statistics from the Admin/stats endpoint
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                const apiUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                 const token = storage.get('ra_admin_token') || storage.get('jwtToken');
                 
                 if (!token) {
@@ -7873,7 +7873,7 @@
         
         async function checkSystemStatus() {
             try {
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                const apiUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                 // Use the cases endpoint as a health check since it's public and always available
                 const response = await fetch(`${apiUrl.replace('/v1', '')}/health`, {
                     method: 'GET',
@@ -8239,7 +8239,7 @@
             try {
                 showToast('Deleting user...', 'info', 2000);
                 
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                const apiUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                 const token = storage.get('ra_admin_token') || storage.get('jwtToken');
                 
                 console.log('🔍 Delete User Debug:', {
@@ -8341,7 +8341,7 @@
             try {
                 showToast('Deleting admin...', 'info', 2000);
                 
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                const apiUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                 const token = storage.get('ra_admin_token') || storage.get('jwtToken');
                 
                 console.log('🔍 Delete Admin Debug:', {
@@ -8639,7 +8639,7 @@
                 
                 console.log('Sending invitation:', inviteData);
                 
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                const apiUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                 const response = await fetch(`${apiUrl}/Admin/invite-user`, {
                     method: 'POST',
                     headers: {
@@ -8709,7 +8709,7 @@
             
             try {
                 const userIds = Array.from(selectedRows).map(row => row.dataset.userId);
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                const apiUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                 
                 const response = await fetch(`${apiUrl}/Admin/users/bulk-update-status`, {
                     method: 'POST',
@@ -8756,7 +8756,7 @@
             
             try {
                 const userIds = Array.from(selectedRows).map(row => row.dataset.userId);
-                const apiUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                const apiUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                 
                 const response = await fetch(`${apiUrl}/Admin/users/bulk-update-role`, {
                     method: 'POST',
@@ -10658,7 +10658,7 @@
         
         // Quick action functions
         function openSwaggerDocs() {
-            window.open('https://241runners-api-v2.azurewebsites.net/swagger', '_blank');
+            window.open('https://two41runners-api.onrender.com/swagger', '_blank');
         }
         
         async function viewSystemLogs() {
@@ -13288,7 +13288,7 @@
         async function initializeRealTimeUpdates() {
             try {
                 
-                const apiBaseUrl = window.API_BASE_URL || 'https://241runners-api-v2.azurewebsites.net/api/v1';
+                const apiBaseUrl = window.API_BASE_URL || 'https://two41runners-api.onrender.com/api/v1';
                 const hubUrl = apiBaseUrl.replace('/api', '') + '/hubs/admin';
                 console.log('🔌 SignalR Hub URL:', hubUrl);
                 

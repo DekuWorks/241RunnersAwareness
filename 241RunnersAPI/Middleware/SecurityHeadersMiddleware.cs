@@ -41,7 +41,7 @@ namespace _241RunnersAPI.Middleware
                     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
                     "font-src 'self' https://fonts.gstatic.com; " +
                     "img-src 'self' data: https:; " +
-                    "connect-src 'self' https://241runners-api-v2.azurewebsites.net wss:; " +
+                    "connect-src 'self' https://two41runners-api.onrender.com wss:; " +
                     "frame-ancestors 'none'; " +
                     "base-uri 'self'; " +
                     "form-action 'self'";
