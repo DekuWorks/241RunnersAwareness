@@ -1,5 +1,5 @@
 {
-  "API_BASE_URL": "https://241runners-api.onrender.com/api",
+  "API_BASE_URL": "https://two41runners-api.onrender.com/api",
   "APP_NAME": "241 Runners Awareness",
   "APP_VERSION": "1.0.0",
   "ENVIRONMENT": "production",

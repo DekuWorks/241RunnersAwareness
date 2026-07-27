@@ -1,6 +1,6 @@
 # Production API deployment
 
-**Target URL:** `https://241runners-api.onrender.com`
+**Target URL:** `https://two41runners-api.onrender.com`
 
 Hosting blockers encountered during setup:
 - **Fly.io** — free trial ended (add payment method at [fly.io](https://fly.io))
@@ -19,7 +19,7 @@ Hosting blockers encountered during setup:
 | `SUPABASE_SERVICE_ROLE_KEY` | GitHub secret `SUPABASE_SERVICE_ROLE_KEY` |
 | `ConnectionStrings__DefaultConnection` | GitHub secret `SUPABASE_CONNECTION_STRING` |
 
-4. After deploy, verify: `curl https://241runners-api.onrender.com/health`
+4. After deploy, verify: `curl https://two41runners-api.onrender.com/health`
 5. `config.json` already points at this host — GitHub Pages will work after Pages rebuild.
 
 One-click (after Render login):  
@@ -36,5 +36,5 @@ bash scripts/deploy-api-fly.sh
 ## Smoke test
 
 ```bash
-API_BASE=https://241runners-api.onrender.com bash scripts/smoke-test-api.sh
+API_BASE=https://two41runners-api.onrender.com bash scripts/smoke-test-api.sh
 ```

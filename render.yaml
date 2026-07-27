@@ -20,7 +20,7 @@ services:
       - key: JWT_AUDIENCE
         value: 241RunnersAwareness
       - key: PUBLIC_API_BASE_URL
-        value: https://241runners-api.onrender.com
+        value: https://two41runners-api.onrender.com
       - key: JWT_KEY
         sync: false
       - key: SUPABASE_URL
