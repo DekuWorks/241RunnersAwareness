@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: 241runners-api
+    runtime: docker
+    dockerfilePath: ./241RunnersAPI/Dockerfile
+    dockerContext: ./241RunnersAPI
+    plan: free
+    region: ohio
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: DATABASE_PROVIDER
+        value: Postgres
+      - key: STORAGE_PROVIDER
+        value: Supabase
+      - key: JWT_ISSUER
+        value: 241RunnersAwareness
+      - key: JWT_AUDIENCE
+        value: 241RunnersAwareness
+      - key: PUBLIC_API_BASE_URL
+        value: https://241runners-api.onrender.com
+      - key: JWT_KEY
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: ConnectionStrings__DefaultConnection
+        sync: false
