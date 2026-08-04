@@ -264,8 +264,9 @@ namespace _241RunnersAPI.Services
         /// <summary>
         /// Validates and sanitizes phone numbers
         /// </summary>
-        public string SanitizePhoneNumber(string phoneNumber)
+        public string SanitizePhoneNumber(string? phoneNumber)
         {
+            // Phone is optional for registration/profile — treat missing/empty as valid empty
             if (string.IsNullOrWhiteSpace(phoneNumber))
                 return string.Empty;
 
