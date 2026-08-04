@@ -349,38 +349,37 @@ html header {
 /* Hamburger menu button - hidden by default on desktop */
 .hamburger {
   display: none;
-  background: none;
-  border: none;
   cursor: pointer;
-  padding: 12px;
+  padding: 10px;
   position: absolute;
   right: 12px;
   top: 50%;
   left: auto;
   transform: translateY(-50%);
-  z-index: 1002;
+  z-index: 1100;
   min-width: 48px;
   min-height: 48px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background: #ffffff !important;
+  border: 2px solid #111111 !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 5px;
 }
 
 .hamburger span {
   display: block;
-  width: 20px;
-  height: 2px;
-  background: #fff;
-  margin: 4px 0;
-  -webkit-transition: 0.3s; /* Safari/Chrome */
-  -moz-transition: 0.3s; /* Firefox */
-  -o-transition: 0.3s; /* Opera */
-  transition: 0.3s;
+  width: 22px;
+  height: 3px;
+  background: #111111 !important;
+  margin: 0;
+  border-radius: 2px;
+  -webkit-transition: 0.25s ease;
+  -moz-transition: 0.25s ease;
+  -o-transition: 0.25s ease;
+  transition: 0.25s ease;
 }
 
 .hamburger.active span:nth-child(1) {
@@ -1080,41 +1079,51 @@ body.dark-mode .feature-card p {
     -ms-transform: translateY(-50%) !important;
     -o-transform: translateY(-50%) !important;
     transform: translateY(-50%) !important;
-    z-index: 1001 !important;
+    z-index: 1100 !important;
     padding: 10px !important;
-    border-radius: 8px !important;
-    background: rgba(255, 255, 255, 0.1) !important;
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
-    backdrop-filter: blur(10px) !important;
+    border-radius: 10px !important;
+    background: #ffffff !important;
+    border: 2px solid #111111 !important;
     width: 48px !important;
     height: 48px !important;
     min-width: 48px !important;
     min-height: 48px !important;
     cursor: pointer !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45) !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
+    gap: 5px !important;
   }
   
   .hamburger span {
-    background: #ffffff !important;
-    width: 20px !important;
-    height: 2px !important;
-    margin: 4px 0 !important;
+    background: #111111 !important;
+    width: 22px !important;
+    height: 3px !important;
+    margin: 0 !important;
+    border-radius: 2px !important;
   }
   
   .hamburger:hover,
-  .hamburger:active {
-    background: rgba(255, 255, 255, 0.25) !important;
-    border-color: rgba(255, 255, 255, 0.6) !important;
+  .hamburger:active,
+  .hamburger:focus-visible {
+    background: #f3f4f6 !important;
+    border-color: #000000 !important;
     opacity: 1 !important;
     -webkit-transform: translateY(-50%) !important;
     -moz-transform: translateY(-50%) !important;
     -ms-transform: translateY(-50%) !important;
     -o-transform: translateY(-50%) !important;
     transform: translateY(-50%) !important;
+  }
+
+  .hamburger.active {
+    background: #111111 !important;
+    border-color: #ffffff !important;
+  }
+
+  .hamburger.active span {
+    background: #ffffff !important;
   }
   
   /* Mobile navigation container - Slides in from the right */
@@ -1125,10 +1134,12 @@ body.dark-mode .feature-card p {
     width: 280px !important;
     max-width: 85% !important;
     height: 100vh !important;
-    background: rgba(0, 0, 0, 0.98) !important;
+    background: #111111 !important;
     -webkit-backdrop-filter: blur(20px) !important;
     backdrop-filter: blur(20px) !important;
-    display: none !important;
+    display: flex !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
     -webkit-box-orient: vertical !important;
     -webkit-box-direction: normal !important;
     -ms-flex-direction: column !important;
@@ -1139,20 +1150,22 @@ body.dark-mode .feature-card p {
     -webkit-box-align: stretch !important;
     -ms-flex-align: stretch !important;
     align-items: stretch !important;
-    -webkit-transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    -moz-transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    -o-transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    z-index: 998 !important;
+    -webkit-transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s !important;
+    -moz-transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s !important;
+    -o-transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s !important;
+    transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s !important;
+    z-index: 1090 !important;
     padding: 80px 0 20px 0 !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
-    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.4) !important;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.55) !important;
   }
   
   /* Show navigation when hamburger is active */
   nav.active {
     display: flex !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
     right: 0 !important;
   }
   
@@ -4736,8 +4749,8 @@ body.dark-mode .action-card p {
 .cases-hero ~ header .hamburger,
 .my-cases-hero ~ header .hamburger {
     display: none;
-    background: none;
-    border: none;
+    background: #ffffff !important;
+    border: 2px solid #111111 !important;
     cursor: pointer;
     padding: 10px;
     position: absolute;
@@ -4745,17 +4758,18 @@ body.dark-mode .action-card p {
     top: 50%;
     left: auto;
     transform: translateY(-50%);
-    z-index: 1001;
+    z-index: 1100;
 }
 
 .cases-hero ~ header .hamburger span,
 .my-cases-hero ~ header .hamburger span {
     display: block;
-    width: 25px;
+    width: 22px;
     height: 3px;
-    background: #fff;
-    margin: 5px 0;
-    transition: 0.3s;
+    background: #111111 !important;
+    margin: 0;
+    border-radius: 2px;
+    transition: 0.25s ease;
 }
 
 .cases-hero ~ header .hamburger.active span:nth-child(1),
